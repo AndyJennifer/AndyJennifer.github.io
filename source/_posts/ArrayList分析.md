@@ -1,3 +1,12 @@
+---
+title: ArrayList分析
+date: 2019-02-23 21:43:18
+categories:
+- Java集合相关
+tags: 
+- Java
+---
+
 ![超杀女.jpg](http://upload-images.jianshu.io/upload_images/2824145-5dda6fec988df5dd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 

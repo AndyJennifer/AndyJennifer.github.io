@@ -1,3 +1,12 @@
+---
+title: SimpleEyes 学习Kotlin必备良器
+date: 2019-02-23 21:22:35
+categories:
+- 开源项目相关
+tags: 
+- Kotlin
+---
+
 #### 介绍
 [SimpleEyes](https://github.com/AndyJennifer/SimpleEyes)是一款基于仿开眼视频App，力求与原始开眼App相似（附上相关App参考版本，如有需要可下载[开眼Version 3.8.1.2.216](https://pan.baidu.com/s/1xWR4fz9bXL4gH-KkQVX-RA) ）,该项目中采用**多Activity+多Fragment**开发。使用**MVP+RxJava+Retrofit**架构。主要采用语言**Kotlin**，**目前该项目持续开发中**。如果你愿意和我一起开发，或者有任何问题，请联系我。我总是在这等着你呢。O(∩_∩)O。
 

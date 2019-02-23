@@ -1,3 +1,12 @@
+---
+title: RecyclerView滚动位置，滚动速度设置
+date: 2019-02-23 22:13:11
+categories:
+- RecyclerView相关
+tags: 
+- RecyclerView
+---
+
 
 ![自行车Boy.jpg](https://upload-images.jianshu.io/upload_images/2824145-7ae7631be0e746f0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

@@ -1,3 +1,13 @@
+---
+title: Gradle系列-引导篇（一）
+date: 2019-02-23 22:15:49
+categories:
+- Gradle相关
+tags: 
+- Gradle
+---
+
+
 
 ![gradle.png](https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

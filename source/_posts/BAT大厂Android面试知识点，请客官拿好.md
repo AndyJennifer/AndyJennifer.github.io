@@ -1,3 +1,10 @@
+---
+title: BAT大厂Android面试知识点，请客官拿好
+date: 2019-02-23 22:20:04
+tags: 
+- 面试
+---
+
 
 ![bat.jpeg](https://upload-images.jianshu.io/upload_images/2824145-b25f520b367237d1.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

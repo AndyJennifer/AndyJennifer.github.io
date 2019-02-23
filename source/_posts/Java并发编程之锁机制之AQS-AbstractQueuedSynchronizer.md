@@ -1,3 +1,11 @@
+---
+title: Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)
+date: 2019-02-23 21:38:23
+categories:
+- Java并发相关
+tags: 
+- Java
+---
 ![爆炸.png](https://upload-images.jianshu.io/upload_images/2824145-0e04abe007aee52d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 >该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》

@@ -1,3 +1,11 @@
+---
+title: Java并发编程之锁机制之Condition接口
+date: 2019-02-23 21:40:23
+categories:
+- Java并发相关
+tags: 
+- Java
+---
 
 ![book.jpg](https://upload-images.jianshu.io/upload_images/2824145-64a13d0c3114cdcb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

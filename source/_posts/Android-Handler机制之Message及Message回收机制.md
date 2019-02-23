@@ -1,3 +1,12 @@
+---
+title: Android Handler机制之Message及Message回收机制
+date: 2019-02-23 22:08:55
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 ![小松鼠.jpg](https://upload-images.jianshu.io/upload_images/2824145-93bba9f12e53bb0d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 

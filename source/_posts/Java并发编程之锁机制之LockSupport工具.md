@@ -1,3 +1,12 @@
+---
+title: Java并发编程之锁机制之LockSupport工具
+date: 2019-02-23 21:39:50
+categories:
+- Java并发相关
+tags: 
+- Java
+---
+
 
 ![长鼻子.jpg](https://upload-images.jianshu.io/upload_images/2824145-77a37f0a5b7690cc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

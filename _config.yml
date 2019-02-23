@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: AndyJennifer‘Blog
+title: AndyJennifer'Blog
 subtitle: What would life be if we had no courage to attempt anything?
-description: 
+description: "AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步"
 keywords: AndyJennifer
 author: AndyJennifer
-language:
+language: zh-CN
 timezone:
 
 # URL
@@ -73,7 +73,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

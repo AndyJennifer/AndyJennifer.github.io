@@ -1,3 +1,10 @@
+---
+title: Kotlin下的5种单例模式
+date: 2019-02-23 22:19:21
+tags:
+- kotlin
+---
+
 
 ![Kotlin.jpg](https://upload-images.jianshu.io/upload_images/2824145-e740353ee09bfb69.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

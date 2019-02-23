@@ -1,3 +1,13 @@
+---
+layout: “android
+title: Handler机制之Message的发送与取出”
+date: 2019-02-23 22:07:13
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击
 [《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)

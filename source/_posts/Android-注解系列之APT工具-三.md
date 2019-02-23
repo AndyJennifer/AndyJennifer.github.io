@@ -1,3 +1,12 @@
+---
+title: Android 注解系列之APT工具--三
+date: 2019-02-23 22:02:37
+categories:
+- 注解相关
+tags: 
+- 注解
+---
+
 
 >该文章中涉及的代码，我已经提交到GitHub上了，大家按需下载---->[源码](https://github.com/AndyJennifer/AptDemo)
 

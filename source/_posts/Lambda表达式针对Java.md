@@ -1,3 +1,12 @@
+---
+title: Lambda表达式针对Java
+date: 2019-02-23 22:00:51
+categories:
+- Java语法相关
+tags: 
+- Lambda
+---
+
 ![天使爱美丽.jpg](https://upload-images.jianshu.io/upload_images/2824145-9f3c46b3bc5b44c0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 我们都知道Java 8 支持Lambda表达式，但是平时开发中也很难用到这个东东，但是作为专业的程序员，技多不压身（其实我是在学Kotlin中，发现里面大量的运用到了Lambda表达式，看的我一脸懵逼，所以只好来学习学习，不然怎么出去装逼，怎么骚浪贱）。好，收，让我们来看看Lambda的前世今生。

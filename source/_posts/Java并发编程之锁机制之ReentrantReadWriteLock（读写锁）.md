@@ -1,3 +1,11 @@
+---
+title: Java并发编程之锁机制之ReentrantReadWriteLock（读写锁）
+date: 2019-02-23 21:26:10
+categories:
+- Java并发相关
+tags: 
+- Java
+---
 ![蓝天.jpg](https://upload-images.jianshu.io/upload_images/2824145-12d950ee54698c34.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 前言

@@ -1,3 +1,12 @@
+---
+title: Java并发编程之锁机制之Lock接口
+date: 2019-02-23 21:37:47
+categories:
+- Java并发相关
+tags: 
+- Java
+---
+
 ![小盒子.jpg](https://upload-images.jianshu.io/upload_images/2824145-99cbcbf1c00c2fc8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 >该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》

@@ -1,3 +1,11 @@
+---
+title: Java并发编程之Volatile
+date: 2019-02-23 21:33:12
+categories:
+- Java并发相关
+tags: 
+- Java
+---
 ![认真.png](https://upload-images.jianshu.io/upload_images/2824145-358b7664b318447b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 >该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》

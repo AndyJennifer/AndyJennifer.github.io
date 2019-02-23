@@ -1,3 +1,12 @@
+---
+title: RecyclerView.smoothScrollToPosition了解一下
+date: 2019-02-23 22:12:08
+categories:
+- RecyclerView相关
+tags: 
+- RecyclerView
+---
+
 ![小狗狗.jpg](https://upload-images.jianshu.io/upload_images/2824145-48cb9d674242f237.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ### 前言
 最近开发中遇到了一个需求，需要RecyclerView滚动到指定位置后置顶显示，当时遇到这个问题的时候，心里第一反应是直接使用RecyclerView的smoothScrollToPosition()方法，实现对应位置的平滑滚动。但是在实际使用中发现并没有到底自己想要的效果。本想着偷懒直接从网上Copy下，但是发现效果并不是很好。于是就自己去研究源码。

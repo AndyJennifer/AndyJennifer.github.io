@@ -1,3 +1,11 @@
+---
+title: Android Handler机制之Handler 、MessageQueue 、Looper
+date: 2019-02-23 22:06:10
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
 
 ![很随意.jpg](https://upload-images.jianshu.io/upload_images/2824145-8e0074126982e457.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

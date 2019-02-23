@@ -1,3 +1,12 @@
+---
+title: Android Handler机制之总目录
+date: 2019-02-23 22:04:30
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 ![小花花.jpg](https://upload-images.jianshu.io/upload_images/2824145-b52c19b7eff35733.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 前言

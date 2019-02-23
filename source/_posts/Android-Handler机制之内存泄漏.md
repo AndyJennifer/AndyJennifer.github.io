@@ -1,3 +1,12 @@
+---
+title: Android Handler机制之内存泄漏
+date: 2019-02-23 22:11:10
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 
 ![溢出啦啦.jpg](https://upload-images.jianshu.io/upload_images/2824145-73ede8ebabc4c5a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

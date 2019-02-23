@@ -1,3 +1,12 @@
+---
+title: Android Handler机制之消息池的扩展 SimplePool与SynchronizedPool
+date: 2019-02-23 22:09:35
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 ![消息池.gif](https://upload-images.jianshu.io/upload_images/2824145-0be39b98baebb871.gif?imageMogr2/auto-orient/strip)
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击

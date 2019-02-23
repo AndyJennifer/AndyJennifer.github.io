@@ -1,3 +1,12 @@
+---
+title: Android Handler机制之ThreadLocal
+date: 2019-02-23 22:05:18
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 
 ![小积木.jpg](https://upload-images.jianshu.io/upload_images/2824145-04bd2a2f4dcf1849.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

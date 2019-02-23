@@ -1,3 +1,12 @@
+---
+title: Android Handler机制之循环消息队列的退出
+date: 2019-02-23 22:10:33
+categories:
+- Handler相关
+tags: 
+- 异步任务
+---
+
 
 ![啦啦.jpeg](https://upload-images.jianshu.io/upload_images/2824145-8bc6d10af2118f1b.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
