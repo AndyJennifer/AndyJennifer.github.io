@@ -1,0 +1,38 @@
+![小石头.jpg](https://upload-images.jianshu.io/upload_images/2824145-e64e7be17dce3220.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+>该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》
+
+### 前言
+在前面的文章中。我们了解了**volatile**、了解了**synchronized**。现在我们来了解一下Java SE 5之后新增加的Lock接口（以及相关实现类）实现的锁功能。在阅读该系列文章之前，希望你已经掌握了volatile原理及CAS操作原理。如果你对上述提到的两个知识点不是很熟悉或者了解。那么建议从整个Java内存模型的设计及相关知识点开始了解，欲知详情，请点击--->《Java并发编程之总目录》。
+
+### concurrent包的设计
+要了解Java为我们提供的基于Lock接口（以及相关实现类）实现的锁功能，我们首先要看一下整个concurrent包下的设计。具体设计如下所示：
+![current.png](https://upload-images.jianshu.io/upload_images/2824145-db62acff4c900b57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+在上图中，我们大致可以看出courrent包下的整体结构。整个包大致分为了三层。
+- 高层：Lock、同步器、阻塞队列等。
+- 中层：AQS(AbstractQueuedSynchronizer)、非阻塞数据结构、原子变量类。
+- 底层：volatile变量的读/写、CAS操作。
+
+其中每个层中的依赖关系也很明显，AQS，非阻塞数据结构和原子变量类（java.util.concurrent.atomic包中的类），都是基于底层实现，而高层类又依赖中层这些基础类。**特别需要注意的是于Lock接口（以及相关实现类）相关的锁功能在整个高层中起着非常重要的重要**。虽然没有直接在图中表述Lock接口在高层中的关系，但是在高层中我们所罗列的同步器、阻塞队列、并发容器等，或多或少都依赖或使用其Lock接口（以及相关实现类）实现的锁功能。
+
+所以了解Lock接口以及相关实现类，对我们认识整个Java并发的机制与设计起着尤为重要的作用。
+
+### Lock接口（以及相关实现类）UML类图
+总所周知锁是用来控制多个线程访问共享资源的方式，一般来说，一个锁就能够防止多个线程同时访问共享资源（但是有些锁可以允许多线程并发的访问共享资源，比如我们后期将会讲解的读写锁），在Lock接口出现之前，Java程序是靠synchronized关键字来实现锁功能的，而Java SE 5之后，并发包中新增了Lock接口以及相关实现类，来实现锁的功能。
+关于 Lock接口（以及相关实现类）的UML类图，具体如下所示：
+
+![继承关系.png](https://upload-images.jianshu.io/upload_images/2824145-f66e4f7b822bbc33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+关于上图中涉及到的类，我都简单的描述了出来，并没有详细的将每个类中的方法描述出来。因为我觉得前期大家只要了解其中的使用关系就行了。后续的相关文章会对其中涉及到的类及使用会有具体的描述。（**如果在手机端阅览的同学，图片有可能不是很清楚，建议直接在PC端阅读**）
+
+从上图中我们发现整个Lock接口以及相关实现类关系还算比较复杂，所以准备分为以下几个部分来介绍：
+- [ Java并发编程之锁机制之Lock接口](https://www.jianshu.com/p/6874d9b4f3d8)
+- [ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)
+- [Java并发编程之锁机制之LockSupport工具](https://www.jianshu.com/p/d0e84096d108)
+- [Java并发编程之锁机制之Condition接口](https://www.jianshu.com/p/a22855b8820a)
+- [Java并发编程之锁机制之重入锁](https://www.jianshu.com/p/1068960ecd64)
+- [Java并发编程之锁机制之读写锁](https://www.jianshu.com/p/416e16eea7da)
+
+
+相信大家看完这系列文章之后，对大家会有所帮助。喜欢我的小伙伴们，不要加我微信啊，给我点赞就行了。你的支持就是对我最大的鼓励。爱你哟~~~
