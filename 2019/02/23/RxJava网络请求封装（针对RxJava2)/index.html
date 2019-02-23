@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>AndyJennifer‘Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下： 12345678910111213public void login(String userName, String password) &amp;#123;       mModel.login(userName,passWor">
+<meta name="keywords" content="AndyJennifer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AndyJennifer‘Blog">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/RxJava网络请求封装（针对RxJava2)/index.html">
+<meta property="og:site_name" content="AndyJennifer‘Blog">
+<meta property="og:description" content="最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下： 12345678910111213public void login(String userName, String password) &amp;#123;       mModel.login(userName,passWor">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-02-23T08:52:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AndyJennifer‘Blog">
+<meta name="twitter:description" content="最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下： 12345678910111213public void login(String userName, String password) &amp;#123;       mModel.login(userName,passWor">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="AndyJennifer‘Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">AndyJennifer‘Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">What would life be if we had no courage to attempt anything?</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-RxJava网络请求封装（针对RxJava2)" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/23/RxJava网络请求封装（针对RxJava2)/" class="article-date">
+  <time datetime="2019-02-23T08:52:30.000Z" itemprop="datePublished">2019-02-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="漫长的婚约.jpg"></p>
+<p>最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public void login(String userName, String password) &#123;</span><br><span class="line">       mModel.login(userName,passWord).subscribe(new Consumer&lt;UserLoginInfo&gt;() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void accept(UserLoginInfo loginInfo) throws Exception &#123;</span><br><span class="line">             //省略逻辑代码</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;, new Consumer&lt;Throwable&gt;() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void accept(Throwable throwable) throws Exception &#123;</span><br><span class="line">           Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码中，我是直接将错误信息打印出来的。当网络情况下。程序会直接抛出<strong>java.net.ConnectException: Failed to connect to /192.168.1.107:8080</strong>，为了良好的用户体验，不应该将网络异常提示出来。用户看后也是<strong>一脸懵逼</strong>，所以必须将此异常进行处理。提示正常的信息。如<strong>网络异常，请检查网络重试</strong>。那下面我们就开始封装吧。</p>
+<h4 id="处理异常信息"><a href="#处理异常信息" class="headerlink" title="处理异常信息"></a>处理异常信息</h4><p>既然程序出现异常的时候会走。相应的Consumer&lt; Throwable &gt;接口，那么我们直接自定义一个类。实现该接口。并对错误进行分类处理。具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public abstract class ConsumerError&lt;T extends Throwable&gt; implements Consumer&lt;T&gt; &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void accept(T t) throws Exception &#123;</span><br><span class="line">        String errorMessage = &quot;&quot;;</span><br><span class="line">        int errorCode = 0;</span><br><span class="line">        if (t instanceof SocketException) &#123;//请求异常</span><br><span class="line">            errorMessage = &quot;网络异常，请检查网络重试&quot;;</span><br><span class="line">        &#125; else if (t instanceof UnknownHostException) &#123;//网络异常</span><br><span class="line">            errorMessage = &quot;请求失败，请稍后重试...&quot;;</span><br><span class="line">        &#125; else if (t instanceof SocketTimeoutException) &#123;//请求超时</span><br><span class="line">            errorMessage = &quot;请求超时&quot;;</span><br><span class="line">        &#125; else if (t instanceof ServerException) &#123;//服务器返回异常</span><br><span class="line">            errorMessage = t.getMessage();</span><br><span class="line">            errorCode = ((ServerException) t).getErrorCode();</span><br><span class="line">        &#125;</span><br><span class="line">        onError(errorCode, errorMessage);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public abstract void onError(int errorCode, String message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码我们可以发现。我们创建了一个抽象类。并且提供了一个<strong>onError</strong>抽象方法（参数1：错误码，参数2：错误信息）。当出现错误的时候，我们只需要创建匿名内部类，并<strong>实现onError方法</strong>就行了。细心的小伙伴可以看见这里出现了一个<strong>ServerException</strong>，这是什么鬼。那接下来，慢慢说。</p>
+<h4 id="自定义服务器异常"><a href="#自定义服务器异常" class="headerlink" title="自定义服务器异常"></a>自定义服务器异常</h4><p>在网络请求中，服务器会返回一些错误。当我们收到服务器返回的这些错误信息的时候。可能会对错误信息进行一些相关的处理。说到服务器异常。那就必须要提到服务器返回的数据格式与网络请求。具体实现如下：</p>
+<h4 id="服务器返回数据格式"><a href="#服务器返回数据格式" class="headerlink" title="服务器返回数据格式"></a>服务器返回数据格式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class Result&lt;T&gt; implements Serializable &#123;</span><br><span class="line">    public boolean result;</span><br><span class="line">    public int code;</span><br><span class="line">    public String message;</span><br><span class="line">    public T data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="具体的网络请求："><a href="#具体的网络请求：" class="headerlink" title="具体的网络请求："></a>具体的网络请求：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public Observable&lt;UserLoginInfo&gt; login(String userName, String password) &#123;</span><br><span class="line"> return Api.getDefault().login(userName,password).compose(RxHelper&lt;UserLoginInfo&gt;handleResult()); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码中，请求地址与参数都可以不用管。直接查看compose()函数中<strong>RxHelper<boolean>handleResult())</boolean></strong>。这里有可能有些小伙伴不知道compose操作符。<a href="https://www.jianshu.com/p/3d0bd54834b0" target="_blank" rel="noopener">传送门</a></p>
+<h5 id="RxHelper具体实现"><a href="#RxHelper具体实现" class="headerlink" title="RxHelper具体实现"></a>RxHelper具体实现</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public class RxHelper &#123;</span><br><span class="line"></span><br><span class="line">      //处理请求结果 针对 有code message data 的json</span><br><span class="line">      //对请求状态吗进行分析，如果成功获取result 中的data</span><br><span class="line">      public static &lt;T&gt; ObservableTransformer&lt;Result&lt;T&gt;, T&gt; handleResult() &#123;</span><br><span class="line">        return upstream -&gt; upstream.flatMap(result -&gt; &#123;</span><br><span class="line">            if (result.code == HttpErrorCode.HTTP_NO_ERROR) &#123;</span><br><span class="line">                return createSuccessData(result.data);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                return Observable.error(new ServerException(result.code, result.message));①</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	//处理没有data的Result</span><br><span class="line">    public static ObservableTransformer&lt;Result, Result&gt; handleOnlyResult() &#123;</span><br><span class="line">        return upstream -&gt; upstream.flatMap(result -&gt; &#123;</span><br><span class="line">            if (result.code == HttpErrorCode.HTTP_NO_ERROR) &#123;</span><br><span class="line">                return createSuccessData(result);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                return Observable.error(new ServerException(result.code, result.message));②</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    //创建成功返回的数据    </span><br><span class="line">    private static &lt;T&gt; Observable&lt;T&gt; createSuccessData(final T t) &#123;</span><br><span class="line">        return Observable.create(new ObservableOnSubscribe&lt;T&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void subscribe(@NonNull ObservableEmitter&lt;T&gt; emitter) throws Exception &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    emitter.onNext(t);</span><br><span class="line">                    emitter.onComplete();</span><br><span class="line">                &#125; catch (Exception ex) &#123;</span><br><span class="line">                    emitter.onError(ex);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>RxHelper主要用于网络请求帮助类处理。对请求结果进行了判断，同时对请求与响应线程进行了处理，看①②处，发现如果当前数据返回状态码不是成功的话，程序就会直接抛出<strong>带有当前的状态码与错误信息的Error</strong>。程序抛出Error后，自然会走我们观察者中的Error方法（<strong>也就是我们自定义的ConsumerError中的error方法</strong>）。</p>
+<p>这样到此。整个异常处理流程就完全清楚了。当然在服务器返回的错误中。你可以根据服务器返回的错误。定义相应的错误处理。</p>
+<h4 id="错误信息封装"><a href="#错误信息封装" class="headerlink" title="错误信息封装"></a>错误信息封装</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class HttpErrorCode &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 请求的服务不存在</span><br><span class="line">     */</span><br><span class="line">    public static final int ERROR_404 = 404;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 系统内部错误</span><br><span class="line">     */</span><br><span class="line">    public static final int ERROR_500 = 500;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 程序内部异常</span><br><span class="line">     */</span><br><span class="line">    public static final int ERROR_998 = 998;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 未知错误</span><br><span class="line">     */</span><br><span class="line">    public static final int ERROR_999 = 999;</span><br><span class="line">    /**</span><br><span class="line">     * 请求成功</span><br><span class="line">     */</span><br><span class="line">    public static final int HTTP_NO_ERROR = 200;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 自定义异常</span><br><span class="line">     */</span><br><span class="line">    public static final int USER_NOT_EXIT = 100000;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="封装后具体代码"><a href="#封装后具体代码" class="headerlink" title="封装后具体代码"></a>封装后具体代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void login(String userName, String password) &#123;</span><br><span class="line">        mModel.login(userName,passWord).subscribe(new Consumer&lt;UserLoginInfo&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void accept(UserLoginInfo loginInfo) throws Exception &#123;</span><br><span class="line">              //省略逻辑代码</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,new ConsumerError&lt;Throwable&gt;() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public void onError(int errorCode, String message) &#123;</span><br><span class="line">                      if(errorCode== HttpErrorCode.USER_NOT_EXIT)&#123;//根据具体错误，处理相应逻辑。</span><br><span class="line">                  </span><br><span class="line">                      &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们的请求封装就完成啦。我们只要在ConsumerError中的onError根据不同的错误码，来处理相应的业务逻辑了。是不是很方便？</p>
+<p>最后，附上我写的一个基于Kotlin 仿开眼的项目<a href="https://github.com/AndyJennifer/SimpleEyes" target="_blank" rel="noopener">SimpleEyes</a>(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/23/RxJava网络请求封装（针对RxJava2)/" data-id="cjsheb85o0007dsr7tsi9i0ry" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/02/23/LinkedList分析/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/02/23/Android-Handler机制之总目录/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/RecyclerView滚动位置，滚动速度设置/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/Gradle系列-引导篇（一）/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/哈希表初识(一)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 AndyJennifer<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

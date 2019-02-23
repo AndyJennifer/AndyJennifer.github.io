@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>AndyJennifer‘Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言年年寒冬，年年也挡不住一个安卓程序员追求大厂的决心。想要进入大厂，我们需要掌握哪些知识点呢？这里，我为大家梳理了一个整体的知识架构。整体包括Java、Android、算法、网络等，并且我也在相应知识点下推荐了与该知识点相关的书籍与博客。希望大家阅读之后，能帮助大家完善与整理自己的知识体系。祝大家早日进入自己理想的公司~~  注意，整篇文章是知识点的概括，不包含答案，需要大家多看源码，知识只有">
+<meta name="keywords" content="AndyJennifer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AndyJennifer‘Blog">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/BAT大厂Android面试知识点，请客官拿好/index.html">
+<meta property="og:site_name" content="AndyJennifer‘Blog">
+<meta property="og:description" content="前言年年寒冬，年年也挡不住一个安卓程序员追求大厂的决心。想要进入大厂，我们需要掌握哪些知识点呢？这里，我为大家梳理了一个整体的知识架构。整体包括Java、Android、算法、网络等，并且我也在相应知识点下推荐了与该知识点相关的书籍与博客。希望大家阅读之后，能帮助大家完善与整理自己的知识体系。祝大家早日进入自己理想的公司~~  注意，整篇文章是知识点的概括，不包含答案，需要大家多看源码，知识只有">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-b25f520b367237d1.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-02-23T08:52:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AndyJennifer‘Blog">
+<meta name="twitter:description" content="前言年年寒冬，年年也挡不住一个安卓程序员追求大厂的决心。想要进入大厂，我们需要掌握哪些知识点呢？这里，我为大家梳理了一个整体的知识架构。整体包括Java、Android、算法、网络等，并且我也在相应知识点下推荐了与该知识点相关的书籍与博客。希望大家阅读之后，能帮助大家完善与整理自己的知识体系。祝大家早日进入自己理想的公司~~  注意，整篇文章是知识点的概括，不包含答案，需要大家多看源码，知识只有">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-b25f520b367237d1.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="AndyJennifer‘Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">AndyJennifer‘Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">What would life be if we had no courage to attempt anything?</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-BAT大厂Android面试知识点，请客官拿好" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/23/BAT大厂Android面试知识点，请客官拿好/" class="article-date">
+  <time datetime="2019-02-23T08:52:30.000Z" itemprop="datePublished">2019-02-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-b25f520b367237d1.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="bat.jpeg"></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>年年寒冬，年年也挡不住一个安卓程序员追求大厂的决心。想要进入大厂，我们需要掌握哪些知识点呢？这里，我为大家梳理了一个整体的知识架构。整体包括Java、Android、算法、网络等，并且我也在相应知识点下推荐了与该知识点相关的书籍与博客。希望大家阅读之后，能帮助大家完善与整理自己的知识体系。祝大家早日进入自己理想的公司~~</p>
+<blockquote>
+<p>注意，整篇文章是知识点的概括，不包含答案，需要大家多看源码，知识只有自己去探索与发现，才会弥足珍贵！</p>
+</blockquote>
+<h3 id="Java基础知识点"><a href="#Java基础知识点" class="headerlink" title="Java基础知识点"></a>Java基础知识点</h3><h4 id="Jvm相关"><a href="#Jvm相关" class="headerlink" title="Jvm相关"></a>Jvm相关</h4><ul>
+<li>Java内存结构及分区</li>
+<li>Java对象的创建、存储及访问</li>
+<li>Java判断对象是否存活及垃圾回收算法（GC）</li>
+<li>Jvm中的常见的垃圾回收器</li>
+<li>Java类加载过程</li>
+<li>Java类加载器（双亲委派模型）</li>
+</ul>
+<p>推荐阅读：<br>《深入理解Java虚拟机JVM高级特性及最佳实践》 第二章 Java内存区域与内存溢出异常<br>《深入理解Java虚拟机JVM高级特性及最佳实践》 第三章 垃圾收集器与内存分配策略<br>《深入理解Java虚拟机JVM高级特性及最佳实践》 第六章 类文件结构<br>《深入理解Java虚拟机JVM高级特性及最佳实践》 第七章 虚拟机类加载机制<br>《Java虚拟机规范 JAVA SE 8版》</p>
+<h4 id="集合相关"><a href="#集合相关" class="headerlink" title="集合相关"></a>集合相关</h4><ul>
+<li>ArrayList分析</li>
+<li>LinkedList分析</li>
+<li>HashMap分析</li>
+<li>HashTable分析</li>
+<li>LinkedHashMap分析</li>
+<li>HashSet分析</li>
+<li>LinkedHashSet分析</li>
+<li>ArrayMap、SparseMap、与HashMap的对比</li>
+<li>ConcurrentHashMap分析</li>
+</ul>
+<p>推荐阅读<br>如果大家不嫌弃，可以看看我的–&gt;<a href="https://www.jianshu.com/p/9c12c4d5455d" target="_blank" rel="noopener">ArrayList分析</a><br>如果大家不嫌弃，可以看看我的–&gt;<a href="https://www.jianshu.com/p/bb4eda651703" target="_blank" rel="noopener">LinkedList分析</a><br>如果大家不嫌弃，可以看看我的–&gt;<a href="https://www.jianshu.com/p/345019b77571" target="_blank" rel="noopener">哈希表初识</a><br><a href="https://blog.csdn.net/justloveyou_/article/details/72862373" target="_blank" rel="noopener">彻头彻尾理解 HashTable</a><br><a href="https://mp.weixin.qq.com/s?__biz=MjM5NjQ5MTI5OA==&amp;mid=504261609&amp;idx=1&amp;sn=cdc762fe7c9050e7e9a2554d8c3337a4&amp;mpshare=1&amp;scene=23&amp;srcid=0217AGtnvS7RimagXJQkmTXc#rd" target="_blank" rel="noopener">美团技术团队-Java8系列之重新认识HashMap</a><br><a href="https://blog.csdn.net/justloveyou_/article/details/71713781" target="_blank" rel="noopener">Map 综述（二）：彻头彻尾理解 LinkedHashMap</a><br>《Java并发编程的艺术》第六章6.1节CocurrrentHashMap（基于JDK 1.6，1.7分析的）实现原理及使用<br><a href="https://www.jianshu.com/p/c0642afe03e0" target="_blank" rel="noopener">深入浅出ConcurrentHashMap1.8</a></p>
+<h4 id="并发相关"><a href="#并发相关" class="headerlink" title="并发相关"></a>并发相关</h4><ul>
+<li>Java内存模型</li>
+<li>volatile原理</li>
+<li>Synchronized的原理</li>
+<li>AQS原理</li>
+<li>Condition原理</li>
+<li>ReentrantLock 原理</li>
+<li>公平锁与非公平锁</li>
+<li>ReentrantReadWriteLock原理</li>
+</ul>
+<p>推荐阅读：<br>《Java并发编程的艺术》第二章 Java并发机制的底层实现原理<br>《Java并发编程的艺术》第三章 内存模型<br>《Java并发编程的艺术》第五章 Java中的锁<br><a href="https://www.jianshu.com/p/355b91f7baa8" target="_blank" rel="noopener">Java并发编程之Java内存模型</a><br><a href="https://www.jianshu.com/p/0a82c764e694" target="_blank" rel="noopener">Java并发编程之Java CAS操作</a><br><a href="https://www.jianshu.com/p/e34469924714" target="_blank" rel="noopener">Java并发编程之Volatile</a><br><a href="https://www.jianshu.com/p/712e27f8c977" target="_blank" rel="noopener">Java并发编程之synchronized</a><br><a href="https://www.jianshu.com/p/4ead70bdab56" target="_blank" rel="noopener">Java并发编程之锁机制之引导篇</a><br><a href="https://www.jianshu.com/p/6874d9b4f3d8" target="_blank" rel="noopener"> Java并发编程之锁机制之Lock接口</a><br><a href="https://www.jianshu.com/p/a372528f47a3" target="_blank" rel="noopener"> Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)</a><br><a href="https://www.jianshu.com/p/d0e84096d108" target="_blank" rel="noopener">Java并发编程之锁机制之LockSupport工具</a><br><a href="https://www.jianshu.com/p/a22855b8820a" target="_blank" rel="noopener">Java并发编程之锁机制之Condition接口</a><br><a href="https://www.jianshu.com/p/1068960ecd64" target="_blank" rel="noopener">Java并发编程之锁机制之重入锁</a><br><a href="https://www.jianshu.com/p/416e16eea7da" target="_blank" rel="noopener">Java并发编程之锁机制之读写锁</a></p>
+<h4 id="线程相关"><a href="#线程相关" class="headerlink" title="线程相关"></a>线程相关</h4><ul>
+<li>线程和进程的区别</li>
+<li>线程的启动和终止</li>
+<li>线程间通信</li>
+<li>等待/通知机制</li>
+</ul>
+<p>推荐阅读：<br>《Java并发编程的艺术》第四章 Java并发编程基础</p>
+<h4 id="线程池相关"><a href="#线程池相关" class="headerlink" title="线程池相关"></a>线程池相关</h4><ul>
+<li>使用线程池的原因</li>
+<li>线程池内部原理</li>
+<li>线程池中的几种重要的参数及流程说明</li>
+<li>线程池中几种常见的工作队列</li>
+<li>几种常见的线程池及使用场景。</li>
+</ul>
+<p>推荐阅读：<br>《Java并发编程的艺术》第九章 Java中的线程池</p>
+<h4 id="IO相关"><a href="#IO相关" class="headerlink" title="IO相关"></a>IO相关</h4><ul>
+<li>IO相关面试问题-Socket</li>
+<li>IO相关面试问题-BIO／NIO</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.csdn.net/lirenzuo/article/details/78764696" target="_blank" rel="noopener">NIO相关基础篇一</a><br><a href="https://blog.csdn.net/lirenzuo/article/details/78838717" target="_blank" rel="noopener">NIO相关基础篇二</a><br><a href="https://blog.csdn.net/lirenzuo/article/details/78898430" target="_blank" rel="noopener">NIO相关基础篇三</a><br>《UNIX 网络编程，卷1：套接字联网API 第三版》第六章 I/O复用：select和poll<br>《深入理解Java虚拟机JVM高级特性及最佳实践》 第二章 Java内存区域与内存溢出异常 2.2.7节直接内存介绍</p>
+<h3 id="Android基础知识点"><a href="#Android基础知识点" class="headerlink" title="Android基础知识点"></a>Android基础知识点</h3><h4 id="Activity相关"><a href="#Activity相关" class="headerlink" title="Activity相关"></a>Activity相关</h4><ul>
+<li>典型状况下的生命周期 </li>
+<li>异常情况下的生命周期</li>
+<li>异常情况下的数据保存</li>
+<li>各种情况下跳转到某个Activity时目标Activity及当前Activity的生命周期</li>
+<li>Activity的启动模式及应用场景</li>
+<li>进程和应用生命周期</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》 第一章 Activity的生命周期和启动模式<br>《Android开发艺术探索》 第九章 9.2节Activity的工作过程<br><a href="https://developer.android.google.cn/guide/components/activities/process-lifecycle" target="_blank" rel="noopener">Google-进程和应用生命周期</a><br><a href="https://developer.android.google.cn/guide/components/activities/tasks-and-back-stack" target="_blank" rel="noopener">Google-任务和返回栈</a></p>
+<h4 id="Service相关"><a href="#Service相关" class="headerlink" title="Service相关"></a>Service相关</h4><ul>
+<li>Service的定义及作用</li>
+<li>Service两种启动方式  startService、 bindService 区别及生命周期</li>
+<li>Service绑定服务的三种实现方式，扩展Binder类、使用Messenger、使用AIDL</li>
+<li>关于启动服务与绑定服务间的转换问题 先绑定服务后启动服务、先启动服务后绑定服务</li>
+<li>服务Service与线程Thread的区别</li>
+<li>Android 5.0以上的隐式启动问题及其解决方案</li>
+<li>如何保证服务不被杀死</li>
+<li>IntentService的使用及原理</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》 第九章 9.3节Service的工作过程<br><a href="https://blog.csdn.net/javazejian/article/details/52709857" target="_blank" rel="noopener">关于Android Service真正的完全详解，你需要知道的一切</a><br><a href="https://blog.csdn.net/javazejian/article/details/52426425" target="_blank" rel="noopener">Android 多线程之IntentService 完全详解</a><br><a href="https://blog.csdn.net/javazejian/article/details/52426353" target="_blank" rel="noopener">Android 多线程之HandlerThread 完全详解</a></p>
+<h4 id="BroadcastReceiver相关"><a href="#BroadcastReceiver相关" class="headerlink" title="BroadcastReceiver相关"></a>BroadcastReceiver相关</h4><ul>
+<li>BroadcastReceiver定义及作用、应用场景</li>
+<li>BroadcastReceiver的注册方式，静态方式、动态方式</li>
+<li>BroadcastReceiver注册与取消的时机</li>
+<li>BroadcastReceiver的不同类型，普通广播，系统广播、有序广播、粘性广播、应用类广播</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》 第九章 9.4节BroadcastReceiver 的工作过程<br><a href="https://www.jianshu.com/p/ca3d87a4cdf3" target="_blank" rel="noopener">BroadcastReceiver史上最全面解析</a><br><a href="https://developer.android.google.cn/guide/components/broadcasts" target="_blank" rel="noopener">广播在7.0、8.0、9.0下的适配</a></p>
+<h4 id="Fragment相关"><a href="#Fragment相关" class="headerlink" title="Fragment相关"></a>Fragment相关</h4><ul>
+<li>Fragment生命周期</li>
+<li>Fragment的懒加载 </li>
+<li>Fragment之间的通信</li>
+<li>FragmentPagerAdapter与FragmentStatePagerAdapter的区别</li>
+<li>为什么不建议直接通过使用new Fragment的方式传入数据</li>
+</ul>
+<p>推荐阅读：<br><a href="https://www.jianshu.com/p/d9143a92ad94" target="_blank" rel="noopener">Fragment全解析系列（一）：那些年踩过的坑</a><br><a href="https://developer.android.google.cn/guide/components/fragments" target="_blank" rel="noopener">Google-Fragment概览</a><br><a href="https://developer.android.google.cn/training/basics/fragments/communicating" target="_blank" rel="noopener">Google-与其他Fragment通信</a></p>
+<h4 id="序列化相关"><a href="#序列化相关" class="headerlink" title="序列化相关"></a>序列化相关</h4><ul>
+<li>序列化与反序列化的定义及区别</li>
+<li>Serializable中serialVersionUID及transient关键字的作用</li>
+<li>序列化：Parcelable和Serializable差异</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.csdn.net/javazejian/article/details/52665164" target="_blank" rel="noopener">序列化与反序列化之Parcelable和Serializable浅析</a><br>《Android开发艺术探索》 第二章 IPC基础概念介绍</p>
+<h4 id="IPC相关"><a href="#IPC相关" class="headerlink" title="IPC相关"></a>IPC相关</h4><ul>
+<li>在Android中什么样的情况下会使用多进程模式，如何开启多进程</li>
+<li>Android为什么采用Binder做为IPC机制</li>
+<li>IPC常用方式 使用Bundle、使用文件共享、使用Messenger、使用AIDL、使用ContentProvider、使用Socket </li>
+<li>AIDL的语义</li>
+<li>AIDL如何创建</li>
+<li>AIDL生成Java文件详细分析</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》 第二章 IPC机制<br>《深如理解LINUX内核 第三版涵盖2.6版》 第三章 进程 3.2节进程描述符<br><a href="https://www.jianshu.com/p/429a1ff3560c" target="_blank" rel="noopener">写给 Android 应用工程师的 Binder 原理剖析</a><br><a href="http://gityuan.com/2015/10/31/binder-prepare/" target="_blank" rel="noopener">如果需要深入了解，推荐GitYuan大大的 Binder 系列文章</a></p>
+<h4 id="View事件机制相关"><a href="#View事件机制相关" class="headerlink" title="View事件机制相关"></a>View事件机制相关</h4><ul>
+<li>View的坐标体系</li>
+<li>View滑动的几种方式，使用ScrollTo/ScrollBy、使用动画、改变布局参数</li>
+<li>弹性滑动的原理及实现 </li>
+<li>View的事件分发机制，点击事件的传递规则，事件分发的源码解读</li>
+<li>处理滑动冲突的场景及解决方法</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》 第三章 View的事件体系</p>
+<h4 id="View绘制相关"><a href="#View绘制相关" class="headerlink" title="View绘制相关"></a>View绘制相关</h4><ul>
+<li>DecorView、Window、ViewRootImpl等概念</li>
+<li>MeasureSpec概念</li>
+<li>View的工作流程，measure过程、layout过程、draw过程</li>
+<li>自定义View需要注意的事项</li>
+<li>Activity、Window、View三者之间的关系</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》第四章 View的工作原理<br>《Android开发艺术探索》第八章 理解Window和WindowManager<br><a href="https://blog.csdn.net/harvic880925/article/details/50995268" target="_blank" rel="noopener">Android自定义控件三部曲文章索引</a></p>
+<h4 id="View动画相关"><a href="#View动画相关" class="headerlink" title="View动画相关"></a>View动画相关</h4><ul>
+<li>常用动画View动画（补间动画）、属性动画与帧动画</li>
+<li>补间动画与属性动画区别</li>
+<li>差值器和估值器理解</li>
+<li>属性动画的工作原理</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.csdn.net/harvic880925/article/details/50995268" target="_blank" rel="noopener">Android自定义控件三部曲文章索引</a><br>《Android开发艺术探索》 第七章 Android动画深入分析</p>
+<h4 id="Handler相关"><a href="#Handler相关" class="headerlink" title="Handler相关"></a>Handler相关</h4><ul>
+<li>Handler机制之ThreadLocal</li>
+<li>Handler机制之Looper、Handler、消息队列如何理解</li>
+<li>Handler机制之Message的发送与取出</li>
+<li>Handler机制之Message及Message的回收机制</li>
+<li>Handler机制之循环消息队列的退出</li>
+<li>Handler机制之内存泄漏</li>
+<li>Handler机制之IdleHandle的理解及使用</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》第十章 10.2节 Android的消息机制<br>IdleHandle的奇思妙想—–&gt;<a href="https://mp.weixin.qq.com/s/KpeBqIEYeOzt_frANoGuSg" target="_blank" rel="noopener">你知道android的MessageQueue.IdleHandler吗？</a><br>Handler面试常问题目—–&gt;<a href="https://www.jianshu.com/p/f70ee1765a61" target="_blank" rel="noopener">你真的懂Handler吗？Handler问答</a><br>如果大家不嫌弃，可以看看我的Handler机制总结—–&gt;<a href="https://www.jianshu.com/p/43bb31d8a742" target="_blank" rel="noopener">Anroid Handler机制总目录</a></p>
+<h4 id="AsyncTask相关"><a href="#AsyncTask相关" class="headerlink" title="AsyncTask相关"></a>AsyncTask相关</h4><ul>
+<li>AsyncTask的使用和注意事项</li>
+<li>AsyncTask几个重要的方法 doInBackgound、onProgressUpdate、onPostExecute等</li>
+<li>AsyncTask的工作原理及源码理解</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》第十一章 Android的线程和线程池<br>《Java并发编程的艺术》第九章 Java中的线程池，第十章 Executor框架</p>
+<h4 id="Bitmap压缩机回收相关"><a href="#Bitmap压缩机回收相关" class="headerlink" title="Bitmap压缩机回收相关"></a>Bitmap压缩机回收相关</h4><ul>
+<li>Bitmap所占内存</li>
+<li>常用压缩图片方式</li>
+<li>LruCache原理</li>
+<li>DiskLruCache原理</li>
+<li>LinkedHashMap原理</li>
+</ul>
+<p>推荐阅读：<br><a href="https://mp.weixin.qq.com/s/ufOjtKURP8QERWw1pn_m1Q" target="_blank" rel="noopener">图片占内存公式：分辨率 * 每个像素大小，严谨吗？</a><br><a href="https://github.com/Curzibn/Luban" target="_blank" rel="noopener">鲁班图片压缩</a><br><a href="https://blog.csdn.net/justloveyou_/article/details/71713781" target="_blank" rel="noopener">Map 综述（二）：彻头彻尾理解 LinkedHashMap</a></p>
+<h4 id="ListView与RecyclerView相关"><a href="#ListView与RecyclerView相关" class="headerlink" title="ListView与RecyclerView相关"></a>ListView与RecyclerView相关</h4><ul>
+<li>ListView的原理和复用机制</li>
+<li>ListView和RecyclerView的区别</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.csdn.net/guolin_blog/article/details/44996879" target="_blank" rel="noopener">Android ListView工作原理完全解析，带你从源码的角度彻底理解</a><br><a href="https://juejin.im/post/5a7569676fb9a063435eaf4c" target="_blank" rel="noopener">深入理解Android中的缓存机制(二)RecyclerView跟ListView缓存机制对比</a></p>
+<h4 id="数据存储相关"><a href="#数据存储相关" class="headerlink" title="数据存储相关"></a>数据存储相关</h4><ul>
+<li>常用数据库框架GreenDao,官方Room</li>
+<li>数据库数据迁移问题</li>
+<li>GreenDao中一对一，一对多，多对多关系</li>
+<li>SharedPreferences使用及源码，commit与apply()方法的区别</li>
+</ul>
+<p>推荐阅读：<br><a href="https://code.tutsplus.com/articles/sql-for-beginners--net-8200" target="_blank" rel="noopener">数据库基础1</a><br><a href="https://code.tutsplus.com/articles/sql-for-beginners-part-2--net-8274" target="_blank" rel="noopener">数据库基础2</a><br><a href="https://code.tutsplus.com/articles/sql-for-beginners-part-3-database-relationships--net-8561" target="_blank" rel="noopener">数据库基础3</a><br><a href="http://greenrobot.org/greendao/documentation/" target="_blank" rel="noopener">GreenDao官方帮助文档</a><br><a href="https://juejin.im/post/5c34615bf265da614171bf8a" target="_blank" rel="noopener">面试高频题：一眼看穿 SharedPreferences</a><br><a href="https://stackoverflow.com/questions/13373170/greendao-schema-update-and-data-migration/30334668#30334668" target="_blank" rel="noopener">GreenDao数据库迁移帮助类 MigrationHelper </a></p>
+<h3 id="Android开源框架知识点"><a href="#Android开源框架知识点" class="headerlink" title="Android开源框架知识点"></a>Android开源框架知识点</h3><h4 id="OkHttp相关"><a href="#OkHttp相关" class="headerlink" title="OkHttp相关"></a>OkHttp相关</h4><ul>
+<li>OkHttp的优点</li>
+<li>OkHttp执行请求的整个流程</li>
+<li>OkHttp中的拦截器</li>
+<li>OkHttp中的同步请求与异步请求的理解及其源码</li>
+<li>OkHttp中涉及到的设计模式</li>
+<li>OkHttp底层网络请求实现，socket还是URLConnection</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.piasy.com/2016/07/11/Understand-OkHttp/index.html" target="_blank" rel="noopener">拆轮子系列-拆OkHttp</a></p>
+<h4 id="Retrofit相关"><a href="#Retrofit相关" class="headerlink" title="Retrofit相关"></a>Retrofit相关</h4><ul>
+<li>Retrofit执行请求的整个流程</li>
+<li>Retrofit中ConverterFactory、CallAdapterFactory的理解</li>
+<li>Retrofit中CallAdapter的适配器模式</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.piasy.com/2016/06/25/Understand-Retrofit/index.html" target="_blank" rel="noopener">拆轮子系列：拆Retrofit</a></p>
+<h4 id="RxJava相关"><a href="#RxJava相关" class="headerlink" title="RxJava相关"></a>RxJava相关</h4><ul>
+<li>RxJava常用创建操作符 create、from、just、interval、range等</li>
+<li>RxJava常用组合、合并操作符 combineLatest、join、merge、zip等</li>
+<li>RxJava错误处理操作符 onErrorReturn、onErrorResumeNext、onExceptionResumeNext等</li>
+<li>RxJava过滤操作符 filter、ofType、sample、take等</li>
+<li>Rxjava背压相关理解</li>
+<li>RxJava实际开发中的使用：网络请求轮询、网络请求嵌套回调、从磁盘 / 内存缓存中 获取缓存数据等</li>
+</ul>
+<p>推荐阅读：<br><a href="https://www.jianshu.com/p/a406b94f3188" target="_blank" rel="noopener">Android Rxjava：这是一篇 清晰 &amp; 易懂的Rxjava 入门教程</a><br>如果大家想直接写Demo，这里我已经写好了一份—&gt;<a href="https://github.com/AndyJennifer/RxJavaSummary" target="_blank" rel="noopener">RxJava操作符总结</a></p>
+<h4 id="Glide相关"><a href="#Glide相关" class="headerlink" title="Glide相关"></a>Glide相关</h4><ul>
+<li>Glide的执行流程</li>
+<li>Glide的缓存机制</li>
+<li>Glide图片转换</li>
+<li>Glide带进度的图片加载功能</li>
+<li>Glide内存、磁盘缓存，优先级使用</li>
+</ul>
+<p>推荐阅读：<br><a href="https://blog.csdn.net/guolin_blog/article/details/53759439" target="_blank" rel="noopener">Android图片加载框架最全解析（一），Glide的基本用法</a><br><a href="https://blog.csdn.net/guolin_blog/article/details/53939176" target="_blank" rel="noopener">Android图片加载框架最全解析（二），从源码的角度理解Glide的执行流程</a><br><a href="https://blog.csdn.net/guolin_blog/article/details/54895665" target="_blank" rel="noopener">Android图片加载框架最全解析（三），深入探究Glide的缓存机制</a><br><a href="https://blog.csdn.net/guolin_blog/article/details/70215985" target="_blank" rel="noopener">Android图片加载框架最全解析（四），玩转Glide的回调与监听</a><br><a href="https://blog.csdn.net/guolin_blog/article/details/71524668" target="_blank" rel="noopener">Android图片加载框架最全解析（五），Glide强大的图片变换功能</a><br><a href="https://blog.csdn.net/guolin_blog/article/details/78179422" target="_blank" rel="noopener">Android图片加载框架最全解析（六），探究Glide的自定义模块功能</a></p>
+<h4 id="ButterKnife相关"><a href="#ButterKnife相关" class="headerlink" title="ButterKnife相关"></a>ButterKnife相关</h4><ul>
+<li>Java注解相关Annotation</li>
+<li>Java注解相关之APT工具</li>
+<li>ButterKnife注解框架原理</li>
+</ul>
+<p>推荐阅读：<br><a href="https://www.jianshu.com/p/fcba7013b0b0" target="_blank" rel="noopener">Android 注解系列之APT工具（三）</a><br><a href="https://www.jianshu.com/p/65c4af2ce8f0" target="_blank" rel="noopener">Android 注解系列之Annotation（二）</a><br><a href="https://www.jianshu.com/p/39fc66aa3297" target="_blank" rel="noopener">ButterKnife 原理解析</a></p>
+<h4 id="EventBus相关"><a href="#EventBus相关" class="headerlink" title="EventBus相关"></a>EventBus相关</h4><ul>
+<li>EventBus原理，及索引类的使用</li>
+</ul>
+<p>推荐阅读：<br><a href="https://www.jianshu.com/p/fcba7013b0b0" target="_blank" rel="noopener">Android 注解系列之APT工具（三）</a><br><a href="https://www.jianshu.com/p/65c4af2ce8f0" target="_blank" rel="noopener">Android 注解系列之Annotation（二）</a><br><a href="https://blog.csdn.net/Tencent_Bugly/article/details/51354693" target="_blank" rel="noopener">腾讯Bugly干货-老司机教你“飙”EventBus3</a></p>
+<h3 id="Android性能优化"><a href="#Android性能优化" class="headerlink" title="Android性能优化"></a>Android性能优化</h3><ul>
+<li>性能优化:布局优化、绘制优化、线程优化等</li>
+<li>ANR异常:主线程执行了耗时操作，如BroadcastReceiver(前台广播10s,后台广播为60s)、Service(前台20s,后台200s)没有处理完相关任务等</li>
+<li>OOM异常：内存溢出的原因</li>
+<li>内存泄漏：内存泄露的几种场景，如单例模式引出的泄露、静态变量导致的泄露、属性动画导致的内存泄露等</li>
+</ul>
+<p>推荐阅读：<br>《Android开发艺术探索》第十五章 Android性能优化<br><a href="https://developer.android.google.cn/studio/profile/memory-profiler.html#record-allocations" target="_blank" rel="noopener">Memory Profiler的使用</a><br><a href="https://github.com/square/leakcanary" target="_blank" rel="noopener">LeakCanary库相关介绍</a></p>
+<h3 id="Android打包知识点"><a href="#Android打包知识点" class="headerlink" title="Android打包知识点"></a>Android打包知识点</h3><ul>
+<li>安卓签名的理解</li>
+<li>Gradle多渠道打包</li>
+</ul>
+<p>推荐阅读：<br>《Android Gradle权威指南》</p>
+<h3 id="Android架构知识点"><a href="#Android架构知识点" class="headerlink" title="Android架构知识点"></a>Android架构知识点</h3><ul>
+<li>MVC架构设计模式面试问题讲解</li>
+<li>MVP架构设计模式面试问题讲解 </li>
+<li>MVVM架构设计模式面试问题讲解</li>
+</ul>
+<p>推荐阅读：<br><a href="https://en.wikipedia.org/wiki/Model–view–presenter" target="_blank" rel="noopener">mvp架构设计</a><br><a href="https://en.wikipedia.org/wiki/Model–view–viewmodel" target="_blank" rel="noopener">mvvm架构设计</a><br><a href="https://github.com/googlesamples/android-architecture" target="_blank" rel="noopener">googlesamples/android-architecture</a></p>
+<h3 id="Android不同版本特性知识点"><a href="#Android不同版本特性知识点" class="headerlink" title="Android不同版本特性知识点"></a>Android不同版本特性知识点</h3><p>推荐阅读：<br><a href="https://developer.android.google.cn/about/versions/pie/" target="_blank" rel="noopener">Android不同版本下的特性</a><br><a href="https://developer.android.google.cn/guide/components/broadcasts" target="_blank" rel="noopener">广播在7.0、8.0、9.0下的适配</a><br><a href="https://developer.android.google.cn/guide/topics/permissions/overview" target="_blank" rel="noopener">Android 6.0 权限下的适配</a><br><a href="https://developer.android.google.cn/about/versions/nougat/android-7.0-changes" target="_blank" rel="noopener">Android 7.0 应用共享文件（FileProvider)</a><br><a href="https://developer.android.google.cn/reference/android/support/v4/content/FileProvider.html" target="_blank" rel="noopener">Android 7.0 共享文件的使用方式</a></p>
+<h3 id="网络知识点"><a href="#网络知识点" class="headerlink" title="网络知识点"></a>网络知识点</h3><ul>
+<li>计算机网络三种体系架构，OSI体系架构（7层）、TCP/IP体系架构(4层)，五层体系架构</li>
+<li>TCP的连接管理（三报文握手，四报文握手）</li>
+<li>TCP与UDP的理解与区别</li>
+<li>Http（HyberText Transfer Protocol）基本概念及报文结构</li>
+<li>Http常见错误码</li>
+<li>Http1.0与Http1.1与Http2.0的区别</li>
+<li>Http中get请求与post请求的区别</li>
+<li>Http中cookie与session的区别</li>
+<li>Http与Https的区别</li>
+<li>Https加密算法相关面试问题，签名证书，公钥私钥、数字摘要的理解</li>
+</ul>
+<p>推荐阅读：<br>体系架构—&gt;《计算机网络第七版 谢希仁》第一章 1.7.1节到1.7.5节<br>TCP三报文握手与四报文握手—&gt;《计算机网络第七版 谢希仁》第五章 5.9节 TCP的运输连接管理<br>TCP与UDP理解—&gt;《计算机网络第七版 谢希仁》 第五章 运输层<br>《计算机网络第七版 谢希仁》 第六章 应用层 第七章 网络安全<br><a href="https://mp.weixin.qq.com/s/GICbiyJpINrHZ41u_4zT-A" target="_blank" rel="noopener">HTTP1.0、HTTP1.1 和 HTTP2.0 的区别</a><br><a href="https://www.jianshu.com/p/45d27f3e1196" target="_blank" rel="noopener">清晰的计算机网络基础 学习指南</a></p>
+<h3 id="设计模式知识点"><a href="#设计模式知识点" class="headerlink" title="设计模式知识点"></a>设计模式知识点</h3><ul>
+<li>单例模式 </li>
+<li>Builder模式</li>
+<li>装饰模式</li>
+<li>策略模式</li>
+<li>模板方法</li>
+<li>观察者模式</li>
+<li>等…..</li>
+</ul>
+<p>推荐阅读：<br>《Android源码设计模式解析与实战》</p>
+<h3 id="算法知识点"><a href="#算法知识点" class="headerlink" title="算法知识点"></a>算法知识点</h3><ul>
+<li>常见的八大排序方式</li>
+<li>时间复杂度的计算</li>
+<li>链表相关算法，链表翻转，链表合并等</li>
+<li>二叉树相关算法前序、中序、后序遍历（递归，迭代）</li>
+<li>红黑树与BL树</li>
+<li>等</li>
+</ul>
+<p>推荐阅读：<br>《Java 数据结构和算法 第二版》<br><a href="https://juejin.im/post/5bbb5754e51d450e8d769e80" target="_blank" rel="noopener">时间复杂度学习（上)</a><br><a href="https://juejin.im/post/5bbd79a0f265da0aa74f46a6" target="_blank" rel="noopener">时间复杂度学习（下)</a><br>刷题—-&gt;<a href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/23/BAT大厂Android面试知识点，请客官拿好/" data-id="cjsheb86s000ldsr7qefg0xv3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/02/23/Android-Handler机制之Handler-、MessageQueue-、Looper/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/02/23/Java并发编程之Java-CAS操作/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/RecyclerView滚动位置，滚动速度设置/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/Gradle系列-引导篇（一）/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/23/哈希表初识(一)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 AndyJennifer<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
