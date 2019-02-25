@@ -1,4 +1,5 @@
 ---
 title: 分类
 date: 2019-02-23 23:52:10
+type: "categories"
 ---

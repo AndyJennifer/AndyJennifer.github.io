@@ -63,7 +63,7 @@ footer:
   #since: 2015
 
   # Icon between year and copyright info.
-  icon:
+  icon: 
     # Icon name in fontawesome, see: https://fontawesome.com/v4.7.0/icons/
     # `heart` is recommended with animation in red (#ff0000).
     name: user
@@ -77,9 +77,9 @@ footer:
   # -------------------------------------------------------------
   powered:
     # Hexo link (Powered by Hexo).
-    enable: true
+    enable: flase
     # Version info of Hexo after Hexo link (vX.X.X).
-    version: true
+    version: flase
 
   theme:
     # Theme & scheme info link (Theme - NexT.scheme).
@@ -158,8 +158,8 @@ menu_settings:
 
 # Schemes
 # scheme: Muse
-#scheme: Mist
-#scheme: Pisces
+# scheme: Mist
+# scheme: Pisces
 scheme: Gemini
 
 
@@ -278,7 +278,7 @@ excerpt_description: true
 # Automatically Excerpt. Not recommend.
 # Use <!-- more --> in the post to control excerpt accurately.
 auto_excerpt:
-  enable: false
+  enable: true
   length: 150
 
 # Read more button
