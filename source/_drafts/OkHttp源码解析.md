@@ -230,7 +230,7 @@ synchronized void enqueue(AsyncCall call) {
 
 ### CacheInterceptor
 判断是否需要读取缓存数据
-
+ 
 ### ConnectInterceptor
 构建连接通道，也就是Socket通道
 
