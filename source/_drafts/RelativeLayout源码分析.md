@@ -8,6 +8,14 @@ categories:
 ### 前言
 RelativeLayout中会有两次测量，因为在RelativeLayout中，View的排列方式是基于彼此的依赖关系。在确定每个子View的位置的时候，就需要先给所有的子View排序一下。又因为RelativeLayout允许A，B 2个子View，横向上B依赖A，纵向上A依赖B。所以需要横向纵向分别进行一次排序测量。
 
+#### 这里解释 
+
+```
+        if (mDirtyHierarchy) {
+            mDirtyHierarchy = false;
+            sortChildren();//这里解释 为什么不走排序
+        }
+```
 ```
  public ViewGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -144,7 +152,7 @@ RelativeLayout中会有两次测量，因为在RelativeLayout中，View的排列
             }
         }
 ```
-该方法最后会返回一个有序的View列表，排序的规则是View之间的依赖关系。举个简单的例子，如果View A在View C的前面，View B在View A的前面，那么整个依赖关系图为 B->A-C，那么返回的有序的View列表，必然是按照上面的顺序进行排列的。
+getSortedViews 方法最后会返回一个有序的View列表，排序的规则是View之间的依赖关系。举个简单的例子，如果View A在View C的前面，View B在View A的前面，那么整个依赖关系图为 B->A-C，那么返回的有序的View列表，必然是按照上面的顺序进行排列的。
 
 ```
  private ArrayDeque<Node> findRoots(int[] rulesFilter) {
@@ -177,6 +185,7 @@ RelativeLayout中会有两次测量，因为在RelativeLayout中，View的排列
                     final int rule = rules[rulesFilter[j]];
                     if (rule > 0) {
                         //判断关系图中，是否有该获取依赖的规则,判断是否有依赖关系
+                        //这里获取依赖的节点
                         final Node dependency = keyNodes.get(rule);
                         // Skip unknowns and self dependencies
                         if (dependency == null || dependency == node) {
@@ -194,7 +203,7 @@ RelativeLayout中会有两次测量，因为在RelativeLayout中，View的排列
             final ArrayDeque<Node> roots = mRoots;
             roots.clear();
 
-            // Finds all the roots in the graph: all nodes with no dependencies
+            //没有依赖关系的节点会添加到roots集合中去
             for (int i = 0; i < count; i++) {
                 final Node node = nodes.get(i);
                 if (node.dependencies.size() == 0) roots.addLast(node);
@@ -203,7 +212,8 @@ RelativeLayout中会有两次测量，因为在RelativeLayout中，View的排列
             return roots;
         }
 ```
-获取没有依赖关系的节点，同时构造关系图中每个View之间的依赖关系
+获取没有直接依赖其他节的集合roots，同时构造关系图中每个View之间的依赖关系,
+也就是说假如依赖关系为 a  b->toleftof c 那么roots为 ac, 排序后数组为 cba
 
 #### 第一次测量
 第一次测量会测量水平方向上所有子View的尺寸
