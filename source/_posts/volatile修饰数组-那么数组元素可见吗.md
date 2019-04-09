@@ -7,7 +7,6 @@ categories:
 date: 2019-04-09 15:42:14
 ---
 
-
 ![bg.jpg](https://upload-images.jianshu.io/upload_images/2824145-4f106ccf9a5b864c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 前言
@@ -188,15 +187,16 @@ WFT!?程序居然又跳出循环了，我并没有用volatile修饰数组，也�
 为了解决这个问题，我查阅了相关资料，结果在[stackoverflow](https://stackoverflow.com/questions/53753792/java-volatile-array-my-test-results-do-not-match-the-expectations)
 找到了我想要的答案。在原文的解答中是这样解释的:
 ```
-If Thread A reads a volatile variable, then all all variables visible to Thread A when reading the volatile variable will also be re-read from main memory.
+If Thread A reads a volatile variable, then all all variables
+visible to Thread A when reading the volatile variable 
+will also be re-read from main memory.
 ```
 `简单翻译一下，就是当一个线程在读取一个使用volatile修饰的变量的时候，会将该线程中所有使用的变量从主内存中重新读取。`
 
 那么也就解释了在例子3中，线程2为什么要跳出循环的原因了。
 
 #### 例子4
-
-但是因为自己手贱，我又写了另一个例子，这个例子，我真的无法解释为什么会跳出循环的原因，具体例子如下：
+但是因为自己手贱，我又写了另一个例子，具体例子如下：
 
 ```
 public class TestVolatile {
@@ -248,9 +248,13 @@ flag--->false
 flag in loop--->true
 Jump out of the loop!
 ```
-按照可见性原理，按照逻辑思维，程序是不可能跳出循环的。但是线程2居然循环了一定次数后，居然TM的跳出循环了。这到底发生了什么事情。我再一次的怀疑我自己的人生，怀疑我的编译器，怀疑我的cpu。
+在程序中线程2居然循环了一定次数后，居然跳出循环了。这到底发生了什么事情呢？
+
+针对于例子4，这里我简单的描述一下，在Java内存模型中，当多个线程操作共享变量的时候，线程什么时候将工作内存中的值刷新到主内存的这个时机是不确定的，所以在例子4中会出现循环一定次数后，跳出循环的情况，也就是我们常说的线程安全的问题(也就是出现可见性的问题)。
+
 
 ### 总结
 写这个博客，完全自己一点点的好奇，但是一点一点的，我发现我把自己圈进去了，有可能这就是技术的魅力吧，因为我本身能力也非常有限，有些例子确实无法解释，这里把我的疑问抛出来，希望和大家一起讨论讨论，希望得到大家的帮助。一起得到一个正确的答案。
+
 
 
