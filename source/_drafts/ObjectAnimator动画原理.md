@@ -7,7 +7,7 @@ categories:
 ---
 
 ### ObjectAnimator动画原理
-总体来说ObjectAnimator，ValueAnimator最后只是调用了Draw()方法重新绘制了view,并没有改变View在父容器中的相对位置，那为什么ObjectAnimator能响应事件呢，因为在View中有一个变化的矩阵，记录了ObjectAnimator执行的一系列变换操作。ViewGroup在处理事件后的时候，判断View内部的变化矩阵算出转换后的坐标点，最后判断
+总体来说ObjectAnimator，ValueAnimator最后只是调用了Draw()方法重新绘制了view,并没有改变View在父容器中的相对位置，那为什么ObjectAnimator能响应事件呢，因为在View中有一个变化的矩阵，记录了ObjectAnimator执行的一系列变换操作。ViewGroup在处理事件后的时候，根据View变化的矩阵之后得到逆矩阵，根据逆矩阵算出转换后的坐标点，最后判断坐标点是否在之前的View中（注意，ViewView在父容器中的相对位置，并没有发生改变）。
 ```
 @Override
     public void start() {
@@ -348,7 +348,7 @@ public void transformPointToViewLocal(float[] point, View child) {
         point[1] += mScrollY - child.mTop;
 
         if (!child.hasIdentityMatrix()) {
-            child.getInverseMatrix().mapPoints(point);
+            child.getInverseMatrix().mapPoints(point);//获取可逆矩阵
         }
     }
 ```
