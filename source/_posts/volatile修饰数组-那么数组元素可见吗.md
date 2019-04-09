@@ -1,10 +1,12 @@
 ---
 title: 'volatile修饰数组,那么数组元素可见吗?'
 tags:
-- volatile
+  - volatile
 categories:
-- 奇思妙想
+  - 奇思妙想
+date: 2019-04-09 15:42:14
 ---
+
 
 ![bg.jpg](https://upload-images.jianshu.io/upload_images/2824145-4f106ccf9a5b864c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
