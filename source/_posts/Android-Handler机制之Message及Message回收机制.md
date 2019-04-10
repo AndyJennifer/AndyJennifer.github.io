@@ -191,7 +191,7 @@ void removeCallbacksAndMessages(Handler h, Object object)
 
 ![第一次循环.png](https://upload-images.jianshu.io/upload_images/2824145-451f619f15b42f36.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-#### 第二次循环
+##### 第二次循环
 经过上文的分析，我们已经知道了，在进行第一次循环后，已经将在removeCallbacksAndMessages方法执行时所有对应的Handler发送的消息移除掉了，但是MessageQueue中可能任然会残留没有移除掉的消息。那么第二次循环，根据代码来理解的话，我们可以得到下图：
 
 ![第二次循环.png](https://upload-images.jianshu.io/upload_images/2824145-8d6a841222333799.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
