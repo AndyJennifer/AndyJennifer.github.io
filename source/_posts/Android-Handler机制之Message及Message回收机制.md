@@ -156,7 +156,7 @@ void removeCallbacksAndMessages(Handler h, Object object)
         }
         synchronized (this) {
             Message p = mMessages;
-            // 回收满足条件的第一条消息  第一步
+            //  第一次循环
             while (p != null && p.target == h
                     && (object == null || p.obj == object)) {
                  //下面操作会将满足回收条件的消息，从消息队列中移除
@@ -165,7 +165,7 @@ void removeCallbacksAndMessages(Handler h, Object object)
                 p.recycleUnchecked();
                 p = n;
             }
-            // 回收该条消息后面的满足条件的消息 第二步
+            // 第二次循环
             while (p != null) {
                 Message n = p.next;
                 if (n != null) {
@@ -182,18 +182,21 @@ void removeCallbacksAndMessages(Handler h, Object object)
         }
     }
 ```
-在removeCallbacksAndMessages(Handler h, Object object)方法中，在该方法中分成了两步，
-- 第一步：回收满足条件的第一条消息。同时将该消息从消息队列中移除。`并且将mMessages指向消息队列中的满足条件的下一节点`。
+在removeCallbacksAndMessages(Handler h, Object object)方法中，在该方法中分别进行了两次循环，肯定有很多读者朋友会很好奇，为什么这里会进行两次循环呢？下面我就具体来讲解一下。
 
-在第一步中，我们可以看出会循环遍历消息队列中的消息找到
-`p.target == h&&（(object == null || p.obj == object)`,
-然后进行回收，也就是说在第一步中，会移除对应的Handler。
+我们都知道，在Handler机制中，`多个handler对应同一个MessageQueue对应同一个Looper，Handler与MessageQueue与Looper之间的关系是N：1：1`。也就是说在MessageQueue中我们可以有多个不同Handler发送的Message。那么我们再结合上面的代码，我们来分析这两次循环。
 
->在Handler机制中，多个handler对应同一个MessageQueue,对应同一个Looper，Handler与MessageQueue与Looper之间的关系是N：1：1)
+##### 第一次循环
+根据上文对代码的理解，第一次循环会将MessageQueue中，当前Handler发送的所有消息移除，`注意!!!!!!!!!这里并不会将整个MessageQueue中的当前Handler发送的消息全部移除`，而是在遍历过程中，如果有其他Handler发送的消息,那么就会将mMessages指向头结点并跳出循环。如下图所示：
 
-- 第二步：回收**已经回收的第一条消息之后**所有满足条件的消息。同时将这些消息从消息队列中移除。
+![第一次循环.png](https://upload-images.jianshu.io/upload_images/2824145-451f619f15b42f36.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->思考：为什么不直接走第二步回收消息就行了。反正满足条件的消息都会移除，为毛要先移除第一条，在接着移除后面的消息（这里如果大家感到困惑，请仔细观看第一步操作中的  其中一条语句`mMessages = n;`,之所以会走两次循环，主要目的是让mMessages指向消息队列中的头节点）。
+#### 第二次循环
+经过上文的分析，我们已经知道了，在进行第一次循环后，已经将在removeCallbacksAndMessages方法执行时所有对应的Handler发送的消息移除掉了，但是MessageQueue中可能任然会残留没有移除掉的消息。那么第二次循环，根据代码来理解的话，我们可以得到下图：
+
+![第二次循环.png](https://upload-images.jianshu.io/upload_images/2824145-8d6a841222333799.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+到这里有可能有小伙伴就会想，为什么不执行一次循环就将所有的对应Handler发送的消息全部移除了呢？这里之所以要执行两次循环的原因是，你并不能保证当移除消息的时候，对应的Handler就不继续发送消息了，也就是说该Handler发送的消息仍然会被添加到MessageQueue中，`所以为了保证将整个MessageQueue中该Handler发送的消息全部被移除，在第一次循环移除之后，我们必须要再执行一次循环移除操作`。
 
 #### 当Loooper取出消息时
 ```
