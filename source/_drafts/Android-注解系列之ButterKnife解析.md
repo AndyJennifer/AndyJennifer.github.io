@@ -35,11 +35,13 @@ categories:
     return createBinding(target, sourceView);
   }
 ```
-
+最后都会调用createBinding方法，我们查看该方法：
 ```
   private static Unbinder createBinding(@NonNull Object target, @NonNull View source) {
     Class<?> targetClass = target.getClass();
     if (debug) Log.d(TAG, "Looking up binding for " + targetClass.getName());
+
+    //获取自动生成的类的构造函数
     Constructor<? extends Unbinder> constructor = findBindingConstructorForClass(targetClass);
 
     if (constructor == null) {
@@ -48,6 +50,7 @@ categories:
 
     //noinspection TryWithIdenticalCatches Resolves to API 19+ only type.
     try {
+      //通过反射，实例化该对象
       return constructor.newInstance(target, source);
     } catch (IllegalAccessException e) {
       throw new RuntimeException("Unable to invoke " + constructor, e);
@@ -71,6 +74,8 @@ categories:
 
   @Nullable @CheckResult @UiThread
   private static Constructor<? extends Unbinder> findBindingConstructorForClass(Class<?> cls) {
+
+    //从缓存中获取构造函数，
     Constructor<? extends Unbinder> bindingCtor = BINDINGS.get(cls);
     if (bindingCtor != null) {
       if (debug) Log.d(TAG, "HIT: Cached in binding map.");
@@ -92,6 +97,7 @@ categories:
     } catch (NoSuchMethodException e) {
       throw new RuntimeException("Unable to find binding constructor for " + clsName, e);
     }
+    //并将该构造函数，放入缓存中。
     BINDINGS.put(cls, bindingCtor);
     return bindingCtor;
   }
