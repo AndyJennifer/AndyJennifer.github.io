@@ -6,13 +6,13 @@ tags:
 
 ### JVM篇
 
-- Java内存结构及分区
-- Java对象的创建、存储及访问
-- Java判断对象是否存活
-- 垃圾回收算法（GC)
-- Jvm中的常见的垃圾回收器
-- Java类加载过程
-- Java类加载器（双亲委派模型）
+- Jvm系列之Java内存结构及分区（一）
+- Jvm系列之Java对象的创建、存储及访问(二)
+- Jvm系列之Java判断对象是否存活（三）
+- Jvm系列之垃圾回收算法（四）
+- Jvm系列之Jvm中的常见的垃圾回收器（五）
+- Jvm系列之Java类加载过程（六）
+- Jvm系列之Java类加载器（双亲委派模型）（七）
 
 
 ### 并发篇
@@ -73,7 +73,7 @@ tags:
 - Android 注解系列之APT工具（三）
 - Android 注解系列之ButterKnife分析（四）
 - Android 注解系列之手写一个ButterKnife(五)
-- Android 注解系列之EventBus分析（五）
+- Android 注解系列之EventBus分析（六）
 
 
 ### 自定义View
