@@ -8,7 +8,10 @@ categories:
 
 ### Window与View，ViewRootImpl关系
 
-- Window是一个抽象的概念，每一个Window都对应着一个View和一个ViewRootImpl
+参考链接 http://gityuan.com/2017/04/16/activity-with-window/
+
+
+- Window是一个抽象的概念，每一个Window都对应着一个View和一个ViewRootImpl，WMS则是管理Activity所相应的窗口系统（系统窗口以及嵌套的子窗口），还有跟APP,SurfaceFlinger（SurfaceFlinger则是将应用UI绘制到frameBuffer(帧缓冲区),最终由硬件完成渲染到屏幕上）等模块间相互协同工作。
 
 
 ### Window添加的过程。

@@ -21,7 +21,7 @@ Android instrumentation是安卓系统里面的一套控制方法，或者“钩
 
 #### ActivityManagerService
 
-ActivityManagerService简称是AMS，它是Android中很重要的一个服务，它统筹管理着Android的四大组件，同一调度各应用进程，因为AMS是系统核心服务，很多API不能直接访问，需要通过客户端的ActivityManager与AMS进行通讯。
+ActivityManagerService简称是AMS，它是Android中很重要的一个服务，它统筹管理着Android中的四大组件，同一调度各应用进程。尤其是Activity的各种栈以及状态切换等管理。因为AMS是系统核心服务，很多API不能直接访问，需要通过客户端的ActivityManager与AMS进行通讯。
 
 
 #### ActivityStack
