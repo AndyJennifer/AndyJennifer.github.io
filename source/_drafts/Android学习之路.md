@@ -42,6 +42,7 @@ tags:
 - Java并发编程之线程池篇之线程池的使用（二）
 - Java并发编程之线程池篇之线程池的分类（三）
 
+
 ### 设计模式
 - 设计模式之面向对象的六大原则（一）
 - 设计模式之单例模式（二）
@@ -80,10 +81,36 @@ tags:
 ### 自定义View
 https://github.com/GcsSloop/AndroidNote
 
-#### 基础篇
- - 自定义View基础篇-坐标系
- - 自定义View基础篇-角度弧度
- - 自定义View基础篇-颜色
+#### 基础知识
+ - 自定义View基础知识篇-坐标系
+ - 自定义View基础知识篇-角度弧度
+ - 自定义View基础知识篇-颜色
+
+### View工作原理篇
+
+-《自定义View工作原理篇（一）-ViewRoot和DecorView》
+-《自定义View工作原理篇（二）-理解MeasureSpec》
+-《自定义view工作原理篇（三）-View的工作流程》
+
+-《自定义View工作原理篇（四）-自定义View的分类》
+-《自定义View工作原理篇（五）-自定义View的注意事项》
+
+-《自定义View工作原理篇（六）-RelativeLayout源码解析》
+-《自定义View工作原理篇（七）-LinearLayout源码解析》
+-《自定义View工作原理篇（八）-FrameLayout源码解析》
+
+
+#### 绘制篇
+
+#### 事件篇
+
+- 《自定义View事件篇（一）-事件分发机制》
+- 《自定义View事件篇（二）-MotionEvent详解》
+- 《自定义View事件篇（三）-特殊形状控件事件处理方案》
+- 《自定义View事件篇（四）-多点触控》
+- 《自定义View事件篇（五）-手势检测(GestureDetecotr)》
+- 《自定义View事件篇（六）-缩放手势检测（ScaleGestureDetector)》
+- 《自定义View事件篇进阶篇（七）-嵌套欢动》
 
 #### 动画篇
 - 《自定义View动画篇（一）-alpha、scale、translate、rotate、set的xml属性及用法》
@@ -107,14 +134,6 @@ https://github.com/GcsSloop/AndroidNote
 - 《自定义View绘图篇（九）-Canvas与图层2》
 -  paint相关
 
-#### 事件篇
-
-- 《自定义View事件篇（一）-事件分发机制》
-- 《自定义View事件篇（二）-MotionEvent详解》
-- 《自定义View事件篇（三）-特殊形状控件事件处理方案》
-- 《自定义View事件篇（四）-多点触控》
-- 《自定义View事件篇（五）-手势检测(GestureDetecotr)》
-- 《自定义View事件篇（六）-缩放手势检测（ScaleGestureDetector)》
 
 
 ### 异步任务
