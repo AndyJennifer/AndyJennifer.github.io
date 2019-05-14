@@ -751,7 +751,7 @@ fillDown方法比较好理解，就是一个一个的创建child，判断当前c
 
         // Make a new view for this position, or convert an unused view if
         // possible.
-        //创建新的视图，如果当前缓存视图不可用的花
+        //创建新的视图，如果当前缓存视图不可用的话
         final View child = obtainView(position, mIsScrap);
 
         // This needs to be positioned and measured.
@@ -1100,7 +1100,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
 
 
 
-最后通过，fillSpecific（）方法又会回到makeAndAddView方法，那么现在我们就可以从回收视图中去获取以存在的视图啦
+最后通过，fillSpecific（）方法又会回到ListView的makeAndAddView方法，那么现在我们就可以从回收视图中去获取以存在的视图啦
 
 ```
  private View makeAndAddView(int position, int y, boolean flow, int childrenLeft,
@@ -1531,5 +1531,157 @@ public View getView(int position, View convertView, ViewGroup parent) {
     }
 ```
 
+### Adapter notifyDataSetChanged 发生了什么事
+
+而我们在调用ListView的setAdapter方法
+
+```
+   public void setAdapter(ListAdapter adapter) {
+        if (mAdapter != null && mDataSetObserver != null) {
+            mAdapter.unregisterDataSetObserver(mDataSetObserver);
+        }
+
+        resetList();
+        mRecycler.clear();
+
+        if (mHeaderViewInfos.size() > 0|| mFooterViewInfos.size() > 0) {
+            mAdapter = wrapHeaderListAdapterInternal(mHeaderViewInfos, mFooterViewInfos, adapter);
+        } else {
+            mAdapter = adapter;
+        }
+
+        mOldSelectedPosition = INVALID_POSITION;
+        mOldSelectedRowId = INVALID_ROW_ID;
+
+        // AbsListView#setAdapter will update choice mode states.
+        super.setAdapter(adapter);
+
+        if (mAdapter != null) {
+            mAreAllItemsSelectable = mAdapter.areAllItemsEnabled();
+            mOldItemCount = mItemCount;
+            mItemCount = mAdapter.getCount();
+            checkFocus();
+            //注意这里。
+            mDataSetObserver = new AdapterDataSetObserver();
+            mAdapter.registerDataSetObserver(mDataSetObserver);
+
+            mRecycler.setViewTypeCount(mAdapter.getViewTypeCount());
+
+            int position;
+            if (mStackFromBottom) {
+                position = lookForSelectablePosition(mItemCount - 1, false);
+            } else {
+                position = lookForSelectablePosition(0, true);
+            }
+            setSelectedPositionInt(position);
+            setNextSelectedPositionInt(position);
+
+            if (mItemCount == 0) {
+                // Nothing selected
+                checkSelectionChanged();
+            }
+        } else {
+            mAreAllItemsSelectable = true;
+            checkFocus();
+            // Nothing selected
+            checkSelectionChanged();
+        }
+
+        requestLayout();
+    }
+```
+
+当我们调用Adapter的notifyDataSetChanged方法时，实际调用的是BaseAdapter的notifyDataSetChanged方法。具体如下所示：
+
+```
+ public void notifyDataSetChanged() {
+        mDataSetObservable.notifyChanged();
+    }
+```
+该方法最终会调用adapter中的所有观察者的onChanged（）方法
+```
+public class DataSetObservable extends Observable<DataSetObserver> {
+    /**
+     * Invokes {@link DataSetObserver#onChanged} on each observer.
+     * Called when the contents of the data set have changed.  The recipient
+     * will obtain the new contents the next time it queries the data set.
+     */
+    public void notifyChanged() {
+        synchronized(mObservers) {
+            // since onChanged() is implemented by the app, it could do anything, including
+            // removing itself from {@link mObservers} - and that could cause problems if
+            // an iterator is used on the ArrayList {@link mObservers}.
+            // to avoid such problems, just march thru the list in the reverse order.
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onChanged();
+            }
+        }
+    }
+
+    /**
+     * Invokes {@link DataSetObserver#onInvalidated} on each observer.
+     * Called when the data set is no longer valid and cannot be queried again,
+     * such as when the data set has been closed.
+     */
+    public void notifyInvalidated() {
+        synchronized (mObservers) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onInvalidated();
+            }
+        }
+    }
+}
+
+```
+那么也就会回到之前，我们为Adapter设置的观察者中的onChanged方法，也就是会实际调用ListView中的AdapterDataSetObserver中的
+```
+    class AdapterDataSetObserver extends AdapterView<ListAdapter>.AdapterDataSetObserver {
+        @Override
+        public void onChanged() {
+            //这里会调用AdapterView的onChanged()方法
+            super.onChanged();
+            if (mFastScroll != null) {
+                mFastScroll.onSectionsChanged();
+            }
+        }
+
+        @Override
+        public void onInvalidated() {
+            super.onInvalidated();
+            if (mFastScroll != null) {
+                mFastScroll.onSectionsChanged();
+            }
+        }
+    }
+```
+最终会调用AdapaterView的onChanged方法,具体如下所示：
+```
+ class AdapterDataSetObserver extends DataSetObserver {
+
+        private Parcelable mInstanceState = null;
+
+        @Override
+        public void onChanged() {
+            mDataChanged = true;
+            mOldItemCount = mItemCount;
+            mItemCount = getAdapter().getCount();
+
+            // Detect the case where a cursor that was previously invalidated has
+            // been repopulated with new data.
+            if (AdapterView.this.getAdapter().hasStableIds() && mInstanceState != null
+                    && mOldItemCount == 0 && mItemCount > 0) {
+                AdapterView.this.onRestoreInstanceState(mInstanceState);
+                mInstanceState = null;
+            } else {
+                rememberSyncState();
+            }
+            checkFocus();
+            requestLayout();
+        }
+ }
+```
+
+
 ### 总结
-ListView会先从activeViews获取缓存的view,如果没有获取到则会通过scrapViews中获取数据。
+- ListView会先从activeViews获取缓存的view,如果没有获取到则会通过scrapViews中获取数据。
+- 从ActiveViews中获取的view不需要在重新绑定数据，而从scrapViews中获取的数据需要重新缓存数据。

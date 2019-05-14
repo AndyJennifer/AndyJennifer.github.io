@@ -77,7 +77,7 @@ categories:
         mState.mItemCount = mAdapter.getItemCount();
         mState.mDeletedInvisibleItemCountSincePreviousLayout = 0;
 
-        // 执行布局
+        // 注意，执行布局，这里的mLayout与我们设置的LayoutManager有关，
         mState.mInPreLayout = false;
         mLayout.onLayoutChildren(mRecycler, mState);
 
@@ -92,6 +92,8 @@ categories:
     }
 
 ```
+因为这里的具体布局是与我们设置的layoutManager有关，所以这里以LinearLayoutManager为例。在LinearLayoutManager中的
+onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tryGetViewHolderForPositionByDeadline（）方法。
 #### 三级缓存或四级缓存
 
 #### 这里需要画一个三级缓存的图
@@ -190,7 +192,7 @@ categories:
                     }
                 }
 
-                //第六步、如果从缓存中都没有拿到，那么久直接创建。
+                //第六步、如果从缓存中都没有拿到，那么就直接创建。
                 if (holder == null) {
                     long start = getNanoTime();
                     if (deadlineNs != FOREVER_NS
