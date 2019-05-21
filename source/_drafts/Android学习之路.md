@@ -111,7 +111,7 @@ https://github.com/GcsSloop/AndroidNote
 - 《自定义View事件篇（四）-多点触控》
 - 《自定义View事件篇（五）-手势检测(GestureDetecotr)》
 - 《自定义View事件篇（六）-缩放手势检测（ScaleGestureDetector)》
-- 《自定义View事件篇进阶篇（七）-嵌套欢动》
+- 《自定义View事件篇进阶篇（七）-嵌套滑动》
 
 #### 动画篇
 - 《自定义View动画篇（一）-alpha、scale、translate、rotate、set的xml属性及用法》
