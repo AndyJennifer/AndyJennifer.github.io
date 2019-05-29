@@ -9,11 +9,10 @@ tags:
 
 ![消息池.gif](https://upload-images.jianshu.io/upload_images/2824145-0be39b98baebb871.gif?imageMogr2/auto-orient/strip)
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
 ### 前言
-在上篇文章[《Android Handler机制之Message及Message回收机制 》](https://www.jianshu.com/p/d0ef4edd4407)我们讲解了Message中所携带的信息及消息池中的实现方式。其中我们已经了解了Message中消息池是以链表的形式来完成。在完成了上篇文章后，我就一直想在Java或Android中是否已经为我们提供了一种对象池来帮助我们来实现缓存对象的实现呢。果真在Android中的android.support.v4.util下的Pools类就为我们提供了SimplePool、SynchronizedPool来创建对象池。下面我就对该包下的类进行讲解。
+在上篇文章{% post_link Android-Handler机制之Message及Message回收机制 %}我们讲解了Message中所携带的信息及消息池中的实现方式。其中我们已经了解了Message中消息池是以链表的形式来完成。在完成了上篇文章后，我就一直想在Java或Android中是否已经为我们提供了一种对象池来帮助我们来实现缓存对象的实现呢。果真在Android中的android.support.v4.util下的Pools类就为我们提供了SimplePool、SynchronizedPool来创建对象池。下面我就对该包下的类进行讲解。
 
 ### Android中提供的对象池
 在android.support.v4.util包下的Pools类中，分别声明了Pool接口，SimplePool实现类与SynchronizedPool实现类，其中具体的UML关系如下图所示：

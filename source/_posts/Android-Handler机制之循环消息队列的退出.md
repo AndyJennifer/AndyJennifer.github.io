@@ -10,8 +10,7 @@ tags:
 
 ![啦啦.jpeg](https://upload-images.jianshu.io/upload_images/2824145-8bc6d10af2118f1b.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
 ### 前言
 在上几篇文中我们介绍了整个消息的循环机制以及消息的回收。现在我们来看看整么退出循环消息队列。（到现在为止，整个Android Handler机制快要接近尾声了。不知道大家看了整个系列的文章，有没有对Handler机制有个深一点的了解。如果对你有所帮助，我也感到十分的开心与自豪~~~）。
@@ -59,7 +58,7 @@ public void quit() { mQueue.quit(false); }
         mMessages = null;//将消息队列中的头节点置为null
     }
 ```
-非安全退出其实很简单，就是遍历消息队列中的消息（消息队列内部结构是链表）将所有消息队列中的消息全部回收。同时将MessageQueue中的mMessages （消息队列中的头消息）置为null，其中关于Message的recycleUnchecked()方法，如果你对该方法不是很熟悉，建议先阅读[《Android Handler机制之Message及Message回收机制 》](https://www.jianshu.com/p/d0ef4edd4407)。关于非安全退出时，消息队列中的回收示意图如下所示：
+非安全退出其实很简单，就是遍历消息队列中的消息（消息队列内部结构是链表）将所有消息队列中的消息全部回收。同时将MessageQueue中的mMessages （消息队列中的头消息）置为null，其中关于Message的recycleUnchecked()方法，如果你对该方法不是很熟悉，建议先阅读{% post_link Android-Handler机制之Message及Message回收机制 %}。关于非安全退出时，消息队列中的回收示意图如下所示：
 
 ![回收全部消息.png](https://upload-images.jianshu.io/upload_images/2824145-012dc5d65a9d84b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

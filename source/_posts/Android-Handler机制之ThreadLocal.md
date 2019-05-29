@@ -10,8 +10,7 @@ tags:
 
 ![小积木.jpg](https://upload-images.jianshu.io/upload_images/2824145-04bd2a2f4dcf1849.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
 
 ### 前言

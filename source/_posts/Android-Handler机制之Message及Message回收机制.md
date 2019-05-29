@@ -10,8 +10,7 @@ tags:
 ![小松鼠.jpg](https://upload-images.jianshu.io/upload_images/2824145-93bba9f12e53bb0d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
 ### 前言
 在前面的文章中我们讲解了Handler、Looper、MessageQueue的具体关系，了解了具体的消息循环的流程。下面将一起来探讨最为整个消息循环的消息载体Message。

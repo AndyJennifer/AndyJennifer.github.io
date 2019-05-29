@@ -89,16 +89,16 @@ https://github.com/GcsSloop/AndroidNote
 
 ### View工作原理篇
 
--《自定义View工作原理篇（一）-ViewRoot和DecorView》
--《自定义View工作原理篇（二）-理解MeasureSpec》
--《自定义view工作原理篇（三）-View的工作流程》
+- 《自定义View工作原理篇（一）-ViewRoot和DecorView》
+- 《自定义View工作原理篇（二）-理解MeasureSpec》
+- 《自定义view工作原理篇（三）-View的工作流程》
 
--《自定义View工作原理篇（四）-自定义View的分类》
--《自定义View工作原理篇（五）-自定义View的注意事项》
+- 《自定义View工作原理篇（四）-自定义View的分类》
+- 《自定义View工作原理篇（五）-自定义View的注意事项》
 
--《自定义View工作原理篇（六）-RelativeLayout源码解析》
--《自定义View工作原理篇（七）-LinearLayout源码解析》
--《自定义View工作原理篇（八）-FrameLayout源码解析》
+- 《自定义View工作原理篇（六）-RelativeLayout源码解析》
+- 《自定义View工作原理篇（七）-LinearLayout源码解析》
+- 《自定义View工作原理篇（八）-FrameLayout源码解析》
 
 
 #### 绘制篇

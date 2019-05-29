@@ -9,10 +9,11 @@ tags:
 ---
 
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
+
 ### 前言
-在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读《 Android Handler机制之ThreadLocal》与《Android Handler机制之MessageQueue Handler Looper》。该篇文章主要着重讲解Message的发送与取出的具体逻辑细节。在此之前，我们先回顾一下Handler发送消息的具体流程。
+在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读{% post_link Android-Handler机制之ThreadLocal %}与{% post_link Android-Handler机制之Handler-、MessageQueue-、Looper %}。该篇文章主要着重讲解Message的发送与取出的具体逻辑细节。在此之前，我们先回顾一下Handler发送消息的具体流程。
+
 ![HandlerLooperMessage关系.png](https://upload-images.jianshu.io/upload_images/2824145-b3c798765233c278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ### 消息的发送
 我们都知道当调用Handler发送消息的时候，不管是调用sendMessage,sendEmptyMessage,sendMessageDelayed还是其他发送一系列方法。最终都会调用**sendMessageDelayed(Message msg, long delayMillis)**方法。

@@ -9,10 +9,10 @@ tags:
 
 ![很随意.jpg](https://upload-images.jianshu.io/upload_images/2824145-8e0074126982e457.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
+
 ### 前言
-上篇文章，我们讲了ThreadLocal，了解了线程本地变量的实质，如果有小伙伴还是不熟悉ThreadLocal原理的，请参看上篇文章[《Android Handler机制之ThreadLocal》](https://www.jianshu.com/p/2a34d30806d4)。如果你已经阅读 了该文章，那现在我们就一起来了解Handler与MessageQueue与Looper三者之间的关系及其内部原理。
+上篇文章，我们讲了ThreadLocal，了解了线程本地变量的实质，如果有小伙伴还是不熟悉ThreadLocal原理的，请参看上篇文章{% post_link Android-Handler机制之ThreadLocal %},如果你已经阅读 了该文章，那现在我们就一起来了解Handler与MessageQueue与Looper三者之间的关系及其内部原理。
 
 ### Handler、MessageQueue、Looper三者之间的关系
 在了解其三者关系之前，我先给大家一个全局的关系图，接下来的文章会根据该关系图，进行相应的补充与描述。
@@ -81,7 +81,7 @@ tags:
 
 ```
 
-观察上诉代码，我们发现，prepareMainLooper方法内部调用prepare()方法（这里我们忽略该方法中的参数 quitAllowed），而prepare内部调用的是ThreadLocal的set()方法。如果你阅读了之前我写的[《Android Handler机制之ThreadLocal》](https://www.jianshu.com/p/2a34d30806d4)。，那么大家应该知道了当前Looper对象已经与主线程关联了（也可以说，当前主线程中保存了当前Looper对象的引用）。
+观察上诉代码，我们发现，prepareMainLooper方法内部调用prepare()方法（这里我们忽略该方法中的参数 quitAllowed），而prepare内部调用的是ThreadLocal的set()方法。如果你阅读了之前我写的{% post_link Android-Handler机制之ThreadLocal %}，那么大家应该知道了当前Looper对象已经与主线程关联了（也可以说，当前主线程中保存了当前Looper对象的引用）。
 
 #### Looper内部创建消息队列
 在了解了Looper对象怎么与当前线程关联的后，我们来看看Looper类中的具体方法。之前我们说过，在创建Looper对象的时候，当前Looper对象内部也会创建与之关联的消息队列(MessageQueue)。那么查看Looper对应的构造函数：
@@ -166,7 +166,7 @@ tags:
       }
     }
 ```
-上述代码中，我省略了很多代码，现在大家不需要关心省略的内容，大家只要关心大的一个方向就够了，关于MessageQueue的next()具体详解，会在下篇文章 [《Android Handler机制之Message的发送与取出》](https://www.jianshu.com/p/219701879fe4)具体介绍。好了，大家把状态调整过来。
+上述代码中，我省略了很多代码，现在大家不需要关心省略的内容，大家只要关心大的一个方向就够了，关于MessageQueue的next()具体详解，会在下篇文章{% post_link Android-Handler机制之Message的发送与取出 %} 具体介绍。好了，大家把状态调整过来。
 在上文中，我们说过MessageQueue是以链表的形式来存储消息的，从next()方法中我们能分析出来，next()方法会一直从MessageQueue中去获取消息，直到获取消息后才会退出。
 
 #### MessageQueue的enqueueMessage（）方法
@@ -204,7 +204,7 @@ boolean enqueueMessage(Message msg, long when) {
         return true;
     }
 ```
-上诉代码中，我们把重心放在for循环中，在for循环中主要干了 一件事，就是根据当前meesag.when的值，来确定当前插入的消息应该放入消息队列的位置。（当前小伙伴肯能会对message.when感到困惑，还是那句话，现阶段我们只用关心主要的流程，具体的方法详解会在下篇文章 [《Android Handler机制之Message的发送与取出》](https://www.jianshu.com/p/219701879fe4)具体介绍）
+上诉代码中，我们把重心放在for循环中，在for循环中主要干了 一件事，就是根据当前meesag.when的值，来确定当前插入的消息应该放入消息队列的位置。（当前小伙伴肯能会对message.when感到困惑，还是那句话，现阶段我们只用关心主要的流程，具体的方法详解会在下篇文章 {% post_link Android-Handler机制之Message的发送与取出 %}具体介绍。
 
 ### Handler的原理
 了解了Looper与MessageQueue的原理后，我们大致了解了整个消息处理的关系，现在就剩下发消息与处理消息的流程了。最后一点了，大家坚持看完。
@@ -273,7 +273,7 @@ public boolean sendMessageAtTime(Message msg, long uptimeMillis)
 public final boolean sendEmptyMessageAtTime(int what, long uptimeMillis)
 public final boolean postAtTime(Runnable r, long uptimeMillis)
 ```
-在Handler发消息的方法中，我们可以总共发消息的种类，分为三种情况，第一种是及时消息，第二种是发送延时消息，第三种是定时消息。其中关于消息怎么在消息队列中排列与处理。具体的方法详解会在下篇文章《Android Handler机制之Message的发送与取出》具体介绍。
+在Handler发消息的方法中，我们可以总共发消息的种类，分为三种情况，第一种是及时消息，第二种是发送延时消息，第三种是定时消息。其中关于消息怎么在消息队列中排列与处理。具体的方法详解会在下篇文章 {% post_link Android-Handler机制之Message的发送与取出 %}具体介绍。
 
 通过查看Handler发送消息的几个方法。我们发现内部都调用了MessageQueue的enqueueMessage（）方法。
 ```
@@ -358,4 +358,4 @@ public Handler(Looper looper, Callback callback, boolean async)
 ![dispatchMessage步骤.png](https://upload-images.jianshu.io/upload_images/2824145-d005ec9b8f4353b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 最后
-看到最后大家已经发现该篇文章主要着重于将Handler机制的整个流程，对于很多的代码细节并没有过多的描述，特别是关于Looper从MessageQueue（消息队列）中取消息与MessageQueue（消息队列）怎么放入消息的具体细节。不用担心，关于这两个知识点将会在下篇文章[《Android Handler机制之Message的发送与取出》](https://www.jianshu.com/p/219701879fe4)具体描述。
+看到最后大家已经发现该篇文章主要着重于将Handler机制的整个流程，对于很多的代码细节并没有过多的描述，特别是关于Looper从MessageQueue（消息队列）中取消息与MessageQueue（消息队列）怎么放入消息的具体细节。不用担心，关于这两个知识点将会在下篇文章 {% post_link Android-Handler机制之Message的发送与取出 %}具体描述。h

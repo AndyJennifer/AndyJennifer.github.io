@@ -10,8 +10,7 @@ tags:
 
 ![溢出啦啦.jpg](https://upload-images.jianshu.io/upload_images/2824145-73ede8ebabc4c5a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于Android Handler系列文章，如果想了解更多，请点击
-[《Android Handler机制之总目录》](https://www.jianshu.com/p/43bb31d8a742)
+>该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
 ### 前言
 整个Handler机制系列文章到此就结束了，相信大家基本已经将整个Handler机制消化的差不多了，现在就剩下最后一个知识点，在平时开发中使用Handler有可能会`导致内存泄漏`的问题。下面我们就一起去了解了解~~
@@ -65,7 +64,7 @@ public class HandlerLeakageActivity extends BaseActivity {
 
 
 #### 那么问题来了，什么时候引用链会断开？
-在文章[《Android Handler机制之Message及Message回收机制 》](https://www.jianshu.com/p/d0ef4edd4407)
+在文章{% post_link Android-Handler机制之Message及Message回收机制 %}
 中，我们曾经提到过，当消息被Looper通过Loop（）方法取出并执行的时候，会执行recycleUnchecked（）方法来重置消息中的数据，具体代码如下：
 ```
 void recycleUnchecked() {
@@ -128,7 +127,8 @@ public class HandlerLeakageActivity extends BaseActivity {
 如果你不想采用上述的两种方式，还有一种方法就是在当前Activity被finish掉的时候，移除掉整个消息队列中的所有消息。这样就能保证Activity与Handler没有直接的引用关系啦。
 
 关于消息的删除主要有三种方法，大家可以根据自己的项目需求来选择相应的方法。具体如下所示：
->（关于消息的删除，如果有同学不是很熟悉，请参看《Android Handler机制之Message及Message回收机制》
+>（关于消息的删除，如果有同学不是很熟悉，请参看{% post_link Android-Handler机制之Message及Message回收机制 %}
+
 ```
 void removeMessages(Handler h, int what, Object object)
 void removeMessages(Handler h, Runnable r, Object object)
