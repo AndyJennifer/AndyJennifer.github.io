@@ -1,5 +1,5 @@
 ---
-title: Android 注解系列之APT工具--三
+title: Android 注解系列之APT工具(三)
 date: 2019-02-23 22:02:37
 categories:
 - 注解相关
@@ -13,7 +13,7 @@ tags:
 ![骑车车.jpg](https://upload-images.jianshu.io/upload_images/2824145-1f146c8640782324.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 前言
-在上篇文章[Android 注解系列之Annotation（二）](https://www.jianshu.com/p/65c4af2ce8f0)中，简要的介绍了注解的基本使用与定义。同时也提出了以下几个问题，`当我们声明了一个注解后，是不是需要手动找到所有的Class对象或Field、Method？`，`怎么通过注解生成新的类的定义呢？`当面对这些问题的时候，我相信大家的第一反应肯定会想，"有不有相应的三方库呢？Java是否提供了相应库或者方法来解决呢？"，当然Java肯定给我们提供了啦，就是我们既陌生又熟悉的`APT`工具啦。
+在上篇文章{% post_link Android-注解系列之Annotation(二) %}中，简要的介绍了注解的基本使用与定义。同时也提出了以下几个问题，`当我们声明了一个注解后，是不是需要手动找到所有的Class对象或Field、Method？`，`怎么通过注解生成新的类的定义呢？`当面对这些问题的时候，我相信大家的第一反应肯定会想，"有不有相应的三方库呢？Java是否提供了相应库或者方法来解决呢？"，当然Java肯定给我们提供了啦，就是我们既陌生又熟悉的`APT`工具啦。
 
 为什么这里我会说既陌生又熟悉呢？我相信对于大多数安卓程序，我们都或多或少使用了一些主流库，如`Dagger2、ButterKnife、EventBus`等，这些库都使用了APT技术。既然大佬们都在使用，那我们怎么不去了解呢？好了，书归正传，下面我们就来看看怎么通过APT来处理之前我们提到的问题。
 

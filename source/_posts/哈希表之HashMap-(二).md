@@ -4,7 +4,7 @@ date: 2019-02-23 21:54:01
 categories:
 - Java集合相关
 tags: 
-- Java
+- 集合
 ---
 
 ![你说是什么图就是什么图.jpg](https://upload-images.jianshu.io/upload_images/2824145-c6655b07bfd9b105.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -12,7 +12,7 @@ tags:
 >在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：
 
 
-* [哈希表初识(一)](https://www.jianshu.com/p/345019b77571)
+* {% post_link 哈希表初识-(一) %}
 * 哈希表之HashMap(二)
 
 提示：该篇文章作为彻底理解哈希表的第二个部分。主要讲了HashMap在Java中基于JDK1.8(不同版本HashMap可能实现不同)的具体实现。如果你对哈希表还不算太熟，建议先阅读上一篇文章，我相信等你看完之后，在回来看这篇文章，会有一种**飞翔的感觉**。
