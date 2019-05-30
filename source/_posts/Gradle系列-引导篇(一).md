@@ -1,5 +1,5 @@
 ---
-title: Gradle系列-引导篇（一）
+title: Gradle系列-引导篇(一)
 date: 2019-02-23 22:15:49
 categories:
 - Gradle相关
