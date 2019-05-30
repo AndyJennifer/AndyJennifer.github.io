@@ -1,18 +1,17 @@
 ---
-title: Java并发编程之锁机制之Lock接口
+title: Java并发编程之锁机制之Lock接口(七)
 date: 2019-02-23 21:37:47
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 ![小盒子.jpg](https://upload-images.jianshu.io/upload_images/2824145-99cbcbf1c00c2fc8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》
 
 ### 前言
-在上篇文章[《Java并发编程之锁机制之引导篇》](https://www.jianshu.com/p/4ead70bdab56)中，我们大致了解了Lock接口（以及相关实现类）在并发编程重要作用。接下来我们就来具体了解Lock接口中声明的方法以及使用优势。
+在上篇文章{% post_link Java并发编程之锁机制之引导篇(六) %}中，我们大致了解了Lock接口（以及相关实现类）在并发编程重要作用。接下来我们就来具体了解Lock接口中声明的方法以及使用优势。
 
 ### Lock简介
 Lock 接口实现类提供了比使用 synchronized 方法和语句可获得的更广泛的锁定操作。此实现允许更灵活的结构，可以具有差别很大的属性，可以支持多个相关的 `Condition` (Condition实现类ConditonObject来实现线程的通知/与唤醒机制，关于Condition后期会进行介绍)对象。

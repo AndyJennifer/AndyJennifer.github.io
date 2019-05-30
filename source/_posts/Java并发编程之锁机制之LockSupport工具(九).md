@@ -1,10 +1,10 @@
 ---
-title: Java并发编程之锁机制之LockSupport工具
+title: Java并发编程之锁机制之LockSupport工具(九)
 date: 2019-02-23 21:39:50
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 
@@ -13,7 +13,7 @@ tags:
 >关于文章涉及到的jdk源码，这里把最新的jdk源码分享给大家----->[jdk源码](https://pan.baidu.com/s/1Lk9yp8cEpSAnLvw5NJdqZg)
 
 ### 前言
-在上篇文章[《Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)》](https://www.jianshu.com/p/a372528f47a3)中我们了解了整个AQS的内部结构，与其独占式与共享式获取同步状态的实现。但是并没有详细描述线程是如何进行阻塞与唤醒的。我也提到了线程的这些操作都与`LockSupport`工具类有关。现在我们就一起来探讨一下该类的具体实现。
+在上篇文章{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}中我们了解了整个AQS的内部结构，与其独占式与共享式获取同步状态的实现。但是并没有详细描述线程是如何进行阻塞与唤醒的。我也提到了线程的这些操作都与`LockSupport`工具类有关。现在我们就一起来探讨一下该类的具体实现。
 
 ### LockSupport类
 了解线程的阻塞和唤醒，我们需要查看LockSupport类。具体代码如下：
@@ -344,8 +344,6 @@ class LockSupportDemo {
 ### 最后
 该文章参考以下博客，站在巨人的肩膀上。可以看得更远。
 
-[Linux 多线程 - 线程异步与同步机制](https://www.cnblogs.com/Jimmy1988/p/7822478.html)
-
-[LockSupport解析与使用](https://blog.csdn.net/secsf/article/details/78560013)
-
-[自己动手写把”锁”---LockSupport深入浅出](https://www.cnblogs.com/qingquanzi/p/8228422.html)
+- [Linux 多线程 - 线程异步与同步机制](https://www.cnblogs.com/Jimmy1988/p/7822478.html)
+- [LockSupport解析与使用](https://blog.csdn.net/secsf/article/details/78560013)
+- [自己动手写把”锁”---LockSupport深入浅出](https://www.cnblogs.com/qingquanzi/p/8228422.html)

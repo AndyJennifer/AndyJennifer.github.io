@@ -1,18 +1,17 @@
 ---
-title: Java并发编程之原子类
+title: Java并发编程之原子类(五)
 date: 2019-02-23 21:36:39
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 ![天天.jpeg](https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》
 
 ### 前言
-在上篇文章[Java并发编程之synchronized](https://www.jianshu.com/p/712e27f8c977)中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如AtomicBoolean、AtomicLong、AtomicInteger等。（这里提到的Atomic系列类原理都是CAS操作，如果你对CAS操作并不是是很熟悉，建议先阅读[Java并发编程之Java CAS操作](https://www.jianshu.com/p/0a82c764e694)
+在上篇文章{% post_link Java并发编程之Synchronized(三) %}中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如AtomicBoolean、AtomicLong、AtomicInteger等。（这里提到的Atomic系列类原理都是CAS操作，如果你对CAS操作并不是是很熟悉，建议先阅读{% post_link Java并发编程之Java的CAS操作(四) %}。
 
 #### 原子类的使用方式
 
@@ -131,7 +130,7 @@ public final boolean weakCompareAndSetInt(Object o, long offset,
 ```
 从上述代码中我们可以得出，会先获取内存中存储的值，最终会调用compareAndSetInt（）方法来完成最终的原子操作。其中compareAndSetInt（）方法的返回值代表着该次CAS操作是否成功。如果不成功。那么会一直循环。直到成功为止（也就是循环CAS操作）。
 
-这里简要的对CAS操作进行描述：CAS操作内部实现原理是缓存锁，在其操作期间，会修改对应操作对象的内存地址。同时其会保证各个处理器的缓存是一致的，如果处理器发现自己的数据对应的内存地址被修改，就会将当前缓存的数据处理为无效，同时该处理器会重新从系统内存中把数据处理到缓存中。如果你对CAS操作还是不熟悉，建议先阅读[Java并发编程之Java CAS操作](https://www.jianshu.com/p/0a82c764e694)，在回过头来看这篇文章。
+这里简要的对CAS操作进行描述：CAS操作内部实现原理是缓存锁，在其操作期间，会修改对应操作对象的内存地址。同时其会保证各个处理器的缓存是一致的，如果处理器发现自己的数据对应的内存地址被修改，就会将当前缓存的数据处理为无效，同时该处理器会重新从系统内存中把数据处理到缓存中。如果你对CAS操作还是不熟悉，建议先阅读{% post_link Java并发编程之Java的CAS操作(四) %}，在回过头来看这篇文章。
 
 >这里有一个小的问题，大家可以思考一下。我们都知道对于long与double数据类型，在java内存模型中long与double具有非原子协定。但是现在商用的虚拟机都把关于long和double变量的读写操作视为具有原子性的操作。那这里为什么会出现一个AtomicLong？或者出现了AtomicLong为什么没有出现ActomicDouble这个类呢？
 
@@ -176,7 +175,7 @@ class AtomicDemo {
 ```
 
 #### 引用类型原子类
-在[Java并发编程之Java CAS操作](https://www.jianshu.com/p/0a82c764e694)文章中我们曾经提到过两个问题，**第一个问题**：虽然我们能通过循环CAS操作来完成对一个变量的原子操作，但是对于多个变量进行操作时，自旋CAS操作就不能保证其原子性。**第二个问题**：ABA问题，因为CAS在操作值的时候，需要检查值有没有发生变化，如果没有发生变化则更新，但是如果一个值原来是A，变成了B，又变成了A，那么使用CAS进行检查时会发现她的值并没有发生变化。那么会导致程序出问题。
+在{% post_link Java并发编程之Java的CAS操作(四) %}文章中我们曾经提到过两个问题，**第一个问题**：虽然我们能通过循环CAS操作来完成对一个变量的原子操作，但是对于多个变量进行操作时，自旋CAS操作就不能保证其原子性。**第二个问题**：ABA问题，因为CAS在操作值的时候，需要检查值有没有发生变化，如果没有发生变化则更新，但是如果一个值原来是A，变成了B，又变成了A，那么使用CAS进行检查时会发现她的值并没有发生变化。那么会导致程序出问题。
 
 为了解决上述提到的两个问题，Java为我们提供了AtomicReference等系列引用类型原子类，来保证引用对象之间的原子性，即可以把多个变量放在一个对象里来进行CAS操作与ABA问题。主要类型原子类如下：
 - AtomicReference：

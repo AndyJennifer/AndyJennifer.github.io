@@ -1,15 +1,14 @@
 ---
-title: Java并发编程之锁机制之引导篇
+title: Java并发编程之锁机制之引导篇(六)
 date: 2019-02-23 21:37:15
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 ![小石头.jpg](https://upload-images.jianshu.io/upload_images/2824145-e64e7be17dce3220.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》
 
 ### 前言
 在前面的文章中。我们了解了**volatile**、了解了**synchronized**。现在我们来了解一下Java SE 5之后新增加的Lock接口（以及相关实现类）实现的锁功能。在阅读该系列文章之前，希望你已经掌握了volatile原理及CAS操作原理。如果你对上述提到的两个知识点不是很熟悉或者了解。那么建议从整个Java内存模型的设计及相关知识点开始了解，欲知详情，请点击--->《Java并发编程之总目录》。
@@ -36,12 +35,12 @@ tags:
 关于上图中涉及到的类，我都简单的描述了出来，并没有详细的将每个类中的方法描述出来。因为我觉得前期大家只要了解其中的使用关系就行了。后续的相关文章会对其中涉及到的类及使用会有具体的描述。（**如果在手机端阅览的同学，图片有可能不是很清楚，建议直接在PC端阅读**）
 
 从上图中我们发现整个Lock接口以及相关实现类关系还算比较复杂，所以准备分为以下几个部分来介绍：
-- [ Java并发编程之锁机制之Lock接口](https://www.jianshu.com/p/6874d9b4f3d8)
-- [ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)
-- [Java并发编程之锁机制之LockSupport工具](https://www.jianshu.com/p/d0e84096d108)
-- [Java并发编程之锁机制之Condition接口](https://www.jianshu.com/p/a22855b8820a)
-- [Java并发编程之锁机制之重入锁](https://www.jianshu.com/p/1068960ecd64)
-- [Java并发编程之锁机制之读写锁](https://www.jianshu.com/p/416e16eea7da)
 
+- {% post_link Java并发编程之锁机制之Lock接口(七) %}
+- {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
+- {% post_link Java并发编程之锁机制之LockSupport工具(九) %}
+- {% post_link Java并发编程之锁机制之Condition接口(十) %}
+- {% post_link Java并发编程之锁机制之(ReentrantLock)重入锁(十一) %}
+- {% post_link Java并发编程之锁机制之ReentrantReadWriteLock(读写锁)(十二) %}
 
 相信大家看完这系列文章之后，对大家会有所帮助。喜欢我的小伙伴们，不要加我微信啊，给我点赞就行了。你的支持就是对我最大的鼓励。爱你哟~~~

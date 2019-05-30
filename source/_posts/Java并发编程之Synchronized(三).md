@@ -1,15 +1,14 @@
 ---
-title: Java并发编程之synchronized
+title: Java并发编程之Synchronized(三)
 date: 2019-02-23 21:35:03
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 ![学习.jpeg](https://upload-images.jianshu.io/upload_images/2824145-4e592f4f3b8d49b5.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》
 
 ### 前言
 上篇文章我们讲了**volatile**关键字，我们大致了解了其为轻量级的同步机制，现在我们来讲讲我们关于同步的另一个兄弟**synchronized**。synchronized作为开发中常用的同步机制，也是我们处理线程安全的常用方法。相信大家对其都比较熟悉。但是对于其内部原理与底层代码实现大家有可能不是很了解，下面我就和大家一起彻底了解synchronized的使用方式与底层原理。
@@ -151,7 +150,7 @@ class SynchronizedDemo {
 >下面文章主要是讲解jdk1.6之后Java团队对锁进行了优化之后的原理，优化之后涉及到偏向锁、轻量级锁、重量级锁。其中该文章都涉及jdk源码，这里把最新的jdk源码分享给大家----->[jdk源码](https://pan.baidu.com/s/1Lk9yp8cEpSAnLvw5NJdqZg)）
 
 
-在了解Synchronized的原理的原理之前，我们需要知道三个知识点**第一个是CAS操作，**、**第二个是Java对象头（其中Synchronized使用的锁就在对象头中）**、**第三个是jdk1.6对锁的优化**。在了解以上三个知识点后，再去理解其原理就相对轻松一点。关于CAS操作已经在上篇文章《Java并发编程之Java CAS操作》进行过讲解，下面我们来讲解关于Java对象头与锁优化的知识点。
+在了解Synchronized的原理的原理之前，我们需要知道三个知识点**第一个是CAS操作**、**第二个是Java对象头（其中Synchronized使用的锁就在对象头中）**、**第三个是jdk1.6对锁的优化**。在了解以上三个知识点后，再去理解其原理就相对轻松一点。关于CAS操作会在下篇文章{% post_link Java并发编程之Java的CAS操作(四) %}进行过讲解，下面我们来讲解关于Java对象头与锁优化的知识点。
 
 #### Java对象的内存布局
 在Java虚拟机中，对象在内存的存储的布局可以分为3块区域：对象头（Header)、实例数据（Instance Data)、对其填充（Padding)。其中虚拟机中的对象头包括三部分信息，分别为"Mark Word"、类型指针、记录数组长度的数据（可选），具体情况如下图所示：
@@ -928,14 +927,15 @@ void ObjectMonitor::exit(bool not_suspended, TRAPS) {
 3. 释放当前锁，并根据QMode的模式判断，是否将_cxq中挂起的线程唤醒。还是其他操作。
 
 ### 感想
-写了这么久，终于写完了~~~  掌声在哪里？
+写了这么久，终于写完了。 掌声在哪里？
 
-该篇文章主要是根据先关博客与自己对源码的理解，发现其实有很多东西自己还是描述的不是很清楚。主要原因是C++代码看的我头大。个人感觉Java的整个锁的机制其实涉及到蛮多的东西，自己理解的只是冰山一角，如果大家对代码或者文章不理解，请轻喷。我也是看的半懂半懂的。原谅我啦~~~
+该篇文章主要是根据先关博客与自己对源码的理解，发现其实有很多东西自己还是描述的不是很清楚。主要原因是C++代码看的我头大。个人感觉Java的整个锁的机制其实涉及到蛮多的东西，自己理解的只是冰山一角，如果大家对代码或者文章不理解，请轻喷。我也是看的半懂半懂的。原谅我啦。
 
 ### 参考
-站在巨人的肩膀上能看的更远~~~
-《深入理解Java虚拟机：JVM高级特性与最佳实践》
-《Java并发编程的艺术》
-[深入理解Java并发之synchronized实现原理](https://blog.csdn.net/javazejian/article/details/72828483)
-[jdk源码剖析二: 对象内存布局、synchronized终极原理](https://www.cnblogs.com/dennyzhangdd/p/6734638.html)
-[jdk源码](https://pan.baidu.com/s/1Lk9yp8cEpSAnLvw5NJdqZg)
+站在巨人的肩膀上能看的更远。
+
+- 《深入理解Java虚拟机：JVM高级特性与最佳实践》
+- 《Java并发编程的艺术》
+- [深入理解Java并发之synchronized实现原理](https://blog.csdn.net/javazejian/article/details/72828483)
+- [jdk源码剖析二: 对象内存布局、synchronized终极原理](https://www.cnblogs.com/dennyzhangdd/p/6734638.html)
+- [jdk源码](https://pan.baidu.com/s/1Lk9yp8cEpSAnLvw5NJdqZg)

@@ -21,16 +21,17 @@ tags:
 
 #### 锁机制篇
 - Java并发编程之Java内存模型（一）
-- Java并发编程之Java CAS操作（二）
-- Java并发编程之Volatile（三）
-- Java并发编程之原子类（四）
-- Java并发编程之锁机制之引导篇（五）
-- Java并发编程之锁机制之Lock接口（六）
-- Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)（七）
-- Java并发编程之锁机制之LockSupport工具（八）
-- Java并发编程之锁机制之Condition接口（九）
-- Java并发编程之锁机制之重入锁（十）
-- Java并发编程之锁机制之读写锁（十一）
+- Java并发编程之Volatile（二）
+- Java并发编程之Synchronized(三)
+- Java并发编程之Java的CAS操作（四）
+- Java并发编程之原子类（五）
+- Java并发编程之锁机制之引导篇（六）
+- Java并发编程之锁机制之Lock接口（七）
+- Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)（八）
+- Java并发编程之锁机制之LockSupport工具（九）
+- Java并发编程之锁机制之Condition接口（十）
+- Java并发编程之锁机制之重入锁（十一）
+- Java并发编程之锁机制之读写锁（十二）
 
 #### 线程篇
 - Java并发编程之线程篇之线程简介（一）

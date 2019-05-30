@@ -1,17 +1,16 @@
 ---
-title: Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)
+title: Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)
 date: 2019-02-23 21:38:23
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 ![爆炸.png](https://upload-images.jianshu.io/upload_images/2824145-0e04abe007aee52d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->该文章属于《Java并发编程》系列文章，如果想了解更多，请点击《Java并发编程之总目录》
 
 ### 前言
-在上篇文章[ 《Java并发编程之锁机制之Lock接口》](https://www.jianshu.com/p/6874d9b4f3d8)中，我们已经了解了，Java下整个Lock接口下实现的锁机制是通过`AQS(这里我们将AbstractQueuedSynchronizer 或AbstractQueuedLongSynchronizer统称为AQS)`与Condition来实现的。那下面我们就来具体了解AQS的内部细节与实现原理。
+在上篇文章{% post_link Java并发编程之锁机制之Lock接口(七) %}中，我们已经了解了，Java下整个Lock接口下实现的锁机制是通过`AQS(这里我们将AbstractQueuedSynchronizer 或AbstractQueuedLongSynchronizer统称为AQS)`与Condition来实现的。那下面我们就来具体了解AQS的内部细节与实现原理。
 
 >PS:该篇文章会以`AbstractQueuedSynchronizer `来进行讲解，对AbstractQueuedLongSynchronizer有兴趣的小伙伴，可以自行查看相关资料。
 

@@ -1,20 +1,22 @@
 ---
-title: Java并发编程之锁机制之ReentrantReadWriteLock（读写锁）
+title: Java并发编程之锁机制之ReentrantReadWriteLock(读写锁)(十二)
 date: 2019-02-23 21:26:10
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
+
 ![蓝天.jpg](https://upload-images.jianshu.io/upload_images/2824145-12d950ee54698c34.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 前言
 在前面的文章中，我们讲到了ReentrantLock(重入锁)，接下来我们讲`ReentrantReadWriteLock（读写锁）`，该锁具备重入锁的`可重入性`、`可中断获取锁`等特征，但是与`ReentrantLock`不一样的是，在`ReentrantReadWriteLock`中，维护了一对锁，一个`读锁`一个`写锁`，而读写锁在同一时刻允许多个`读`线程访问。但是在写线程访问时，所有的读线程和其他的写线程均被阻塞。在阅读本片文章之前，希望你已阅读过以下几篇文章：
-- [ Java并发编程之锁机制之Lock接口](https://www.jianshu.com/p/6874d9b4f3d8)
-- [ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)
-- [Java并发编程之锁机制之LockSupport工具](https://www.jianshu.com/p/d0e84096d108)
-- [Java并发编程之锁机制之Condition接口](https://www.jianshu.com/p/a22855b8820a)
-- [Java并发编程之锁机制之（ReentrantLock)重入锁](https://www.jianshu.com/p/1068960ecd64)
+
+- {% post_link Java并发编程之锁机制之Lock接口(七) %}
+- {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
+- {% post_link Java并发编程之锁机制之LockSupport工具(九) %}
+- {% post_link Java并发编程之锁机制之Condition接口(十) %}
+- {% post_link Java并发编程之锁机制之(ReentrantLock)重入锁(十一) %}
 
 ### 基本结构
 在具体了解`ReentrantReadWriteLock`之前，我们先看一下其整体结构，具体结构如下图所示：
@@ -22,7 +24,7 @@ tags:
 
 从整体图上来看，`ReentrantReadWriteLock`实现了`ReadWriteLock`接口，其中在`ReentrantReadWriteLock`中分别声明了以下几个静态内部类：
 - `WriteLock`与`ReadLock`（维护的一对读写锁）：单从类名我们可以看出这两个类的作用，就是控制读写线程的锁
-- `Sync`及其子类`NofairSync`与`FairSync`：如果你阅读过 [Java并发编程之锁机制之（ReentrantLock)重入锁](https://www.jianshu.com/p/1068960ecd64)中公平锁与非公平锁的介绍，那么我们也可以猜测出`ReentrantReadWriteLock（读写锁）`是支持公平锁与非公平锁的。
+- `Sync`及其子类`NofairSync`与`FairSync`：如果你阅读过{% post_link Java并发编程之锁机制之(ReentrantLock)重入锁(十一) %}中公平锁与非公平锁的介绍，那么我们也可以猜测出`ReentrantReadWriteLock（读写锁）`是支持公平锁与非公平锁的。
 - `ThreadLoclHoldCounter`及`HoldCounter`：涉及到锁的重进入，在下文中我们会具体进行描述。
 
 
@@ -93,7 +95,7 @@ static final class NonfairSync extends Sync{省略部分代码...}
 static final class FairSync extends Sync {省略部分代码...}
 ```
 这里我们又看到了我们熟悉的`AQS`，也就是说`WriteLock`与`ReadLock`这两个锁，其实是通过AQS中的同步队列来对线程的进行控制的。那么结合我们之前的AQS的知识，我们可以得到下图：
->（如果你对AQS不熟，那么你可以阅读该篇文章----->[ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)).
+>（如果你对AQS不熟，那么你可以阅读该篇文章----->{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %})。
 >
 ![读写锁状态关系图.png](https://upload-images.jianshu.io/upload_images/2824145-1a0de5f2e62b3ed7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 这里我省略了`为什么维护的是同一个同步队列的原因`，这个问题留给大家。
@@ -201,7 +203,7 @@ static final class FairSync extends Sync {省略部分代码...}
         final boolean readerShouldBlock() {return apparentlyFirstQueuedIsExclusive();}
     }
 ```
-这里就不再对公平锁与非公平锁进行分析了。在文章 [Java并发编程之锁机制之（ReentrantLock)重入锁](https://www.jianshu.com/p/1068960ecd64)中已经对这个知识点进行了分析。有兴趣的小伙伴可以参考该文章。
+这里就不再对公平锁与非公平锁进行分析了。在文章{% post_link Java并发编程之锁机制之(ReentrantLock)重入锁(十一) %}中已经对这个知识点进行了分析。有兴趣的小伙伴可以参考该文章。
 
 ##### 步骤（3）中为毛要记录第一个获取写锁的线程？线程的重进入是如何实现的？
 在ReentrantReadWriteLock类中分别定义了`Thread firstReader`与`int firstReaderHoldCount`变量来记录当前`第一个`获取写锁的线程以及其重进入的次数。官方的给的解释是`便于跟踪与记录线程且这种记录是非常廉价的`。也就是说，之所以单独定义一个变量来记录第一个获取获取写锁的线程，是为了在众多的读线程中区分线程，也是为了以后的调试与跟踪。
@@ -221,7 +223,7 @@ static final class FairSync extends Sync {省略部分代码...}
      
    private transient ThreadLocalHoldCounter readHolds;
 ```
-如果有小伙伴不熟悉`ThreadLocal`，可以参看该篇文章[《Android Handler机制之ThreadLocal》](https://www.jianshu.com/p/2a34d30806d4)
+如果有小伙伴不熟悉`ThreadLocal`，可以参看该篇文章{% post_link Android-Handler机制之ThreadLocal %}
 
 ##### 步骤（4）中继续尝试获取读锁？
 当第一次获取读锁失败的时候，会调用`fullTryAcquireShared(Thread current)`方法会继续尝试获取锁。该函数返回的三个条件为：

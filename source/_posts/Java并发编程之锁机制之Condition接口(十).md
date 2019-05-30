@@ -1,10 +1,10 @@
 ---
-title: Java并发编程之锁机制之Condition接口
+title: Java并发编程之锁机制之Condition接口(十)
 date: 2019-02-23 21:40:23
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 ![book.jpg](https://upload-images.jianshu.io/upload_images/2824145-64a13d0c3114cdcb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -13,7 +13,7 @@ tags:
 在前面的文章中，我曾提到过，整个Lock接口下实现的锁机制中`AQS(AbstractQueuedSynchronizer，下文都称之为AQS)`与`Condition`才是真正的实现者。也就说`Condition`在整个同步组件的基础框架中也起着非常重要的作用，既然它如此重要与犀利，那么现在我们就一起去了解其内部的实际原理与具体逻辑。
 
 
->在阅读该文章之前，我由衷的建议先阅读[《Java并发编程之锁机制之AQS》](https://www.jianshu.com/p/a372528f47a3)与[《Java并发编程之锁机制之LockSupport工具》](https://www.jianshu.com/p/d0e84096d108)这两篇文章。因为整个Condtion的内部机制与逻辑都离不开以上两篇文章提到的知识点。
+>在阅读该文章之前，我由衷的建议先阅读{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}与{% post_link Java并发编程之锁机制之LockSupport工具(九) %}这两篇文章。因为整个Condtion的内部机制与逻辑都离不开以上两篇文章提到的知识点。
 
 ### Condition接口方法介绍
 在正式介绍Condtion之前，我们可以先了解其中声明的方法。具体方法声明，如下表所示：
@@ -26,7 +26,7 @@ tags:
 在实际使用中，Condition接口实现类是`AQS`中的内部类`ConditionObject`。在其内部维护了一个`FIFO(first in first out)`的队列（这里我们称之为`等待队列`，你也可以叫做阻塞队列，看每个人的理解），通过与`AQS中的同步队列`配合使用，来控制获取共享资源的线程。
 
 #### 等待队列
-等待队列是`ConditionObjec`中内部的一个`FIFO(first in first out)`的队列，在队列中的每个节点都包含了一个线程引用，且该线程就是在ConditionObject对象上阻塞的线程。需要注意的是，在等待队列中的节点是复用了`AQS`中`Node类`的定义。换句话说，在`AQS`中维护的同步队列与`ConditionObjec`中维护的等待队列中的节点类型都是`AQS.Node`类型。（关于`AbstractQueuedSynchronizer.Node`类的介绍，大家可以参看[《Java并发编程之锁机制之AQS》](https://www.jianshu.com/p/a372528f47a3)文章中的描述）。
+等待队列是`ConditionObjec`中内部的一个`FIFO(first in first out)`的队列，在队列中的每个节点都包含了一个线程引用，且该线程就是在ConditionObject对象上阻塞的线程。需要注意的是，在等待队列中的节点是复用了`AQS`中`Node类`的定义。换句话说，在`AQS`中维护的同步队列与`ConditionObjec`中维护的等待队列中的节点类型都是`AQS.Node`类型。（关于`AbstractQueuedSynchronizer.Node`类的介绍，大家可以参看{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}文章中的描述）。
 
 
 在ConditionObject类中也分别定义了`firstWaiter`与`lastWaiter`两个指针，分别指向等待队列中头部与尾部。当实际线程调用其以`await开头`的系列方法后。会将该线程构造为Node节点。添加等待队列中的尾部。关于等待队列的基本结构如下图所示：
@@ -157,7 +157,7 @@ class BoundedBuffer {
 ```
 该方法的逻辑也比较简单，分为以下三个步骤：
 - （1）获取等待队列中的尾节点，如果当前尾节点已经中断，那么则通过`unlinkCancelledWaiters()`方法移除等待队列中所有的`已经中断`或`已经释放同步状态（也就是释放锁）`的线程节点
-- （2）构建等待队列中的节点，注意，是通过`New`的形式，那么就说明与同步队列中的线程节点不是同一个。（对Node状态枚举不清楚的小伙伴，可以参看[Java并发编程之锁机制之AQS](https://www.jianshu.com/p/a372528f47a3)文章下的Node状态枚举介绍）。
+- （2）构建等待队列中的节点，注意，是通过`New`的形式，那么就说明与同步队列中的线程节点不是同一个。（对Node状态枚举不清楚的小伙伴，可以参看{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}文章下的Node状态枚举介绍）。
 - （3）将该线程节点添加到等待队列中去，同时构建firstWaiter与lastWaiter的指向，可以看出等待队列总是以`FIFO(first in first out )`的形式添加线程节点。
 
 
@@ -204,7 +204,7 @@ class BoundedBuffer {
         }
     }
 ```
- `release(int arg)`方法会释放当前线程的同步状态， 并唤醒`同步队列中`的下一线程节点，使其尝试获取同步状态，因为该方法已经在[Java并发编程之锁机制之AQS](https://www.jianshu.com/p/a372528f47a3)文章下的`unparkSuccessorNode node)`方法的下分析过了，所以这里就不再进行分析了。希望大家参考上面提到的文章进行理解。
+ `release(int arg)`方法会释放当前线程的同步状态， 并唤醒`同步队列中`的下一线程节点，使其尝试获取同步状态，因为该方法已经在{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}文章下的`unparkSuccessorNode node)`方法的下分析过了，所以这里就不再进行分析了。希望大家参考上面提到的文章进行理解。
 
 #### isOnSyncQueue(Node node)
 该方法主要用于判断当前线程节点是否在同步队列中。具体代码如下所示：
@@ -235,7 +235,7 @@ class BoundedBuffer {
 这里之所以使用同步队列`tail（尾节点）`来遍历，如果`node.netx!=null`，那么就说明当前线程已经在同步队列中。那么我们需要处理的情况肯定是针对`node.next==null`的情况。所以需要从尾节点开始遍历。
 
 #### acquireQueued(final Node node, int arg)
-当线程被唤醒后（具体原因是当通过`signal()等系列方法`，线程才会从`await（）`方法返回）会调用该方法将该线程节点加入到同步队列中。该方法我在[《Java并发编程之锁机制之AQS》](https://www.jianshu.com/p/a372528f47a3)中具体描述过了。这里就不在进行过多的解析。
+当线程被唤醒后（具体原因是当通过`signal()等系列方法`，线程才会从`await（）`方法返回）会调用该方法将该线程节点加入到同步队列中。该方法我在{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}中具体描述过了。这里就不在进行过多的解析。
 
 #### 阻塞流程
 在理解了整个阻塞的流程后，现在我们来归纳总结一下，整个阻塞的流程。具体流程如下图所示：
@@ -312,7 +312,7 @@ class BoundedBuffer {
 - （2）通过`enq(Node node)`方法，将该线程节点放入`同步队列`中。
 - （3）当将该线程节点放入同步队列后，获取当前节点的状态并判断，如果该节点的`waitStatus>0`或者通过`compareAndSetWaitStatus(ws, Node.SIGNAL)`将该节点的状态设置为Singal，如果失败则通过`LockSupport.unpark(node.thread)`唤醒线程。
 
-上述步骤中，着重讲`enq(Node node)`方法，关于`LockSupport.unPark(Thread thread)`方法的理解，大家可以阅读[《Java并发编程之锁机制之LockSupport工具》](https://www.jianshu.com/p/d0e84096d108)。下面我们就来分析`enq(Node node)`方法。具体代码如下所示：
+上述步骤中，着重讲`enq(Node node)`方法，关于`LockSupport.unPark(Thread thread)`方法的理解，大家可以阅读{% post_link Java并发编程之锁机制之LockSupport工具(九) %}。下面我们就来分析`enq(Node node)`方法。具体代码如下所示：
 ```
    private Node enq(Node node) {
         for (;;) {
@@ -356,7 +356,7 @@ static final long PREV;
         }
     }
 ```
-其中`Node.class.getDeclaredField("prev")`语句很好理解，就是获取Node类中`pre`字段，如果有则返回相应Field字段，反之抛出NoSuchFieldException异常。关于Unfase中的`objectFieldOffset(Field f)`方法，我曾经在[《Java并发编程之锁机制之LockSupport工具》](https://www.jianshu.com/p/d0e84096d108)描述过类似的情况。这里我简单的再解释一遍。该方法用于获取某个字段相对 Java对象的“起始地址”的偏移量，也就是说每个字段在类对应的内存中存储是有`“角标”`的，那么也就是说我们现在的`PREV`静态变量就代表着Node中`prev`字段在内存中的“角标”。
+其中`Node.class.getDeclaredField("prev")`语句很好理解，就是获取Node类中`pre`字段，如果有则返回相应Field字段，反之抛出NoSuchFieldException异常。关于Unfase中的`objectFieldOffset(Field f)`方法，我曾经在{% post_link Java并发编程之锁机制之LockSupport工具(九) %}描述过类似的情况。这里我简单的再解释一遍。该方法用于获取某个字段相对 Java对象的“起始地址”的偏移量，也就是说每个字段在类对应的内存中存储是有`“角标”`的，那么也就是说我们现在的`PREV`静态变量就代表着Node中`prev`字段在内存中的“角标”。
 
 当获取到"角标"后，我们再通过` U.putObject(node, Node.PREV, oldTail);`该方法第一个参数是操作对象，第二个参数是操作的内存“角标”，第三个参数是期望值。那么最后，也就完成了将当前节点的prev字段指向同步队列的尾节点。
 
@@ -404,7 +404,8 @@ static final long PREV;
 ### 最后
 该文章参考以下图书，站在巨人的肩膀上。可以看得更远。
 - 《Java并发编程的艺术》
+
 ### 推荐阅读
-- [Java并发编程之锁机制之引导篇](https://www.jianshu.com/p/4ead70bdab56)
-- [《Java并发编程之锁机制之AQS》](https://www.jianshu.com/p/a372528f47a3)
-- [《Java并发编程之锁机制之LockSupport工具》](https://www.jianshu.com/p/d0e84096d108)
+- {% post_link Java并发编程之锁机制之引导篇(六)%}
+- {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
+- {% post_link Java并发编程之锁机制之LockSupport工具(九) %}

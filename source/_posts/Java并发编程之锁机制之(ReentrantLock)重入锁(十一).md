@@ -1,10 +1,10 @@
 ---
-title: Java并发编程之锁机制之（ReentrantLock)重入锁
+title: Java并发编程之锁机制之(ReentrantLock)重入锁(十一)
 date: 2019-02-23 21:29:12
 categories:
 - Java并发相关
 tags: 
-- Java
+- 并发
 ---
 
 
@@ -14,11 +14,10 @@ tags:
 
 ### 前言
 通过前面的文章，我们已经了解了`AQS(AbstractQueuedSynchronizer)`内部的实现与基本原理。现在我们来了解一下，Java中为我们提供的Lock机制下的锁实现--`ReentrantLock（重入锁）`，阅读该篇文章之前，希望你已阅读以下文章。
-- [ Java并发编程之锁机制之Lock接口](https://www.jianshu.com/p/6874d9b4f3d8)
-- [ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)
-- [Java并发编程之锁机制之LockSupport工具](https://www.jianshu.com/p/d0e84096d108)
-- [Java并发编程之锁机制之Condition接口](https://www.jianshu.com/p/a22855b8820a)
-
+- {% post_link Java并发编程之锁机制之Lock接口(七) %}
+- {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
+- {% post_link Java并发编程之锁机制之LockSupport工具(九) %}
+- {% post_link Java并发编程之锁机制之Condition接口(十) %}
 
 ### ReentrantLock基本介绍
 `ReentrantLock`是一种`可重入`的`互斥锁`，它具有与使用`synchronized `方法和语句所访问的隐式监视器锁相同的一些基本行为和语义，但功能更强大。
@@ -147,7 +146,7 @@ static final class NonfairSync extends Sync {
         }
     }
 ```
-当我们调用lock()方法时，通过CAS操作将AQS中的state的状态设置为1，如果成功，那么表示获取同步状态成功。那么会接着调用`setExclusiveOwnerThread(Thread thread)`方法来设置当前占有锁的线程。如果失败，则调用`acquire(int arg)`方法来获取同步状态（该方法是属于AQS中的独占式获取同步状态的方法，对该方法不熟悉的小伙伴，建议阅读[ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)）。而该方法内部会调用`tryAcquire(int acquires)`来尝试获取同步状态。通过观察，我们发现最终会调用`Sync`类中的`nonfairTryAcquire(int acquires)`方法。我们继续跟踪。
+当我们调用lock()方法时，通过CAS操作将AQS中的state的状态设置为1，如果成功，那么表示获取同步状态成功。那么会接着调用`setExclusiveOwnerThread(Thread thread)`方法来设置当前占有锁的线程。如果失败，则调用`acquire(int arg)`方法来获取同步状态（该方法是属于AQS中的独占式获取同步状态的方法，对该方法不熟悉的小伙伴，建议阅读{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}。而该方法内部会调用`tryAcquire(int acquires)`来尝试获取同步状态。通过观察，我们发现最终会调用`Sync`类中的`nonfairTryAcquire(int acquires)`方法。我们继续跟踪。
 ```
     final boolean nonfairTryAcquire(int acquires) {
 		    //获取当前线程
@@ -198,7 +197,8 @@ static final class NonfairSync extends Sync {
 
 那么接下来，我们来分析在ReentrantLock中的非公平锁的具体实现。
 
->这里需要大家具备`AQS(AbstractQueuedSynchronizer)`类的相关知识。如果大家不熟悉这块的知识。建议大家阅读 [ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)。
+>这里需要大家具备`AQS(AbstractQueuedSynchronizer)`类的相关知识。如果大家不熟悉这块的知识。建议大家阅读 {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}。
+
 ```
     static final class NonfairSync extends Sync {
         private static final long serialVersionUID = 7316153563782823691L;
@@ -236,7 +236,7 @@ static final class NonfairSync extends Sync {
 ### 公平锁
 理解了非公平锁，再来理解公平锁就非常简单了。下面我们来看一下公平锁与非公平锁的加锁的源码：
 ![非公平锁与公平锁源码区别.png](https://upload-images.jianshu.io/upload_images/2824145-b6351764588542ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-从源码我们可以看出，非公平锁与公平锁之间的代码唯一区别就是多了一个判断条件`!hasQueuedPredecessors()(图中红框所示)`。那我们查看其源码（该代码在AQS中，强烈建议阅读[ Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://www.jianshu.com/p/a372528f47a3)）
+从源码我们可以看出，非公平锁与公平锁之间的代码唯一区别就是多了一个判断条件`!hasQueuedPredecessors()(图中红框所示)`。那我们查看其源码（该代码在AQS中，强烈建议阅读{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}）
 ```
     public final boolean hasQueuedPredecessors() {
         Node t = tail;
@@ -256,7 +256,8 @@ static final class NonfairSync extends Sync {
 ### 最后
 该文章参考以下图书，站在巨人的肩膀上。可以看得更远。
 - 《Java并发编程的艺术》
+
 ### 推荐阅读
-- [Java并发编程之锁机制之引导篇](https://www.jianshu.com/p/4ead70bdab56)
-- [《Java并发编程之锁机制之AQS》](https://www.jianshu.com/p/a372528f47a3)
-- [《Java并发编程之锁机制之LockSupport工具》](https://www.jianshu.com/p/d0e84096d108)
+- {% post_link Java并发编程之锁机制之引导篇(六)%}
+- {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
+- {% post_link Java并发编程之锁机制之LockSupport工具(九) %}
