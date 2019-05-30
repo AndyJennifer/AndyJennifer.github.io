@@ -17,13 +17,13 @@ tags:
 该系列文章分为两篇文章。
 
 - 如果你想解决通过smoothScrollToPosition滚动到顶部，或者滚动加速，请观看本篇文章，
-- 如果你想了解其内部实现，请看[RecyclerView.smoothScrollToPosition了解一下](https://www.jianshu.com/p/a5cd3cff2f1b)
+- 如果你想了解其内部实现，请看{% post_link RecyclerView-smoothScrollToPosition了解一下 %}
 
 >注意！！！注意！！！注意！！！
 >这是使用的LinearLayoutManager且是竖直方向上的，横向的思路是一样的，只是修改的方法不一样，大家一定要注意前提条件。
 
-###如何使用smoothScrollToPosition滚动到顶部？
-如果你看了我的另一篇文章[RecyclerView.smoothScrollToPosition了解一下](https://www.jianshu.com/p/a5cd3cff2f1b),大家应该会清楚，其实在你设定目标位置后，当找到目标视图后，最后让RecyclerView进行滚动的方法是其对应LinearLayoutManager中的LinearSmoothScroller的calculateDtToFit()方法。
+### 如何使用smoothScrollToPosition滚动到顶部？
+如果你看了我的另一篇文章{% post_link RecyclerView-smoothScrollToPosition了解一下 %},大家应该会清楚，其实在你设定目标位置后，当找到目标视图后，最后让RecyclerView进行滚动的方法是其对应LinearLayoutManager中的LinearSmoothScroller的calculateDtToFit()方法。
 
 ```
  public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int

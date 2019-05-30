@@ -14,7 +14,7 @@ tags:
 该系列文章分为两篇文章。
 
 - 如果你想了解其内部实现，请观看本篇文章，
-- 如果你想解决通过smoothScrollToPosition滚动到顶部，或者修改滚动加速，请观看[RecyclerView滚动位置，滚动速度设置](https://www.jianshu.com/p/7110bedfdb5e)
+- 如果你想解决通过smoothScrollToPosition滚动到顶部，或者修改滚动加速，请观看{% post_link RecyclerView滚动位置，滚动速度设置 %}
 
 
 ###  什么是可见范围？
