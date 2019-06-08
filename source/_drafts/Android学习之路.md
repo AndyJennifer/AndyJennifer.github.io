@@ -8,7 +8,6 @@ tags:
 ### JVM篇
 
 - Jvm系列之运行时数据区域(一) {% post_link Jvm系列之运行时数据区域(一) %}
-- Jvm系列之快速理解运行时数据区域(二)
 - Jvm系列之Java对象的创建、存储及访问(二)
 - Jvm系列之Java判断对象是否存活(三)
 - Jvm系列之垃圾回收算法(四)
@@ -163,6 +162,7 @@ https://github.com/GcsSloop/AndroidNote
 - 《ListView与RecyclerView篇(三)-RecyclerView缓存原理》
 - 《ListView与RecyclerView篇(四)-ListView缓存原理》
 - 《ListView与RecyclerView篇(五)-ListView与RecyclerView缓存对比总结》
+- 《ListView与RecyclerView篇(六)-RecyclerView的RecyclerPool的使用》
 - 《ListView与RecyclerView篇(六)-RecyclerView滑动状态保存》
 - 《ListView与RecyclerView篇(七)-RecyclerView滑动定位》
 - 《ListView与RecyclerView篇(八)-RecyclerView自定义ItemDecoration》
