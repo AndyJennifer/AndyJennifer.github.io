@@ -172,8 +172,6 @@ https://github.com/GcsSloop/AndroidNote
 ### Kotlin
 
 
-
-
 ### Flutter
 
 
