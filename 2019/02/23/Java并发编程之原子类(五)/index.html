@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在上篇文章Java并发编程之Synchronized(三)中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如Atomi">
+<meta name="keywords" content="并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程之原子类(五)">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/Java并发编程之原子类(五)/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在上篇文章Java并发编程之Synchronized(三)中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如Atomi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-2ec245c061aea68e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发编程之原子类(五)">
+<meta name="twitter:description" content="前言在上篇文章Java并发编程之Synchronized(三)中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如Atomi">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/Java并发编程之原子类(五)/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java并发编程之原子类(五) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/Java并发编程之原子类(五)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java并发编程之原子类(五)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 21:36:39" itemprop="dateCreated datePublished" datetime="2019-02-23T21:36:39+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java并发相关/" itemprop="url" rel="index"><span itemprop="name">Java并发相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="天天.jpeg"></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章<a href="/2019/02/23/Java并发编程之Synchronized(三)/" title="Java并发编程之Synchronized(三)">Java并发编程之Synchronized(三)</a>中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如AtomicBoolean、AtomicLong、AtomicInteger等。（这里提到的Atomic系列类原理都是CAS操作，如果你对CAS操作并不是是很熟悉，建议先阅读<a href="/2019/02/23/Java并发编程之Java的CAS操作(四)/" title="Java并发编程之Java的CAS操作(四)">Java并发编程之Java的CAS操作(四)</a>。</p>
+<h4 id="原子类的使用方式"><a href="#原子类的使用方式" class="headerlink" title="原子类的使用方式"></a>原子类的使用方式</h4><p>既然我们提到Atomic系列类是简单高效且线程安全的。光说没用，我们直接来实际例子，具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line">    private AtomicInteger mAtomicInteger = new AtomicInteger();//如果没有指定值，默认是1</span><br><span class="line">    </span><br><span class="line">    private void doAdd() &#123;</span><br><span class="line">        for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">            int value = mAtomicInteger.addAndGet(1);</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + &quot;---&gt;&quot; + value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(demo::doAdd, &quot;线程1&quot;).start();</span><br><span class="line">        new Thread(demo::doAdd, &quot;线程2&quot;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">线程1---&gt;1</span><br><span class="line">线程1---&gt;2</span><br><span class="line">线程1---&gt;3</span><br><span class="line">线程2---&gt;4</span><br><span class="line">线程1---&gt;5</span><br><span class="line">线程2---&gt;6</span><br><span class="line">线程1---&gt;7</span><br><span class="line">线程2---&gt;8</span><br><span class="line">线程2---&gt;9</span><br><span class="line">线程2---&gt;10</span><br></pre></td></tr></table></figure></p>
+<p>在上述代码逻辑非常简单，主要是想通过通过2个线程将mAtomicInteger 的值分别加1,每个线程执行加1并操作5次。</p>
+<blockquote>
+<p>这里简单对AtomicInteger 中的addAndGet（int delta）方法进行介绍，该方法是以原子的方式将输入的值与ActomicInteger中的值进行相加，返回相加后ActomicInteger中的值。</p>
+</blockquote>
+<p>通过执行代码我们发现，结果最后打印的结果是我们预期的10。但是如果我们将ActomicInteger修改为普通的int类型，我们会发现结果是千奇百怪（这里我就不贴代码了）有兴趣的小伙伴可以自己去试一试。</p>
+<h3 id="原子类"><a href="#原子类" class="headerlink" title="原子类"></a>原子类</h3><p>在Java中的并发包中了提供了以下几种类型的原子类来来解决线程安全的问题。分为基本数据类型原子类、数组类型原子类、引用类型原子类、字段类型原子类。因为其内部原理都差不多一致。这里会对每种类型的原子类抽一个来介绍。</p>
+<h4 id="基本数据类型原子类"><a href="#基本数据类型原子类" class="headerlink" title="基本数据类型原子类"></a>基本数据类型原子类</h4><p>基本数据类型原子类主要为以下几种：</p>
+<ul>
+<li>AtomicBoolen: boolean类型原子类</li>
+<li>AtomicInteger: int类型原子类</li>
+<li>AtomicLong:  long类型原子类</li>
+</ul>
+<p>这里我们以AtomicInteger来进行讲解，具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class AtomicInteger extends Number implements java.io.Serializable &#123;</span><br><span class="line">  </span><br><span class="line">    private static final sun.misc.Unsafe U = sun.misc.Unsafe.getUnsafe();</span><br><span class="line">    private static final long VALUE;</span><br><span class="line"></span><br><span class="line">    private volatile int value;//注意该值用volatile修饰</span><br><span class="line"></span><br><span class="line">    public AtomicInteger(int initialValue) &#123;</span><br><span class="line">        value = initialValue;</span><br><span class="line">    &#125;</span><br><span class="line">    //以原子的方式将输入的值与ActomicInteger中的值进行相加，</span><br><span class="line">    //注意：返回相加前ActomicInteger中的值</span><br><span class="line">    public final int getAndAdd(int delta) &#123;</span><br><span class="line">        return U.getAndAddInt(this, VALUE, delta);</span><br><span class="line">    &#125;</span><br><span class="line">    //以原子的方式将输入的值与ActomicInteger中的值进行相加，</span><br><span class="line">    //注意：返回相加后的结果</span><br><span class="line">    public final int addAndGet(int delta) &#123;</span><br><span class="line">        return U.getAndAddInt(this, VALUE, delta) + delta;</span><br><span class="line">    &#125;</span><br><span class="line">    //以原子方式将当前ActomicInteger中的值加1,</span><br><span class="line">    //注意：返回相加前ActomicInteger中的值</span><br><span class="line">    public final int getAndIncrement() &#123;</span><br><span class="line">        return U.getAndAddInt(this, VALUE, 1);</span><br><span class="line">    &#125;</span><br><span class="line">    //以原子方式将当前ActomicInteger中的值加1,</span><br><span class="line">    //注意：返回相加后的结果</span><br><span class="line">    public final int incrementAndGet() &#123;</span><br><span class="line">        return U.getAndAddInt(this, VALUE, 1) + 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //省略部分代码...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，我只留了AtomicInteger 类一部分常用的方法。大家在使用其内部方法时一定要注意其返回的结果。例如<strong>getAndAdd（）与addAndGet（）方法之间的返回值的区别</strong>。既然我们已经说过了使用Actomic系列原子类是线程安全的。那么现在我们就来看看其具体原理。这里我们以getAndAdd（）方法为例进行讲解。</p>
+<p>AtomicInteger内部会调用其中sun.misc.Unsafe方法中getAndAddInt的方法。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public final int getAndAdd(int delta) &#123;</span><br><span class="line">       return U.getAndAddInt(this, VALUE, delta);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>而sun.misc.Unsafe方法中getAndAddInt方法又会调用jdk.internal.misc.Unsafe的getAndAddInt，具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public final int getAndAddInt(Object o, long offset, int delta) &#123;</span><br><span class="line">       return theInternalUnsafe.getAndAddInt(o, offset, delta);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>jdk.internal.misc.Unsafe的getAndAddInt（）方法的声明如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public final int getAndAddInt(Object o, long offset, int delta) &#123;</span><br><span class="line">        int v;</span><br><span class="line">        do &#123;</span><br><span class="line">            v = getIntVolatile(o, offset);//先获取内存中存储的值</span><br><span class="line">        &#125; while (!weakCompareAndSetInt(o, offset, v, v + delta));//如果不是期望的结果值，就一直循环</span><br><span class="line">        return v;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">//该函数返回值代表CAS操作是否成功    </span><br><span class="line">public final boolean weakCompareAndSetInt(Object o, long offset,</span><br><span class="line">                                          int expected,</span><br><span class="line">                                          int x) &#123;</span><br><span class="line">     return compareAndSetInt(o, offset, expected, x);//执行CAS操作</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上述代码中我们可以得出，会先获取内存中存储的值，最终会调用compareAndSetInt（）方法来完成最终的原子操作。其中compareAndSetInt（）方法的返回值代表着该次CAS操作是否成功。如果不成功。那么会一直循环。直到成功为止（也就是循环CAS操作）。</p>
+<p>这里简要的对CAS操作进行描述：CAS操作内部实现原理是缓存锁，在其操作期间，会修改对应操作对象的内存地址。同时其会保证各个处理器的缓存是一致的，如果处理器发现自己的数据对应的内存地址被修改，就会将当前缓存的数据处理为无效，同时该处理器会重新从系统内存中把数据处理到缓存中。如果你对CAS操作还是不熟悉，建议先阅读<a href="/2019/02/23/Java并发编程之Java的CAS操作(四)/" title="Java并发编程之Java的CAS操作(四)">Java并发编程之Java的CAS操作(四)</a>，在回过头来看这篇文章。</p>
+<blockquote>
+<p>这里有一个小的问题，大家可以思考一下。我们都知道对于long与double数据类型，在java内存模型中long与double具有非原子协定。但是现在商用的虚拟机都把关于long和double变量的读写操作视为具有原子性的操作。那这里为什么会出现一个AtomicLong？或者出现了AtomicLong为什么没有出现ActomicDouble这个类呢？</p>
+</blockquote>
+<h4 id="数组类型原子类"><a href="#数组类型原子类" class="headerlink" title="数组类型原子类"></a>数组类型原子类</h4><p>对于数组类型的原子类，在Java中，主要通过原子的方式更新数组里面的某个元素，数组类型原子类主要有以下几种：</p>
+<ul>
+<li>AtomicIntegerArray：Int数组类型原子类</li>
+<li>AtomicLongArray：long数组类型原子类</li>
+<li>AtomicReferenceArray：引用类型原子类（关于AtomicReferenceArray即引用类型原子类会在下文介绍）</li>
+</ul>
+<p>这里我们还是以AtomicIntegerArray为例，因为其内部原理都是循环CAS操作，所以我们这里就描述其使用方式，具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line"></span><br><span class="line">    private int[] value = new int[]&#123;0, 1, 2&#125;;</span><br><span class="line">    private AtomicIntegerArray mAtomicIntegerArray = new AtomicIntegerArray(value);</span><br><span class="line"></span><br><span class="line">    private void doAdd() &#123;</span><br><span class="line">        for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">            int value = mAtomicIntegerArray.addAndGet(0, 1);</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + &quot;---&gt;&quot; + value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(demo::doAdd, &quot;线程1&quot;).start();</span><br><span class="line">        new Thread(demo::doAdd, &quot;线程2&quot;).start();</span><br><span class="line">    &#125;</span><br><span class="line">  //程序输出结果如下：</span><br><span class="line">线程1---&gt;1</span><br><span class="line">线程1---&gt;2</span><br><span class="line">线程1---&gt;4</span><br><span class="line">线程2---&gt;3</span><br><span class="line">线程1---&gt;5</span><br><span class="line">线程2---&gt;6</span><br><span class="line">线程1---&gt;7</span><br><span class="line">线程2---&gt;8</span><br><span class="line">线程2---&gt;9</span><br><span class="line">线程2---&gt;10</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="引用类型原子类"><a href="#引用类型原子类" class="headerlink" title="引用类型原子类"></a>引用类型原子类</h4><p>在<a href="/2019/02/23/Java并发编程之Java的CAS操作(四)/" title="Java并发编程之Java的CAS操作(四)">Java并发编程之Java的CAS操作(四)</a>文章中我们曾经提到过两个问题，<strong>第一个问题</strong>：虽然我们能通过循环CAS操作来完成对一个变量的原子操作，但是对于多个变量进行操作时，自旋CAS操作就不能保证其原子性。<strong>第二个问题</strong>：ABA问题，因为CAS在操作值的时候，需要检查值有没有发生变化，如果没有发生变化则更新，但是如果一个值原来是A，变成了B，又变成了A，那么使用CAS进行检查时会发现她的值并没有发生变化。那么会导致程序出问题。</p>
+<p>为了解决上述提到的两个问题，Java为我们提供了AtomicReference等系列引用类型原子类，来保证引用对象之间的原子性，即可以把多个变量放在一个对象里来进行CAS操作与ABA问题。主要类型原子类如下：</p>
+<ul>
+<li>AtomicReference：</li>
+<li>AtomicReferenceFieldUpdater：</li>
+<li>AtomicMarkableReference：</li>
+<li>AtomicStampedReference：</li>
+</ul>
+<h5 id="多个变量的CAS操作"><a href="#多个变量的CAS操作" class="headerlink" title="多个变量的CAS操作"></a>多个变量的CAS操作</h5><p>这里我们先解决第一个问题，关系多个变量的CAS操作，我们先以AtomicReference来进行讲解，具体代码如下所示：<br>（这里提一嘴，关于引用类型的原子类，内部都调用的是<strong>compareAndSwapObject</strong>（）方法来实现CAS操作的。）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line"></span><br><span class="line">    Person mPerson = new Person(&quot;红红&quot;, 1);</span><br><span class="line">    private AtomicReference&lt;Person&gt; mAtomicReference = new AtomicReference&lt;&gt;(mPerson);</span><br><span class="line"></span><br><span class="line">    private class Person &#123;</span><br><span class="line">        String name;</span><br><span class="line">        int age;</span><br><span class="line"></span><br><span class="line">        Person(String name, int age) &#123;</span><br><span class="line">            this.name = name;</span><br><span class="line">            this.age = age;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    private void updatePersonInfo(String name, int age) throws Exception &#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + &quot;更新前---&gt;&quot; + mAtomicReference.get().name + &quot;----&gt;&quot; + mAtomicReference.get().age);</span><br><span class="line">        mAtomicReference.getAndUpdate(person -&gt; new Person(name, age));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(() -&gt; demo.updatePersonInfo(&quot;蓝蓝&quot;, 2), &quot;线程1&quot;).start();</span><br><span class="line">   </span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line">        System.out.println(&quot;暂停一秒---&gt;&quot; + demo.mAtomicReference.get().name + &quot;----&gt;&quot; + demo.mAtomicReference.get().age);</span><br><span class="line">     </span><br><span class="line">        System.out.println(&quot;更新后----&gt;&quot; + demo.mAtomicReference.get().name + &quot;----&gt;&quot; + demo.mAtomicReference.get().age);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">线程1更新前---&gt;红红----&gt;1</span><br><span class="line">暂停一秒---&gt;蓝蓝----&gt;2</span><br><span class="line">更新后----&gt;蓝蓝----&gt;2</span><br></pre></td></tr></table></figure></p>
+<p>上述代码中创建了Person 类，且当前AtomicReference传入的是当前 mPerson =new Person(“红红”, 1)，在Main方法中创建线程1使其调用mAtomicReference.getAndUpdate(new Person(“蓝蓝”，2))来更新Person信息。更新完成后休眠一秒后，获取更新结果并打印。从结果上来看，的确是对多个变量进行了更新的操作。</p>
+<h5 id="ABA问题"><a href="#ABA问题" class="headerlink" title="ABA问题"></a>ABA问题</h5><p>关于ABA问题，大家已经知道其出现的原因，现在我们就用具体例子让大家来了解一下。ABA会引发的问题。<br>这里我们以具体的例子来进行讲解。具体例子如下所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-2ec245c061aea68e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aba.png"></p>
+<p>观察上图，我们初始化了一个单向的链表结构，其中Header指向链表头节点，其中A节点的下一节点为B节点。<br>这个时候我们希望通过线程1，通过CAS操作将链表中的B节点放入头节点中,且B的next节点为A节点。具体为代码如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if(header.compareAndSet(A,B))&#123;</span><br><span class="line">	B.next = A;</span><br><span class="line">	A.next = null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当线程1已经拿到header.compareAndSet(A,B)的结果正准备执行下一行代码时，突然线程2介入，将A、B两个节点移除，同时重新将A、C、D三个节点依次加入链表中。当线程2操作完毕的时候，这个时候线程1接着执行。线程1在执行的时候，会检查当前链表中A是否为头节点，当前情况A是头节点（通过线程2添加的）。那么就会执行剩余代码也就是（B.next =A, A.next = null)。那么通过线程1操作完成后，就出现上图中当前链表中C、D两个节点丢失的情况。所以为了解决ABA问题，Java中提供了<strong>AtomicStampedReference</strong>来解决。</p>
+<p>为了方便大家理解对AtomicStampedReference类的使用，提供了以下例子：具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line"></span><br><span class="line">    Person mPerson = new Person(&quot;红红&quot;, 1);</span><br><span class="line">    private AtomicStampedReference&lt;Person&gt; mAtomicReference = new AtomicStampedReference&lt;&gt;(mPerson, 1);</span><br><span class="line"></span><br><span class="line">    private class Person &#123;</span><br><span class="line">        String name;</span><br><span class="line">        int age;</span><br><span class="line"></span><br><span class="line">        Person(String name, int age) &#123;</span><br><span class="line">            this.name = name;</span><br><span class="line">            this.age = age;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 更新信息</span><br><span class="line">     *</span><br><span class="line">     * @param name     名称</span><br><span class="line">     * @param age      年龄</span><br><span class="line">     * @param oldStamp CAS操作比较的旧的版本</span><br><span class="line">     * @param newStamp 希望更新后的版本</span><br><span class="line">     */</span><br><span class="line">    private void updatePersonInfo(String name, int age, int oldStamp, int newStamp) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + &quot;更新前---&gt;&quot; + mAtomicReference.getReference().name + &quot;----&gt;&quot; + mAtomicReference.getReference().age);</span><br><span class="line">        mAtomicReference.compareAndSet(mPerson, new Person(name, age), oldStamp, newStamp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(() -&gt; demo.updatePersonInfo(&quot;蓝蓝&quot;, 2, 1, 2), &quot;线程1&quot;).start();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;暂停一秒---&gt;&quot; + demo.mAtomicReference.getReference().name + &quot;----&gt;&quot; + demo.mAtomicReference.getReference().age);</span><br><span class="line">        new Thread(() -&gt; demo.updatePersonInfo(&quot;花花&quot;, 3, 1, 3), &quot;线程2&quot;).start();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line">        System.out.println(&quot;更新后----&gt;&quot; + demo.mAtomicReference.getReference().name + &quot;----&gt;&quot; + demo.mAtomicReference.getReference().age);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">线程1更新前---&gt;红红----&gt;1</span><br><span class="line">暂停一秒---&gt;蓝蓝----&gt;2</span><br><span class="line">线程2更新前---&gt;蓝蓝----&gt;2</span><br><span class="line">更新后----&gt;蓝蓝----&gt;2</span><br></pre></td></tr></table></figure></p>
+<p>在上述代码中，我们使用AtomicStampedReference类，其中在使用该类的时候，需要传入一个类似于版本（你也可以叫做邮戳，时间戳等，随你喜欢）的int类型的属性。在Main方法中我们分别创建了2个线程来进行CAS操作，其中线程1想做的操作是将版本为1的mPerson(“红红”，1)修改为版本为2的Person(“蓝蓝，2”)。当线程1执行完毕后，紧接着线程2开始执行，线程2想做的操作是将版本为1的mPerson(“红红”，1)修改为版本3的Person(“花花”，3)。从程序输出结果可以看出，线程2的操作是没有执行的。也就验证了AtomicStampedReference确实解决了ABA的问题。</p>
+<h4 id="字段类型原子类"><a href="#字段类型原子类" class="headerlink" title="字段类型原子类"></a>字段类型原子类</h4><p>如果需要更新某个类中的某个字段，在Actomic系列中，Java提供了以下几个类来实现：</p>
+<ul>
+<li>AtomicIntegerFieldUpdater：int类型字段原子类</li>
+<li>AtomicLongFieldUpdater：long类型字段原子类</li>
+<li>AtomicReferenceFieldUpdater：引用型字段原子类</li>
+</ul>
+<p>上面所说的三个类原理都差不多，这里我们以AtomicIntegerFieldUpdate类来讲解，具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line"></span><br><span class="line">    Person mPerson = new Person(&quot;红红&quot;, 1);</span><br><span class="line">    private AtomicIntegerFieldUpdater&lt;Person&gt; mFieldUpdater = AtomicIntegerFieldUpdater.newUpdater(Person.class, &quot;age&quot;);</span><br><span class="line"></span><br><span class="line">    private class Person &#123;</span><br><span class="line">        String name;</span><br><span class="line">        volatile int age;//使用volatile修饰</span><br><span class="line"></span><br><span class="line">        Person(String name, int age) &#123;</span><br><span class="line">            this.name = name;</span><br><span class="line">            this.age = age;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 更新信息</span><br><span class="line">     *</span><br><span class="line">     * @param age 年龄</span><br><span class="line">     */</span><br><span class="line">    private void updatePersonInfo(int age) &#123;</span><br><span class="line">        System.out.println(&quot;更新前---&gt;&quot; + mPerson.age);</span><br><span class="line">        mFieldUpdater.addAndGet(mPerson, age);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private int getUpdateInfo() &#123;</span><br><span class="line">        return mFieldUpdater.get(mPerson);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(() -&gt; demo.updatePersonInfo(12), &quot;线程1&quot;).start();</span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line">        System.out.println(&quot;更新后---&gt;&quot; + demo.getUpdateInfo());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">更新前---&gt;1</span><br><span class="line">更新后---&gt;13</span><br></pre></td></tr></table></figure></p>
+<p>这里对AtomicIntegerFieldUpdate不在进行过多的描述，大家需要主要的是在使用字段类型原子类的时候，<strong>需要进行更新的字段，需要通过volatile来修饰。</strong></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>Atomic系列类为我们提供了简单高效、线程安全的方式来更新一个变量的值或一个引用的值。</li>
+<li>Atomic为处理多个变量原子更新的问题，为我们提供了AtomicReference类，为了解决ABA问题提供了AtomicStampedReference。在实际使用中，根据代码情况来使用不同Atomic的系列类。</li>
+<li>在使用字段类型原子类的时候，需要将需要更新的字段，通过volatile来修饰。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/并发/" rel="tag"># 并发</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/Java并发编程之Synchronized(三)/" rel="next" title="Java并发编程之Synchronized(三)">
+                <i class="fa fa-chevron-left"></i> Java并发编程之Synchronized(三)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/Java并发编程之锁机制之引导篇(六)/" rel="prev" title="Java并发编程之锁机制之引导篇(六)">
+                Java并发编程之锁机制之引导篇(六) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原子类的使用方式"><span class="nav-number">1.1.</span> <span class="nav-text">原子类的使用方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原子类"><span class="nav-number">2.</span> <span class="nav-text">原子类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基本数据类型原子类"><span class="nav-number">2.1.</span> <span class="nav-text">基本数据类型原子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数组类型原子类"><span class="nav-number">2.2.</span> <span class="nav-text">数组类型原子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引用类型原子类"><span class="nav-number">2.3.</span> <span class="nav-text">引用类型原子类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#多个变量的CAS操作"><span class="nav-number">2.3.1.</span> <span class="nav-text">多个变量的CAS操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ABA问题"><span class="nav-number">2.3.2.</span> <span class="nav-text">ABA问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字段类型原子类"><span class="nav-number">2.4.</span> <span class="nav-text">字段类型原子类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

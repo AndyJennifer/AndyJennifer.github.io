@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="关于文章涉及到的jdk源码，这里把最新的jdk源码分享给大家—–&amp;gt;jdk源码  前言在上篇文章Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)中我们了解了整个AQS的内部结构，与其独占式与共享式获取同步状态的实现。但是并没有详细描述线程是如何进行阻塞与唤醒的。我也提到了线程的这些操作都与LockSupport工具类有关。现在我们就一起来探讨一">
+<meta name="keywords" content="并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程之锁机制之LockSupport工具(九)">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之LockSupport工具(九)/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="关于文章涉及到的jdk源码，这里把最新的jdk源码分享给大家—–&amp;gt;jdk源码  前言在上篇文章Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)中我们了解了整个AQS的内部结构，与其独占式与共享式获取同步状态的实现。但是并没有详细描述线程是如何进行阻塞与唤醒的。我也提到了线程的这些操作都与LockSupport工具类有关。现在我们就一起来探讨一">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-77a37f0a5b7690cc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-291438fe9894d7c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-7636697f1503ed60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-8094f6979df5fe6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-41e5cbf9d13ed218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-95dfa50270728585.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发编程之锁机制之LockSupport工具(九)">
+<meta name="twitter:description" content="关于文章涉及到的jdk源码，这里把最新的jdk源码分享给大家—–&amp;gt;jdk源码  前言在上篇文章Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)中我们了解了整个AQS的内部结构，与其独占式与共享式获取同步状态的实现。但是并没有详细描述线程是如何进行阻塞与唤醒的。我也提到了线程的这些操作都与LockSupport工具类有关。现在我们就一起来探讨一">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-77a37f0a5b7690cc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/Java并发编程之锁机制之LockSupport工具(九)/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java并发编程之锁机制之LockSupport工具(九) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/Java并发编程之锁机制之LockSupport工具(九)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java并发编程之锁机制之LockSupport工具(九)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 21:39:50" itemprop="dateCreated datePublished" datetime="2019-02-23T21:39:50+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java并发相关/" itemprop="url" rel="index"><span itemprop="name">Java并发相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-77a37f0a5b7690cc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="长鼻子.jpg"></p>
+<blockquote>
+<p>关于文章涉及到的jdk源码，这里把最新的jdk源码分享给大家—–&gt;<a href="https://pan.baidu.com/s/1Lk9yp8cEpSAnLvw5NJdqZg" target="_blank" rel="noopener">jdk源码</a></p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章<a href="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/" title="Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)">Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)</a>中我们了解了整个AQS的内部结构，与其独占式与共享式获取同步状态的实现。但是并没有详细描述线程是如何进行阻塞与唤醒的。我也提到了线程的这些操作都与<code>LockSupport</code>工具类有关。现在我们就一起来探讨一下该类的具体实现。</p>
+<h3 id="LockSupport类"><a href="#LockSupport类" class="headerlink" title="LockSupport类"></a>LockSupport类</h3><p>了解线程的阻塞和唤醒，我们需要查看LockSupport类。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">public class LockSupport &#123;</span><br><span class="line">    private LockSupport() &#123;&#125; // Cannot be instantiated.</span><br><span class="line"></span><br><span class="line">    private static void setBlocker(Thread t, Object arg) &#123;</span><br><span class="line">        U.putObject(t, PARKBLOCKER, arg);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static void unpark(Thread thread) &#123;</span><br><span class="line">        if (thread != null)</span><br><span class="line">            U.unpark(thread);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void park(Object blocker) &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        setBlocker(t, blocker);</span><br><span class="line">        U.park(false, 0L);</span><br><span class="line">        setBlocker(t, null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void parkNanos(Object blocker, long nanos) &#123;</span><br><span class="line">        if (nanos &gt; 0) &#123;</span><br><span class="line">            Thread t = Thread.currentThread();</span><br><span class="line">            setBlocker(t, blocker);</span><br><span class="line">            U.park(false, nanos);</span><br><span class="line">            setBlocker(t, null);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void parkUntil(Object blocker, long deadline) &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        setBlocker(t, blocker);</span><br><span class="line">        U.park(true, deadline);</span><br><span class="line">        setBlocker(t, null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">    public static Object getBlocker(Thread t) &#123;</span><br><span class="line">        if (t == null)</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        return U.getObjectVolatile(t, PARKBLOCKER);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void park() &#123;</span><br><span class="line">        U.park(false, 0L);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void parkNanos(long nanos) &#123;</span><br><span class="line">        if (nanos &gt; 0)</span><br><span class="line">            U.park(false, nanos);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void parkUntil(long deadline) &#123;</span><br><span class="line">        U.park(true, deadline);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //省略部分代码</span><br><span class="line">    private static final sun.misc.Unsafe U = sun.misc.Unsafe.getUnsafe();</span><br><span class="line">    private static final long PARKBLOCKER;</span><br><span class="line">    private static final long SECONDARY;</span><br><span class="line">    static &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            PARKBLOCKER = U.objectFieldOffset</span><br><span class="line">                (Thread.class.getDeclaredField(&quot;parkBlocker&quot;));</span><br><span class="line">            SECONDARY = U.objectFieldOffset</span><br><span class="line">                (Thread.class.getDeclaredField(&quot;threadLocalRandomSecondarySeed&quot;));</span><br><span class="line">        &#125; catch (ReflectiveOperationException e) &#123;</span><br><span class="line">            throw new Error(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上面的代码中，我们可以知道LockSupport中的对外提供的方法都是<code>静态方法</code>。这些方法提供了最基本的线程阻塞和唤醒功能，在LockSupport类中定义了一组以park开头的方法用来阻塞当前线程。以及<code>unPark(Thread thread)</code>方法来唤醒一个被阻塞的线程。关于park开头的方法具体描述如下表所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-291438fe9894d7c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="park.png"></p>
+<p>其中<code>park(Object blocker)</code>与<code>parkNanos(Object blocker, long nanos)</code>及<code>parkUntil(Object blocker, long deadline)</code>三个方法是Java 6中新增加的方法。其中参数blocker是用来标识当前线程等待的对象（下文简称为阻塞对象），<code>该对象主要用于问题排查和系统监控</code>。</p>
+<blockquote>
+<p>由于在Java 5之前，当线程阻塞时（使用synchronized关键字）在一个对象上时，通过线程dump能够查看到该线程的阻塞对象。方便问题定位，而Java 5退出的Lock等并发工具却遗漏了这一点，致使在线程dump时无法提供阻塞对象的信息。因此，在Java 6中，LockSupport新增了含有阻塞对象的park方法。用以替代原有的park方法。</p>
+</blockquote>
+<h3 id="LockSupport中的blocker"><a href="#LockSupport中的blocker" class="headerlink" title="LockSupport中的blocker"></a>LockSupport中的blocker</h3><p> 可能有很多读者对Blocker的原理有点好奇，既然线程都被阻塞了，<code>是通过什么办法将阻塞对象设置到线程中去的呢？</code> 不急不急，我们继续查看含有阻塞对象(Object blocker)的park方法。 我们发现内部都调用了<code>setBlocker(Thread t, Object arg)</code>方法。具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private static void setBlocker(Thread t, Object arg) &#123;</span><br><span class="line">     U.putObject(t, PARKBLOCKER, arg);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中 <code>U</code>为sun.misc.包下的<code>Unsafe</code>类。而其中的<code>PARKBLOCKER</code>是在静态代码块中进行赋值的，也就是如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private static final sun.misc.Unsafe U = sun.misc.Unsafe.getUnsafe();</span><br><span class="line">  static &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            PARKBLOCKER = U.objectFieldOffset</span><br><span class="line">                (Thread.class.getDeclaredField(&quot;parkBlocker&quot;));</span><br><span class="line">		   //省略部分代码</span><br><span class="line">        &#125; catch (ReflectiveOperationException e) &#123;</span><br><span class="line">            throw new Error(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>Thread.class.getDeclaredField(&quot;parkBlocker&quot;)</code>方法其实很好理解，就是获取线程中的<code>parkBlocker</code>字段。如果有则返回其对应的Field字段，如果没有则抛出<code>NoSuchFieldException</code>异常。那么关于Unsafe中的<code>objectFieldOffset(Field f)</code>方法怎么理解呢？ </p>
+<p>在描述该方法之前，需要给大家讲一个知识点。在JVM中，可以自由选择如何实现Java对象的<code>&quot;布局&quot;</code>,也就Java对象的各个部分分别放在内存那个地方，JVM是可以感知和决定的。 在sun.misc.Unsafe中提供了<code>objectFieldOffset()</code>方法用于获取某个字段相对 Java对象的“起始地址”的偏移量,也提供了getInt、getLong、getObject之类的方法可以使用前面获取的偏移量来访问某个Java 对象的某个字段。</p>
+<p> 有可能大家理解起来比较困难，这里给大家画了一个图，帮助大家理解，具体如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-7636697f1503ed60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="blocker.png"></p>
+<p>在上图中，我们创建了两个Thread对象，其中Thread对象1在内存中分配的地址为<code>0x10000-0x10100</code>,Thread对象2在内存中分配的地址为<code>0x11000-0x11100</code>,其中<code>parkBlocker</code>对应内存偏移量为2（这里我们假设相对于其对象的“起始位置”的偏移量为2）。那么通过<code>objectFieldOffset(Field f)</code>就能获取该字段的偏移量。需要注意的是<code>某字段在其类中的内存偏移量总是相同的</code>，也就是对于Thread对象1与Thread对象2，parkBlocker字段在其对象所在的内存偏移量始终是相同的。</p>
+<p>那么我们再回到<code>setBlocker(Thread t, Object arg)</code>方法，当我们获取到<code>parkBlocker</code>字段在其对象内存偏移量后，<br>接着会调用<code>U.putObject(t, PARKBLOCKER, arg);</code>，该方法有三个参数,第一个参数是操作对象，第二个参数是内存偏移量，第三个参数是实际存储值。该方法理解起来也很简单，就是<code>操作某个对象中某个内存地址下的数据</code>。那么结合我们上面所讲的。该方法的实际操作结果如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-8094f6979df5fe6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="blocker_set.png"></p>
+<p>到现在，我们就应该懂了，<code>尽管当前线程已经阻塞</code>，但是我们还是能直接操控线程中<code>实际存储该字段的内存区域</code>来达到我们想要的结果。</p>
+<h3 id="LockSupport底层代码实现"><a href="#LockSupport底层代码实现" class="headerlink" title="LockSupport底层代码实现"></a>LockSupport底层代码实现</h3><p>通过阅读源代码我们可以发现，LockSupport中关于线程的阻塞和唤醒，主要调用的是sun.misc.Unsafe 中的<code>park(boolean isAbsolute, long time)</code>与<code>unpark(Object thread)</code>方法，也就是如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">   private static final jdk.internal.misc.Unsafe theInternalUnsafe =   </span><br><span class="line">     jdk.internal.misc.Unsafe.getUnsafe();</span><br><span class="line">     </span><br><span class="line">public void park(boolean isAbsolute, long time) &#123;</span><br><span class="line">       theInternalUnsafe.park(isAbsolute, time);</span><br><span class="line">   &#125;</span><br><span class="line">   public void unpark(Object thread) &#123;</span><br><span class="line">       theInternalUnsafe.unpark(thread);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>查看sun.misc.包下的Unsafe.java文件我们可以看出，内部其实调用的是jdk.internal.misc.Unsafe中的方法。继续查看jdk.internal.misc.中的Unsafe.java中对应的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@HotSpotIntrinsicCandidate</span><br><span class="line">public native void unpark(Object thread);</span><br><span class="line"></span><br><span class="line">@HotSpotIntrinsicCandidate</span><br><span class="line">public native void park(boolean isAbsolute, long time);</span><br></pre></td></tr></table></figure></p>
+<p>通过查看方法，我们可以得出最终调用的是JVM中的方法，也就是会调用<code>hotspot.share.parims</code>包下的<code>unsafe.cpp</code>中的方法。继续跟踪。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">UNSAFE_ENTRY(void, Unsafe_Park(JNIEnv *env, jobject unsafe, jboolean isAbsolute, jlong time)) &#123;</span><br><span class="line">  //省略部分代码</span><br><span class="line">  thread-&gt;parker()-&gt;park(isAbsolute != 0, time);</span><br><span class="line">  //省略部分代码</span><br><span class="line">&#125; UNSAFE_END</span><br><span class="line"></span><br><span class="line">UNSAFE_ENTRY(void, Unsafe_Unpark(JNIEnv *env, jobject unsafe, jobject jthread)) &#123;</span><br><span class="line">  Parker* p = NULL;</span><br><span class="line">  //省略部分代码</span><br><span class="line">  if (p != NULL) &#123;</span><br><span class="line">    HOTSPOT_THREAD_UNPARK((uintptr_t) p);</span><br><span class="line">    p-&gt;unpark();</span><br><span class="line">  &#125;</span><br><span class="line">&#125; UNSAFE_END</span><br></pre></td></tr></table></figure></p>
+<p>通过观察代码我们发现，线程的阻塞和唤醒其实是与<code>hotspot.share.runtime</code>中的<code>Parker类</code>相关。我们继续查看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Parker : public os::PlatformParker &#123;</span><br><span class="line">private:</span><br><span class="line">  volatile int _counter ;//该变量非常重要，下文我们会具体描述</span><br><span class="line">	 //省略部分代码</span><br><span class="line">protected:</span><br><span class="line">  ~Parker() &#123; ShouldNotReachHere(); &#125;</span><br><span class="line">public:</span><br><span class="line">  // For simplicity of interface with Java, all forms of park (indefinite,</span><br><span class="line">  // relative, and absolute) are multiplexed into one call.</span><br><span class="line">  void park(bool isAbsolute, jlong time);</span><br><span class="line">  void unpark();</span><br><span class="line">  //省略部分代码</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上述代码中，<code>volatile int _counter</code>该字段的值非常重要，<code>一定要注意其用volatile修饰</code>（在下文中会具体描述，接着当我们通过<code>SourceInsight</code>工具(推荐大家阅读代码时，使用该工具)点击其park与unpark方法时，我们会得到如下界面：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-41e5cbf9d13ed218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="parker.png"></p>
+<p>从图中红色矩形中我们可也看出，针对线程的阻塞和唤醒，<code>不同操作系统有着不同的实现</code>。众所周知Java是跨平台的。针对不同的平台，做出不同的处理。也是非常理解的。因为作者对windows与solaris操作系统不是特别了解。所以这里我选择对Linux下的平台下进行分析。也就是选择<code>hotspot.os.posix</code>包下的<code>os_posix.cpp</code>文件进行分析。</p>
+<h4 id="Linux下的park实现"><a href="#Linux下的park实现" class="headerlink" title="Linux下的park实现"></a>Linux下的park实现</h4><p>为了方便大家理解Linux下的阻塞实现，在实际代码中我省略了一些不重要的代码，具体如下图所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">void Parker::park(bool isAbsolute, jlong time) &#123;</span><br><span class="line"></span><br><span class="line">  //(1)如果_counter的值大于0，那么直接返回</span><br><span class="line">  if (Atomic::xchg(0, &amp;_counter) &gt; 0) return;</span><br><span class="line">    </span><br><span class="line">  //获取当前线程</span><br><span class="line">  Thread* thread = Thread::current();</span><br><span class="line">  JavaThread *jt = (JavaThread *)thread;</span><br><span class="line">  </span><br><span class="line">  //(2)如果当前线程已经中断，直接返回。</span><br><span class="line">  if (Thread::is_interrupted(thread, false)) &#123;</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  //(3)判断时间，如果时间小于0，或者在绝对时间情况下，时间为0直接返回</span><br><span class="line">  struct timespec absTime;</span><br><span class="line">  if (time &lt; 0 || (isAbsolute &amp;&amp; time == 0)) &#123; // don&apos;t wait at all</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line">  //如果时间大于0，判断阻塞超时时间或阻塞截止日期，同时将时间赋值给absTime</span><br><span class="line">  if (time &gt; 0) &#123;</span><br><span class="line">    to_abstime(&amp;absTime, time, isAbsolute);</span><br><span class="line">  &#125;</span><br><span class="line">  //(4)如果当前线程已经中断，或者申请互斥锁失败，则直接返回</span><br><span class="line">  if (Thread::is_interrupted(thread, false) ||</span><br><span class="line">      pthread_mutex_trylock(_mutex) != 0) &#123;</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  //(5)如果是时间等于0,那么就直接阻塞线程，</span><br><span class="line">  if (time == 0) &#123;</span><br><span class="line">    _cur_index = REL_INDEX; // arbitrary choice when not timed</span><br><span class="line">    status = pthread_cond_wait(&amp;_cond[_cur_index], _mutex);</span><br><span class="line">    assert_status(status == 0, status, &quot;cond_timedwait&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  //(6)根据absTime之前计算的时间，阻塞线程相应时间</span><br><span class="line">  else &#123;</span><br><span class="line">    _cur_index = isAbsolute ? ABS_INDEX : REL_INDEX;</span><br><span class="line">    status = pthread_cond_timedwait(&amp;_cond[_cur_index], _mutex, &amp;absTime);</span><br><span class="line">    assert_status(status == 0 || status == ETIMEDOUT,</span><br><span class="line">                  status, &quot;cond_timedwait&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  //省略部分代码</span><br><span class="line">  //(7)当线程阻塞超时，或者到达截止日期时，直接唤醒线程  </span><br><span class="line">  _counter = 0;</span><br><span class="line">  status = pthread_mutex_unlock(_mutex);</span><br><span class="line"></span><br><span class="line"> //省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从整个代码来看其实关于Linux下的park方法分为以下七个步骤：</p>
+<ul>
+<li>（1）调用<code>Atomic::xchg</code>方法，将<code>_counter</code>的值赋值为0，其方法的返回值为<code>之前_counter的值</code>，如果返回值<code>大于0</code>（因为有其他线程操作过_counter的值，也就是其他线程调用过<code>unPark</code>方法)，那么就直接返回。</li>
+<li>（2）如果当前线程已经中断，直接返回。也就是说如果当前线程已经中断了，那么调用park()方法来阻塞线程就会无效。</li>
+<li>（3） 判断其设置的时间是否合理，如果合理，判断<code>阻塞超时时间</code>或<code>阻塞截止日期</code>，同时将时间赋值给<code>absTime</code></li>
+<li>（4） 在实际对线程进行阻塞前，再一次判断如果当前线程已经中断，或者申请互斥锁失败，则直接返回</li>
+<li>（5） 如果是时间等于0（时间为0，表示一直阻塞线程，除非调用unPark方法唤醒），那么就直接阻塞线程，</li>
+<li>（6）根据absTime之前计算的时间，并调用<code>pthread_cond_timedwait</code>方法阻塞线程相应的时间。</li>
+<li>（7） 当线程阻塞相应时间后，通过<code>pthread_mutex_unlock</code>方法直接唤醒线程,同时将<code>_counter</code>赋值为0。</li>
+</ul>
+<p>因为关于Linux的阻塞涉及到其内部函数，这里将用到的函数都进行了声明。大家可以根据下表所介绍的方法进行理解。具体方法如下表所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-95dfa50270728585.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linux方法.png"></p>
+<h4 id="Linux下的unpark实现"><a href="#Linux下的unpark实现" class="headerlink" title="Linux下的unpark实现"></a>Linux下的unpark实现</h4><p>在了解了Linux的park实现后，再来理解Linux的唤醒实现就非常简单了，查看相应方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">void Parker::unpark() &#123;</span><br><span class="line">  int status = pthread_mutex_lock(_mutex);</span><br><span class="line">  assert_status(status == 0, status, &quot;invariant&quot;);</span><br><span class="line">  const int s = _counter;</span><br><span class="line">  //将_counter的值赋值为1</span><br><span class="line">  _counter = 1;</span><br><span class="line">  // must capture correct index before unlocking</span><br><span class="line">  int index = _cur_index;</span><br><span class="line">  status = pthread_mutex_unlock(_mutex);</span><br><span class="line">  assert_status(status == 0, status, &quot;invariant&quot;);</span><br><span class="line">  //省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其实从代码整体逻辑来讲，最终唤醒其线程的方法为<code>pthread_mutex_unlock(_mutex)</code>（关于该函数的作用，我已经在上表进行介绍了。大家可以参照Linux下的park实现中的图表进行理解）。同时将<code>_counter的值赋值为1</code>, 那么结合我们上文所讲的park(将线程进行阻塞)方法，那么我们可以得知整个线程的唤醒与阻塞，在Linux系统下，其实是受到<code>Parker类中的_counter的值的影响的</code>。</p>
+<h3 id="LockSupport的使用"><a href="#LockSupport的使用" class="headerlink" title="LockSupport的使用"></a>LockSupport的使用</h3><p>现在我们基本了解了LockSupport的基本原理。现在我们来看看它的基本使用吧。在例子中，为了方便大家顺便弄清blocker的作用，这里我调用了带blocker的park方法。具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">class LockSupportDemo &#123;</span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        Thread a = new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                LockSupport.park(&quot;线程a的blocker数据&quot;);</span><br><span class="line">                System.out.println(&quot;我是被线程b唤醒后的操作&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        a.start();</span><br><span class="line"></span><br><span class="line">        //让当前主线程睡眠1秒，保证线程a在线程b之前执行</span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line">        Thread b = new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                </span><br><span class="line">                String before = (String) LockSupport.getBlocker(a);</span><br><span class="line">                System.out.println(&quot;阻塞时从线程a中获取的blocker------&gt;&quot; + before);</span><br><span class="line">                LockSupport.unpark(a);</span><br><span class="line">                </span><br><span class="line">                //这里睡眠是，保证线程a已经被唤醒了</span><br><span class="line">                try &#123;</span><br><span class="line">                    Thread.sleep(1000);</span><br><span class="line">                    String after = (String) LockSupport.getBlocker(a);</span><br><span class="line">                    System.out.println(&quot;唤醒时从线程a中获取的blocker------&gt;&quot; + after);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        b.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>代码中，创建了两个线程，线程a与线程b（线程a优先运行与线程b），在线程a中，通过调用<code>LockSupport.park(&quot;线程a的blocker数据&quot;);</code>给线程a设置了一个String类型的blocker，当线程a运行的时候，直接将线程a阻塞。在线程b中，先会获取线程a中的blocker，打印输出后。再通过<code>LockSupport.unpark(a);</code>唤醒线程a。当唤醒线程a后。最后输出并打印线程a中的blocker。  实际代码运行结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">阻塞时从线程a中获取的blocker------&gt;线程a的blocker数据</span><br><span class="line">我是被线程b唤醒后的操作</span><br><span class="line">唤醒时从线程a中获取的blocker------&gt;null</span><br></pre></td></tr></table></figure></p>
+<p>从结果中，我们可以看出，线程a被阻塞时，后续就不会再进行操作了。当线程a被线程b唤醒后。之前设置的blocker也变为null了。同时如果在线程a中park语句后还有额外的操作。那么会继续运行。关于为毛之前的blocker之前变为null，具体原因如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public static void park(Object blocker) &#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    setBlocker(t, blocker);</span><br><span class="line">    U.park(false, 0L);//当线程被阻塞时，会阻塞在这里</span><br><span class="line">    setBlocker(t, null);//线程被唤醒时，会将blocer置为null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过上述例子，我们完全知道了blocker可以在线程阻塞的时候，获取数据。也就证明了当我们对线程进行问题排查和系统监控的时候blocker的有着非常重要的作用。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>该文章参考以下博客，站在巨人的肩膀上。可以看得更远。</p>
+<ul>
+<li><a href="https://www.cnblogs.com/Jimmy1988/p/7822478.html" target="_blank" rel="noopener">Linux 多线程 - 线程异步与同步机制</a></li>
+<li><a href="https://blog.csdn.net/secsf/article/details/78560013" target="_blank" rel="noopener">LockSupport解析与使用</a></li>
+<li><a href="https://www.cnblogs.com/qingquanzi/p/8228422.html" target="_blank" rel="noopener">自己动手写把”锁”—LockSupport深入浅出</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/并发/" rel="tag"># 并发</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/" rel="next" title="Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)">
+                <i class="fa fa-chevron-left"></i> Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/Java并发编程之锁机制之Condition接口(十)/" rel="prev" title="Java并发编程之锁机制之Condition接口(十)">
+                Java并发编程之锁机制之Condition接口(十) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LockSupport类"><span class="nav-number">2.</span> <span class="nav-text">LockSupport类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LockSupport中的blocker"><span class="nav-number">3.</span> <span class="nav-text">LockSupport中的blocker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LockSupport底层代码实现"><span class="nav-number">4.</span> <span class="nav-text">LockSupport底层代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux下的park实现"><span class="nav-number">4.1.</span> <span class="nav-text">Linux下的park实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux下的unpark实现"><span class="nav-number">4.2.</span> <span class="nav-text">Linux下的unpark实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LockSupport的使用"><span class="nav-number">5.</span> <span class="nav-text">LockSupport的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

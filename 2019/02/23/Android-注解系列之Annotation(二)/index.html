@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="注解基本概念注解（也称为元数据），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到JAVA SE5的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻">
+<meta name="keywords" content="注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 注解系列之Annotation(二)">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="注解基本概念注解（也称为元数据），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到JAVA SE5的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-7e5f11afb642739f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-3ba27f5378be074d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-eee4879fa122ddc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.861Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 注解系列之Annotation(二)">
+<meta name="twitter:description" content="注解基本概念注解（也称为元数据），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到JAVA SE5的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Android 注解系列之Annotation(二) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 注解系列之Annotation(二)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 22:03:41" itemprop="dateCreated datePublished" datetime="2019-02-23T22:03:41+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/注解相关/" itemprop="url" rel="index"><span itemprop="name">注解相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="居家程序员.jpg"></p>
+<h3 id="注解基本概念"><a href="#注解基本概念" class="headerlink" title="注解基本概念"></a>注解基本概念</h3><p>注解（<code>也称为元数据</code>），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到<code>JAVA SE5</code>的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻编写<code>样板</code>代码的负担。通过使用注解。我们可以将这些元数据保存在Java源代码中，并利用<code>annotation API为自己的注解构造处理工具</code>。</p>
+<h3 id="注解的声明"><a href="#注解的声明" class="headerlink" title="注解的声明"></a>注解的声明</h3><p>说了这么多，我们先来看看注解的声明。具体参看下面的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Documented</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Target(value = &#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, ANNOTATION_TYPE,PACKAGE&#125;)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>观看上述例子，我们发现注解的声明其实有点类似于Java接口的声明。除了@符号以外，@HelloAnnotation 定义更像是一个空的接口。事实上，它与其他任何Java接口一样。注解也会被编译成class文件。在定义注解时需要一些<code>元注解</code>，如<code>@Retention</code>和<code>@Target</code>。要知道注解的正确使用，我们需要了解<code>元注解</code>的使用方法与作用。</p>
+<h4 id="元注解"><a href="#元注解" class="headerlink" title="元注解"></a>元注解</h4><p>Java目前内置了5种元注解，元注解主要负责注解其他的注解。这里分别对其进行介绍:</p>
+<h5 id="Target元注解"><a href="#Target元注解" class="headerlink" title="@Target元注解"></a>@Target元注解</h5><p>该注解主要表示该注解可以用于什么地方，其中可能ElementType参数为以下几种情况：</p>
+<ul>
+<li>TYPE：用于类、接口（<code>包括注解类型</code>）或enum声明</li>
+<li>FIELD：用于字段声明，包括enum实例</li>
+<li>METHOD：用于方法声明</li>
+<li>PARAMETER：用于参数声明</li>
+<li>CONSTRUCTOR：用于构造函数声明</li>
+<li>LOCAL_VARIABLE：用于局部变量声明</li>
+<li>ANNOTATION_TYPE：用于注解可也用于注解声明（应用于另一个注解上）</li>
+<li>PACKAGE：用于包声明</li>
+<li>TYPE_PARAMETER：用于类上泛型参数的说明（<code>JDK1.8加入</code>）</li>
+<li>TYPE_USE：用于任何类型的声明（<code>JDK1.8加入</code>）</li>
+</ul>
+<p>这里为了方便大家理解，会对以上@Target作用范围进行介绍，其中关于<code>TYPE_PARAMETER与TYPE_USE</code>会单独着重介绍。下面我们还是以@HelloAnnotation 注解为例，其中该注解声明如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@Target(value = &#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, ANNOTATION_TYPE,PACKAGE&#125;)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么在实际代码中，我们可以通过@HelloAnnotation 注解定义的Target去声明想声明的东西。具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">// TYPE：用于类、接口（`包括注解类型`）或enum声明</span><br><span class="line">@HelloAnnotation</span><br><span class="line">class AnnotationDemo &#123;</span><br><span class="line"></span><br><span class="line">    //CONSTRUCTOR：用于构造函数声明</span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    public AnnotationDemo(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //FIELD：用于字段声明，包括enum实例</span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    private String name;</span><br><span class="line"></span><br><span class="line">    //METHOD：用于方法声明</span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    public void sayHello() &#123;</span><br><span class="line">        System.out.println(&quot;hello every one&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //PARAMETER：用于参数声明</span><br><span class="line">    public void saySometing(@HelloAnnotation String text) &#123; &#125;</span><br><span class="line">    </span><br><span class="line">    //LOCAL_VARIABLE：用于局部变量声明</span><br><span class="line">    public int add(int a, int b) &#123;</span><br><span class="line">        @HelloAnnotation int total = 0;</span><br><span class="line">        return a + b;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //ANNOTATION_TYPE：用于注解可也用于注解声明（应用于另一个注解上）</span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    @interface AnnotationTwo &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中对包进行注解修饰，需要在当前包下创建<code>package-info.java</code>文件，而该文件的作用有以下三点：</p>
+<ul>
+<li>为标注在包上Annotation提供便利</li>
+<li>声明包的私有类和常量</li>
+<li>提供包的整体注释说明（ 如果是项目是分“包”开发，也就是说一个包实现一个业务逻辑或功能点、或模块、或组件，则需要对一个包有很好的说明，说明这个包是干啥的，有啥作用，版本变迁，特别说明等等）<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 主要是为了测试包的注解</span><br><span class="line"> */</span><br><span class="line">@HelloAnnotation</span><br><span class="line">package annotation;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="新增的TYPE-PARAMETER与TYPE-USE"><a href="#新增的TYPE-PARAMETER与TYPE-USE" class="headerlink" title="新增的TYPE_PARAMETER与TYPE_USE"></a>新增的TYPE_PARAMETER与TYPE_USE</h5><p>在JDK1.8中增加了<code>TYPE_PARAMETER与TYPE_USE</code>,其中TYPE_PARAMETER用于修饰<code>类上的泛型参数</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Target(value = &#123;TYPE_PARAMETER&#125;)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">&#125;</span><br><span class="line">class A&lt;@HelloAnnotation T&gt; &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>TYPE_USE用于<code>任何类型声明(也包含修饰类上的泛型参数）</code>，具体情况如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Target(value = &#123;TYPE_USE&#125;)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@HelloAnnotation</span><br><span class="line">class AnnotationDemo&lt;@HelloAnnotation T&gt; &#123;</span><br><span class="line"></span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    public AnnotationDemo(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    private String name;</span><br><span class="line"></span><br><span class="line">    public void saySometing(@HelloAnnotation String text) &#123; &#125;</span><br><span class="line"></span><br><span class="line">    public int add(int a, int b) &#123;</span><br><span class="line">        @HelloAnnotation int total = 0;</span><br><span class="line">        return a + b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    @interface AnnotationTwo &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Retention元注解"><a href="#Retention元注解" class="headerlink" title="@Retention元注解"></a>@Retention元注解</h5><p>该注解表该注解在什么级别下被保存，可选的RetentionPolicy参数为：</p>
+<ul>
+<li>SOURCE：该类型的注解只会保留在源码里，经过编译器编译后，生成的class文件里是不会存在该注解信息的。</li>
+<li>CLASS：注解在class文件中可用，但是会被VM丢弃（该类型的注解信息会被保留在源码与class文件中，在执行的时候，不会被加载到虚拟机中）。<code>注意：当注解未定义未定义Retention值时，默认值是CLASS级别</code></li>
+<li>RUNTIME：VM将在运行期间也保留注解，因此可以通过反射机制读取到注解的信息（该类型的注解信息会被保留在源码、class文件和虚拟机执行期间）。<h5 id="Documented元注解"><a href="#Documented元注解" class="headerlink" title="@Documented元注解"></a>@Documented元注解</h5>该注解表示，是否将注解包含在JavaDoc中，具体列子如下图所示<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">@Documented</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@HelloAnnotation</span><br><span class="line">class AnnotationDemo &#123;</span><br><span class="line"></span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    public AnnotationDemo(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @HelloAnnotation</span><br><span class="line">    private String name;</span><br><span class="line"></span><br><span class="line">    public void saySometing(@HelloAnnotation String text) &#123; &#125;</span><br><span class="line"></span><br><span class="line">    public int add(int a, int b) &#123;</span><br><span class="line">        @HelloAnnotation int total = 0;</span><br><span class="line">        return a + b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>我们跳转到项目的目录，打开命令行，执行<code>javadoc -encoding utf-8 -charset utf-8 -package annotation</code>命令(这里我是所有的文件都是放在annotaton包下的，所以你可以根据你自己的包名为该包下的所有.java文件生成Doc文档)。运行完命令后我们找到自动生成的Doc文档。点击后如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-7e5f11afb642739f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="doc文档.png"></p>
+<p>从上图中我们可以发现，如果为注解指定了<code>@Documented</code>元注解，那么在生成的Doc文档中是会有相应注解的（<code>如图上红箭头所指</code>）。</p>
+<h5 id="Inherited元注解"><a href="#Inherited元注解" class="headerlink" title="@Inherited元注解"></a>@Inherited元注解</h5><p>该注解表示，允许子类继承父类中的注解。其实理解起来也简单。看下面的列子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Inherited</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface Hello &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface World &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Hello</span><br><span class="line">class Person &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@World</span><br><span class="line">class Man extends Person &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Annotation[] annotations = Man.class.getAnnotations();</span><br><span class="line">        for (Annotation annotation : annotations) &#123;</span><br><span class="line">            System.out.println(annotation.annotationType());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">interface annotation.Hello</span><br><span class="line">interface annotation.World</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，创建了@Hello与@World注解，其中<code>@Hello使用@Inherited修饰</code>,同时我们也创建了用<code>@Hello修饰的Person类</code>及其用<code>@World修饰的Man子类</code>,然后我们通过<code>Man.class.getAnnotations()</code>方法获取Man类中的注解（下文会对注解使用以及赋值进行介绍），得到上述代码中的输出结果。也就证明了@Inherited元注解可以让子类继承父类中的注解的结论。</p>
+<h5 id="Repeatable元注解-JDK-1-8之后新加入的"><a href="#Repeatable元注解-JDK-1-8之后新加入的" class="headerlink" title="@Repeatable元注解(JDK 1.8之后新加入的)"></a>@Repeatable元注解(JDK 1.8之后新加入的)</h5><p>该注解是JDK 1.8新加入的，该注解表示，可以在<code>同一个地方多次使用同一种注解类型</code>。也就是说在JDK 1.8之前是无法在同一个类型上使用相同的注解的。</p>
+<h6 id="JDK1-8之前"><a href="#JDK1-8之前" class="headerlink" title="JDK1.8之前"></a>JDK1.8之前</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface FilterPath &#123;</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//在JDK1.8之前是在一个地方多次使用同一种注解</span><br><span class="line">@FilterPath(&quot;hello/java&quot;)</span><br><span class="line">@FilterPath(&quot;hello/android&quot;)</span><br><span class="line">class FileOperate &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，我们声明了@FilterPath注解，你有可能注意到了其中的<code>String value();</code>这段语句，这里大家先不着急理解这段代码到底是什么意思，大家就理解成给该<code>注解提供字符串赋值</code>操作就行了（下文会对注解使用以及赋值进行介绍）。如果我们采用以上代码，编译器是会报错的。所以为了处理这种情况，在JDK1.8之前，如果想实现类似于上述相同的功能，我们一般采用下面的这种方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface FilterPath &#123;</span><br><span class="line">    String []value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@FilterPath(&#123;&quot;hello/java&quot;,&quot;hello/android&quot;&#125;)</span><br><span class="line">class FileOperate &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将@FilterPath注解中的<code>String value();</code>修改为<code>String []value();</code>,也就是说让该注解接受字符串数组。</p>
+<h6 id="JDK1-8之后"><a href="#JDK1-8之后" class="headerlink" title="JDK1.8之后"></a>JDK1.8之后</h6><p>在JDK1.8之后我们可以使用@Repeatable，但是使用该注解也有一定的限制。下面我们一起来看看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Repeatable(FilterPaths.class)//添加@Repeatable元注解，注意其中的值</span><br><span class="line">public @interface FilterPath &#123;</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface FilterPaths &#123;</span><br><span class="line">    FilterPath[] value();//注解其中的数组类型为FilterPath</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//现在可以在同一个地方使用同一注解啦~</span><br><span class="line">@FilterPath(&quot;hello/java&quot;)</span><br><span class="line">@FilterPath(&quot;hello/android&quot;)</span><br><span class="line">class FileOperate &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上述代码中，我们创建了<code>@FilterPath与@FilterPaths</code>两个注解，需要注意的是我们在@FilterPath注解上增加了元注解<code>@Repeatable(FilterPaths.class)</code>其中的参数<code>FilterPaths.class是指明接受同一个类型上重复注解的容器，</code>（也就是接受重复的@FilterPath注解），那么我们再看@FilterPaths中声明了 <code>FilterPath[] value();</code>，也就是其接受@FilterPath注解类型。</p>
+<h6 id="Repeatable元注解使用注意事项"><a href="#Repeatable元注解使用注意事项" class="headerlink" title="@Repeatable元注解使用注意事项"></a>@Repeatable元注解使用注意事项</h6><p>为了处理@Repeatble注解，JDK1.8在AnnotatedElement接口中提供了<code>getAnnotationsByType与getAnnotationsByType</code>方法，(注意：如果我们采用传统的方法，也就是<code>getAnnotation(Class&lt;A&gt; annotationClass)</code>方法来获取声明的注解，我们需要传入<code>注解容器的class</code>,而<code>不是需要重复的注解的class</code>）。这里我们还是以JDK1.8之后中提到的代码为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        //从该类上获取FilterPath注解信息</span><br><span class="line">        FilterPath filterPath = FileOperate.class.getAnnotation(FilterPath.class);</span><br><span class="line">        System.out.println(filterPath);</span><br><span class="line"></span><br><span class="line">        //从该类上获取FilterPaths注解信息</span><br><span class="line">        System.out.println(&quot;----------------------------&quot;);</span><br><span class="line">        FilterPaths filterPaths = FileOperate.class.getAnnotation(FilterPaths.class);</span><br><span class="line">        System.out.println(filterPaths);</span><br><span class="line">        for (FilterPath path : filterPaths.value()) &#123;</span><br><span class="line">            System.out.println(path.value());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //通过getAnnotationsByType</span><br><span class="line">        System.out.println(&quot;----------------------------&quot;);</span><br><span class="line">        FilterPath[] annotationsByType = FileOperate.class.getAnnotationsByType(FilterPath.class);</span><br><span class="line">        if (annotationsByType != null) &#123;</span><br><span class="line">            for (FilterPath path : annotationsByType) &#123;</span><br><span class="line">                System.out.println(path.value());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //通过getDeclaredAnnotationsByType</span><br><span class="line">        System.out.println(&quot;----------------------------&quot;);</span><br><span class="line">        FilterPath[] declaredAnnotationsByType = FileOperate.class.getDeclaredAnnotationsByType(FilterPath.class);</span><br><span class="line">        if (declaredAnnotationsByType != null) &#123;</span><br><span class="line">            for (FilterPath path : declaredAnnotationsByType) &#123;</span><br><span class="line">                System.out.println(path.value());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//输出结果</span><br><span class="line">null</span><br><span class="line">----------------------------</span><br><span class="line">@annotation.FilterPaths(value=[@annotation.FilterPath(value=hello/java), @annotation.FilterPath(value=hello/android)])</span><br><span class="line">hello/java</span><br><span class="line">hello/android</span><br><span class="line">----------------------------</span><br><span class="line">hello/java</span><br><span class="line">hello/android</span><br><span class="line">----------------------------</span><br><span class="line">hello/java</span><br><span class="line">hello/android</span><br></pre></td></tr></table></figure></p>
+<p>从输出结果来看，我们<code>并不能通过getAnnotation(FilterPath.class)</code>获取注解（获得的注解为null），而是需要通过getAnnotation(<code>FilterPaths.class</code>)来获取）。同时如果我们采<code>getAnnotationsByType(FilterPath.class)</code>或<code>getDeclaredAnnotationsByType(FilterPath.class)</code>就能获取到正确的值。这里需要注意<code>getAnnotationsByType</code>与<code>getDeclaredAnnotationsByType</code>方法的区别，如果子类调用<code>getAnnotationsByType</code>方法且该子类的父类中声明了用@Inherited修饰的注解，那么可以获得父类中的注解。而<code>getDeclaredAnnotationsByType</code>是获取不到父类中声明的注解的。</p>
+<h3 id="注解的使用与支持属性类型"><a href="#注解的使用与支持属性类型" class="headerlink" title="注解的使用与支持属性类型"></a>注解的使用与支持属性类型</h3><h4 id="注解支持属性类型"><a href="#注解支持属性类型" class="headerlink" title="注解支持属性类型"></a>注解支持属性类型</h4><p>在了解了注解的定义与元注解之后，我们一起来了解注解元素中可以定义的属性。其中支持的具体类型如下所示：</p>
+<ul>
+<li>所有的基本类型（int、float、boolean)等</li>
+<li>String</li>
+<li>Class</li>
+<li>enum</li>
+<li>Annotaion</li>
+<li>以及以上类型的数组</li>
+</ul>
+<p>如果你使用了其他类型，那么编译器就会报错，<code>注意！！！！也不能使用任何类型的包装类型</code>。不过由于自动打包的存在，这也不算什么限制。注解亦可以作为元素的类型。也就是说<code>注解可以嵌套</code>。</p>
+<h4 id="注解添加属性"><a href="#注解添加属性" class="headerlink" title="注解添加属性"></a>注解添加属性</h4><p>我们已经知道了注解中属性的支持类型，现在就开始为注解添加属性吧。其基本语法是: <code>类型 属性名();</code>，请看如下例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">//声明枚举</span><br><span class="line">enum Week &#123;</span><br><span class="line">    MONDAY,</span><br><span class="line">    TUESDAY,</span><br><span class="line">    WEDNESDAY,</span><br><span class="line">    THURSDAY,</span><br><span class="line">    FRIDAY,</span><br><span class="line">    SATURDAY,</span><br><span class="line">    SUNDAY</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Target(ElementType.TYPE_USE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">    String text();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface WorldAnnotation &#123;</span><br><span class="line"></span><br><span class="line">    //基本类型及其数组类型</span><br><span class="line">    int intAttr();</span><br><span class="line">    float floatAttr() ;</span><br><span class="line">    boolean booleanAttr() ;</span><br><span class="line"></span><br><span class="line">    int[] intArray() ;</span><br><span class="line">    float[] floatArray() ;</span><br><span class="line">    boolean[] booleanArry() ;</span><br><span class="line"></span><br><span class="line">    //String类型及其数组类型</span><br><span class="line">    String stringAttr() ;</span><br><span class="line">    String[] stringArray();</span><br><span class="line"></span><br><span class="line">    //Class类型及其数组类型</span><br><span class="line">    Class classAttr() ;</span><br><span class="line">    Class[] classArray();</span><br><span class="line"></span><br><span class="line">    //enum类型及其数组类型</span><br><span class="line">    Week day() ;</span><br><span class="line">    Week[] week();</span><br><span class="line"></span><br><span class="line">    //注解嵌套</span><br><span class="line">    HelloAnnotation HelloAnnotation();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上图中我将注解的支持的所有类型都展示出来了，这样我相信大家都能非常好的理解了。</p>
+<h5 id="为属性指定缺省值（默认值）"><a href="#为属性指定缺省值（默认值）" class="headerlink" title="为属性指定缺省值（默认值）"></a>为属性指定缺省值（默认值）</h5><p>属性除了用户指定值外，还支持默认值，其语法为：<code>属性 属性名() default 默认值;</code>，那么结合上述的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface WorldAnnotation &#123;</span><br><span class="line"></span><br><span class="line">    //基本类型及其数组类型</span><br><span class="line">    int intAttr() default -1;</span><br><span class="line"></span><br><span class="line">    float floatAttr() default -1f;</span><br><span class="line"></span><br><span class="line">    boolean booleanAttr() default false;</span><br><span class="line"></span><br><span class="line">    int[] intArray() default &#123;1, 2, 3&#125;;</span><br><span class="line"></span><br><span class="line">    float[] floatArray() default &#123;1f, 2f, 3f&#125;;</span><br><span class="line"></span><br><span class="line">    boolean[] booleanArry() default &#123;true, false, true&#125;;</span><br><span class="line"></span><br><span class="line">    //String类型及其数组类型</span><br><span class="line">    String stringAttr() default &quot;&quot;;</span><br><span class="line"></span><br><span class="line">    String[] stringArray();</span><br><span class="line"></span><br><span class="line">    //Class类型及其数组类型</span><br><span class="line">    Class classAttr() default Class.class;</span><br><span class="line"></span><br><span class="line">    Class[] classArray();</span><br><span class="line"></span><br><span class="line">    //enum类型</span><br><span class="line">    Week day() default Week.MONDAY;</span><br><span class="line"></span><br><span class="line">    //enum数组类型</span><br><span class="line">    Week[] week() default &#123;Week.MONDAY,Week.THURSDAY&#125;;</span><br><span class="line"></span><br><span class="line">    //注解嵌套</span><br><span class="line">    HelloAnnotation HelloAnnotation() default @HelloAnnotation(text = &quot;word&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>也就是说当用户自己没有指定相应属性值的时候，如果属性设置了默认值，那么该属性的值就是默认值。但是设置属性的默认值时有限制的。具体内容看下面的介绍。</p>
+<h6 id="注解默认值限制"><a href="#注解默认值限制" class="headerlink" title="注解默认值限制"></a>注解默认值限制</h6><p>虽然限制我们已经可以在注解定义我们想要的信息，但是在Java中，注解中的元素类型必须要么有默认值，要么在使用注解是提供元素的值。其次<code>对于非基本类型的元素</code>，无论是在源代码中声明时，或是在注解接口中定义默认值时，都<code>不能以null作为其值</code>。这个约束使得处理器很难发现一个元素的存在和缺失的状态，因为在每个注解的声明中，所有的元素都存在，并且都具有相应的值，为了绕开这个约束，我们只能定义一些特殊的值，<code>例如空字符串或负数，以此表示某个元素不存在</code>。也就说像这样的代码编译器是不会通过的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String stringAttr() default null;//错误！！！！</span><br><span class="line">String[] stringArray() default null;//错误！！！</span><br></pre></td></tr></table></figure>
+<h5 id="value属性"><a href="#value属性" class="headerlink" title="value属性"></a>value属性</h5><p>如果一个注解中有一个<code>名称为value</code>的属性，且你只想设置value属性(即其他属性都采用默认值或者你只有一个value属性)，那么可以省略掉<code>“value=”</code>部分。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//第一种情况，只有一个vaule属性，那么你在使用时候可以直接@WorldAnnotation(&quot;hello&quot;)</span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface WorldAnnotation &#123;</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//第二种情况，有多个属性但是其属性都有默认值，</span><br><span class="line">//你只使用value属性，那么你在使用时候可以直接@WorldAnnotation(&quot;hello&quot;)</span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface WorldAnnotation &#123;</span><br><span class="line">    int intAttr() default -1;</span><br><span class="line">    float floatAttr() default -1f;</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="注解与反射机制"><a href="#注解与反射机制" class="headerlink" title="注解与反射机制"></a>注解与反射机制</h3><p>在了解了注解的定义与属性的添加后，现在我们在来看看注解的实际运用情况。注解的使用需要与<code>Java的反射机制</code>结合使用。所以了解其中的了解两者之前的关系尤为重要。</p>
+<h4 id="注解与反射机制的关系"><a href="#注解与反射机制的关系" class="headerlink" title="注解与反射机制的关系"></a>注解与反射机制的关系</h4><p>众所周知，JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。那么从Java的整个类加载机制来看，过程是如下这样：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-3ba27f5378be074d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="java类加载图.png"></p>
+<p>对于Java类的加载主要分为以下步骤：</p>
+<ul>
+<li>将程序中的<code>*.java</code>文件通过javac命令编译成扩展名为<code>*.class</code>文件。其中<code>*.class</code>文件保存着Java代码转换后的虚拟机指令。</li>
+<li>当需要使用某个类时，JVM(Java 虚拟机)将会加载它的<code>*.class</code>文件，并创建对应的<code>Class对象</code>。其中Class对象中不仅有着类的声明定义，还有 Constructor(类的构造器定义)、Field(类的成员变量定义)、Method(类的方法定义)、Package(类的包定义)。</li>
+</ul>
+<h5 id="那注解到底和类的加载有什么关系呢？"><a href="#那注解到底和类的加载有什么关系呢？" class="headerlink" title="那注解到底和类的加载有什么关系呢？"></a>那注解到底和类的加载有什么关系呢？</h5><p>当我们声明了注解，且将注解的生命周期设置为<code>@Retention(RetentionPolicy.RUNTIME)</code>，那么在编译成class文件的时候，<code>会将注解添加到文件中去</code>，那么JVM根据class文件生成相应的<code>Class对象之后就会带有注解信息</code>。那么我们通过Class对象中的Constructor、Field、Method等类，就能获取其上声明的注解信息了。<code>那注解信息到底是以声明形式声明与表现的呢？</code></p>
+<p>这里我们还是以@HelloAnnotation 注解为例，当我们声明了注解后，通过<code>javap</code>命令获取编译后的的字节码信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.TYPE_USE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">    String value();</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">//通过javap -p HelloAnnotation.class</span><br><span class="line">public interface annotation.HelloAnnotation extends java.lang.annotation.Annotation &#123;</span><br><span class="line">  public abstract java.lang.String value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上图中，我们可以得知经过编译后，其实注解最终会<code>继承Annotation接口</code>。也就是说注解最终会以<code>java.lang.annotation.Annotation</code>对象的形式在Class对象中进行展示或存储。</p>
+<h5 id="注解的处理"><a href="#注解的处理" class="headerlink" title="注解的处理"></a>注解的处理</h5><p>为了方便处理接口信息以及实现面向对象的规则，其中<code>Constructor、Field、Method、Class、Package</code>类都实现了<code>AnnotatedElement</code>接口。具体关系如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-eee4879fa122ddc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整体继承关系图.png"></p>
+<p>也就是最终的注解注解处理全部都交给了<code>AnnotatedElement</code>接口来实现。那现在我们来看看该接口的方法声明。</p>
+<h5 id="AnnotatedElement中的方法声明"><a href="#AnnotatedElement中的方法声明" class="headerlink" title="AnnotatedElement中的方法声明"></a>AnnotatedElement中的方法声明</h5><p>在<code>AnnotatedElement</code>接口中为我们提供了以下几个方法来获取注解信息：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法名称</th>
+<th style="text-align:center">返回值</th>
+<th style="text-align:center">方法说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">getAnnotation(Class<t> annotationClass)</t></td>
+<td style="text-align:center"><code>&lt;T extends Annotation&gt;</code> T</td>
+<td style="text-align:center">返回元素上指定类型的注解，如果无，则返回为null</td>
+</tr>
+<tr>
+<td style="text-align:center">getAnnotations()</td>
+<td style="text-align:center">Annotation[ ]</td>
+<td style="text-align:center">返回元素上存在的所有注解，<code>包括从父类继承的</code></td>
+</tr>
+<tr>
+<td style="text-align:center">getAnnotationsByType(Class<t> annotationClass) <code>since 1.8</code></t></td>
+<td style="text-align:center"><code>&lt;T extends Annotation&gt;</code> T [ ]</td>
+<td style="text-align:center">返回元素上指定的类型的注解数组，<code>包括父类的注解</code>，如果无，返回长度为0的数组，该方法与getAnnotation(Class<t> annotationClass)的主要区别是，<code>该方法可以检查注解是不是重复的</code>。如果是这样，尝试通过“查看”容器注释来找到该类型的一个或多个注释。</t></td>
+</tr>
+<tr>
+<td style="text-align:center">getDeclaredAnnotation(Class<t> annotationClass)</t></td>
+<td style="text-align:center"><code>&lt;T extends Annotation&gt;</code> T</td>
+<td style="text-align:center">返回该元素上的指定类型的所有的注解，不包括父类的注解，如果无，返回长度为0的数组</td>
+</tr>
+<tr>
+<td style="text-align:center">getDeclaredAnnotationsByType(Class<t> annotationClass)  <code>since 1.8</code></t></td>
+<td style="text-align:center"><code>&lt;T extends Annotation&gt;</code> T [ ]</td>
+<td style="text-align:center">同getAnnotationsByType(Class<t> annotationClass)方法类似，只是获取的注解中<code>不包括父类的注解</code></t></td>
+</tr>
+<tr>
+<td style="text-align:center">getDeclaredAnnotations()</td>
+<td style="text-align:center">Annotation[ ]</td>
+<td style="text-align:center">返回该元素上的所有的注解，不包括父类的注解，如果无，返回长度为0的数组</td>
+</tr>
+</tbody>
+</table>
+<p>其中<code>getAnnotationsByType(Class&lt;T&gt; annotationClass)</code>与<code>getDeclaredAnnotationsByType(Class&lt;T&gt; annotationClass)</code>方法是<code>jdk 1.8</code>之后提供的接口<code>默认实现方法</code>。需要注意的是该两个方法是支持注解的<code>@Repeatable</code>，而其他方法是不支持的。那么在平时开发中，我们可以根据自己的项目需求选取不同的方法。</p>
+<h4 id="注解的实际使用"><a href="#注解的实际使用" class="headerlink" title="注解的实际使用"></a>注解的实际使用</h4><p>通过了解注解的声明以及与反射机制之间的关系后，现在我们来实战一下。简单的写个例子彻底巩固注解的相关知识吧。这里我们简单通过<code>什么人在什么地方做了什么事</code>为例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//什么人</span><br><span class="line">   @Target(ElementType.TYPE)</span><br><span class="line">   @Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">   @interface Who &#123;</span><br><span class="line">       String name();</span><br><span class="line">       int age();</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   //在哪里</span><br><span class="line">   @Target(ElementType.FIELD)</span><br><span class="line">   @Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">   @interface Where &#123;</span><br><span class="line">       String country();</span><br><span class="line">       String province();</span><br><span class="line">       String city();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">//做了什么事</span><br><span class="line">   @Target(ElementType.METHOD)</span><br><span class="line">   @Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">   @interface DoSomething &#123;</span><br><span class="line">       String value();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码中，我们声明了三个注解，如果你认真看了前面我们说的注解的定义和使用话的理解起来非常简单，这里我们需要注意的是三个注解中的 <code>@Retention</code>都是设置为<code>(RetentionPolicy.RUNTIME)</code>，之所以设置为运行时，是因为根据类的加载机制，Class对象的生成是在JVM读取class文件的时候，也就是运行期间。那下面我们接着看具体的使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">@Who(name = &quot;AndyJenifer&quot;, age = 18)</span><br><span class="line">class Person &#123;</span><br><span class="line"></span><br><span class="line">    @Where(country = &quot;中国&quot;, province = &quot;四川&quot;, city = &quot;成都&quot;)</span><br><span class="line">    private String where;</span><br><span class="line"></span><br><span class="line">    @DoSomething(&quot;写博客&quot;)</span><br><span class="line">    public void doSomething() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Class&lt;Person&gt; personClass = Person.class;</span><br><span class="line">        StringBuffer sb = new StringBuffer();</span><br><span class="line"></span><br><span class="line">        //获取类上的注解</span><br><span class="line">        Who who = personClass.getAnnotation(Who.class);</span><br><span class="line">        sb.append(who.name());</span><br><span class="line">        sb.append(who.age());</span><br><span class="line"></span><br><span class="line">        //获取字段上的注解</span><br><span class="line">        Field[] fields = personClass.getDeclaredFields();</span><br><span class="line">        for (Field field : fields) &#123;</span><br><span class="line">            Annotation[] annotations = field.getAnnotations();</span><br><span class="line">            if (annotations.length &gt; 0 &amp;&amp; annotations[0] instanceof Where) &#123;</span><br><span class="line">                Where where = (Where) annotations[0];</span><br><span class="line">                sb.append(where.country());</span><br><span class="line">                sb.append(where.province());</span><br><span class="line">                sb.append(where.city());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        //获取方法上的注解</span><br><span class="line">        Method[] methods = personClass.getMethods();</span><br><span class="line">        for (Method method : methods) &#123;</span><br><span class="line">            Annotation[] annotations = method.getAnnotations();</span><br><span class="line">            if (annotations.length &gt; 0 &amp;&amp; annotations[0] instanceof DoSomething) &#123;</span><br><span class="line">                DoSomething doSomething = (DoSomething) annotations[0];</span><br><span class="line">                sb.append(doSomething.value());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(sb.toString());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    //输出结果：AndyJenifer18中国四川成都写博客</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码理解起来还是比较容易，在Main方法中获取当前Person的Class对象，通过Class对象获取其中声明的字段与方法。得到相应的字段与方法后，再去拿上面声明的注解。然后组合信息并打印。细心的小伙伴肯定观察到了在获取相应字段的时候，我们调用的是<code>getDeclaredFields()</code>而不是方法<code>getFields()</code>(当然对于其他元素，如 Constructor、Field、Method、Package，都有类似的方法<code>getDeclaredXXXX()</code>与<code>getXXXX()</code>)。这里简单的说一下这两种方法的区别：</p>
+<ul>
+<li>getXXXX()：获得某个类的所有的公共（public）的元素（如Constructor、Field、Method、Package），包括父类声明的。 </li>
+<li>getDeclaredXXXX()：获得某个类的所有声明的元素（如Constructor、Field、Method、Package），即包括<code>public、private和proteced</code>，但是<code>不包括父类声明的</code>。</li>
+</ul>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>文章到这里，现在大家已经基本了解了注解的声明与使用。不知道小伙伴们有没有想过一个问题。如果我们声明了一个注解，然后希望该注解在项目的不同类中都会使用。那么当处理这些类的注解的时候，<code>我们是不是需要手动的找到所有的Class对象</code>？（不管你是通过类名也好，还是通过文件的方式来读取也好）。那这样是不是会很麻烦呢？在文章中我们也提到过，注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻编写<code>样板</code>代码的负担。<code>那么怎么通过注解生成新的类的定义呢?</code>，<code>又怎么生成样板代码呢？</code>。如果大家有兴趣，我们将在后续文章继续讲述并解决这些问题。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>该文章参考以下博客与图书，站在巨人的肩膀上。可以看得更远。</p>
+<p><a href="https://blog.csdn.net/javazejian/article/details/71860633" target="_blank" rel="noopener">深入理解Java注解类型(@Annotation)</a><br>《Think in java 》</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/注解/" rel="tag"># 注解</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/Android-注解系列之APT工具(三)/" rel="next" title="Android 注解系列之APT工具(三)">
+                <i class="fa fa-chevron-left"></i> Android 注解系列之APT工具(三)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/Android-Handler机制之总目录/" rel="prev" title="Android Handler机制之总目录">
+                Android Handler机制之总目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#注解基本概念"><span class="nav-number">1.</span> <span class="nav-text">注解基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解的声明"><span class="nav-number">2.</span> <span class="nav-text">注解的声明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#元注解"><span class="nav-number">2.1.</span> <span class="nav-text">元注解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Target元注解"><span class="nav-number">2.1.1.</span> <span class="nav-text">@Target元注解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#新增的TYPE-PARAMETER与TYPE-USE"><span class="nav-number">2.1.2.</span> <span class="nav-text">新增的TYPE_PARAMETER与TYPE_USE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Retention元注解"><span class="nav-number">2.1.3.</span> <span class="nav-text">@Retention元注解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Documented元注解"><span class="nav-number">2.1.4.</span> <span class="nav-text">@Documented元注解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Inherited元注解"><span class="nav-number">2.1.5.</span> <span class="nav-text">@Inherited元注解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Repeatable元注解-JDK-1-8之后新加入的"><span class="nav-number">2.1.6.</span> <span class="nav-text">@Repeatable元注解(JDK 1.8之后新加入的)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#JDK1-8之前"><span class="nav-number">2.1.6.1.</span> <span class="nav-text">JDK1.8之前</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#JDK1-8之后"><span class="nav-number">2.1.6.2.</span> <span class="nav-text">JDK1.8之后</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Repeatable元注解使用注意事项"><span class="nav-number">2.1.6.3.</span> <span class="nav-text">@Repeatable元注解使用注意事项</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解的使用与支持属性类型"><span class="nav-number">3.</span> <span class="nav-text">注解的使用与支持属性类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注解支持属性类型"><span class="nav-number">3.1.</span> <span class="nav-text">注解支持属性类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注解添加属性"><span class="nav-number">3.2.</span> <span class="nav-text">注解添加属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#为属性指定缺省值（默认值）"><span class="nav-number">3.2.1.</span> <span class="nav-text">为属性指定缺省值（默认值）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#注解默认值限制"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">注解默认值限制</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#value属性"><span class="nav-number">3.2.2.</span> <span class="nav-text">value属性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解与反射机制"><span class="nav-number">4.</span> <span class="nav-text">注解与反射机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注解与反射机制的关系"><span class="nav-number">4.1.</span> <span class="nav-text">注解与反射机制的关系</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#那注解到底和类的加载有什么关系呢？"><span class="nav-number">4.1.1.</span> <span class="nav-text">那注解到底和类的加载有什么关系呢？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#注解的处理"><span class="nav-number">4.1.2.</span> <span class="nav-text">注解的处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AnnotatedElement中的方法声明"><span class="nav-number">4.1.3.</span> <span class="nav-text">AnnotatedElement中的方法声明</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注解的实际使用"><span class="nav-number">4.2.</span> <span class="nav-text">注解的实际使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考"><span class="nav-number">5.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

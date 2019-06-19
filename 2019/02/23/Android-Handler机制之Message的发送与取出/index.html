@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读Android Handler机制之ThreadLocal与Android Handler机制之Handler 、Messa">
+<meta name="keywords" content="异步任务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Handler机制之Message的发送与取出”">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/Android-Handler机制之Message的发送与取出/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读Android Handler机制之ThreadLocal与Android Handler机制之Handler 、Messa">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-b3c798765233c278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-f6048cc7d22e098c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-09c5226cc93a80c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-aebe13831a25a08e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-15c235ff4f8d9a97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-8fae432825308828.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-be14464451c370f9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.858Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Handler机制之Message的发送与取出”">
+<meta name="twitter:description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读Android Handler机制之ThreadLocal与Android Handler机制之Handler 、Messa">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-b3c798765233c278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/Android-Handler机制之Message的发送与取出/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Handler机制之Message的发送与取出” | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/Android-Handler机制之Message的发送与取出/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Handler机制之Message的发送与取出”
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 22:07:13" itemprop="dateCreated datePublished" datetime="2019-02-23T22:07:13+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Handler相关/" itemprop="url" rel="index"><span itemprop="name">Handler相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>该文章属于Android Handler系列文章，如果想了解更多，请点击<a href="/2019/02/23/Android-Handler机制之总目录/" title="Android Handler机制之总目录">Android Handler机制之总目录</a></p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读<a href="/2019/02/23/Android-Handler机制之ThreadLocal/" title="Android Handler机制之ThreadLocal">Android Handler机制之ThreadLocal</a>与<a href="/2019/02/23/Android-Handler机制之Handler-、MessageQueue-、Looper/" title="Android Handler机制之Handler 、MessageQueue 、Looper">Android Handler机制之Handler 、MessageQueue 、Looper</a>。该篇文章主要着重讲解Message的发送与取出的具体逻辑细节。在此之前，我们先回顾一下Handler发送消息的具体流程。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-b3c798765233c278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="HandlerLooperMessage关系.png"></p>
+<h3 id="消息的发送"><a href="#消息的发送" class="headerlink" title="消息的发送"></a>消息的发送</h3><p>我们都知道当调用Handler发送消息的时候，不管是调用sendMessage,sendEmptyMessage,sendMessageDelayed还是其他发送一系列方法。最终都会调用<strong>sendMessageDelayed(Message msg, long delayMillis)</strong>方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public final boolean sendMessageDelayed(Message msg, long delayMillis)</span><br><span class="line">  &#123;</span><br><span class="line">      if (delayMillis &lt; 0) &#123;</span><br><span class="line">          delayMillis = 0;</span><br><span class="line">      &#125;</span><br><span class="line">      return sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>该方法会调用sendMessageAtTime()方法。其中第二个参数是执行消息的时间，是通过从开机到现在的毫秒数（手机睡眠的时间不包括在内）+ 延迟执行的时间。这里不使用System.currentTimeMillis() ，是因为该时间是可以修改的。会导致延迟消息等待时间不准确。该方法内部会调用sendMessageAtTime()方法，我们接着往下走。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public boolean sendMessageAtTime(Message msg, long uptimeMillis) &#123;</span><br><span class="line">     MessageQueue queue = mQueue;</span><br><span class="line">     if (queue == null) &#123;</span><br><span class="line">         RuntimeException e = new RuntimeException(</span><br><span class="line">                 this + &quot; sendMessageAtTime() called with no mQueue&quot;);</span><br><span class="line">         Log.w(&quot;Looper&quot;, e.getMessage(), e);</span><br><span class="line">         return false;</span><br><span class="line">     &#125;</span><br><span class="line">     return enqueueMessage(queue, msg, uptimeMillis);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>这里获取到线程中的MessageQueue对象mQueue（在构造函数通过Looper获得的），并调用enqueueMessage()方法，enqueueMessage()方法最终内部会调用MessageQueue的enqueueMessage()方法,那现在我们就直接看MessageQueue中把消息加入消息队列中的方法。</p>
+<h3 id="消息的加入"><a href="#消息的加入" class="headerlink" title="消息的加入"></a>消息的加入</h3><p>当通过handler调用一系列方法如sendMessage()、sendMessageDelayed()方法时，最终会调用MessageQueue的enqueueMessage()方法。现在我们就来看看，消息是怎么加入MessageQueue(消息队列)中去的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">boolean enqueueMessage(Message msg, long when) &#123;</span><br><span class="line">        if (msg.target == null) &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;Message must have a target.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        if (msg.isInUse()) &#123;</span><br><span class="line">            throw new IllegalStateException(msg + &quot; This message is already in use.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">	        //如果当前消息循环已经结束，直接退出</span><br><span class="line">            if (mQuitting) &#123;</span><br><span class="line">                IllegalStateException e = new IllegalStateException(</span><br><span class="line">                        msg.target + &quot; sending message to a Handler on a dead thread&quot;);</span><br><span class="line">                Log.w(TAG, e.getMessage(), e);</span><br><span class="line">                msg.recycle();</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            msg.markInUse();</span><br><span class="line">            msg.when = when;</span><br><span class="line">            Message p = mMessages;//头部消息</span><br><span class="line">            boolean needWake;</span><br><span class="line">            //如果队列中没有消息，或者当前进入的消息比消息队列中的消息等待时间短，那么就放在消息队列的头部</span><br><span class="line">            if (p == null || when == 0 || when &lt; p.when) &#123;</span><br><span class="line">                // New head, wake up the event queue if blocked.</span><br><span class="line">                msg.next = p;</span><br><span class="line">                mMessages = msg;</span><br><span class="line">                needWake = mBlocked;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">	            //判断唤醒条件，当前当前消息队列头部消息是屏障消息，且当前插入的消息为异步消息</span><br><span class="line">	            //且当前消息队列处于无消息可处理的状态</span><br><span class="line">                needWake = mBlocked &amp;&amp; p.target == null &amp;&amp; msg.isAsynchronous();</span><br><span class="line">                Message prev;</span><br><span class="line">                //循环遍历消息队列，把当前进入的消息放入合适的位置（比较等待时间）</span><br><span class="line">                for (;;) &#123;</span><br><span class="line">                    prev = p;</span><br><span class="line">                    p = p.next;</span><br><span class="line">                    if (p == null || when &lt; p.when) &#123;</span><br><span class="line">                        break;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (needWake &amp;&amp; p.isAsynchronous()) &#123;</span><br><span class="line">                        needWake = false;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                //将消息插入合适的位置</span><br><span class="line">                msg.next = p; </span><br><span class="line">                prev.next = msg;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">			//调用nativeWake，以触发nativePollOnce函数结束等待</span><br><span class="line">            if (needWake) &#123;</span><br><span class="line">                nativeWake(mPtr);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>这里大家肯定注意到了nativeWake()方法，这里先不对该方法进行详细的描述，下文会对其解释及介绍。</strong><br>其实通过代码大家就应该发现了，在将消息加入到消息队列中时，已经将消息按照等待时间进行了排序。排序分为两种情况（<strong>这里图中的message.when是与当前的系统的时间差</strong>）：</p>
+<ul>
+<li><p>第一种：如果队列中没有消息，或者当前进入的消息比消息队列中头部的消息等待时间短，那么就放在消息队列的头部</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-f6048cc7d22e098c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="第一种情况.png"></p>
+</li>
+</ul>
+<ul>
+<li>第二种：反之，循环遍历消息队列，把当前进入的消息放入合适的位置（比较等待时间）<br><img src="https://upload-images.jianshu.io/upload_images/2824145-09c5226cc93a80c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="第二种情况.png"></li>
+</ul>
+<p>综上，我们了解了在我们使用Handler发送消息时，当消息进入到MessageQueue(消息队列)中时，已经按照等待时间进行了排序，且其头部对应的消息是Loop即将取出的消息。</p>
+<h4 id="获取消息"><a href="#获取消息" class="headerlink" title="获取消息"></a>获取消息</h4><p>我们都知道消息的取出，是通过Loooper.loop()方法，其中loop()方法内部会调用MessageQueue中的next()方法。那下面我们就直接来看next()方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line">Message next() &#123;</span><br><span class="line">    </span><br><span class="line">    //如果退出消息消息循环，那么就直接退出</span><br><span class="line">       final long ptr = mPtr;</span><br><span class="line">       if (ptr == 0) &#123;</span><br><span class="line">           return null;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       int pendingIdleHandlerCount = -1; // -1 only during first iteration</span><br><span class="line">       int nextPollTimeoutMillis = 0;</span><br><span class="line">       for (;;) &#123;</span><br><span class="line">           if (nextPollTimeoutMillis != 0) &#123;</span><br><span class="line">               Binder.flushPendingCommands();</span><br><span class="line">           &#125;</span><br><span class="line">		</span><br><span class="line">		//执行native层消息机制层,</span><br><span class="line">		//timeOutMillis参数为超时等待时间。如果为-1，则表示无限等待，直到有事件发生为止。</span><br><span class="line">		//如果值为0，则无需等待立即返回。该方法可能会阻塞</span><br><span class="line">           nativePollOnce(ptr, nextPollTimeoutMillis);</span><br><span class="line"></span><br><span class="line">           synchronized (this) &#123;</span><br><span class="line">               //获取系统开机到现在的时间，如果使用System.currentMillis()会有误差，</span><br><span class="line">               final long now = SystemClock.uptimeMillis();</span><br><span class="line">               Message prevMsg = null;</span><br><span class="line">               Message msg = mMessages;//头部消息</span><br><span class="line">            </span><br><span class="line">               //判断是否是栅栏，同时获取消息队列最近的异步消息</span><br><span class="line">               if (msg != null &amp;&amp; msg.target == null) &#123;</span><br><span class="line">                   do &#123;</span><br><span class="line">                       prevMsg = msg;</span><br><span class="line">                       msg = msg.next;</span><br><span class="line">                   &#125; while (msg != null &amp;&amp; !msg.isAsynchronous());</span><br><span class="line">               &#125;</span><br><span class="line">               //获取消息，判断等待时间，如果还需要等待则等待相应时间后唤醒</span><br><span class="line">               if (msg != null) &#123;</span><br><span class="line">                   if (now &lt; msg.when) &#123;//判断当前消息时间，是不是比当前时间大，计算时间差</span><br><span class="line">                       // Next message is not ready.  Set a timeout to wake up when it is ready.</span><br><span class="line">                       nextPollTimeoutMillis = (int) Math.min(msg.when - now, Integer.MAX_VALUE);</span><br><span class="line">                   &#125; else &#123;</span><br><span class="line">                       // 不需要等待时间或者等待时间已经到了，那么直接返回该消息</span><br><span class="line">                       mBlocked = false;</span><br><span class="line">                       if (prevMsg != null) &#123;</span><br><span class="line">                           prevMsg.next = msg.next;</span><br><span class="line">                       &#125; else &#123;</span><br><span class="line">                           mMessages = msg.next;</span><br><span class="line">                       &#125;</span><br><span class="line">                       msg.next = null;</span><br><span class="line">                       if (DEBUG) Log.v(TAG, &quot;Returning message: &quot; + msg);</span><br><span class="line">                       msg.markInUse();</span><br><span class="line">                       return msg;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125; else &#123;</span><br><span class="line">                   //没有更多的消息了</span><br><span class="line">                   nextPollTimeoutMillis = -1;</span><br><span class="line">               &#125;</span><br><span class="line"></span><br><span class="line">               // Process the quit message now that all pending messages have been handled.</span><br><span class="line">               //判断是否已经退出了</span><br><span class="line">               if (mQuitting) &#123;</span><br><span class="line">                   dispose();</span><br><span class="line">                   return null;</span><br><span class="line">               &#125;</span><br><span class="line"></span><br><span class="line">               // If first time idle, then get the number of idlers to run.</span><br><span class="line">               // Idle handles only run if the queue is empty or if the first message</span><br><span class="line">               // in the queue (possibly a barrier) is due to be handled in the future.</span><br><span class="line">               //获取空闲时处理任务的handler 用于发现线程何时阻塞等待更多消息的回调接口。</span><br><span class="line">               if (pendingIdleHandlerCount &lt; 0</span><br><span class="line">                       &amp;&amp; (mMessages == null || now &lt; mMessages.when)) &#123;</span><br><span class="line">                   pendingIdleHandlerCount = mIdleHandlers.size();</span><br><span class="line">               &#125;</span><br><span class="line">               //如果空闲时处理任务的handler个数为0，继续让线程阻塞</span><br><span class="line">               if (pendingIdleHandlerCount &lt;= 0) &#123;</span><br><span class="line">                   // No idle handlers to run.  Loop and wait some more.</span><br><span class="line">                   mBlocked = true;</span><br><span class="line">                   continue;</span><br><span class="line">               &#125;</span><br><span class="line">			//判断当前空闲时处理任务的handler是否是为空</span><br><span class="line">               if (mPendingIdleHandlers == null) &#123;</span><br><span class="line">                   mPendingIdleHandlers = new IdleHandler[Math.max(pendingIdleHandlerCount, 4)];</span><br><span class="line">               &#125;</span><br><span class="line">               mPendingIdleHandlers = mIdleHandlers.toArray(mPendingIdleHandlers);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           //只有第一次迭代的时候，才会执行下面代码</span><br><span class="line">           for (int i = 0; i &lt; pendingIdleHandlerCount; i++) &#123;</span><br><span class="line">               final IdleHandler idler = mPendingIdleHandlers[i];</span><br><span class="line">               mPendingIdleHandlers[i] = null; // release the reference to the handler</span><br><span class="line"></span><br><span class="line">               boolean keep = false;</span><br><span class="line">               try &#123;</span><br><span class="line">                   keep = idler.queueIdle();</span><br><span class="line">               &#125; catch (Throwable t) &#123;</span><br><span class="line">                   Log.wtf(TAG, &quot;IdleHandler threw exception&quot;, t);</span><br><span class="line">               &#125;</span><br><span class="line">			//如果不保存空闲任务，执行完成后直接删除</span><br><span class="line">               if (!keep) &#123;</span><br><span class="line">                   synchronized (this) &#123;</span><br><span class="line">                       mIdleHandlers.remove(idler);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           // 重置空闲的handler个数，因为不需要重复执行</span><br><span class="line">           pendingIdleHandlerCount = 0;</span><br><span class="line">		</span><br><span class="line">		//当执行完空闲的handler的时候，新的native消息可能会进入，所以唤醒Native消息机制层</span><br><span class="line">           nextPollTimeoutMillis = 0;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这里大家直接看MessageQueue的next()法肯定会很懵逼。妈的，这个nativePollOnce()方法是什么鬼，为毛它会阻塞呢？这个msg.isAsynchronous()判断又是怎么回事？妈的这个逻辑有点乱理解不了啊。大家不要慌，让我们带着这几个问题来慢慢分析。</p>
+<h3 id="Native消息机制"><a href="#Native消息机制" class="headerlink" title="Native消息机制"></a>Native消息机制</h3><p>其实在Android 消息处理机制中，不仅包括了Java层的消息机制处理，还包括了Native消息处理机制(与我们知道的Handler机制一样，也拥有Handler、Looper、MessageQueue)。这里我们不讲Native消息机制的具体代码细节，如果有兴趣的小伙伴，请查看—–&gt;<a href="https://blog.csdn.net/innost/article/details/47252865" target="_blank" rel="noopener">深入理解Java Binder和MessageQueue</a></p>
+<p>这里我们用一张图来表示Native消息与Jave层消息的关系（这里为大家提供了<a href="https://pan.baidu.com/s/1hAcAxFylMU0Aspg2dP9dBA" target="_blank" rel="noopener">Android源码</a>，大家可以按需下载），具体细节如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-aebe13831a25a08e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Native消息机制.png"> (这里我用的别人的图，如有侵权，请联系我，马上删除)。</p>
+<p>其实我们也可以从Java层中的MessageQueue中几个方法就可以看出来。其中声明了几个本地的方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private native static long nativeInit();</span><br><span class="line">private native static void nativeDestroy(long ptr);</span><br><span class="line">private native void nativePollOnce(long ptr, int timeoutMillis);</span><br><span class="line">private native static void nativeWake(long ptr);</span><br><span class="line">private native static boolean nativeIsPolling(long ptr);</span><br><span class="line">private native static void nativeSetFileDescriptorEvents(long ptr, int fd, int events);</span><br></pre></td></tr></table></figure>
+<p>特别是在MessageQueue构造方法中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MessageQueue(boolean quitAllowed) &#123;</span><br><span class="line">    mQuitAllowed = quitAllowed;</span><br><span class="line">    mPtr = nativeInit();//mPtr 其实是Native消息机制中MessageQueue的地址。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Java层中MessageQueue在初始化的时候，会调用本地方法去创建Native MessageQueue。并通过mPrt保存了Native中的MessageQueue的地址。</p>
+<h4 id="Native消息机制与Java层的消息机制有什么关系"><a href="#Native消息机制与Java层的消息机制有什么关系" class="headerlink" title="Native消息机制与Java层的消息机制有什么关系"></a>Native消息机制与Java层的消息机制有什么关系</h4><p>想知道有什么关系，我们需要查看frameworks\base\core\jni\android_os_MessageQueue.cpp文件，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">static jlong android_os_MessageQueue_nativeInit(JNIEnv* env, jclass clazz) &#123;</span><br><span class="line">    NativeMessageQueue* nativeMessageQueue = new NativeMessageQueue();</span><br><span class="line">    if (!nativeMessageQueue) &#123;</span><br><span class="line">        jniThrowRuntimeException(env, &quot;Unable to allocate native queue&quot;);</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    nativeMessageQueue-&gt;incStrong(env);</span><br><span class="line">    return reinterpret_cast&lt;jlong&gt;(nativeMessageQueue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其实nativeInit()方法很简单，初始化NativeMessageQueue对象然后返回其地址。现在我们继续查看NativeMessageQueue的构造函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">NativeMessageQueue::NativeMessageQueue() :</span><br><span class="line">        mPollEnv(NULL), mPollObj(NULL), mExceptionObj(NULL) &#123;</span><br><span class="line">    mLooper = Looper::getForThread();</span><br><span class="line">    if (mLooper == NULL) &#123;</span><br><span class="line">        mLooper = new Looper(false);</span><br><span class="line">        Looper::setForThread(mLooper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>哇，我们看见了我们熟悉的”<strong>Looper</strong>“,这段代码其实很好理解。Native Looper调用静态方法getForThread()，获取当前线程中的Looper对象。如果为空，则创建Native Looper对象。这里大家肯定会有个疑问。当前线程是指什么线程呢？想知道到底绑定是什么线程，我们需要进入Native Looper中查看setForThread()与getForThread()两个方法。</p>
+<h4 id="getForThread-从线程中获取设置的变量"><a href="#getForThread-从线程中获取设置的变量" class="headerlink" title="getForThread()从线程中获取设置的变量"></a>getForThread()从线程中获取设置的变量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Returns the looper associated with the calling thread, or NULL if</span><br><span class="line"> * there is not one.</span><br><span class="line"> */</span><br><span class="line">sp&lt;Looper&gt; Looper::getForThread() &#123;</span><br><span class="line">    int result = pthread_once(&amp; gTLSOnce, initTLSKey);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result != 0, &quot;pthread_once failed&quot;);</span><br><span class="line">    return (Looper*)pthread_getspecific(gTLSKey);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里pthread_getspecific()机制类似于Java层的ThreadLocal中的get()方法,是从线程中获取key值对应的数据。其中通过我们可以通过注释就能明白,Native Looper是存储在本地线程中的，而对应的线程，就是调用它的线程，而我们是在主线程中调用的。故Native Looper与主线程产生了关联。那么相应的setForThread()也是对主线程进行操作的了。接着看setForThread()方法。</p>
+<h4 id="setForThread-从线程中设置变量"><a href="#setForThread-从线程中设置变量" class="headerlink" title="setForThread()从线程中设置变量"></a>setForThread()从线程中设置变量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">  * Sets the given looper to be associated with the calling thread.</span><br><span class="line">  * If another looper is already associated with the thread, it is replaced. *</span><br><span class="line">  * If &quot;looper&quot; is NULL, removes the currently associated looper.</span><br><span class="line">  */ </span><br><span class="line">void Looper::setForThread(const sp&lt;Looper&gt;&amp; looper) &#123;</span><br><span class="line">    sp&lt;Looper&gt; old = getForThread(); // also has side-effect of initializing TLS</span><br><span class="line">    if (looper != NULL) &#123;</span><br><span class="line">        looper-&gt;incStrong((void*)threadDestructor);</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_setspecific(gTLSKey, looper.get());</span><br><span class="line">    if (old != NULL) &#123;</span><br><span class="line">        old-&gt;decStrong((void*)threadDestructor);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里pthread_setspecific()机制类似于Java层的ThreadLocal中的set()方法。通过注释我们明白将Native looper放入调用线程，如果已经存在，就替换。如果为空就删除。</p>
+<h4 id="nativePollOnce-方法为什么会导致主线程阻塞？"><a href="#nativePollOnce-方法为什么会导致主线程阻塞？" class="headerlink" title="nativePollOnce()方法为什么会导致主线程阻塞？"></a>nativePollOnce()方法为什么会导致主线程阻塞？</h4><p>经过上文的讨论与分析，大家现在已经知道了，在Android消息机制中不仅有 Java层的消息机制，还有Native的消息机制。既然要出里Native的消息机制。那么肯定有一个处理消息的方法。那么调用本地消息机制消息的方法必然就是nativePollOnce()方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static void android_os_MessageQueue_nativePollOnce(JNIEnv* env, jobject obj,</span><br><span class="line">        jlong ptr, jint timeoutMillis) &#123;</span><br><span class="line">    NativeMessageQueue* nativeMessageQueue = reinterpret_cast&lt;NativeMessageQueue*&gt;(ptr);</span><br><span class="line">    nativeMessageQueue-&gt;pollOnce(env, obj, timeoutMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在nativePollOnce()方法中调用nativeMessageQueue的pollOnce()方法，我们接着走。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void NativeMessageQueue::pollOnce(JNIEnv* env, jobject pollObj, int timeoutMillis) &#123;</span><br><span class="line">    mPollEnv = env;</span><br><span class="line">    mPollObj = pollObj;</span><br><span class="line">    mLooper-&gt;pollOnce(timeoutMillis);</span><br><span class="line">    mPollObj = NULL;</span><br><span class="line">    mPollEnv = NULL;</span><br><span class="line"></span><br><span class="line">    if (mExceptionObj) &#123;</span><br><span class="line">        env-&gt;Throw(mExceptionObj);</span><br><span class="line">        env-&gt;DeleteLocalRef(mExceptionObj);</span><br><span class="line">        mExceptionObj = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们发现pollOnce(timeoutMillis)内部调用的是Natave looper中的 pollOnce(int timeoutMillis, int<em> outFd, int</em> outEvents, void** outData)方法。继续看。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">int Looper::pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData) &#123;</span><br><span class="line">    int result = 0;</span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        while (mResponseIndex &lt; mResponses.size()) &#123;</span><br><span class="line">            const Response&amp; response = mResponses.itemAt(mResponseIndex++);</span><br><span class="line">            int ident = response.request.ident;</span><br><span class="line">            if (ident &gt;= 0) &#123;</span><br><span class="line">                int fd = response.request.fd;</span><br><span class="line">                int events = response.events;</span><br><span class="line">                void* data = response.request.data;</span><br><span class="line">#if DEBUG_POLL_AND_WAKE</span><br><span class="line">                ALOGD(&quot;%p ~ pollOnce - returning signalled identifier %d: &quot;</span><br><span class="line">                        &quot;fd=%d, events=0x%x, data=%p&quot;,</span><br><span class="line">                        this, ident, fd, events, data);</span><br><span class="line">#endif</span><br><span class="line">                if (outFd != NULL) *outFd = fd;</span><br><span class="line">                if (outEvents != NULL) *outEvents = events;</span><br><span class="line">                if (outData != NULL) *outData = data;</span><br><span class="line">                return ident;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (result != 0) &#123;</span><br><span class="line">#if DEBUG_POLL_AND_WAKE</span><br><span class="line">            ALOGD(&quot;%p ~ pollOnce - returning result %d&quot;, this, result);</span><br><span class="line">#endif</span><br><span class="line">            if (outFd != NULL) *outFd = 0;</span><br><span class="line">            if (outEvents != NULL) *outEvents = 0;</span><br><span class="line">            if (outData != NULL) *outData = NULL;</span><br><span class="line">            return result;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        result = pollInner(timeoutMillis);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由于篇幅的限制，这里就简单介绍一哈pollOnce()方法。<strong>该方法会一直等待Native消息，其中 timeOutMillis参数为超时等待时间。如果为-1，则表示无限等待，直到有事件发生为止。如果值为0，则无需等待立即返回。</strong> 那么既然nativePollOnce()方法有可能阻塞，那么根据上文我们讨论的MessageQueue中的enqueueMessage中的nativeWake()方法。大家就应该了然了。nativeWake()方法就是唤醒Native消息机制不再等待消息而直接返回。</p>
+<h4 id="nativePollOnce-一直循环为毛不造成主线程的卡死？"><a href="#nativePollOnce-一直循环为毛不造成主线程的卡死？" class="headerlink" title="nativePollOnce()一直循环为毛不造成主线程的卡死？"></a>nativePollOnce()一直循环为毛不造成主线程的卡死？</h4><blockquote>
+<p>到了这里，其实大家都会有个疑问，如果当前主线程的MessageQueue没有消息时，程序就会便阻塞在loop的queue.next()中的nativePollOnce()方法里，一直循环那么主线程为什么不卡死呢？这里就涉及到Linux pipe/epoll机制，此时主线程会释放CPU资源进入休眠状态，直到下个消息到达或者有事务发生，通过往pipe管道写端写入数据来唤醒主线程工作。这里采用的epoll机制，是一种IO多路复用机制，可以同时监控多个描述符，当某个描述符就绪(读或写就绪)，则立刻通知相应程序进行读或写操作，本质同步I/O，即读写是阻塞的。 所以说，主线程大多数时候都是处于休眠状态，并不会消耗大量CPU资源。–摘自<a href="https://www.zhihu.com/question/34652589/answer/90344494" target="_blank" rel="noopener">Gityuan知乎回答</a></p>
+</blockquote>
+<p>如果大家想消息了解Native 消息机制的处理机制，请查看—–&gt;<a href="https://blog.csdn.net/innost/article/details/47252865" target="_blank" rel="noopener">深入理解Java Binder和MessageQueue</a></p>
+<p>###屏障消息与异步消息</p>
+<h4 id="屏障消息"><a href="#屏障消息" class="headerlink" title="屏障消息"></a>屏障消息</h4><p>在next()方法中，有一个屏障的概念(message.target ==null为屏障消息)，如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if (msg != null &amp;&amp; msg.target == null) &#123;</span><br><span class="line">                  // Stalled by a barrier.  Find the next asynchronous message in the queue.</span><br><span class="line">                  do &#123;</span><br><span class="line">                      prevMsg = msg;</span><br><span class="line">                      msg = msg.next;</span><br><span class="line">                  &#125; while (msg != null &amp;&amp; !msg.isAsynchronous());</span><br><span class="line">              &#125;</span><br></pre></td></tr></table></figure>
+<p>其实通过代码，当出现屏障的时候，会滤过同步消息，而是直接获取其中的异步消息并返回。如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-15c235ff4f8d9a97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏障与异步消息.png"></p>
+<p><strong>在Hadnler无参的构造函数中，默认设置的消息都是同步的。</strong>那我们就可以知道在Android中消息分为了两种，一种是同步消息，另一种是异步消息。在官方的解释中，异步消息通常代表着中断，输入事件和其他信号，这些信号必须独立处理，即使其他工作已经暂停。</p>
+<h4 id="异步消息"><a href="#异步消息" class="headerlink" title="异步消息"></a>异步消息</h4><p>要设置异步消息，直接调用Message的setAsynchronous()方法，方法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Sets whether the message is asynchronous, meaning that it is not</span><br><span class="line"> * subject to &#123;@link Looper&#125; synchronization barriers.</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * Certain operations, such as view invalidation, may introduce synchronization</span><br><span class="line"> * barriers into the &#123;@link Looper&#125;&apos;s message queue to prevent subsequent messages</span><br><span class="line"> * from being delivered until some condition is met.  In the case of view invalidation,</span><br><span class="line"> * messages which are posted after a call to &#123;@link android.view.View#invalidate&#125;</span><br><span class="line"> * are suspended by means of a synchronization barrier until the next frame is</span><br><span class="line"> * ready to be drawn.  The synchronization barrier ensures that the invalidation</span><br><span class="line"> * request is completely handled before resuming.</span><br><span class="line"> * &lt;/p&gt;&lt;p&gt;</span><br><span class="line"> * Asynchronous messages are exempt from synchronization barriers.  They typically</span><br><span class="line"> * represent interrupts, input events, and other signals that must be handled independently</span><br><span class="line"> * even while other work has been suspended.</span><br><span class="line"> * &lt;/p&gt;&lt;p&gt;</span><br><span class="line"> * Note that asynchronous messages may be delivered out of order with respect to</span><br><span class="line"> * synchronous messages although they are always delivered in order among themselves.</span><br><span class="line"> * If the relative order of these messages matters then they probably should not be</span><br><span class="line"> * asynchronous in the first place.  Use with caution.</span><br><span class="line"> * &lt;/p&gt;</span><br><span class="line"> *</span><br><span class="line"> * @param async True if the message is asynchronous.</span><br><span class="line"> *</span><br><span class="line"> * @see #isAsynchronous()</span><br><span class="line"> */</span><br><span class="line">public void setAsynchronous(boolean async) &#123;</span><br><span class="line">    if (async) &#123;</span><br><span class="line">        flags |= FLAG_ASYNCHRONOUS;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        flags &amp;= ~FLAG_ASYNCHRONOUS;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>大家可以看到，设置异步消息，官方文档对其有详细的说明，侧面体现出了异步消息的重要性，那下面我就带着大家一起来理一理官方的注释说明。</p>
+<ul>
+<li>如果设置了异步消息，异步消息将不会受到屏障的影响（从next()方法中，我们已经了解了，当出现屏障的时候，同步消息会直接被过滤。直接返回最近的异步消息）</li>
+<li>在某些操作中，例如视图进行invalidation(视图失效，进行重绘)，会引入屏障消息（也就是将message.target ==null的消息放入消息队列中），已防止后续的同步消息被执行。同时同步消息的执行会等到视图重绘完成后才会执行。</li>
+</ul>
+<h4 id="有哪些操作是异步消息呢？"><a href="#有哪些操作是异步消息呢？" class="headerlink" title="有哪些操作是异步消息呢？"></a>有哪些操作是异步消息呢？</h4><p>这里我就直接通过ActivityThread中的几个异步消息给大家做一些简单介绍。这里我就不用代码展示了，用图片来表示更清晰明了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-8fae432825308828.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ActivityThread中的异步消息.png"><br>在ActivityThread中，有一个sendMessage()多个参数方法。我们明显的看出，有四个消息是设置为异步消息的。DUMP_SERVICE、DUMP_HEAP、DUMP_ACTIVITY、DUMP_PROVIDER。从字面意思就可以看出来。回收service、回收堆内存、回收Activity、回收Provider都属于异步消息。</p>
+<h4 id="屏障消息发送的时机"><a href="#屏障消息发送的时机" class="headerlink" title="屏障消息发送的时机"></a>屏障消息发送的时机</h4><p>那么Android中在哪些情况下会发生屏障消息呢？其实最为常见的就是在我们界面进行绘制的时候，如在ViewRootImpl.scheduleTraversals（）中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">void scheduleTraversals() &#123;</span><br><span class="line">       if (!mTraversalScheduled) &#123;</span><br><span class="line">           mTraversalScheduled = true;</span><br><span class="line">           //发送屏障消息</span><br><span class="line">           mTraversalBarrier = mHandler.getLooper().getQueue().postSyncBarrier();</span><br><span class="line">           mChoreographer.postCallback(</span><br><span class="line">                   Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);</span><br><span class="line">           if (!mUnbufferedInputDispatch) &#123;</span><br><span class="line">               scheduleConsumeBatchedInput();</span><br><span class="line">           &#125;</span><br><span class="line">           notifyRendererOfFramePending();</span><br><span class="line">           pokeDrawLockIfNeeded();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在调用scheduleTraversals()方法时，我们发现会发生一个屏障过去。具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">private int postSyncBarrier(long when) &#123;</span><br><span class="line">      </span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">	        //记录屏障消息的个数</span><br><span class="line">            final int token = mNextBarrierToken++;</span><br><span class="line">            final Message msg = Message.obtain();</span><br><span class="line">            msg.markInUse();</span><br><span class="line">            msg.when = when;</span><br><span class="line">            msg.arg1 = token;</span><br><span class="line">			</span><br><span class="line">			//按照消息队列的等待时间，将屏障按照顺序插入</span><br><span class="line">            Message prev = null;</span><br><span class="line">            Message p = mMessages;</span><br><span class="line">            if (when != 0) &#123;</span><br><span class="line">                while (p != null &amp;&amp; p.when &lt;= when) &#123;</span><br><span class="line">                    prev = p;</span><br><span class="line">                    p = p.next;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if (prev != null) &#123; // invariant: p == prev.next</span><br><span class="line">                msg.next = p;</span><br><span class="line">                prev.next = msg;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                msg.next = p;</span><br><span class="line">                mMessages = msg;</span><br><span class="line">            &#125;</span><br><span class="line">            return token;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们直接将围栏放在了消息队列中，同时重要的是我们并没有直接设置target,也就是tartget =null。其实现在我们可以想象，我们当我们正在进行界面的绘制的时候，我们是不希望有其他操作的，这个时候，要排除同步消息操作，也是可能理解的。</p>
+<h3 id="IdleHandler-MessageQueuqe空闲时执行的任务"><a href="#IdleHandler-MessageQueuqe空闲时执行的任务" class="headerlink" title="IdleHandler(MessageQueuqe空闲时执行的任务)"></a>IdleHandler(MessageQueuqe空闲时执行的任务)</h3><p>在MessageQueue中的next()方法，出现了<strong>IdleHandler</strong>(MessageQueuqe空闲时执行的任务)，查看MessageQueue中IdleHander接口的说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Callback interface for discovering when a thread is going to block</span><br><span class="line"> * waiting for more messages.</span><br><span class="line"> */</span><br><span class="line">public static interface IdleHandler &#123;</span><br><span class="line">    /**</span><br><span class="line">     * Called when the message queue has run out of messages and will now</span><br><span class="line">     * wait for more.  Return true to keep your idle handler active, false</span><br><span class="line">     * to have it removed.  This may be called if there are still messages</span><br><span class="line">     * pending in the queue, but they are all scheduled to be dispatched</span><br><span class="line">     * after the current time.</span><br><span class="line">     */</span><br><span class="line">    boolean queueIdle();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当线程正在等待更多消息时，会回调该接口，同时queueIdl（）方法，<strong>会在消息队列执行完所有的消息等待且在等待更多消息时会被调用</strong>，如果返回true,表示该任务会在消息队列等待更多消息的时候继续执行，如果为false，表示该任务执行完成后就会被删除，不再执行。</p>
+<p>其中MessageQueue通过使用addIdleHandler(@NonNull IdleHandler handler) 方法添加空闲时任务。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void addIdleHandler(@NonNull IdleHandler handler) &#123;</span><br><span class="line">       if (handler == null) &#123;</span><br><span class="line">           throw new NullPointerException(&quot;Can&apos;t add a null IdleHandler&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       synchronized (this) &#123;</span><br><span class="line">           mIdleHandlers.add(handler);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>既然MessageQueue可以添加空闲时任务，那么我们就看看最为明显的ActivityThread中声明的GcIdler。在ActivityThread中的<strong>H</strong>收到<strong>GC_WHEN_IDLE</strong>消息后，会执行scheduleGcIdler，将GcIdler添加到MessageQueue中的空闲任务集合中。具体如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">void scheduleGcIdler() &#123;</span><br><span class="line">       if (!mGcIdlerScheduled) &#123;</span><br><span class="line">           mGcIdlerScheduled = true;</span><br><span class="line">           //添加GC任务</span><br><span class="line">           Looper.myQueue().addIdleHandler(mGcIdler);</span><br><span class="line">       &#125;</span><br><span class="line">       mH.removeMessages(H.GC_WHEN_IDLE);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>ActivityThread中GcIdler的详细声明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  //GC任务</span><br><span class="line">  final class GcIdler implements MessageQueue.IdleHandler &#123;</span><br><span class="line">       @Override</span><br><span class="line">       public final boolean queueIdle() &#123;</span><br><span class="line">           doGcIfNeeded();</span><br><span class="line">           //执行后，就直接删除</span><br><span class="line">           return false;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">// 判断是否需要执行垃圾回收。</span><br><span class="line">   void doGcIfNeeded() &#123;</span><br><span class="line">       mGcIdlerScheduled = false;</span><br><span class="line">       final long now = SystemClock.uptimeMillis();</span><br><span class="line">    //获取上次GC的时间</span><br><span class="line">       if ((BinderInternal.getLastGcTime()+MIN_TIME_BETWEEN_GCS) &lt; now) &#123;</span><br><span class="line">           //Slog.i(TAG, &quot;**** WE DO, WE DO WANT TO GC!&quot;);</span><br><span class="line">           BinderInternal.forceGc(&quot;bg&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>GcIdler方法理解起来很简单、就是获取上次GC的时间，判断是否需要GC操作。如果需要则进行GC操作。这里ActivityThread中还声明了其他空闲时的任务。如果大家对其他空闲任务感兴趣，可以自行研究。</p>
+<h3 id="什么时候唤醒主线程呢？"><a href="#什么时候唤醒主线程呢？" class="headerlink" title="什么时候唤醒主线程呢？"></a>什么时候唤醒主线程呢？</h3><p>通过上文的了解，大家已经知道了Native的消息机制可能会导致主线程阻塞，那么唤醒Native消息机制<strong>（让Native消息机制不在等待Native消息，也就是nativePollOnce（）方法返回）</strong>在整个Android的消息机制中尤为重要，这里放在这里给大家讲是因为唤醒的条件涉及到屏障消息与空闲任务。大家理解了这两个内容后再来理解唤醒的时机就相对容易一点了，这里我们分别对唤醒的两个时机进行讲解。</p>
+<h4 id="在添加消息到消息队列中"><a href="#在添加消息到消息队列中" class="headerlink" title="在添加消息到消息队列中"></a>在添加消息到消息队列中</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">boolean enqueueMessage(Message msg, long when) &#123;</span><br><span class="line">	    ...省略部分代码</span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">	      ...省略部分代码</span><br><span class="line">            msg.markInUse();</span><br><span class="line">            msg.when = when;</span><br><span class="line">            Message p = mMessages;//头部消息</span><br><span class="line">            boolean needWake;</span><br><span class="line">            //如果队列中没有消息，或者当前进入的消息比消息队列中的消息等待时间短，那么就放在消息队列的头部</span><br><span class="line">            if (p == null || when == 0 || when &lt; p.when) &#123;</span><br><span class="line">                // New head, wake up the event queue if blocked.</span><br><span class="line">                msg.next = p;</span><br><span class="line">                mMessages = msg;</span><br><span class="line">                needWake = mBlocked;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">	            //判断唤醒条件，当前消息队列头部消息是屏障消息，且当前插入的消息为异步消息</span><br><span class="line">	            //且当前消息队列处于无消息可处理的状态</span><br><span class="line">                needWake = mBlocked &amp;&amp; p.target == null &amp;&amp; msg.isAsynchronous();</span><br><span class="line">                Message prev;</span><br><span class="line">                //循环遍历消息队列，把当前进入的消息放入合适的位置（比较等待时间）</span><br><span class="line">                for (;;) &#123;</span><br><span class="line">                    prev = p;</span><br><span class="line">                    p = p.next;</span><br><span class="line">                    if (p == null || when &lt; p.when) &#123;</span><br><span class="line">                        break;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (needWake &amp;&amp; p.isAsynchronous()) &#123;</span><br><span class="line">                        needWake = false;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                //将消息插入合适的位置</span><br><span class="line">                msg.next = p; </span><br><span class="line">                prev.next = msg;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">			//调用nativeWake，以触发nativePollOnce函数结束等待</span><br><span class="line">            if (needWake) &#123;</span><br><span class="line">                nativeWake(mPtr);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码，我们很明显的看见Native消息机制的唤醒，受到<strong>needWake</strong>这个变量影响，<strong>needWake ==true</strong>是在两个条件下。</p>
+<ul>
+<li>第一个：如果当前消息按照等待时间排序是在消息队列的头部, <strong>needWake = mBlocked</strong>，且<strong>mBlocked</strong>会在当前消息队列中没有消息可以处理，且没有空闲任务的条件下为<strong>true</strong>（mBlocked变量的赋值会在下文讲解）。</li>
+<li>第二个：如果当前<strong>mBlocked=true（第一个条件判断）</strong>，且消息队列头部消息是屏障消息，同时当前插入的消息为异步消息的条件。<strong>needWake = true</strong>。</li>
+</ul>
+<h4 id="在空闲任务完成的时候唤醒"><a href="#在空闲任务完成的时候唤醒" class="headerlink" title="在空闲任务完成的时候唤醒"></a>在空闲任务完成的时候唤醒</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">Message next() &#123;</span><br><span class="line">	 ...省略部分代码</span><br><span class="line">       int pendingIdleHandlerCount = -1; // -1 only during first iteration</span><br><span class="line">       int nextPollTimeoutMillis = 0;</span><br><span class="line">       for (;;) &#123;</span><br><span class="line">         ...省略部分代码</span><br><span class="line">		//执行native层消息机制层,</span><br><span class="line">		//timeOutMillis参数为超时等待时间。如果为-1，则表示无限等待，直到有事件发生为止。</span><br><span class="line">		//如果值为0，则无需等待立即返回。该方法可能会阻塞</span><br><span class="line">           nativePollOnce(ptr, nextPollTimeoutMillis);</span><br><span class="line">           synchronized (this) &#123;</span><br><span class="line">             ...省略部分代码</span><br><span class="line">           </span><br><span class="line">               //获取空闲时处理任务的handler 用于发现线程何时阻塞等待更多消息的回调接口。</span><br><span class="line">               if (pendingIdleHandlerCount &lt; 0</span><br><span class="line">                       &amp;&amp; (mMessages == null || now &lt; mMessages.when)) &#123;</span><br><span class="line">                   pendingIdleHandlerCount = mIdleHandlers.size();</span><br><span class="line">               &#125;</span><br><span class="line">               if (pendingIdleHandlerCount &lt;= 0) &#123;</span><br><span class="line">               //如果消息队列中没有消息可以处理，且没有空闲任务，那么就继续等待消息</span><br><span class="line">                   mBlocked = true;</span><br><span class="line">                   continue;</span><br><span class="line">               &#125;</span><br><span class="line">		   ...省略部分代码</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">        ...省略执行空闲任务代码</span><br><span class="line">        </span><br><span class="line">           // 重置空闲的handler个数，因为不需要重复执行</span><br><span class="line">           pendingIdleHandlerCount = 0;</span><br><span class="line">		</span><br><span class="line">		//当执行完空闲的handler的时候，新的native消息可能会进入，所以唤醒Native消息机制层</span><br><span class="line">           nextPollTimeoutMillis = 0;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们可以看到 <strong>mBlocked = true</strong>的条件是在消息队列中没有消息可以处理，且也没有空闲任务的情况下。也就是当前<strong>mBlocked = true</strong>会影响到MessageQueue中enqueueMessage()方法是否唤醒主线程。</p>
+<p>如果当前空闲任务完成后，<strong>会将nextPollTimeoutMillis 置为0，</strong>如果nextPollTimeoutMillis =0，会导致nativePollOnce直接返回，也就是会直接唤醒主线程（唤醒Native消息机制层）。</p>
+<h3 id="MessageQueue取出消息整体流程"><a href="#MessageQueue取出消息整体流程" class="headerlink" title="MessageQueue取出消息整体流程"></a>MessageQueue取出消息整体流程</h3><p>到目前为止，大家已经对整个消息的发送与取出有一个大概的了解了。这里我着重对MessageQueue取消息的流程画了一个简单的流程图。希望大家根据对取消息有个更好的理解。<br><img src="https://upload-images.jianshu.io/upload_images/2824145-be14464451c370f9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整体流程.jpg"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>Handler在发消息时，MessageQueue已经对消息<strong>按照了等待时间</strong>进行了排序。</li>
+<li>MessageQueue<strong>不仅包含了Java层消息机制同时包含Native消息机制</strong></li>
+<li>Handler消息分为<strong>异步消息</strong>与<strong>同步消息</strong>两种。</li>
+<li>MessageQueue中存在<strong>“屏障消息“</strong>的概念，当出现屏障消息时，会执行最近的异步消息，同步消息会被过滤。</li>
+<li>MessageQueue在执行完消息队列中的消息等待更多消息时，<strong>会处理一些空闲任务，如GC操作等。</strong></li>
+</ul>
+<h4 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h4><p>站在巨人的肩膀上。可以看得更远。该篇文章参阅了一下几本图书与源码。我这里我给了百度云盘的下载链接。大家可以按需下载。</p>
+<p><a href="https://pan.baidu.com/s/1g8-Hj7SykM5o-NrgigvhMA" target="_blank" rel="noopener">深入理解Android 卷1,2,3</a></p>
+<p><a href="https://pan.baidu.com/s/1hAcAxFylMU0Aspg2dP9dBA" target="_blank" rel="noopener">Android源码</a></p>
+<p><a href="https://pan.baidu.com/s/19M6xuFYekGXF0BSEM1Kh9w" target="_blank" rel="noopener">Android开发艺术探索</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/异步任务/" rel="tag"># 异步任务</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/Android-Handler机制之Handler-、MessageQueue-、Looper/" rel="next" title="Android Handler机制之Handler 、MessageQueue 、Looper">
+                <i class="fa fa-chevron-left"></i> Android Handler机制之Handler 、MessageQueue 、Looper
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/Android-Handler机制之Message及Message回收机制/" rel="prev" title="Android Handler机制之Message及Message回收机制">
+                Android Handler机制之Message及Message回收机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息的发送"><span class="nav-number">2.</span> <span class="nav-text">消息的发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息的加入"><span class="nav-number">3.</span> <span class="nav-text">消息的加入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取消息"><span class="nav-number">3.1.</span> <span class="nav-text">获取消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Native消息机制"><span class="nav-number">4.</span> <span class="nav-text">Native消息机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Native消息机制与Java层的消息机制有什么关系"><span class="nav-number">4.1.</span> <span class="nav-text">Native消息机制与Java层的消息机制有什么关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getForThread-从线程中获取设置的变量"><span class="nav-number">4.2.</span> <span class="nav-text">getForThread()从线程中获取设置的变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setForThread-从线程中设置变量"><span class="nav-number">4.3.</span> <span class="nav-text">setForThread()从线程中设置变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nativePollOnce-方法为什么会导致主线程阻塞？"><span class="nav-number">4.4.</span> <span class="nav-text">nativePollOnce()方法为什么会导致主线程阻塞？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nativePollOnce-一直循环为毛不造成主线程的卡死？"><span class="nav-number">4.5.</span> <span class="nav-text">nativePollOnce()一直循环为毛不造成主线程的卡死？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#屏障消息"><span class="nav-number">4.6.</span> <span class="nav-text">屏障消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异步消息"><span class="nav-number">4.7.</span> <span class="nav-text">异步消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有哪些操作是异步消息呢？"><span class="nav-number">4.8.</span> <span class="nav-text">有哪些操作是异步消息呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#屏障消息发送的时机"><span class="nav-number">4.9.</span> <span class="nav-text">屏障消息发送的时机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IdleHandler-MessageQueuqe空闲时执行的任务"><span class="nav-number">5.</span> <span class="nav-text">IdleHandler(MessageQueuqe空闲时执行的任务)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么时候唤醒主线程呢？"><span class="nav-number">6.</span> <span class="nav-text">什么时候唤醒主线程呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在添加消息到消息队列中"><span class="nav-number">6.1.</span> <span class="nav-text">在添加消息到消息队列中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在空闲任务完成的时候唤醒"><span class="nav-number">6.2.</span> <span class="nav-text">在空闲任务完成的时候唤醒</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MessageQueue取出消息整体流程"><span class="nav-number">7.</span> <span class="nav-text">MessageQueue取出消息整体流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#感谢"><span class="nav-number">8.1.</span> <span class="nav-text">感谢</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

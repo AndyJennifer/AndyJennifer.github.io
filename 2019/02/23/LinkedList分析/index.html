@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="上次我们分析了ArrayList,大家都已经了解了分析一个集合的步骤。那接下来，我们继续分析LinkedList。废话不不多说，直接整。 #查看LinkedLis成员 12345678910111213/**    * 指针指向第一个节点    * 初始化: (first == null &amp;amp;&amp;amp; last == null) ||    *            (first.pre">
+<meta name="keywords" content="集合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LinkedList分析">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/LinkedList分析/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="上次我们分析了ArrayList,大家都已经了解了分析一个集合的步骤。那接下来，我们继续分析LinkedList。废话不不多说，直接整。 #查看LinkedLis成员 12345678910111213/**    * 指针指向第一个节点    * 初始化: (first == null &amp;amp;&amp;amp; last == null) ||    *            (first.pre">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2824145-09c6c13397af88ee.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.873Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LinkedList分析">
+<meta name="twitter:description" content="上次我们分析了ArrayList,大家都已经了解了分析一个集合的步骤。那接下来，我们继续分析LinkedList。废话不不多说，直接整。 #查看LinkedLis成员 12345678910111213/**    * 指针指向第一个节点    * 初始化: (first == null &amp;amp;&amp;amp; last == null) ||    *            (first.pre">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2824145-09c6c13397af88ee.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/LinkedList分析/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>LinkedList分析 | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/LinkedList分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LinkedList分析
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 21:51:36" itemprop="dateCreated datePublished" datetime="2019-02-23T21:51:36+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java集合相关/" itemprop="url" rel="index"><span itemprop="name">Java集合相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="http://upload-images.jianshu.io/upload_images/2824145-09c6c13397af88ee.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="模仿游戏.jpeg"></p>
+<p>上次我们分析了ArrayList,大家都已经了解了分析一个集合的步骤。那接下来，我们继续分析LinkedList。废话不不多说，直接整。</p>
+<p>#查看LinkedLis成员</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * 指针指向第一个节点</span><br><span class="line">    * 初始化: (first == null &amp;&amp; last == null) ||</span><br><span class="line">    *            (first.prev == null &amp;&amp; first.item != null)</span><br><span class="line">    */</span><br><span class="line">   transient Node&lt;E&gt; first;</span><br><span class="line"></span><br><span class="line">   /**</span><br><span class="line">    * 指针指向最后一个节点</span><br><span class="line">    * 初始化: (first == null &amp;&amp; last == null) ||</span><br><span class="line">    *            (last.next == null &amp;&amp; last.item != null)</span><br><span class="line">    */</span><br><span class="line">   transient Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure>
+<p>从LinkedList成员中，可以看出Lined内部有两个指针，first(指向第一个节点)与Last(指向最后一个节点)。查看相关Node类声明：</p>
+<p>###Node类声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private static class Node&lt;E&gt; &#123;</span><br><span class="line">        E item;</span><br><span class="line">        Node&lt;E&gt; next;</span><br><span class="line">        Node&lt;E&gt; prev;</span><br><span class="line"></span><br><span class="line">        Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">            this.item = element;</span><br><span class="line">            this.next = next;</span><br><span class="line">            this.prev = prev;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>Node类中，保存了当前数据元素，上一个节点，及下一个节点。从这里，我们大概了解到了LinkedList的内部结构是链表。</p>
+<p>##一、添加元素</p>
+<p>###add(e)方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">       linkLast(e);</span><br><span class="line">       return true;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>add方法内部调用了linkLast(e),继续走linkLast(e)。</p>
+<p>####查看linkLast（e)方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void linkLast(E e) &#123;</span><br><span class="line">        final Node&lt;E&gt; l = last;//last指向最后一个节点。</span><br><span class="line">        final Node&lt;E&gt; newNode = new Node&lt;&gt;(l, e, null);</span><br><span class="line">        last = newNode;</span><br><span class="line">        if (l == null)</span><br><span class="line">            first = newNode;//frist指向第一个添加元素</span><br><span class="line">        else</span><br><span class="line">            l.next = newNode;//不是第一次添加，上一个节点的next指向当前节点</span><br><span class="line">        size++;</span><br><span class="line">        modCount++;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>当该方法执行是，会初始化一个Node节点保存当前添加元素及上一个节点。如果是第一次执行，该方法，first与Last都会指向该节点。如果不是第一次执行。上个节点的next会指向新添加的节点，且last指向新添加的节点。</p>
+<p>###addFist（e)方法<br>addFist（e)中方法直接调用了linkFrist(e)方法，我们直接查看LinkFirst方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private void linkFirst(E e) &#123;</span><br><span class="line">      final Node&lt;E&gt; f = first;</span><br><span class="line">      final Node&lt;E&gt; newNode = new Node&lt;&gt;(null, e, f);</span><br><span class="line">      first = newNode;</span><br><span class="line">      if (f == null)</span><br><span class="line">          last = newNode;</span><br><span class="line">      else</span><br><span class="line">          f.prev = newNode;</span><br><span class="line">      size++;</span><br><span class="line">      modCount++;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>linkFirst方法内部创建了一个新的节点。如果是第一次添加。新节点上个节点为null。如果不是,则新的节点的上个的节点为first原来指向的节点，first指向新添加的节点。</p>
+<p>###addLast(e)方法原理与addFirst（e)原理差不多，这里就直接跳过了</p>
+<h2 id="二、获取元素"><a href="#二、获取元素" class="headerlink" title="二、获取元素"></a>二、获取元素</h2><p>###get(Index)方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public E get(int index) &#123;</span><br><span class="line">        checkElementIndex(index);//判断是否操作存储的长度</span><br><span class="line">        return node(index).item;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>get方法先判断时候在有效范围类，如果调用了node(index）方法返回相应元素，继续走node方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Node&lt;E&gt; node(int index) &#123;</span><br><span class="line">        // assert isElementIndex(index);</span><br><span class="line">        if (index &lt; (size &gt;&gt; 1)) &#123;</span><br><span class="line">            Node&lt;E&gt; x = first;</span><br><span class="line">            for (int i = 0; i &lt; index; i++)</span><br><span class="line">                x = x.next;</span><br><span class="line">            return x;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            Node&lt;E&gt; x = last;</span><br><span class="line">            for (int i = size - 1; i &gt; index; i--)</span><br><span class="line">                x = x.prev;</span><br><span class="line">            return x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>该方法内部先判断index的位置是否小于<strong>总长度的一半</strong>，如果是，则从链表前方遍历，如果不是，则从链表最末尾进行遍历。</p>
+<p>##三、删除元素</p>
+<p>###removeFirst()方法</p>
+<figure class="highlight plain"><figcaption><span>E removeFirst() &#123;</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">    final Node&lt;E&gt; f = first;</span><br><span class="line">    if (f == null)//如果first没有指向元素，抛出异常</span><br><span class="line">        throw new NoSuchElementException();</span><br><span class="line">    return unlinkFirst(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>removeFirst()方法，先判断当前frist时候为null,如果不是,将first作为参数传入unLinkFirst()方法，查看unLinkFirst方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private E unlinkFirst(Node&lt;E&gt; f) &#123;</span><br><span class="line">       // assert f == first &amp;&amp; f != null;</span><br><span class="line">       final E element = f.item;</span><br><span class="line">       final Node&lt;E&gt; next = f.next;</span><br><span class="line">       f.item = null;</span><br><span class="line">       f.next = null; // help GC</span><br><span class="line">       first = next;</span><br><span class="line">       if (next == null)</span><br><span class="line">           last = null;</span><br><span class="line">       else</span><br><span class="line">           next.prev = null;</span><br><span class="line">       size--;</span><br><span class="line">       modCount++;</span><br><span class="line">       return element;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>unLinkFirst方法将器node中数据置为null,且将frist节点，指向f的下一个节点。并将f的下一个节点的上个节点(也就是f)至为null。</p>
+<p>###removeLast()方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public E removeLast() &#123;</span><br><span class="line">        final Node&lt;E&gt; l = last;</span><br><span class="line">        if (l == null)</span><br><span class="line">            throw new NoSuchElementException();</span><br><span class="line">        return unlinkLast(l);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>removeLast方法内把Last指向的节点，传入unLikeLast()方法，继续走unLinkLast方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private E unlinkLast(Node&lt;E&gt; l) &#123;</span><br><span class="line">       // assert l == last &amp;&amp; l != null;</span><br><span class="line">       final E element = l.item;</span><br><span class="line">       final Node&lt;E&gt; prev = l.prev;</span><br><span class="line">       l.item = null;</span><br><span class="line">       l.prev = null; // help GC</span><br><span class="line">       last = prev;</span><br><span class="line">       if (prev == null)</span><br><span class="line">           first = null;</span><br><span class="line">       else</span><br><span class="line">           prev.next = null;</span><br><span class="line">       size--;</span><br><span class="line">       modCount++;</span><br><span class="line">       return element;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>unLinkLast方法内部获取last重写指向Last原节点的上一个节点，同时将Last原节点至为null.</p>
+<p>总结</p>
+<ul>
+<li>LinkedList方法内部实现是链表，且内部有fist与last指针控制数据的增加与删除等操作</li>
+<li>LinkedList内部元素是可以重复，且有序的。因为是按照链表进行存储元素的。</li>
+<li>LinkedList线程不安全的，因为其内部添加、删除、等操作，没有进行同步操作。</li>
+<li>LinkedList增删元素速度较快。</li>
+</ul>
+<p>最后，附上我写的一个基于Kotlin 仿开眼的项目SimpleEyes(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/集合/" rel="tag"># 集合</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/ArrayList分析/" rel="next" title="ArrayList分析">
+                <i class="fa fa-chevron-left"></i> ArrayList分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/哈希表初识-(一)/" rel="prev" title="哈希表初识(一)">
+                哈希表初识(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#二、获取元素"><span class="nav-number">1.</span> <span class="nav-text">二、获取元素</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

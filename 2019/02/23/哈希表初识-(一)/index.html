@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="写这篇文章的时候，是大年三十，本来应该和家人一起看春节联欢晚会的，但是看了一个小时感觉没有什么劲，我想今年春晚又会被吐槽吧。哈哈哈哈。书归正传，还是按照我们的老规矩,走起。（PS:本来是早就应该写完的文章，发现自己还是太懒。到了现在真正的写完。反省反省….）  在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结">
+<meta name="keywords" content="集合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="哈希表初识(一)">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/哈希表初识-(一)/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="写这篇文章的时候，是大年三十，本来应该和家人一起看春节联欢晚会的，但是看了一个小时感觉没有什么劲，我想今年春晚又会被吐槽吧。哈哈哈哈。书归正传，还是按照我们的老规矩,走起。（PS:本来是早就应该写完的文章，发现自己还是太懒。到了现在真正的写完。反省反省….）  在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-01e4b20ee6720064.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-5b39808f6cbe991f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-fca74c109c89881f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-162b29946bbe5413.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-2cc0af3047916351.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-088df76f5327b4d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-dd23932fde3e4d5e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-23a8b487bb761aac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-2f97667065cd94e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-6d1e5de02c67b206.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-c6b296754a7c63c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="哈希表初识(一)">
+<meta name="twitter:description" content="写这篇文章的时候，是大年三十，本来应该和家人一起看春节联欢晚会的，但是看了一个小时感觉没有什么劲，我想今年春晚又会被吐槽吧。哈哈哈哈。书归正传，还是按照我们的老规矩,走起。（PS:本来是早就应该写完的文章，发现自己还是太懒。到了现在真正的写完。反省反省….）  在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-01e4b20ee6720064.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/哈希表初识-(一)/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>哈希表初识(一) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/哈希表初识-(一)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">哈希表初识(一)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 21:52:51" itemprop="dateCreated datePublished" datetime="2019-02-23T21:52:51+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java集合相关/" itemprop="url" rel="index"><span itemprop="name">Java集合相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-01e4b20ee6720064.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="死侍.jpg"></p>
+<blockquote>
+<p>写这篇文章的时候，是大年三十，本来应该和家人一起看春节联欢晚会的，但是看了一个小时感觉没有什么劲，我想今年春晚又会被<strong>吐槽</strong>吧。哈哈哈哈。书归正传，还是按照我们的老规矩,走起。（PS:本来是早就应该写完的文章，发现自己还是太懒。到了现在真正的写完。反省反省….）</p>
+</blockquote>
+<p>在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。</p>
+<p>此系列文章主要分为两个部分，具体目录如下：</p>
+<ul>
+<li>哈希表初识(一)</li>
+<li><a href="/2019/02/23/哈希表之HashMap-(二)/" title="哈希表之HashMap(二)">哈希表之HashMap(二)</a>
+</li>
+</ul>
+<p>其中第一篇是带领着大家理解为什么会设计此种数据结构，及其遇见的问题及解决办法。我相信通过阅读这篇文章后，你再去理解HashMap，我相信你会有一种豁然开朗的感觉。建议先阅读第一部分。</p>
+<p>###前言<br>哈希表是我们程序员开发者经常会使用到的数据结构。我们都知道是其主要用于<strong>映射（键值对</strong>）关系的数据。哈希表<strong>在查找、删除、添加数据方面效率都比较高</strong>。既然哈希表有如此多的优点，那么我就带着大家从哈希表实际应用例子出发，通过相应例子，带领大家彻底的了解哈希表的使用情景及其遇到的问题，以及相应的解决方法。</p>
+<p>###哈希表简介</p>
+<blockquote>
+<p>哈希表（Hash table，也叫散列表），是根据关键值(Key value)而直接进行访问的数据结构。也就是说，它通过把关键键值映射到表中一个位置来访问记录，以加快查找的速度。这个映射函数叫做哈希函数，存放记录的数组叫做哈希表。</p>
+</blockquote>
+<p>上文提到了两个比较重要的知识点。<strong>哈希表是基于数组且通过哈希函数来构建映射关系</strong>。接下来我们通过生活中的几个例子，来了解一下哈希表在实际使用中会出现的问题以及解决方案。</p>
+<p>####学号作为键，存储学生信息<br>假如现在我们要做一个学校的学生信息记录。这个学校大概有1000人。学生的记录信息包括学号、年龄、性别等信息。假设学生的学号是从零开始的有序自增长，那么如果要求我们需要从快速检索某一个学生的信息。那我们应该使用什么样的数据结构呢？</p>
+<p>我们可能首先想到的就是数组。即数组下标对应着相应学生信息，具体数据结构如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-5b39808f6cbe991f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="学生存储数组.png"></p>
+<p>如果我们需要找到Jennifer这个学生。我们只需要通过数组下标拿到相应信息就行了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Student andy = StudentArray[2];</span><br></pre></td></tr></table></figure></p>
+<p>如果我们需要增加一个Jack学生，我们只需要在数组的末尾添加新添加的学生信息。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">StudentArray[storeNumber++] = new Student(&quot;Jack&quot;);</span><br></pre></td></tr></table></figure></p>
+<p>我们发现通过上述结构设计，我们能很快的找到某个学生，或者删除一个学生，因为学生的信息是与学号进行关联的。同时每个学生的学号与数组的下标是相对应的。通过数组下标的操作。我们就能完成我们想要的数据操作。当然上述情况只是<strong>理想的数据情况</strong>，我们可以直接通过将学号作为数组的下标来作为键值对的映射关系。实际开发常见中，我们并不能遇到如此良好的数据映射关系的。</p>
+<p>####字典作为键，查找英语单词<br>上文描述了理想情况下的数据映射关系，下面我们来看看<strong>“不良好”</strong>的数据关系。</p>
+<p>假如，我们希望在我们的程序中存储100000个单词，如果我们考虑每个单词都占据一个数组单元，那么我们就需要创建一个容量为100000的数组，通过上述步骤，我们能快速的对单词进行存储。但是数组下标与单词有什么关系呢？我们如何能快速的找到某个单词的位置呢？</p>
+<h5 id="把单词转换为数组下标"><a href="#把单词转换为数组下标" class="headerlink" title="把单词转换为数组下标"></a>把单词转换为数组下标</h5><p>因为数组中的数组单元与单词是没有关系的。为了达到映射关系，我们可以通过<strong>ASCII的编码思想</strong>来解决相应的问题，我们都知道ASCII 码使用指定的7 位或8 位二进制数组合来表示128 或256 种可能的字符。其中ASCII包含了所有的所有的大写和小写字母，数字0 到9、标点符号。其中小写英文字母的对应的十进制范围是97-122。<strong>那么我们可以采用简单的编码方式， 从字母a到z进行依次从1递增进行编码。</strong></p>
+<p>例如单词 <strong>abandon</strong><br>其中<br><strong>a  = 1</strong><br><strong>b = 2</strong><br><strong>a = 1</strong><br><strong>n = 14</strong><br><strong>d = 4</strong><br><strong>o = 15</strong><br><strong>n = 14</strong></p>
+<p>求和 <strong>1+2+1+14+4+15+14 = 51</strong></p>
+<p>那么我们可以将<strong>abandon</strong>放入下标为51的数组中。</p>
+<p>这样就能直接通过words数组下标进行访问了，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Stirng words = words[51];</span><br></pre></td></tr></table></figure></p>
+<p>但是通过这种方式来存储单词，会出现一个问题。假如我们规定单词的最大长度为10，那么对应的单词求的和就有260种可能，而我们总共的单词有100000个，那么每个数组单元要存储大约380个单词（10000除以260），那么我们可以考虑的是数组单元使用子数组或者链表的方式来存储数据，但是每个数组单元有380个单词，在对数据进行操作的时候，效率是不是很低下呢？所以我们能不能想一个办法。让每个数组单元的存储数据个数尽量减小。让数组单元存储的数据尽量分散呢？</p>
+<h5 id="幂操作"><a href="#幂操作" class="headerlink" title="幂操作"></a>幂操作</h5><p>因为直接使用简单编码进行相加的方式会导致产生的数组下标较小（数据比较集中），数组单元个数太多的情况，所以我们采用幂的方式。<br>还是使用单词<strong>abandon</strong><br>其中<br> <strong>a = 10^0+1</strong><br><strong>b = 10^1+2</strong><br><strong>a= 10^2+1</strong><br> <strong>n= 10^3+14</strong><br> <strong>d = 10^4+4</strong><br> <strong>o = 10^5+15</strong><br> <strong>n = 10^6+14</strong></p>
+<p>求和 <strong>1+12+101+1014+10004+100015+1000014 =1111161</strong><br>那我们是不是就可以直接将<strong>abandon</strong>放入下标为1111161的数组中？</p>
+<p>不要忘了我们的单词的最大长度是10。那么我们数组中的最大下标为:<br><strong>10^0 + 10^1 +10^2 +10^3 +10^4 +10^5 +10^6 +10^7 +10^8 +10^9</strong><br>算都不用算，我们知道这是很大的数，我们不可能申请这么大容量的数组。</p>
+<p>通过以上分析，我们如果如果采用第一种方案的话，产生数组的下标比较少（数据比较集中），如果使用第二种方案产生的数组下标会更多（数据比较分散），且申请了不必要的空间。那么为了将第二种方案的下标范围进行压缩，那么我们该使用什么样的解决方法呢？继续往下看。</p>
+<p>###哈希函数</p>
+<blockquote>
+<p><strong>通过一种算法将一个大范围的数字转化一个小范围的数字，这个算法对应的函数称为哈希函数</strong></p>
+</blockquote>
+<p>如何将一个大范围的数字区间转换成一个小范围的数字区间，我们常用的方式是取余（也叫取模操作）。</p>
+<p>我们都知道对于给定任意一个整数p,任意一个整数n,一定存在不等式：<br><strong>n= kp+r</strong><br>其中k、r是整数，且r大于等于0小于p ,r为n除以p的余数。</p>
+<p>既然我们已经知道了一个数（n)在除以另一个数(p)是余数的取值范围(大于0且小于p减去1)。<br>那么我们把一个范围是0~199(bigerRange)的数据压缩到0~9(smallerRange)的范围。我们可以进行如下操作：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-fca74c109c89881f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="缩小范围.png"></p>
+<p>对应的伪代码为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">smallerRange = bigerRange % 10;</span><br><span class="line">arrayIndex = smallerRange;//arrayIndex 代表哈希化操作后，数据对应的数组下标</span><br></pre></td></tr></table></figure></p>
+<p>同理对应我们上述提到的单词存储，我们也可以进行如下操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smallerRange = bigerRange % arraySize;</span><br></pre></td></tr></table></figure></p>
+<p>###冲突<br>经过取余操作后，我们现在已经将单词从一个较大的范围压缩到了一个小的范围，但是细心的读者肯定会发现。假如通过这种方式进行单词的存储，<strong>假如某个单词和另一个单词进行幂操作后，进行取余的值是相同的，那么就会出现冲突的问题。也就是同一数组下标中存储了两份不同的数据。</strong> 列如上图中，数组中words[196]与words[6]。</p>
+<p>既然出现了冲突的问题，一般我们会采用两种方式，第一种方式是找到数组的一个空位，并把这个单词填入，第二种方法创建一个存储链表的数组，数组内部不存储单词，产生的冲突的数据直接添加到这个数组下标所对应的链表的下一个节点。这两种方法分别对应着我们下文要讲的<strong>开发地址法</strong>与<strong>链地址法</strong>。</p>
+<p>###开放地址法<br>当数据不能直接放入由哈希函数计算出来的下标对应相应的数组单元，我们需要获取数组中的其他的位置。根据获取新位置的计算方式的不同，开发地址法分为了三种方法。<strong>线性探测</strong>、<strong>二次探测</strong>、<strong>再哈希化</strong>。下面我们就来具体来讲讲这三种方式的分别实现以及一些问题。</p>
+<p>####线性探测<br>线性探测是在产生冲突时，我们就顺势下推，寻找数组中空白的地址。列如，当前我们需要存储单词<strong>abandon</strong>,但是当前0下标对应的数组单元已经存储了数据(a)。那么我们就尝试使用1标，如果1下标对应的数组单元也同样存储了数据(apple)，那么我们继续判断数组下标2。这样通过依次递增的方式去寻找能够进行存储的数据单元。具体实现如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-162b29946bbe5413.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="线性探测.png"></p>
+<p>对应添加元素伪代码为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void insert(int key ,Word word)&#123;</span><br><span class="line">	int hashVal = hashMethod(key);//通过hash函数计算得到对应的数组下标</span><br><span class="line">	while(words[hashVal]!=null)&#123;</span><br><span class="line">		++hashVal;//对角标进行递增</span><br><span class="line">		hashVal %=words.size();</span><br><span class="line">	&#125;</span><br><span class="line">	words[hashVal]=word;//找到空数据单元，进行赋值操作</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>#####线性探测聚集问题<br>但是聪明的你，肯定会发现一个问题，就是当我我们的数据越插入的越来越多的时候，哈希表会变得越来越臃肿，这导致我们在插入新的元素的时候，会探测很长一段距离。当数组填的越满时，聚集就越可能发生。具体问题如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-2cc0af3047916351.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="聚集问题.png"></p>
+<p>对应添加元素伪代码为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public void insert(int key ,Word word)&#123;</span><br><span class="line">	int hashVal = hashMethod(key);//通过hash函数计算得到对应的数组下标</span><br><span class="line">	int step=0;</span><br><span class="line">	while(words[hashVal]!=null)&#123;</span><br><span class="line">		step = Math.pow(step,2);//获取步长</span><br><span class="line">		hashVal+=step;</span><br><span class="line">		hashVal %=words.size();</span><br><span class="line">		step++;</span><br><span class="line">	&#125;</span><br><span class="line">	words[hashVal]=word;//找到空数据单元，进行赋值操作</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上图来看，如果我们与数组0(a)产生冲突的时候，我们需要线性的向下寻找空白单元。当我们的数组数据存储比例（当前数组存储数据与数组容量的比例，也可以叫做<strong>装填因子</strong>）较高时。那么我们查询空白单元。所耗的时间也比较长。（这里先不讨论<strong>数组扩容</strong>的问题，下面我们才讨论扩容。）</p>
+<p>####二次探测<br>上面我们讨论了，在使用线性探测时会出现聚集的问题，当数据量大时，查询空白数据单元的次数也会相应的增加。为了减少这种聚集的问题，我们可以采用二次探测。二次探测的原理就是尽量探测相对较远的数据单元，而不探测相邻的数据单元。</p>
+<p>在线性探测中，如果通过计算获得的数组下标为<strong>x</strong>，则对应的线性探测步长就是<strong>x+1</strong>,<strong>x+2</strong>,<strong>x+3</strong>,那么在二次探测中，探测的步长为:<strong>x+1^2</strong>,<strong>x+2^2</strong>,<strong>x+3^2</strong>,也就是<strong>x+1</strong>,<strong>x+4</strong>,<strong>x+9</strong>。具体实现如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-088df76f5327b4d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="二次探测.png"></p>
+<h5 id="二次探测聚集问题"><a href="#二次探测聚集问题" class="headerlink" title="二次探测聚集问题"></a>二次探测聚集问题</h5><p>二次探测虽然消除了线性探测中产生的聚集问题，但是又出现了更细的聚集问题，出现这种更细的聚集问题是因为多个数据经过计算后，获得相同的数组下标，在探测空的数据单元的时候，所寻找的数据单元是相同的。<br>如现在我们需要将a,apple,abandon,access等4个单词插入哈希表中，假如它们计算后的数组下标都是一样的。那么假如已经插入a单词，那么当apple插入时（假设查询步长为1后，直接插入成功），所走的步长为1，abandon会先走1的步长，然后再走4的步长（假设走了4的步长后，直接插入成功），那么当access进行插入的时候，它会判断1,4对应步长下，是否可以插入数据，很明显当abandon与access进行插入的时候，他们都判断了1步长对应的数据。</p>
+<p>####再哈希化<br>为了解决线性探测与二次探测带来的聚集问题。我们还可以使用再哈希法，从上文我们已经了解了，二次探测出现聚集问题的原因是因为所探测的步长是固定的。解决这个问题的最好办法就是是步长是变化的就行了。那么我们就可以另一哈希函数（用另一哈希函数的原因是，我们要限定始终在数组范围内进行查询）根据关键字(key),来动态的计算步长就行了。</p>
+<p>注意：</p>
+<ul>
+<li>新的哈希函数必须与上一个哈希函数不同（相同，不是写了当没写吗？我直接乘以2就完了，对不对）</li>
+<li>不能输出0（步长为0，我们还添加个毛线啊）。</li>
+</ul>
+<p>那么修改我们上面的伪代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public void insert(int key ,Word word)&#123;</span><br><span class="line">	int hashVal = hashMethod(key);//通过hash函数计算得到对应的数组下标</span><br><span class="line">	int step= hashStep(key);</span><br><span class="line">	while(words[hashVal]!=null)&#123;</span><br><span class="line">		hashVal+=step;</span><br><span class="line">		hashVal %=words.size();</span><br><span class="line">	&#125;</span><br><span class="line">	words[hashVal]=word;//找到空数据单元，进行赋值操作</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//牛逼的计算步长的方法，其中constant是质数 且小于数组容量, 那么步长的范围为大于等于0小于等constant</span><br><span class="line">public int hashStep(Key key)&#123;</span><br><span class="line">	return constant -(key%constant);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注意：这里又有同学要问了，为什么要使用质数，我们都知道质数在在大于1的自然数中，除了1和它本身以外不再有其他因数。试想，如果当前我们的数组长度为10，通过哈希计算后的数组下标是0，且我们计算后的步长为5，那么探测序列就是，0,5,10,0,5,10。程序会一直探测直到崩溃。</p>
+<p>###链地址法<br>上面我们介绍了开放地址法，它们共同点是在数组中寻找空的数据单元进行新的数据插入，而链地址法是在每个数据单元中设置链表，当发生冲突时，直接将新的数据添加到链表中。具体实现如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-dd23932fde3e4d5e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="链地址法.png"></p>
+<p>因为链地址法是基于链表的，它是不需要进行探测序列的。因为我们可以直接将元素放在对应末尾。</p>
+<h3 id="扩展数组"><a href="#扩展数组" class="headerlink" title="扩展数组"></a>扩展数组</h3><p>上面我们讨论了，开放地址法与链地址法。试想一种情况，当我们的数组快满时，增删查数据会变得很慢（因为要去探测空的数据单元），这个时候我们就需要对数组进行扩展，扩展的时机是什么呢？</p>
+<p>还记得我们上文提到的<strong>装填因子（当前数组存储数据与数组容量的比例）</strong>，我们不可能等到数组快满时，才进行扩展操作，因为会影响效率。所以我们一般情况下会在装填因子大于或等于0.75的情况下进行数组的扩展（装填因子太小，扩展频率太快，装填因子太大，影响数据操作效率）。</p>
+<p>注意：</p>
+<ul>
+<li><strong>在Java中，数组有固定的大小，不能进行扩展。只能创建一个更大容量的数组，将原来的数组放入较大容量数组中去。</strong></li>
+<li><strong>我们不能直接将数组的元素直接复制到新的数组中去，也就是数据不能再新数组和老数组在相同的位置上。我们需要重新将元素添加进去，根据相应的哈希函数重新去计算在新的数组中数据所在的位置。</strong></li>
+</ul>
+<p>这里肯定有很多同学要问，我为啥不能复制到相同的位置上呢？如果你还记得，数据的位置我们是通过哈希函数来计算的，也就是我们对数组长度进行取余操。假如在新数组中我们需要对某个数据进行查找的时候。因为不是不同的数组长度。那么计算的位置肯定不同。我们就会找不到它，但是它又确实在数组中存在。所以就会造成数据混乱的情况。</p>
+<blockquote>
+<p>在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：</p>
+</blockquote>
+<ul>
+<li>哈希表初识(一)</li>
+<li>
+</li>
+</ul>
+<p>提示：该篇文章作为彻底理解哈希表的第二个部分。主要讲了HashMap在Java中基于JDK1.8(不同版本HashMap可能实现不同)的具体实现。如果你对哈希表还不算太熟，建议先阅读上一篇文章，我相信等你看完之后，在回来看这篇文章，会有一种<strong>飞翔的感觉</strong>。</p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在Java中java.util包下，定义了Map接口来实现键值对的映射关系。常用的类为HashMap,LinkedHashMap,TreeMap。其主要的类关系如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-23a8b487bb761aac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Map类关系图.png"></p>
+<p>在平时项目的开发中，我们主要使用的是HashMap及其子类，那我们接下来就了解一下HashMap的主要特征。</p>
+<ul>
+<li>采用数组+链表的形式对数据进行存储。</li>
+<li>根据hashCode值存储数据，访问速度较快。</li>
+<li>有且只有一个key为null的数组。</li>
+<li>遍历是无序的。</li>
+<li>线程非安全。</li>
+</ul>
+<h3 id="内部结构"><a href="#内部结构" class="headerlink" title="内部结构"></a>内部结构</h3><p>既然上文提到了数组+链表的形式，大家是否想起我们上篇文章提到的<strong>链地址法</strong>呢？如果你忘记了链地址法的具体实现，没关系，让我们一起看看在Java中HashMap具体的内部结构,具体的结构如下图所示：(注意:<strong>在JDK1.8中如果链表的长度大于8时会将该链表转换为红黑树</strong>)</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-2f97667065cd94e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="内部结构.png"></p>
+<p>从图中看出，HashMap底层存储的是<strong>Node</strong>节点，本质是一个映射（键值对）。上图中，每个<strong>黑色圆点</strong>就是一个<strong>Node</strong>对象。<strong>数组table</strong>对应Node&lt;K,V&gt;[] table。</p>
+<p>查看Node对应源码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; &#123;</span><br><span class="line">       final int hash;</span><br><span class="line">       final K key;</span><br><span class="line">       V value;</span><br><span class="line">       Node&lt;K,V&gt; next;</span><br><span class="line"></span><br><span class="line">       Node(int hash, K key, V value, HashMapEntry&lt;K,V&gt; next) &#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final K getKey()       &#123;...&#125;</span><br><span class="line">       public final V getValue()      &#123;...&#125;</span><br><span class="line">       public final String toString() &#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final int hashCode()&#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final V setValue(V newValue) &#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final boolean equals(Object o) &#123;...&#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>从代码中我们可以看出，<strong>Node</strong>是HashMap的一个内部类，实现了Map.Entry接口。该类中保存了当前存储数据的hash值，关键字、和当前存储数据、及下一个Node节点的引用。既然我们已经知道了HashMap到底存储的是什么东西，那么我们继续看看HashMap的初始化。</p>
+<p>###HashMap初始化</p>
+<p>在我们初始化HashMap实例对象的时候，我们默认调用是其参数为空的构造函数，查看具体实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public HashMap() &#123;</span><br><span class="line">	  //DEFAULT_LOAD_FACTOR = 0.75</span><br><span class="line">    this.loadFactor = DEFAULT_LOAD_FACTOR;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上，不知道大家看到熟悉的东西没<strong>loadFactor</strong>,还记得上篇文章我们提到的<strong>装载因子</strong>(我们不可能等到数组快满时，才进行扩容操作，因为会影响效率），我们发现默认情况下，HashMap初始容量为16，且装载因子为0.75，也就是当容量为12(当前数组容量*装载因子)时，进行下一次添加数据的时候，会对HashMap内部的数组进行扩容。</p>
+<h3 id="HashMap放入键值对"><a href="#HashMap放入键值对" class="headerlink" title="HashMap放入键值对"></a>HashMap放入键值对</h3><h4 id="查看put方法"><a href="#查看put方法" class="headerlink" title="查看put方法"></a>查看put方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public V put(K key, V value) &#123;</span><br><span class="line">       return putVal(hash(key), key, value, false, true);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>在HashMap调用put方法，放入键值对时，会先调用hash方法计算当前key对象的哈希值，对应hash方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static final int hash(Object key) &#123;</span><br><span class="line">        int h;</span><br><span class="line">        return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>hash方法内部会获取当前key的hashCode,通过当前hashCode与当前hashCode右移后的数字，进行异或运算得到哈希值。</p>
+<h4 id="查看putVal方法"><a href="#查看putVal方法" class="headerlink" title="查看putVal方法"></a>查看putVal方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,</span><br><span class="line">                   boolean evict) &#123;</span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;</span><br><span class="line">         //第一步，如果当前table为空，则初始化</span><br><span class="line">        if ((tab = table) == null || (n = tab.length) == 0)</span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">        //第二步，如果当前数据未放入，则添加</span><br><span class="line">        if ((p = tab[i = (n - 1) &amp; hash]) == null)</span><br><span class="line">            tab[i] = newNode(hash, key, value, null);</span><br><span class="line">        else &#123;</span><br><span class="line">            Node&lt;K,V&gt; e; K k;</span><br><span class="line">                //第三步，如果当前key已存在，则进行覆盖操作</span><br><span class="line">            if (p.hash == hash &amp;&amp;</span><br><span class="line">                ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                e = p;</span><br><span class="line">                //第四步，判断该链表是否是红黑树</span><br><span class="line">            else if (p instanceof TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);</span><br><span class="line">            else &#123;//第五步，是否是链表</span><br><span class="line">                for (int binCount = 0; ; ++binCount) &#123;</span><br><span class="line">                    if ((e = p.next) == null) &#123;</span><br><span class="line">                        p.next = newNode(hash, key, value, null);</span><br><span class="line">                        //如果当前链表长度大于等于8则转会红黑树处理</span><br><span class="line">                        if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st</span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        break;</span><br><span class="line">                    &#125;</span><br><span class="line">                    //如果是链表中的key已存在，则进行覆盖操作</span><br><span class="line">                    if (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                        break;</span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if (e != null) &#123; // existing mapping for key</span><br><span class="line">                V oldValue = e.value;</span><br><span class="line">                //第六步，是否覆盖已存在的key对应的value</span><br><span class="line">                if (!onlyIfAbsent || oldValue == null)</span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                return oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ++modCount;</span><br><span class="line">        //如果添加完后，当前数组容量大于临界值，对数组进行扩容。</span><br><span class="line">        if (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>从上述代码中我们可以看出，HashMap添加元素主要分为六个步骤。经过这六个步骤完成了相应的键值对的映射。下面我们将具体的来分析这六个步骤。</p>
+<p>####（一）创建table数组<br>如果当前数组为空，会调用相应resize()方法。创建相应table数组。这里省略了扩容数组代码，因为其比较复杂，下面我们会单独进行分析。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">final Node&lt;K,V&gt;[] resize() &#123;</span><br><span class="line">       Node&lt;K,V&gt;[] oldTab = table;</span><br><span class="line">       int oldCap = (oldTab == null) ? 0 : oldTab.length;</span><br><span class="line">       int oldThr = threshold;</span><br><span class="line">       int newCap, newThr = 0;</span><br><span class="line">       //判断当前数组是否被创建</span><br><span class="line">       if (oldCap &gt; 0) &#123;</span><br><span class="line">           if (oldCap &gt;= MAXIMUM_CAPACITY) &#123;</span><br><span class="line">               threshold = Integer.MAX_VALUE;</span><br><span class="line">               return oldTab;</span><br><span class="line">           &#125;</span><br><span class="line">           //如果当前数组到达临界值</span><br><span class="line">           //数组容量为原来的2倍</span><br><span class="line">           //新的临界值为原来的2倍</span><br><span class="line">           else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;</span><br><span class="line">                    oldCap &gt;= DEFAULT_INITIAL_CAPACITY)</span><br><span class="line">               newThr = oldThr &lt;&lt; 1; // double threshold</span><br><span class="line">       &#125;</span><br><span class="line">       else if (oldThr &gt; 0) // initial capacity was placed in threshold</span><br><span class="line">           newCap = oldThr;</span><br><span class="line">       else &#123;            </span><br><span class="line">           //默认没有数据的情况下，初始化数组，与临界值</span><br><span class="line">           newCap = DEFAULT_INITIAL_CAPACITY;</span><br><span class="line">           newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);</span><br><span class="line">       &#125;</span><br><span class="line">       if (newThr == 0) &#123;</span><br><span class="line">           float ft = (float)newCap * loadFactor;</span><br><span class="line">           newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (float)MAXIMUM_CAPACITY ?</span><br><span class="line">                     (int)ft : Integer.MAX_VALUE);</span><br><span class="line">       &#125;</span><br><span class="line">       //设置当前临界值</span><br><span class="line">       threshold = newThr;</span><br><span class="line">       @SuppressWarnings(&#123;&quot;rawtypes&quot;,&quot;unchecked&quot;&#125;)</span><br><span class="line">           Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];</span><br><span class="line">       table = newTab;</span><br><span class="line">       </span><br><span class="line">    		....省略扩容代码</span><br><span class="line">    		</span><br><span class="line">    	 //返回新的数组</span><br><span class="line">       return newTab;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码很好理解。判断当前数组是否为空，如果为空，则初始化当前数组，且当前数组容量为DEFAULT_INITIAL_CAPACITY（DEFAULT_INITIAL_CAPACITY = 16),且临界值为12（<br>DEFAULT_INITIAL_CAPACITY* DEFAULT_LOAD_FACTOR）DEFAULT_LOAD_FACTOR，我们已经知道默认为0.75。最后该方法会将创建的数组进行返回。</p>
+<p>####（二）如果当前数据未放入，则添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if ((p = tab[i = (n - 1) &amp; hash]) == null)</span><br><span class="line">           tab[i] = newNode(hash, key, value, null);</span><br></pre></td></tr></table></figure>
+<p>上述代码，知根据当前key值计算出来的hash值。获取对应数组中的下标，如果当前数组单元没有放入数据，则添加数据到相应的数组单元中。</p>
+<p>####（三）如果当前key已存在，则进行覆盖操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (p.hash == hash &amp;&amp;</span><br><span class="line">               ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">       e = p;</span><br></pre></td></tr></table></figure>
+<p>上面代码也是很好理解，如果当前数组单元有数据，且相同hash值且key值相同，那么就进行替换操作。</p>
+<p>####（四）判断当前是否是红黑树</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">else if (p instanceof TreeNode)</span><br><span class="line">              e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);</span><br></pre></td></tr></table></figure>
+<p>如果当前数组单元对应的是红黑树，那么调用相应红黑树添加方法。这里我们不讨论红黑树，这里我们只要知道。在使用红黑树的时候，查找效率是要优于传统的链表就好了。</p>
+<p>####（五）、（六）添加元素到链表中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">for (int binCount = 0; ; ++binCount) &#123;</span><br><span class="line">               if ((e = p.next) == null) &#123;</span><br><span class="line">                   p.next = newNode(hash, key, value, null);</span><br><span class="line">                   if (binCount &gt;= TREEIFY_THRESHOLD - 1) </span><br><span class="line">                   	 //如果当前链表长度大于8，转换为红黑树</span><br><span class="line">                       treeifyBin(tab, hash);</span><br><span class="line">                   break;</span><br><span class="line">               &#125;</span><br><span class="line">               //获取hash值相同与key值相同，直接返回当前节点。</span><br><span class="line">               if (e.hash == hash &amp;&amp;</span><br><span class="line">                   ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                   break;</span><br><span class="line">               p = e;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       if (e != null) &#123; // existing mapping for key</span><br><span class="line">           V oldValue = e.value;</span><br><span class="line">           if (!onlyIfAbsent || oldValue == null)</span><br><span class="line">               e.value = value;</span><br><span class="line">           afterNodeAccess(e);</span><br><span class="line">           return oldValue;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>这里我把第五步与第六部合并来讲解。从代码代码大家就可以理解。获取数组单元链表的长度，如果当前链表长度大于8，转换为红黑树，如果存在相同hash值或者key值相同的节点。直接替换对应的value,反之。添加键值对到相应链表中。</p>
+<h3 id="HashMap的扩容机制"><a href="#HashMap的扩容机制" class="headerlink" title="HashMap的扩容机制"></a>HashMap的扩容机制</h3><p>上面我们省略了扩容代码的具体，下面我们来仔细探讨一下HashMap的扩容机制。<br>主要扩容代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">//oldTab是原来的talble 数组</span><br><span class="line">if (oldTab != null) &#123;</span><br><span class="line">			  //遍历原来数组单元中对应的链表，oldCap是原来数组的容量</span><br><span class="line">          for (int j = 0; j &lt; oldCap; ++j) &#123;</span><br><span class="line">              Node&lt;K,V&gt; e;</span><br><span class="line">              if ((e = oldTab[j]) != null) &#123;</span><br><span class="line">                  oldTab[j] = null;</span><br><span class="line">                  //如果数组单元只有一个节点则计算其新位置，</span><br><span class="line">                  if (e.next == null)</span><br><span class="line">                      newTab[e.hash &amp; (newCap - 1)] = e;</span><br><span class="line">                  //如果是红黑树，特殊处理</span><br><span class="line">                  else if (e instanceof TreeNode)</span><br><span class="line">                      ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);</span><br><span class="line">                  //获取数组单元中的链表中的节点，并且重新定义位置。</span><br><span class="line">                  else &#123; // preserve order</span><br><span class="line">                      Node&lt;K,V&gt; loHead = null, loTail = null;</span><br><span class="line">                      Node&lt;K,V&gt; hiHead = null, hiTail = null;</span><br><span class="line">                      Node&lt;K,V&gt; next;</span><br><span class="line">                      do &#123;</span><br><span class="line">                          next = e.next;</span><br><span class="line">                          //原位置的节点</span><br><span class="line">                          if ((e.hash &amp; oldCap) == 0) &#123;</span><br><span class="line">                              if (loTail == null)</span><br><span class="line">                                  loHead = e;</span><br><span class="line">                              else</span><br><span class="line">                                  loTail.next = e;</span><br><span class="line">                              loTail = e;</span><br><span class="line">                          &#125;</span><br><span class="line">                          //原位置+oldCap的节点</span><br><span class="line">                          else &#123;</span><br><span class="line">                              if (hiTail == null)</span><br><span class="line">                                  hiHead = e;</span><br><span class="line">                              else</span><br><span class="line">                                  hiTail.next = e;</span><br><span class="line">                              hiTail = e;</span><br><span class="line">                          &#125;</span><br><span class="line">                      &#125; while ((e = next) != null);</span><br><span class="line">                      //把原位置的节点放入</span><br><span class="line">                      if (loTail != null) &#123;</span><br><span class="line">                          loTail.next = null;</span><br><span class="line">                          newTab[j] = loHead;</span><br><span class="line">                      &#125;</span><br><span class="line">                      //把新位置的节点放入</span><br><span class="line">                      if (hiTail != null) &#123;</span><br><span class="line">                          hiTail.next = null;</span><br><span class="line">                          newTab[j + oldCap] = hiHead;</span><br><span class="line">                      &#125;</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+<p>直接去理解这段代码很难，根据上篇文章的经验，我们知道在数组进行扩容的时候，需要根据hash值去与新的数组长度进行取余运算（hash&amp;length -1),但是从上述代码中，我们没有发现进行取余的操作。这是怎么回事呢？没事大家一起来看下图。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-6d1e5de02c67b206.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="取余流程.png"></p>
+<p>上图中，我们假设某个节点hash值为1111 1111 1111 1111 11111 0000 1011 1111，并且在添加该值时，数组进行了扩容操作（为原来的数组长度的2倍）。我们发现节点在重新计算角标的时候，因为数组的长度变为之前的两倍，所以在新数组中的bit位中，始终要比原来的高一位（图中红色以表示区分），那么我们就可以根据下图得知。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-c6b296754a7c63c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="未命名表单.png"></p>
+<p>从上图可以得知，只要我们通过<strong>e.hash &amp; oldCap==0</strong>，我们就可以得知，该节点的新位置是在原位置，还是在原来的位置基础上+oldCap。不得不说这段代码非常优雅与巧妙，提高的效率不是吹的（因为没有重新取余去计算角标）。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>站在巨人的肩膀上。可以看得更远。</p>
+<p>[Java 8系列之重新认识HashMap]–美团技术团队</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>最后，附上我写的一个基于Kotlin 仿开眼的项目<a href="https://github.com/AndyJennifer/SimpleEyes" target="_blank" rel="noopener">SimpleEyes</a>(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/集合/" rel="tag"># 集合</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/LinkedList分析/" rel="next" title="LinkedList分析">
+                <i class="fa fa-chevron-left"></i> LinkedList分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/哈希表之HashMap-(二)/" rel="prev" title="哈希表之HashMap(二)">
+                哈希表之HashMap(二) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#把单词转换为数组下标"><span class="nav-number">1.</span> <span class="nav-text">把单词转换为数组下标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#幂操作"><span class="nav-number">2.</span> <span class="nav-text">幂操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二次探测聚集问题"><span class="nav-number">3.</span> <span class="nav-text">二次探测聚集问题</span></a></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展数组"><span class="nav-number"></span> <span class="nav-text">扩展数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number"></span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部结构"><span class="nav-number"></span> <span class="nav-text">内部结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap放入键值对"><span class="nav-number"></span> <span class="nav-text">HashMap放入键值对</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看put方法"><span class="nav-number"></span> <span class="nav-text">查看put方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看putVal方法"><span class="nav-number"></span> <span class="nav-text">查看putVal方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap的扩容机制"><span class="nav-number"></span> <span class="nav-text">HashMap的扩容机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number"></span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number"></span> <span class="nav-text">最后</span></a></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

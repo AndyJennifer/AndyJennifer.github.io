@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言在前面的文章中我们讲解了Handler、Looper、MessageQueue的具体关系，了解了具体的消息循环的流程。下面将一起来探讨最为整个消息循环的消息载体Message。 Message中可以携带的信息Message中可以携带的数据比较丰富，下面对一些常用的数据进行了">
+<meta name="keywords" content="异步任务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Handler机制之Message及Message回收机制">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/Android-Handler机制之Message及Message回收机制/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言在前面的文章中我们讲解了Handler、Looper、MessageQueue的具体关系，了解了具体的消息循环的流程。下面将一起来探讨最为整个消息循环的消息载体Message。 Message中可以携带的信息Message中可以携带的数据比较丰富，下面对一些常用的数据进行了">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-93bba9f12e53bb0d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/9/22/16601c88465668b4?w=883&h=562&f=png&s=24696">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/9/22/16601c88462010a4?w=883&h=591&f=png&s=21165">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-451f619f15b42f36.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-8d6a841222333799.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/9/22/16601c884690d0ad?w=1240&h=517&f=png&s=91646">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/9/22/16601c8846acbc2c?w=1240&h=487&f=png&s=89553">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.857Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Handler机制之Message及Message回收机制">
+<meta name="twitter:description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言在前面的文章中我们讲解了Handler、Looper、MessageQueue的具体关系，了解了具体的消息循环的流程。下面将一起来探讨最为整个消息循环的消息载体Message。 Message中可以携带的信息Message中可以携带的数据比较丰富，下面对一些常用的数据进行了">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-93bba9f12e53bb0d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/Android-Handler机制之Message及Message回收机制/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Android Handler机制之Message及Message回收机制 | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/Android-Handler机制之Message及Message回收机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android Handler机制之Message及Message回收机制
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 22:08:55" itemprop="dateCreated datePublished" datetime="2019-02-23T22:08:55+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Handler相关/" itemprop="url" rel="index"><span itemprop="name">Handler相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-93bba9f12e53bb0d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="小松鼠.jpg"></p>
+<blockquote>
+<p>该文章属于Android Handler系列文章，如果想了解更多，请点击<a href="/2019/02/23/Android-Handler机制之总目录/" title="Android Handler机制之总目录">Android Handler机制之总目录</a></p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在前面的文章中我们讲解了Handler、Looper、MessageQueue的具体关系，了解了具体的消息循环的流程。下面将一起来探讨最为整个消息循环的消息载体Message。</p>
+<h3 id="Message中可以携带的信息"><a href="#Message中可以携带的信息" class="headerlink" title="Message中可以携带的信息"></a>Message中可以携带的信息</h3><p>Message中可以携带的数据比较丰富，下面对一些常用的数据进行了分析。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 用户定义的消息代码，以便当接受到消息是关于什么的。其中每个Hanler都有自己的命名控件，不用担心会冲突</span><br><span class="line"> */	</span><br><span class="line"> public int what;</span><br><span class="line">/**</span><br><span class="line"> * 如果你只想存很少的整形数据，那么可以考虑使用arg1与arg2,</span><br><span class="line"> * 如果需要传输很多数据可以使用Message中的setData(Bundle bundle)</span><br><span class="line"> */</span><br><span class="line"> public int arg1;</span><br><span class="line">/**</span><br><span class="line"> * 如果你只想存很少的整形数据，那么可以考虑使用arg1与arg2,</span><br><span class="line"> * 如果需要传输很多数据可以使用Message中的setData(Bundle bundle)</span><br><span class="line"> */</span><br><span class="line"> public int arg2;</span><br><span class="line">/**</span><br><span class="line"> * 发送给接受方的任意对象，在使用跨进程的时候要注意obj不能为null</span><br><span class="line"> */</span><br><span class="line"> public Object obj;</span><br><span class="line">/**</span><br><span class="line"> * 在使用跨进程通信Messenger时，可以确定需要谁来接收</span><br><span class="line"> */</span><br><span class="line"> public Messenger replyTo;</span><br><span class="line">/**</span><br><span class="line"> * 在使用跨进程通信Messenger时，可以确定需要发消息的uid</span><br><span class="line"> */</span><br><span class="line"> public int sendingUid = -1;</span><br><span class="line">/**</span><br><span class="line"> * 如果数据比较多，可以直接使用Bundle进行数据的传递</span><br><span class="line"> */</span><br><span class="line"> Bundle data;</span><br></pre></td></tr></table></figure></p>
+<p>其中关于what的值为什么不会冲突的原因是，之前我们讲过的handler是与线程进行绑定的。也就是说不同消息循环消息的发送，处理的线程是不一样的。当然是不会冲突的。对于Messenger，因为涉及到Binder机制，这里就不过多的描述了，有兴趣的小伙伴可以自行查询相关资料学习。</p>
+<h3 id="创建消息的方式"><a href="#创建消息的方式" class="headerlink" title="创建消息的方式"></a>创建消息的方式</h3><p>官方建议使用Message.obtain()系列方法来获取Message实例，因为其Message实例是直接从Handler的消息池中获取的，可以循环利用，不必另外开辟内存空间，效率比直接使用new Message（）创建实例要高。其中具体创建消息的方式，我已经为大家分好类了。具体分类如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//无参数</span><br><span class="line">public static Message obtain() &#123;...&#125;</span><br><span class="line">//带Messag参数</span><br><span class="line">public static Message obtain(Message orig) &#123;&#125;</span><br><span class="line">//带Handler参数</span><br><span class="line">public static Message obtain(Handler h) &#123;&#125;</span><br><span class="line">public static Message obtain(Handler h, Runnable callback)&#123;&#125;</span><br><span class="line">public static Message obtain(Handler h, int what)&#123;&#125;</span><br><span class="line">public static Message obtain(Handler h, int what, Object obj)&#123;&#125;</span><br><span class="line">public static Message obtain(Handler h, int what, int arg1, int arg2)&#123;&#125;</span><br><span class="line">public static Message obtain(Handler h, int what,int arg1, int arg2, Object obj) &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中在Message的obtain带参数的方法中，内部都会调用无参的obtain()方法来获取消息后。然后并根据其传入的参数，对Message进行赋值。（关于具体的obtain方法会在下方消息池实现原理中具体描述）</p>
+<h3 id="消息池实现原理"><a href="#消息池实现原理" class="headerlink" title="消息池实现原理"></a>消息池实现原理</h3><p>既然官方建议使用消息池来获取消息，那么在了解其内部机制之前，我们来看看Message中的消息池的设计。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private static final Object sPoolSync = new Object();//控制获取从消息池中获取消息。保证线程安全</span><br><span class="line">private static Message sPool;//消息池</span><br><span class="line">private static int sPoolSize = 0;//消息池中回收的消息数量</span><br><span class="line">private static final int MAX_POOL_SIZE = 50;//消息池最大容量</span><br></pre></td></tr></table></figure></p>
+<p>从Message的消息池设计，我们大概能看出以下几点：</p>
+<ol>
+<li>该消息池在同一个消息循环中是共享的（sPool声明为static)，</li>
+<li>消息池中的最大容量为50，</li>
+<li>从消息池获取消息是线程安全的。</li>
+</ol>
+<h4 id="从消息池中获取消息"><a href="#从消息池中获取消息" class="headerlink" title="从消息池中获取消息"></a>从消息池中获取消息</h4><p>在上文中，我们已经知道了在使用消息池获得消息时，都会调用无参的obtain（）方法。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public static Message obtain() &#123;</span><br><span class="line">       synchronized (sPoolSync) &#123;</span><br><span class="line">           if (sPool != null) &#123;</span><br><span class="line">               Message m = sPool;</span><br><span class="line">               sPool = m.next;</span><br><span class="line">               m.next = null;</span><br><span class="line">               m.flags = 0; //重新标识当前Message没有使用过</span><br><span class="line">               sPoolSize--;</span><br><span class="line">               return m;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       return new Message();//如果为空直接返回</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上述代码中，我们可以了解，也就是当前 消息池不为空（sPool !=null)的情况下，那么我们就可以从消息池中获取数据，相应的消息池中的消息数量会减少。<strong>消息池的内部实现是以链表的形式</strong>，其中spol指针指向当前链表的头结点，从消息池中获取消息是<strong>以移除链表中sPool所指向的节点的形式</strong>，具体原理如下图所示：<br><img src="https://user-gold-cdn.xitu.io/2018/9/22/16601c88465668b4?w=883&amp;h=562&amp;f=png&amp;s=24696" alt="获取消息.png"></p>
+<h4 id="回收消息到消息池"><a href="#回收消息到消息池" class="headerlink" title="回收消息到消息池"></a>回收消息到消息池</h4><p>在Meaage的消息回收中，消息的实际回收方法是recycleUnchecked（）方法，具体如下图所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"> void recycleUnchecked() &#123;</span><br><span class="line">   //用于表示当前Message消息已经被使用过了</span><br><span class="line">      flags = FLAG_IN_USE;</span><br><span class="line">      //情况之前Message的数据</span><br><span class="line">      what = 0;</span><br><span class="line">      arg1 = 0;</span><br><span class="line">      arg2 = 0;</span><br><span class="line">      obj = null;</span><br><span class="line">      replyTo = null;</span><br><span class="line">      sendingUid = -1;</span><br><span class="line">      when = 0;</span><br><span class="line">      target = null;</span><br><span class="line">      callback = null;</span><br><span class="line">      data = null;</span><br><span class="line">//判断当前消息池中的数量是不是小于最大数量，其中 MAX_POOL_SIZE=50</span><br><span class="line">      synchronized (sPoolSync) &#123;</span><br><span class="line">          if (sPoolSize &lt; MAX_POOL_SIZE) &#123;</span><br><span class="line">              next = sPool;</span><br><span class="line">              sPool = this;</span><br><span class="line">              sPoolSize++;//记录当前消息池中的数量</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在recycleUnchecked（）方法中，大致分为三步，第一步将该条回收的消息状态设置为正在使用，第二步将Message所有的存储信息都变为初始值，第三步，如果当前消息池仍能够存储回收的消息，那么就将消息存储在消息池中。<strong>其中将回收消息加入消息池中是使用链表的形式</strong>，具体回收消息到消息池如下图所示：<br><img src="https://user-gold-cdn.xitu.io/2018/9/22/16601c88462010a4?w=883&amp;h=591&amp;f=png&amp;s=21165" alt="加入消息.png"></p>
+<h3 id="Message-消息回收时机"><a href="#Message-消息回收时机" class="headerlink" title="Message 消息回收时机"></a>Message 消息回收时机</h3><p>这里为了方便大家梳理逻辑，我提前将几种会调用消息进行回收的情况都描述出来了，具体的情况如下所示：</p>
+<h4 id="当Handler指定删除单条消息，或所有消息的时候"><a href="#当Handler指定删除单条消息，或所有消息的时候" class="headerlink" title="当Handler指定删除单条消息，或所有消息的时候"></a>当Handler指定删除单条消息，或所有消息的时候</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void removeMessages(Handler h, int what, Object object)</span><br><span class="line">void removeMessages(Handler h, Runnable r, Object object)</span><br><span class="line">void removeCallbacksAndMessages(Handler h, Object object)</span><br></pre></td></tr></table></figure>
+<p>当使用Handler删除某条消息的时候，会分别调用MessageQueue的</p>
+<ul>
+<li>removeMessages(Handler h, int what, Object object)</li>
+<li>removeCallbacksAndMessages(Handler h, Object object) </li>
+<li>removeMessages(Handler h, Runnable r, Object object) </li>
+</ul>
+<p>这三个方法逻辑比较类似。这里直接选取removeCallbacksAndMessages（）方法来进行讲解。具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">void removeCallbacksAndMessages(Handler h, Object object) &#123;</span><br><span class="line">       if (h == null) &#123;</span><br><span class="line">           return;</span><br><span class="line">       &#125;</span><br><span class="line">       synchronized (this) &#123;</span><br><span class="line">           Message p = mMessages;</span><br><span class="line">           //  第一次循环</span><br><span class="line">           while (p != null &amp;&amp; p.target == h</span><br><span class="line">                   &amp;&amp; (object == null || p.obj == object)) &#123;</span><br><span class="line">                //下面操作会将满足回收条件的消息，从消息队列中移除</span><br><span class="line">               Message n = p.next;</span><br><span class="line">               mMessages = n;</span><br><span class="line">               p.recycleUnchecked();</span><br><span class="line">               p = n;</span><br><span class="line">           &#125;</span><br><span class="line">           // 第二次循环</span><br><span class="line">           while (p != null) &#123;</span><br><span class="line">               Message n = p.next;</span><br><span class="line">               if (n != null) &#123;</span><br><span class="line">                   if (n.target == h &amp;&amp; (object == null || n.obj == object)) &#123;</span><br><span class="line">                   //下面操作会将满足回收条件的消息，从消息队列中移除</span><br><span class="line">                       Message nn = n.next;</span><br><span class="line">                       n.recycleUnchecked();</span><br><span class="line">                       p.next = nn;</span><br><span class="line">                       continue;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">               p = n;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>在removeCallbacksAndMessages(Handler h, Object object)方法中，在该方法中分别进行了两次循环，肯定有很多读者朋友会很好奇，为什么这里会进行两次循环呢？下面我就具体来讲解一下。</p>
+<p>我们都知道，在Handler机制中，<code>多个handler对应同一个MessageQueue对应同一个Looper，Handler与MessageQueue与Looper之间的关系是N：1：1</code>。也就是说在MessageQueue中我们可以有多个不同Handler发送的Message。那么我们再结合上面的代码，我们来分析这两次循环。</p>
+<h5 id="第一次循环"><a href="#第一次循环" class="headerlink" title="第一次循环"></a>第一次循环</h5><p>根据上文对代码的理解，第一次循环会将MessageQueue中，当前Handler发送的所有消息移除，<code>注意!!!!!!!!!这里并不会将整个MessageQueue中的当前Handler发送的消息全部移除</code>，而是在遍历过程中，如果有其他Handler发送的消息,那么就会将mMessages指向头结点并跳出循环。如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-451f619f15b42f36.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="第一次循环.png"></p>
+<h5 id="第二次循环"><a href="#第二次循环" class="headerlink" title="第二次循环"></a>第二次循环</h5><p>经过上文的分析，我们已经知道了，在进行第一次循环后，已经将在removeCallbacksAndMessages方法执行时所有对应的Handler发送的消息移除掉了，但是MessageQueue中可能任然会残留没有移除掉的消息。那么第二次循环，根据代码来理解的话，我们可以得到下图：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-8d6a841222333799.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="第二次循环.png"></p>
+<p>到这里有可能有小伙伴就会想，为什么不执行一次循环就将所有的对应Handler发送的消息全部移除了呢？这里之所以要执行两次循环的原因是，你并不能保证当移除消息的时候，对应的Handler就不继续发送消息了，也就是说该Handler发送的消息仍然会被添加到MessageQueue中，<code>所以为了保证将整个MessageQueue中该Handler发送的消息全部被移除，在第一次循环移除之后，我们必须要再执行一次循环移除操作</code>。</p>
+<h4 id="当Loooper取出消息时"><a href="#当Loooper取出消息时" class="headerlink" title="当Loooper取出消息时"></a>当Loooper取出消息时</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"> public static void loop() &#123;</span><br><span class="line">//省略部分代码</span><br><span class="line">     for (;;) &#123;</span><br><span class="line">         Message msg = queue.next(); // might block</span><br><span class="line">         if (msg == null) &#123;</span><br><span class="line">             // No message indicates that the message queue is quitting.</span><br><span class="line">             return;</span><br><span class="line">         &#125;</span><br><span class="line">//省略部分代码</span><br><span class="line">         try &#123;</span><br><span class="line">             msg.target.dispatchMessage(msg);</span><br><span class="line">             end = (slowDispatchThresholdMs == 0) ? 0 : SystemClock.uptimeMillis();</span><br><span class="line">         &#125; finally &#123;</span><br><span class="line">             if (traceTag != 0) &#123;</span><br><span class="line">                 Trace.traceEnd(traceTag);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">   //省略部分代码</span><br><span class="line">   </span><br><span class="line">   //回收消息</span><br><span class="line">         msg.recycleUnchecked();</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>我们都知道消息的取出是通过Looper类中的loop方法。从代码中我们可以看出，当消息取出并执行相应操作后。最后会将消息回收。</p>
+<h4 id="当Looper取消循环消息队列的时候"><a href="#当Looper取消循环消息队列的时候" class="headerlink" title="当Looper取消循环消息队列的时候"></a>当Looper取消循环消息队列的时候</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public void quitSafely() &#123; mQueue.quit(true);&#125;</span><br><span class="line">public void quit() &#123; mQueue.quit(false); &#125;</span><br></pre></td></tr></table></figure>
+<p>当退出消息队列的时候，也就是调用Loooper的quitSafely（）或quit（）方法，从代码中我们可以看出，会调用其内部的MessageQueue的quit(boolean safe)方法。我们继续跟踪代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">void quit(boolean safe) &#123;</span><br><span class="line">     if (!mQuitAllowed) &#123;//注意，主线程是不能退出消息循环的</span><br><span class="line">         throw new IllegalStateException(&quot;Main thread not allowed to quit.&quot;);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     synchronized (this) &#123;</span><br><span class="line">         if (mQuitting) &#123;//如果当前循环消息已经退出了，直接返回</span><br><span class="line">             return;</span><br><span class="line">         &#125;</span><br><span class="line">         mQuitting = true;</span><br><span class="line"></span><br><span class="line">         if (safe) &#123;//如果是安全退出</span><br><span class="line">             removeAllFutureMessagesLocked();</span><br><span class="line">         &#125; else &#123;//如果不是安全退出</span><br><span class="line">             removeAllMessagesLocked();</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         // We can assume mPtr != 0 because mQuitting was previously false.</span><br><span class="line">         nativeWake(mPtr);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>在MessageQueue的quit(boolean safe)方法中，会将mQuitting （用于判断当前消息队列是否已经退出）置为true，同时会根据当前是否安全退出的标志 (safe)来走不同的逻辑,如果安全则走removeAllFutureMessagesLocked（）方法，如果不是安全退出则走removeAllMessagesLocked（）方法。下面分别对这两个方法进行讨论。</p>
+<h5 id="非安全退出"><a href="#非安全退出" class="headerlink" title="非安全退出"></a>非安全退出</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private void removeAllMessagesLocked() &#123;</span><br><span class="line">    Message p = mMessages;</span><br><span class="line">    while (p != null) &#123;</span><br><span class="line">        Message n = p.next;</span><br><span class="line">        p.recycleUnchecked();</span><br><span class="line">        p = n;</span><br><span class="line">    &#125;</span><br><span class="line">    mMessages = null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>非安全退出其实很简单，就是将所有消息队列中的消息全部回收。具体示意图如下所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/9/22/16601c884690d0ad?w=1240&amp;h=517&amp;f=png&amp;s=91646" alt="回收全部消息.png"></p>
+<h5 id="安全退出"><a href="#安全退出" class="headerlink" title="安全退出"></a>安全退出</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">private void removeAllFutureMessagesLocked() &#123;</span><br><span class="line">     final long now = SystemClock.uptimeMillis();</span><br><span class="line">     Message p = mMessages;//当前队列中的头消息</span><br><span class="line">     if (p != null) &#123;</span><br><span class="line">         if (p.when &gt; now) &#123;//判断时间，如果Message的取出时间比当前时间要大直接移除</span><br><span class="line">             removeAllMessagesLocked();</span><br><span class="line">         &#125; else &#123;</span><br><span class="line">             Message n;</span><br><span class="line">             for (;;) &#123;//继续判断，取队列中所有大于当前时间的消息</span><br><span class="line">                 n = p.next;</span><br><span class="line">                 if (n == null) &#123;</span><br><span class="line">                     return;</span><br><span class="line">                 &#125;</span><br><span class="line">                 if (n.when &gt; now) &#123;</span><br><span class="line">                     break;</span><br><span class="line">                 &#125;</span><br><span class="line">                 p = n;</span><br><span class="line">             &#125;</span><br><span class="line">             p.next = null;</span><br><span class="line">             do &#123;//将所有所有大于当前时间的消息的消息回收</span><br><span class="line">                 p = n;</span><br><span class="line">                 n = p.next;</span><br><span class="line">                 p.recycleUnchecked();</span><br><span class="line">             &#125; while (n != null);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>观察上诉代码，在该方法中，会判断当前消息队列中的头消息的时间是否大于当前时间，如果大于当前时间就会removeAllMessagesLocked（）方法（也就是回收全部消息），反之，则回收部分消息，同时没有被回收的消息任然可以被取出执行。具体示意图如下所示：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/9/22/16601c8846acbc2c?w=1240&amp;h=487&amp;f=png&amp;s=89553" alt="回收部分消息.png"></p>
+<h4 id="当消息队列退出的，但是仍然发送消息过来的时候"><a href="#当消息队列退出的，但是仍然发送消息过来的时候" class="headerlink" title="当消息队列退出的，但是仍然发送消息过来的时候"></a>当消息队列退出的，但是仍然发送消息过来的时候</h4><p>在Looper调用quit()方法时，也就是Looper退出消息循环的时候，我们已经知道了其内部会调用MessageQueue的quit(boolean safe)方法。当MessageQueue退出的时候，会将mQuitting置为true。那么当对应的Handler发送消息时，我们都知道会调用MessageQueue的enqueueMessage（Message msg, long when）方法。那么现在我们观察下列代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">boolean enqueueMessage(Message msg, long when) &#123;</span><br><span class="line">	   ...省略部分代码</span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">          ...省略部分代码</span><br><span class="line">            if (mQuitting) &#123;</span><br><span class="line">                IllegalStateException e = new IllegalStateException(</span><br><span class="line">                        msg.target + &quot; sending message to a Handler on a dead thread&quot;);</span><br><span class="line">                Log.w(TAG, e.getMessage(), e);</span><br><span class="line">                msg.recycle();</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">            ...省略部分代码</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>观察该代码我们得知，当循环消息退出的时候，如果这个时候Handler继续发送消息来。会将该消息回收。但是现在这里有个问题。既然我们的消息队列已经结束循环了。那么我们回收该消息又有什么用呢？我们又不能重新的开启消息循环。不知道Google这里为什么会这么设计。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>在使用Handler发消息时，建议使用Message.obtin()方法，从消息池中获取消息。</li>
+<li>在Message中消息池是使用链表的形式来存储消息的。</li>
+<li>在Message中消息池中最大允许存储50条的消息。</li>
+<li>在使用Handler移除某条消息的时候，该消息有可能会被消息池回收。（会判断消息池是否仍然能存储消息）</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/异步任务/" rel="tag"># 异步任务</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/Android-Handler机制之Message的发送与取出/" rel="next" title="Handler机制之Message的发送与取出”">
+                <i class="fa fa-chevron-left"></i> Handler机制之Message的发送与取出”
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/Android-Handler机制之消息池的扩展-SimplePool与SynchronizedPool/" rel="prev" title="Android Handler机制之消息池的扩展 SimplePool与SynchronizedPool">
+                Android Handler机制之消息池的扩展 SimplePool与SynchronizedPool <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message中可以携带的信息"><span class="nav-number">2.</span> <span class="nav-text">Message中可以携带的信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建消息的方式"><span class="nav-number">3.</span> <span class="nav-text">创建消息的方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息池实现原理"><span class="nav-number">4.</span> <span class="nav-text">消息池实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#从消息池中获取消息"><span class="nav-number">4.1.</span> <span class="nav-text">从消息池中获取消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回收消息到消息池"><span class="nav-number">4.2.</span> <span class="nav-text">回收消息到消息池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message-消息回收时机"><span class="nav-number">5.</span> <span class="nav-text">Message 消息回收时机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当Handler指定删除单条消息，或所有消息的时候"><span class="nav-number">5.1.</span> <span class="nav-text">当Handler指定删除单条消息，或所有消息的时候</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#第一次循环"><span class="nav-number">5.1.1.</span> <span class="nav-text">第一次循环</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第二次循环"><span class="nav-number">5.1.2.</span> <span class="nav-text">第二次循环</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当Loooper取出消息时"><span class="nav-number">5.2.</span> <span class="nav-text">当Loooper取出消息时</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当Looper取消循环消息队列的时候"><span class="nav-number">5.3.</span> <span class="nav-text">当Looper取消循环消息队列的时候</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#非安全退出"><span class="nav-number">5.3.1.</span> <span class="nav-text">非安全退出</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安全退出"><span class="nav-number">5.3.2.</span> <span class="nav-text">安全退出</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当消息队列退出的，但是仍然发送消息过来的时候"><span class="nav-number">5.4.</span> <span class="nav-text">当消息队列退出的，但是仍然发送消息过来的时候</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
+<meta name="keywords" content="Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle系列-引导篇(一)">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-3f62357c67fc183d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-eb33e56f256fe391.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle系列-引导篇(一)">
+<meta name="twitter:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Gradle系列-引导篇(一) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gradle系列-引导篇(一)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 22:15:49" itemprop="dateCreated datePublished" datetime="2019-02-23T22:15:49+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Gradle相关/" itemprop="url" rel="index"><span itemprop="name">Gradle相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="gradle.png"></p>
+<blockquote>
+<p>题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。</p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：</p>
+<ul>
+<li>开启项目提示界面一直显示Gradle Build Running </li>
+<li>Gradle传递性依赖冲突</li>
+<li>多渠道打包</li>
+<li>…..等</li>
+</ul>
+<p>相信大家在平时使用的时候，遇到问题都通过搜索引擎来解决，有些小伙伴可定会想,”<code>作为一个Android开发者，我没有必要去详细的了解Gradle到底去这么使用，平时开发任务本来就比较重，哪里有时间有精力来学习呢</code>“ 但是个人觉得对Gradle的了解，对于我们平时开发项目有很重要的帮助。</p>
+<h3 id="Java项目的构建"><a href="#Java项目的构建" class="headerlink" title="Java项目的构建"></a>Java项目的构建</h3><p>要知道Gradle是什么以及其作用。我们需要从整个Java项目的构建说起，看下图：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-3f62357c67fc183d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="gradle-java-builds.png"></p>
+<p>从上图中我们可以看出在平时Java项目的构建流程，或多或少我们会涉及以下操作：</p>
+<ul>
+<li>通过<code>javac</code>命令将一些Java源文件编译为class文件。</li>
+<li>将类文件和资源文件（图像和字符串的资源）压缩为Jar包。</li>
+<li>通过<code>javadoc</code>命令提取Java源文件的中的注释。生成文档。</li>
+<li>运行一些单元测试，或程序验收测试。</li>
+<li>将Jar文件部署到资源库中。</li>
+</ul>
+<p>既然Java项目的构建会经历以上或更多的步骤，那么我们接下来看看Android项目的构建流程。</p>
+<h3 id="Android项目的构建"><a href="#Android项目的构建" class="headerlink" title="Android项目的构建"></a>Android项目的构建</h3><p>对于Android项目的构建，主要会经历和解决下面这些问题：</p>
+<ul>
+<li>Android对于Java源文件<code>并未按照标准Java字节码编译</code>，但可为Android运行时自定义字节码。</li>
+<li>Android具有三种资源类型（R.java、Application source code、JavaInterfaces)，且按照不同的方式打包。</li>
+<li>还有一个难题就是你定义的资源需要与所包括的资源库中的资源进行汇集，在编译其他任何程序之前，需要知道所有这些资源的识别符。</li>
+<li>Android应用多数情况下会对应用进行加密。</li>
+</ul>
+<p>那么汇集所有的资源以及情况后，整个Android的构建流程看起来是这个样子：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2824145-eb33e56f256fe391.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Android构建流程图.png"></p>
+<p>为了方便大家理解这里对其中主要的构建过程进行描述(<code>上图中绿色椭圆部分</code>)：</p>
+<ul>
+<li>aapt：aapt(Android Asset Packaging Tool)工具会打包应用中的资源文件，如AndroidManifest.xml、layout布局中的xml等，并将xml文件编译为二进制形式，当然assets文件夹中的文件不会被编译，图片及raw文件夹中的资源也会保持原来的形态，(<code>需要注意的是raw文件夹中的资源也会生成资源id。AAPT编译完成之后会生成R.java文件</code>)。</li>
+<li>aidl：AIDL工具会将所有的aidl接口转化为java接口。</li>
+<li>Java Compiler(Java编译器)：当AAPT与AIDL工具将需要处理的数据处理好后，Java 编译器会将所有的java代码，包括R.java与aidl文件编译成<code>.class文件</code>。</li>
+<li>dex：dex工具会将上述产生的.class文件及第三库及其他.class文件编译成<code>.dex文件</code>（dex文件是Dalvik虚拟机可以执行的格式），dex文件最终会被打包进APK文件。</li>
+<li>apkbuilder：apkbuilder工具会将编译过的资源及未编译过的资源（如图片等）以及.dex文件打包成APK文件。</li>
+<li>Jarsingner：生成APK文件后，需要对其签名才可安装到设备，平时测试时会使用debug keystore，当正式发布应用时必须使用release版的keystore对应用进行签名。Jarsigner工具会根据相应的keystore生成相应的签名APK文件。</li>
+<li>zipalign(release mode)：zipalign工具，它能够对打包的应用程序进行优化。在你的应用程序上运行zipalign，使得在运行时Android与应用程序间的交互更加有效率。</li>
+</ul>
+<blockquote>
+<p>在Android中，每个应用程序中储存的数据文件都会被多个进程访问：安装程序会读取应用程序的manifest文件来处理与之相关的权限问题；Home应用程序会读取资源文件来获取应用程序的名和图标；系统服务会因为很多种原因读取资源（例如，显示应用程序的Notification）。此外，就是应用程序自身用到的资源文件。<br>在Android中，当资源文件通过内存映射对齐到4字节边界时，访问资源文件的代码才是有效率的。但是，如果资源本身没有进行对齐处理（未使用zipalign工具），它就必须回到老路上，显式地读取它们——这个过程将会比较缓慢且会花费额外的内存。</p>
+</blockquote>
+<p>从整个Android项目的构建来看，我们会感叹“为啥我就简单的创建一个应用，为毛有非常多的事情需要做。”，所以为了方便处理这些，我们都会想是不是可以写一个能自动处理这些过程的程序化脚本呢？<code>所以Gradle出现了！！！！</code>。</p>
+<h3 id="为毛选择Gradle？"><a href="#为毛选择Gradle？" class="headerlink" title="为毛选择Gradle？"></a>为毛选择Gradle？</h3><p>对于以前传统的项目构建工具，只是编译和打包源代码。而现在项目的构建需要负责更多的工作，它们会运行测试、从多个来源购买编码资源、生成文档、创建多个构建变种、发布应用程序和管理依赖性。而Gradle不仅具备这些能力与功能，还解决了Android开发人员面临的一些最棘手的问题，如下所示：</p>
+<ul>
+<li>如何自动构建和测试应用，以快速实现生产力？</li>
+<li>如何管理依赖和变种。使专业开发人员只需要单击一次就能提取出其应用的数十个变种？</li>
+<li>如何构建处理及处理非常大的应用？</li>
+<li>…</li>
+</ul>
+<p>哎呀说这么多，<code>其实最大的原因是Google爸爸已经选择Gradle做为Android Studio的构建系统</code>，在Android Studio中将Android应用的整个流程指派给了Gradle。当我们点击<code>运行</code>按钮时，Android studio会在运行过程中设置Gradle，并在后台监控。通过学习有关Gradle知识。我们可以扩展此默认行为。以构建能力更强且经过适当测试的应用。</p>
+<p><code>既然Gradle大法这么好，为毛我们不去学习呢？</code></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Gradle是项目的构建工具，解决了我们平时开发中，项目测试、项目打包、项目依赖等问题。</p>
+<p>###最后<br>Gradle系列会继续写。如果大家喜欢我的写作风格的话。欢迎大家点赞。</p>
+<p>最后，附上我写的一个基于Kotlin 仿开眼的项目<a href="https://github.com/AndyJennifer/SimpleEyes" target="_blank" rel="noopener">SimpleEyes</a>(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Gradle/" rel="tag"># Gradle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/RxJava网络请求封装/" rel="next" title="RxJava网络请求封装">
+                <i class="fa fa-chevron-left"></i> RxJava网络请求封装
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/" rel="prev" title="从ButterKnife.kt 了解Kotlin 委托与扩展">
+                从ButterKnife.kt 了解Kotlin 委托与扩展 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java项目的构建"><span class="nav-number">2.</span> <span class="nav-text">Java项目的构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android项目的构建"><span class="nav-number">3.</span> <span class="nav-text">Android项目的构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为毛选择Gradle？"><span class="nav-number">4.</span> <span class="nav-text">为毛选择Gradle？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

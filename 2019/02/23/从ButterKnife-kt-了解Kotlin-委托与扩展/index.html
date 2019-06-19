@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ##ButterK">
+<meta name="keywords" content="kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从ButterKnife.kt 了解Kotlin 委托与扩展">
+<meta property="og:url" content="http://yoursite.com/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ##ButterK">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-06-17T06:37:17.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从ButterKnife.kt 了解Kotlin 委托与扩展">
+<meta name="twitter:description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ##ButterK">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>从ButterKnife.kt 了解Kotlin 委托与扩展 | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从ButterKnife.kt 了解Kotlin 委托与扩展
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-23 22:17:17" itemprop="dateCreated datePublished" datetime="2019-02-23T22:17:17+08:00">2019-02-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p> 最近学了<strong>Kotlin</strong>这门新语言用于Android开发。其中不免遇上<strong>findViewById()</strong>,原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现<a href="https://github.com/JakeWharton/kotterknife" target="_blank" rel="noopener">kotterknife</a>。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库)</p>
+<p>##ButterKnife的使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private val mIcon by bindView&lt;ImageView&gt;(R.id.iv_image)</span><br></pre></td></tr></table></figure>
+<p>通过以上代码，我们发现。只需要通过 by bindView&lt;View类型&gt;（id）就能获得我们需要找到的View,那其中涉及到的知识点是哪几个呢？</p>
+<p>主要知识点</p>
+<ul>
+<li><a href="https://www.kotlincn.net/docs/reference/delegation.html" target="_blank" rel="noopener">委托属性</a></li>
+<li><a href="https://www.kotlincn.net/docs/reference/extensions.html" target="_blank" rel="noopener">扩展函数</a></li>
+<li><a href="https://www.kotlincn.net/docs/reference/lambdas.html" target="_blank" rel="noopener">高阶函数</a></li>
+</ul>
+<p>如果你已经对这几个知识点都掌握了，那么就直接开始分析代码，查看bindView方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public fun &lt;V : View&gt; View.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;View, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; Activity.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;Activity, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; Dialog.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;Dialog, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; DialogFragment.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;DialogFragment, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; SupportDialogFragment.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;SupportDialogFragment, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; Fragment.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;Fragment, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; SupportFragment.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;SupportFragment, V&gt; = required(id, viewFinder)</span><br><span class="line">public fun &lt;V : View&gt; ViewHolder.bindView(id: Int)</span><br><span class="line">    : ReadOnlyProperty&lt;ViewHolder, V&gt; = required(id, viewFinder)</span><br></pre></td></tr></table></figure></p>
+<p>我们发现该类中对常用的View、Activity、Dailog、Fragment等都扩展了一个bindView的方法，而其返回值都是Kotlin中标准库中的ReadyOnlyProperty接口。而具体实现是required(id,viewFinder)方法。</p>
+<p>而ViewFinder又是什么呢？我们继续查看viewFinder<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private val View.viewFinder: View.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; findViewById(it) &#125;</span><br><span class="line">private val Activity.viewFinder: Activity.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; findViewById(it) &#125;</span><br><span class="line">private val Dialog.viewFinder: Dialog.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; findViewById(it) &#125;</span><br><span class="line">private val DialogFragment.viewFinder: DialogFragment.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; dialog?.findViewById(it) ?: view?.findViewById(it) &#125;</span><br><span class="line">private val SupportDialogFragment.viewFinder: SupportDialogFragment.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; dialog?.findViewById(it) ?: view?.findViewById(it) &#125;</span><br><span class="line">private val Fragment.viewFinder: Fragment.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; view.findViewById(it) &#125;</span><br><span class="line">private val SupportFragment.viewFinder: SupportFragment.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; view!!.findViewById(it) &#125;</span><br><span class="line">private val ViewHolder.viewFinder: ViewHolder.(Int) -&gt; View?</span><br><span class="line">    get() = &#123; itemView.findViewById(it) &#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们发现ViewFinder只不过是我们常用的View、Activity、Dailog、Fragment等的扩展属性 同时该属性拥有函数类型 T.()-&gt;View，并且ViewFinder最终的实现是其相应接受者的findViewById(id)函数。</p>
+<p>我们继续点击required方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@Suppress(&quot;UNCHECKED_CAST&quot;)</span><br><span class="line">private fun &lt;T, V : View&gt; required(id: Int, finder: T.(Int) -&gt; View?)</span><br><span class="line">    = Lazy &#123; t: T, desc -&gt; t.finder(id) as V? ?: viewNotFound(id, desc) &#125;</span><br></pre></td></tr></table></figure>
+<p>我们发现required方法返回的是一个Lazy对象，并且初始化了其initializer 属性。根据id寻找相应的View.如果没有找到就执行相应的viewNotFound方法。</p>
+<p>可能有些小朋友看不懂这段代码。那么其完整格式为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Lazy( &#123; t: T, desc -&gt; t.finder(id) as V? ?: viewNotFound(id, desc) &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>在Kotlin中有一个约定，如果函数的最后一个参数是一个函数。并且你传递一个Lambda表达式作为相应的参数，你可以在圆括号外面声明它</p>
+<p>转换后:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Lazy()&#123; t: T, desc -&gt; t.finder(id) as V? ?: viewNotFound(id, desc) &#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意</strong>：如果Lambdashi 该调用的唯一参数。则调用中的圆括号可以省略<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Lazy &#123; t: T, desc -&gt; t.finder(id) as V? ?: viewNotFound(id, desc) &#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来继续查看Lazy类:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// Like Kotlin&apos;s lazy delegate but the initializer gets the target and metadata passed to it</span><br><span class="line">private class Lazy&lt;T, V&gt;(private val initializer: (T, KProperty&lt;*&gt;) -&gt; V) : ReadOnlyProperty&lt;T, V&gt; &#123;</span><br><span class="line">  private object EMPTY</span><br><span class="line">  private var value: Any? = EMPTY</span><br><span class="line"></span><br><span class="line">  override fun getValue(thisRef: T, property: KProperty&lt;*&gt;): V &#123;</span><br><span class="line">    if (value == EMPTY) &#123;</span><br><span class="line">      value = initializer(thisRef, property)</span><br><span class="line">    &#125;</span><br><span class="line">    @Suppress(&quot;UNCHECKED_CAST&quot;)</span><br><span class="line">    return value as V</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过观察我们发现该类实现了<strong>ReadOnlyProperty</strong>接口。我们知道在类委托中。可以实现<strong>ReadOnlyProperty</strong>(针对于val)或<strong>ReadWriteProperty</strong>(针对于var)接口。Lazy实现了ReadOnlyProperty那么在属性委托的时候会调用其<strong>getValue</strong>方法 (<strong>第一个参数</strong>：当前调用对象。<strong>第二个参数</strong>。当前属性的描述)，在getValue方法中，会调用其 initializer属性的对应的函数作为最终的返回值。</p>
+<p>最终。整个流程分析完毕。我们可以发现Kotlin这门语言的强大之处。给我们编码带来了许多方便。还不快来一起学习Koltin。</p>
+<p>最后，附上我写的一个基于Kotlin 仿开眼的项目<a href="https://github.com/AndyJennifer/SimpleEyes" target="_blank" rel="noopener">SimpleEyes</a>(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/kotlin/" rel="tag"># kotlin</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/Gradle系列-引导篇(一)/" rel="next" title="Gradle系列-引导篇(一)">
+                <i class="fa fa-chevron-left"></i> Gradle系列-引导篇(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/23/Kotlin下的5种单例模式/" rel="prev" title="Kotlin下的5种单例模式">
+                Kotlin下的5种单例模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
