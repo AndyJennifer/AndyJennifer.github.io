@@ -184,5 +184,7 @@ https://github.com/GcsSloop/AndroidNote
 
 ### 版本控制(Git)
 
+http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html
+- 《Commit message 和 Change log 编写指南》
 
 ### 音视频
