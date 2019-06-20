@@ -123,7 +123,7 @@ public class Main {
     }
 }
 ```
-观察上述过程，可以发现不管采用何种方式来构建线程任务，我们都需要创建相应的Thread对象。并调用其start方法。而调用start方法的含义是，告诉当前Java虚拟机，当前线程已经初始化完毕。如果线程规划器空闲。则立即调用对于Thread的`run()`方法执行相应任务。
+观察上述过程，可以发现不管采用何种方式来构建线程任务，我们都需要创建相应的Thread对象。并调用其`start()`方法。而调用start方法的含义是，告诉当前Java虚拟机，当前线程已经初始化完毕。如果线程规划器空闲。则立即调用对于Thread的`run()`方法执行相应任务。
 
 那实现Runnable接口与继承Thread来创建线程任务之间到底有什么区别呢？如果我们观察使用Runnable接口的方式，我们发现其实际调用了Thread类的构造函数。如下所示：
 
@@ -143,13 +143,53 @@ public class Main {
 那么现在区别就非常明显了。实现Runnable接口来创建线程任务，主要是为了将具体的任务抽离出来，那么这样不仅避免了Thread类的单继承的局限性，还更符合面向对象的编程思想，同时也降低了线程对象和线程任务的耦合性。
 
 ### 线程的优先级
-在上文构造线程章节中，我们曾讲过，Java线程在构建的时候，会复用父线程的优先级。那优先级代表着什么呢？在具体讲解优先级之前，我们需要
-这里要将分时系统，然后将线程的优先级
 
+在上文构造线程章节中，我们曾讲过，Java线程在构建的时候，会复用父线程的优先级。那优先级代表着什么呢？在具体讲解优先级之前，我们需要了解分时操作系统。在现代的操作系统（如：Windows、Linux、Mac OS X等)中基本采用的分时的形式调度运行的线程，操作系统会分出一个个时间片，线程会分配到`若干时间片`后，当线程的时间片用完之后就会发生线程的调度，等待下次分配。具体如下图所示；
+
+![分时操作系统](https://user-gold-cdn.xitu.io/2019/6/20/16b733aa96896d07?w=393&h=391&f=png&s=29461)
+
+>时间片是分时操作系统分配给每个正在运行的进程微观上的一段CPU时间。
+
+通常状况下，一个系统中所有的线程被分配到的时间片长短并不是相等的，不同的操作系统有着自己的时间片分配规则。而线程的优先级的大小只是占了线程分配时间片的一个权重。也就是说，不是设置了优先级越高，线程就能一定获得更多的时间片。
+
+在Java线程中，通过一个整形成员变量`priority`来控制优先级。优先级的范围为1-10。我们在构建线程的时候可以通过`setPriority(int newPriority)`方法来设置优先级,当然Java中也默认了三个优先级,分别为`MIN_PRIORITY（1）、NORM_PRIORITY（5）、MAX_PRIORITY（10）`。具体代码如下所示：
+
+```
+public class Main {
+
+    public static void main(String[] args) {
+        //使用实现Runnable接口
+        Thread thread1 = new Thread(new MyRunnableB());
+        Thread thread2 = new Thread(new MyRunnableB());
+        Thread thread3 = new Thread(new MyRunnableB());
+        thread1.setPriority(Thread.MIN_PRIORITY);
+        thread2.setPriority(Thread.NORM_PRIORITY);
+        thread3.setPriority(Thread.MAX_PRIORITY);
+        
+        thread1.start();
+        thread2.start();
+        thread3.start();
+    }
+
+    static class MyRunnableB implements Runnable {
+        @Override
+        public void run() {
+            System.out.println("MyRunnableB线程任务已经启动了");
+        }
+    }
+}
+```
 ### Daemon线程（守护线程）
+在上文构造线程章节中，我们曾讲过，Java线程在构建的时候也会复用父线程的Daemon属性。其实在Java中线程分为`守护线程`及`用户线程`。所谓守护线程是指在程序运行的时候在后台提供一种通用服务的线程，比如垃圾回收线程就是一个很称职的守护者，并且这种线程并不属于程序中不可或缺的部分。因此，当所有的非守护线程结束时，程序也就终止了，同时会杀死进程中的所有守护线程。反过来说，只要`用户线程`还在运行，程序就不会终止。具体例子如下所示：
 
-### 线程的状态
-画画线程的状态，讲讲查看线程状态的java命令
+>需要注意的是，Daemon属性需要在线程调用start方法之前设置。不能在线程启动的时候设置。
+
+![用户线程与守护线程的区别](https://user-gold-cdn.xitu.io/2019/6/20/16b7372902346d0b?w=972&h=522&f=png&s=117619)
+
+通过观察上诉代码，我们明显可以看见守护进程，程序最后打印了`Process finished with exit code 0`，也就是暗示程序结束运行了。而使用用户进程的程序一直没有结束，一直在循环打印相应信息，这两者对比，也就是验证了我们之前的结论。
+
 
 ### 最后
+站在巨人的肩膀上，才能看的更远~
 
+- 《Java并发编程的艺术》
