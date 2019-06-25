@@ -38,7 +38,7 @@ tags:
 - Java并发编程之线程篇之线程简介(二) {% post_link Java并发编程之线程篇之线程简介(二) %}
 - Java并发编程之线程篇之线程中断(三) {% post_link Java并发编程之线程篇之线程中断(三) %}
 - Java并发编程之线程篇之线程间通信(四)
-- Java并发编程之线程篇之线程的状态（五)
+- Java并发编程之线程篇之线程的状态(五)
 - Java并发编程之线程篇之线程实际应用实例(六)
 
 
@@ -114,6 +114,8 @@ https://github.com/GcsSloop/AndroidNote
 - 《自定义View事件篇(五)-手势检测(GestureDetecotr)》
 - 《自定义View事件篇(六)-缩放手势检测(ScaleGestureDetector)》
 - 《自定义View事件篇进阶篇(七)-嵌套滑动机制》
+- 《自定义View事件篇进阶篇(八)-嵌套滑动实际例子》
+- 《自定义View事件篇进阶篇(九)-CoordinatorLayout与Behavior》
 
 #### 动画篇
 - 《自定义View动画篇(一)-alpha、scale、translate、rotate、set的xml属性及用法》
@@ -161,7 +163,7 @@ https://github.com/GcsSloop/AndroidNote
 - 《ListView与RecyclerView篇(二)-RecyclerView的简单封装》
 - 《ListView与RecyclerView篇(三)-RecyclerView缓存原理》
 - 《ListView与RecyclerView篇(四)-ListView缓存原理》
-- 《ListView与RecyclerView篇(五)-ListView与RecyclerView缓存对比总结》
+- 《ListView与RecyclerView篇(五)-ListView与RecyclerView缓存对比总结》Bugly总结
 - 《ListView与RecyclerView篇(六)-RecyclerView的RecyclerPool的使用》
 - 《ListView与RecyclerView篇(六)-RecyclerView滑动状态保存》
 - 《ListView与RecyclerView篇(七)-RecyclerView滑动定位》
