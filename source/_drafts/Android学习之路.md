@@ -93,53 +93,53 @@ https://github.com/GcsSloop/AndroidNote
 
 ### View工作原理篇
 
-- 《自定义View工作原理篇(一)-ViewRoot和DecorView》
-- 《自定义View工作原理篇(二)-理解MeasureSpec》
-- 《自定义view工作原理篇(三)-View的工作流程》
+- 自定义View工作原理篇(一)-ViewRoot和DecorView
+- 自定义View工作原理篇(二)-理解MeasureSpec
+- 自定义view工作原理篇(三)-View的工作流程
 
-- 《自定义View工作原理篇(四)-自定义View的分类》
-- 《自定义View工作原理篇(五)-自定义View的注意事项》
+- 自定义View工作原理篇(四)-自定义View的分类
+- 自定义View工作原理篇(五)-自定义View的注意事项
 
-- 《自定义View工作原理篇(六)-RelativeLayout源码解析》
-- 《自定义View工作原理篇(七)-LinearLayout源码解析》
-- 《自定义View工作原理篇(八)-FrameLayout源码解析》
+- 自定义View工作原理篇(六)-RelativeLayout源码解析
+- 自定义View工作原理篇(七)-LinearLayout源码解析
+- 自定义View工作原理篇(八)-FrameLayout源码解析
 
 
 #### 事件篇
 
-- 《自定义View事件篇(一)-事件分发机制》
-- 《自定义View事件篇(二)-MotionEvent详解》
-- 《自定义View事件篇(三)-特殊形状控件事件处理方案》
-- 《自定义View事件篇(四)-多点触控》
-- 《自定义View事件篇(五)-手势检测(GestureDetecotr)》
-- 《自定义View事件篇(六)-缩放手势检测(ScaleGestureDetector)》
-- 《自定义View事件篇进阶篇(七)-嵌套滑动机制》
-- 《自定义View事件篇进阶篇(八)-嵌套滑动实际例子》
-- 《自定义View事件篇进阶篇(九)-CoordinatorLayout与Behavior》
-- 《自定义View事件篇进阶篇(九)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的关系》
-- 《自定义View事件篇进阶篇(九)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的使用例子》
+- 自定义View事件篇(一)-事件分发机制
+- 自定义View事件篇(二)-MotionEvent详解
+- 自定义View事件篇(三)-特殊形状控件事件处理方案
+- 自定义View事件篇(四)-多点触控
+- 自定义View事件篇(五)-手势检测(GestureDetecotr)
+- 自定义View事件篇(六)-缩放手势检测(ScaleGestureDetector)
+- 自定义View事件篇进阶篇(七)-NestedScrolling（嵌套滑动）机制
+- 自定义View事件篇进阶篇(八)-嵌套滑动实际例子
+- 自定义View事件篇进阶篇(九)-CoordinatorLayout与Behavior
+- 自定义View事件篇进阶篇(九)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的关系
+- 自定义View事件篇进阶篇(九)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的使用例子
 
 
 #### 动画篇
-- 《自定义View动画篇(一)-alpha、scale、translate、rotate、set的xml属性及用法》
-- 《自定义View动画篇(二)-代码生成alpha、scale、translate、rotate、set的xml属性及用法》
-- 《自定义View动画篇(三)-插值器》
-- 《自定义View动画篇(四)-联合动画的xml实现》
-- 《自定义View动画篇(五)-联合动画的代码实现》
-- 《自定义View动画篇(六)-VauleAnimator》
-- 《自定义View动画篇(七)-ObjectAnimator》
-- 《自定义View动画篇(八)-ObjectAnimator原理实现》
+- 自定义View动画篇(一)-alpha、scale、translate、rotate、set的xml属性及用法
+- 自定义View动画篇(二)-代码生成alpha、scale、translate、rotate、set的xml属性及用法
+- 自定义View动画篇(三)-插值器
+- 自定义View动画篇(四)-联合动画的xml实现
+- 自定义View动画篇(五)-联合动画的代码实现
+- 自定义View动画篇(六)-VauleAnimator
+- 自定义View动画篇(七)-ObjectAnimator
+- 自定义View动画篇(八)-ObjectAnimator原理实现
 
 #### 绘图篇
-- 《自定义View绘图篇(一)-View绘制流程》
-- 《自定义View绘图篇(二)-基本图形绘制》
-- 《自定义View绘图篇(三)-路径(path)》
-- 《自定义View绘图篇(四)-path-贝塞尔曲线》
-- 《自定义View绘图篇(五)-path-pathMeasure》
-- 《自定义View绘图篇(六)-path与SVG》
-- 《自定义View绘图篇(七)-区域(Range)》
-- 《自定义View绘图篇(八)-Canvas与图层1》
-- 《自定义View绘图篇(九)-Canvas与图层2》
+- 自定义View绘图篇(一)-View绘制流程
+- 自定义View绘图篇(二)-基本图形绘制
+- 自定义View绘图篇(三)-路径(path)
+- 自定义View绘图篇(四)-path-贝塞尔曲线
+- 自定义View绘图篇(五)-path-pathMeasure
+- 自定义View绘图篇(六)-path与SVG
+- 自定义View绘图篇(七)-区域(Range)
+- 自定义View绘图篇(八)-Canvas与图层1
+- 自定义View绘图篇(九)-Canvas与图层2
 -  paint相关
 
 
@@ -148,30 +148,30 @@ https://github.com/GcsSloop/AndroidNote
 
 #### Handler篇
 
-- 《Android Handler机制之ThreadLocal》
-- 《Android Handler机制之Handler 、MessageQueue 、Looper》
-- 《Android Handler机制之Message的发送与取出》
-- 《Android Handler机制之Message及Message回收机制》
-- 《Android Handler机制之消息池的扩展 SimplePool与SynchronizedPool》
-- 《Android Handler机制之循环消息队列的退出 》
-- 《Android Handler机制之内存泄漏》
-- 《Android Handler机制之HandlerThread》
+- Android Handler机制之ThreadLocal
+- Android Handler机制之Handler 、MessageQueue 、Looper
+- Android Handler机制之Message的发送与取出
+- Android Handler机制之Message及Message回收机制
+- Android Handler机制之消息池的扩展 SimplePool与SynchronizedPool
+- Android Handler机制之循环消息队列的退出 
+- Android Handler机制之内存泄漏
+- Android Handler机制之HandlerThread
 
 
 #### Asynctack篇
 
 
 ### ListView与RecyclerView篇
-- 《ListView与RecyclerView篇(一)-RecyclerView的简单使用》
-- 《ListView与RecyclerView篇(二)-RecyclerView的简单封装》
-- 《ListView与RecyclerView篇(三)-RecyclerView缓存原理》
-- 《ListView与RecyclerView篇(四)-ListView缓存原理》
-- 《ListView与RecyclerView篇(五)-ListView与RecyclerView缓存对比总结》Bugly总结
-- 《ListView与RecyclerView篇(六)-RecyclerView的RecyclerPool的使用》
-- 《ListView与RecyclerView篇(六)-RecyclerView滑动状态保存》
-- 《ListView与RecyclerView篇(七)-RecyclerView滑动定位》
-- 《ListView与RecyclerView篇(八)-RecyclerView自定义ItemDecoration》
-- 《ListView与RecyclerView篇(九)-RecyclerView自定义LayoutManager》
+- ListView与RecyclerView篇(一)-RecyclerView的简单使用
+- ListView与RecyclerView篇(二)-RecyclerView的简单封装
+- ListView与RecyclerView篇(三)-RecyclerView缓存原理
+- ListView与RecyclerView篇(四)-ListView缓存原理
+- ListView与RecyclerView篇(五)-ListView与RecyclerView缓存对比总结Bugly总结
+- ListView与RecyclerView篇(六)-RecyclerView的RecyclerPool的使用
+- ListView与RecyclerView篇(六)-RecyclerView滑动状态保存
+- ListView与RecyclerView篇(七)-RecyclerView滑动定位
+- ListView与RecyclerView篇(八)-RecyclerView自定义ItemDecoration
+- ListView与RecyclerView篇(九)-RecyclerView自定义LayoutManager
 
 
 ### Kotlin
@@ -189,6 +189,6 @@ https://github.com/GcsSloop/AndroidNote
 ### 版本控制(Git)
 
 http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html
-- 《Commit message 和 Change log 编写指南》
+- Commit message 和 Change log 编写指南
 
 ### 音视频
