@@ -50,4 +50,8 @@ https://blog.csdn.net/qq_42944793/article/details/88417127
 https://blog.csdn.net/suyimin2010/article/details/81900757
 
 https://cloud.tencent.com/developer/article/1383134 coordinatorLayout资料
+
+https://www.jianshu.com/p/1cf7e9ade0f8 fling 效果的解释
+
+https://www.jianshu.com/p/c138055af5d2 判断recyclerView到底底部的方法
 站在巨人的肩膀上，才能看的更远~
