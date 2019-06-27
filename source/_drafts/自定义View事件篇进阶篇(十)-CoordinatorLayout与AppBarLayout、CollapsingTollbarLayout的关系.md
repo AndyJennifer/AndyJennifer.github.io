@@ -55,6 +55,8 @@ categories:
 </android.support.design.widget.CoordinatorLayout>
 ```
 
+### 从coordinatorLayout的拦截方法说起，
+
 coordinatorLayout在接受到NestedScrollingChild的嵌套滑动，会调用该方法，接着又会循环调用其中的子view来判断滑动模式
 ```
     @Override
@@ -82,5 +84,8 @@ coordinatorLayout在接受到NestedScrollingChild的嵌套滑动，会调用该�
         return handled;
     }
 ```
+
+### 讲讲AppBarLayout的默认behavior
+怎么找到那个默认behavior,请查看CoordinatorLayout中getResolvedLayoutParams(View child)方法
 ### 最后
 站在巨人的肩膀上，才能看的更远~
