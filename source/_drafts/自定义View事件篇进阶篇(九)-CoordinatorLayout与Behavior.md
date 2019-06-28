@@ -118,58 +118,6 @@ categories:
 
 
 
-#### CoordinatorLayout
-如果CoordinatorLayout中的子view对应的behavior.onInterceptTouchEvent返回true,那么就会导致CoordinatorLayout拦截事件，那么走自身的onTouchEvent。而该方法也会调用behavior的onTouchEvent方法。
-一般情况。默认情况下基本都是返回为false,所以我们不用担心，问题走了behavior的onTouchEvent方法，那嵌套机制怎么实现？？？如AppbarLayout的Behavior的父类Behavior，HeaderBehavior中的拦截方法。
-```
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        boolean handled = false;
-        boolean cancelSuper = false;
-        MotionEvent cancelEvent = null;
-
-        final int action = ev.getActionMasked();
-        
-         //只要CoordinatorLayout拦截事件，那么mBehaviorTouchView(第一个设置beHavior的view）就不为空，接下来就会在调用behavior的onTouchEvent方法了
-        if (mBehaviorTouchView != null || (cancelSuper = performIntercept(ev, TYPE_ON_TOUCH))) {
-            // Safe since performIntercept guarantees that
-            // mBehaviorTouchView != null if it returns true
-            final LayoutParams lp = (LayoutParams) mBehaviorTouchView.getLayoutParams();
-            final Behavior b = lp.getBehavior();
-            if (b != null) {
-                handled = b.onTouchEvent(this, mBehaviorTouchView, ev);
-            }
-        }
-
-        // Keep the super implementation correct
-        //下面的逻辑，是保证CoordinatorLayout正确的传统事件机制。
-        if (mBehaviorTouchView == null) {
-            handled |= super.onTouchEvent(ev);
-        } else if (cancelSuper) {
-            if (cancelEvent == null) {
-                final long now = SystemClock.uptimeMillis();
-                cancelEvent = MotionEvent.obtain(now, now,
-                        MotionEvent.ACTION_CANCEL, 0.0f, 0.0f, 0);
-            }
-            super.onTouchEvent(cancelEvent);
-        }
-
-        if (!handled && action == MotionEvent.ACTION_DOWN) {
-
-        }
-
-        if (cancelEvent != null) {
-            cancelEvent.recycle();
-        }
-
-        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-            resetTouchBehaviors(false);
-        }
-
-        return handled;
-    }
-```
-
 
 
 ```
@@ -332,6 +280,127 @@ categories:
         releaseTempRect(lastDrawRect);
     }
 ```
+
+### CoordinatorLayout中Behavior要拦截事件
+如果CoordinatorLayout中的子view对应的behavior.onInterceptTouchEvent返回true,那么就会导致CoordinatorLayout拦截事件，那么走自身的onTouchEvent。而该方法也会调用behavior的onTouchEvent方法。一般情况。默认情况下基本都是返回为false,所以我们不用担心，问题走了behavior的onTouchEvent方法，那嵌套机制怎么实现？？？如AppbarLayout的Behavior的父类Behavior，HeaderBehavior中的拦截方法。
+```
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        boolean handled = false;
+        boolean cancelSuper = false;
+        MotionEvent cancelEvent = null;
+
+        final int action = ev.getActionMasked();
+        
+         //只要CoordinatorLayout拦截事件，那么mBehaviorTouchView(第一个设置beHavior的view）就不为空，接下来就会在调用behavior的onTouchEvent方法了
+        if (mBehaviorTouchView != null || (cancelSuper = performIntercept(ev, TYPE_ON_TOUCH))) {
+            // Safe since performIntercept guarantees that
+            // mBehaviorTouchView != null if it returns true
+            final LayoutParams lp = (LayoutParams) mBehaviorTouchView.getLayoutParams();
+            final Behavior b = lp.getBehavior();
+            if (b != null) {
+                handled = b.onTouchEvent(this, mBehaviorTouchView, ev);
+            }
+        }
+
+        // Keep the super implementation correct
+        //下面的逻辑，是保证CoordinatorLayout正确的传统事件机制。
+        if (mBehaviorTouchView == null) {
+            handled |= super.onTouchEvent(ev);
+        } else if (cancelSuper) {
+            if (cancelEvent == null) {
+                final long now = SystemClock.uptimeMillis();
+                cancelEvent = MotionEvent.obtain(now, now,
+                        MotionEvent.ACTION_CANCEL, 0.0f, 0.0f, 0);
+            }
+            super.onTouchEvent(cancelEvent);
+        }
+
+        if (!handled && action == MotionEvent.ACTION_DOWN) {
+
+        }
+
+        if (cancelEvent != null) {
+            cancelEvent.recycle();
+        }
+
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            resetTouchBehaviors(false);
+        }
+
+        return handled;
+    }
+```
+HeaderBehavior中的拦截方法。
+```
+    @Override
+    public boolean onInterceptTouchEvent(CoordinatorLayout parent, V child, MotionEvent ev) {
+        if (mTouchSlop < 0) {
+            mTouchSlop = ViewConfiguration.get(parent.getContext()).getScaledTouchSlop();
+        }
+
+        final int action = ev.getAction();
+
+        // Shortcut since we're being dragged
+        if (action == MotionEvent.ACTION_MOVE && mIsBeingDragged) {
+            return true;
+        }
+
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN: {
+                mIsBeingDragged = false;
+                final int x = (int) ev.getX();
+                final int y = (int) ev.getY();
+                if (canDragView(child) && parent.isPointInChildBounds(child, x, y)) {
+                    mLastMotionY = y;
+                    mActivePointerId = ev.getPointerId(0);
+                    ensureVelocityTracker();
+                }
+                break;
+            }
+
+            case MotionEvent.ACTION_MOVE: {
+                //注意这里 对activePointerId 赋值，通过event来获取手指的id，而是强制设置的
+                final int activePointerId = mActivePointerId;
+                if (activePointerId == INVALID_POINTER) {
+                    // If we don't have a valid id, the touch down wasn't on content.
+                    break;
+                }
+                final int pointerIndex = ev.findPointerIndex(activePointerId);
+                if (pointerIndex == -1) {
+                    break;
+                }
+
+                final int y = (int) ev.getY(pointerIndex);
+                final int yDiff = Math.abs(y - mLastMotionY);
+                if (yDiff > mTouchSlop) {
+                    mIsBeingDragged = true;
+                    mLastMotionY = y;
+                }
+                break;
+            }
+
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP: {
+                mIsBeingDragged = false;
+                mActivePointerId = INVALID_POINTER;
+                if (mVelocityTracker != null) {
+                    mVelocityTracker.recycle();
+                    mVelocityTracker = null;
+                }
+                break;
+            }
+        }
+
+        if (mVelocityTracker != null) {
+            mVelocityTracker.addMovement(ev);
+        }
+
+        return mIsBeingDragged;
+    }
+
+```
+  又因为 private int mActivePointerId = INVALID_POINTER;所以HeaderBehavior永远都不会拦截事件的。！！！！！！也就是说事件会传递下去，不会被behavior拦截。我顶你个肺。那你写这个干吗啊？？？？
 
 ### 最后
 站在巨人的肩膀上，才能看的更远~
