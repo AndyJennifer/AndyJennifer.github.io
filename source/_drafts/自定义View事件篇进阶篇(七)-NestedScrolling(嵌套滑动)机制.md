@@ -199,7 +199,7 @@ NestedScrolling机制与传统的事件分发机制最大的不同，就是Neste
 想要实现嵌套滑动效果，根据嵌套滑动的机制设定，事件必须传递到子控件，也就是说父控件是不能拦截事件的。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。
 
 #### 子控件如何找到嵌套滑动的父控件
-实现嵌套滑动，我们需要字控件与父控件共同作用，缺一不可，那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，代码如下所示：
+实现嵌套滑动，我们需要子控件与父控件共同作用，缺一不可，那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，代码如下所示：
 ```
     public boolean startNestedScroll(@ScrollAxis int axes, @NestedScrollType int type) {
         if (hasNestedScrollingParent(type)) {
