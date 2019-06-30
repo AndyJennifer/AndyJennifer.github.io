@@ -18,7 +18,7 @@ categories:
 想要实现上图效果，在传统滑动机制中，我们需要调用父控件中onInterceptTouchEvent方法来拦截向上滑动。拦截后，父控件在onTouchEvent滑动至headerView隐藏，当headerView隐藏后，父控件就不继续滑动了（因为父控件拦截了事件，所以同一事件序列的事件，任然会传递给父控件,也就会调用其onTouchEvent方法），然后我们需要通过父控件中的onTouchEvent方法将剩余的事件强行传递给RecyclerView（或ListView），使其也能滚动。由此可见，只要项目中出现嵌套滑动，我们都必须为其写一套逻辑。这样解决问题的方式太单一且重复。所以为了帮助开发者们快速的处理该问题，谷歌推出了NestedScrolling机制。
 
 ### NestedScrolling机制
-NestedScrolling机制与传统的事件分发机制最大的不同，就是NestedScrolling机制中的事件是可以共享的（事件由子控件传递到父控件，父控件不能拦截事件）。整个处理过程主要分为以下几个步骤：
+NestedScrolling机制与传统的事件分发机制最大的不同，就是NestedScrolling机制中的事件是可以共享的（当父控件不拦截事件，子控件可以将事件传递到父控件）。整个处理过程主要分为以下几个步骤：
 
 - 当子控件收到滑动事件，准备要滑动时，会先询问父控件是否要滑动。
 - 如果父控件需要滑动，那么就会通知子控件它具体消耗了多少滑动距离。然后交由子控件处理剩余的滑动距离。
@@ -33,7 +33,7 @@ NestedScrolling机制与传统的事件分发机制最大的不同，就是Neste
 - NestedScrollingChild2（接口）
 - NestedScrollingChildHelper（类）
 
-其中NestedScrollingParent与NestedScrollingChild就是将5.0中ViewGoup与View增加的方法抽象为接口，NestedScrollingParentHelper与NestedScrollingChildHelper也就对应着5.0中ViewGoup与View增加的方法的具体实现。NestedScrollingParent2与NestedScrollingChild2接口是为了处理嵌套fling效果的，这个知识点会在下文进行介绍。这里大家可以选择忽略。
+其中NestedScrollingParent与NestedScrollingChild就是将Android 5.0或以上版本中ViewGoup与View增加的方法抽象为接口，NestedScrollingParentHelper与NestedScrollingChildHelper与ViewGoup与View增加的方法的具体实现相对应。NestedScrollingParent2与NestedScrollingChild2接口是为了处理嵌套fling效果的，这个知识点会在下文进行介绍。这里大家可以选择忽略。
 
 需要注意的是，如果你的Android平台在5.0以上，那么你可以直接使用系统ViewGoup与View自带的方法。但是为了向下兼容，建议还是使用support v4包提供的相应接口来实现嵌套滑动。本文也会以实现接口的方式来进行讲解。
 
@@ -112,6 +112,7 @@ NestedScrolling机制与传统的事件分发机制最大的不同，就是Neste
 ```
 
 #### NestedScrollingChild接口介绍
+
 如果采用接口的方式实现嵌套滑动，子控件需要实现NestedScrollingChild接口。接口具体方法如下：，
 ```
     /**
@@ -189,9 +190,43 @@ NestedScrolling机制与传统的事件分发机制最大的不同，就是Neste
     public boolean hasNestedScrollingParent() {}
 ```
 ###  嵌套滑动过程分析
-通过上文，我相信大家能基本了解这两个接口方法的作用，但是我们并不知道这些方法之间对应的关系与调用的时机。我们已经知道嵌套滑动的机制，也了解了谷歌在5.0中为ViewGroup与View增加的方法。那么现在我们一起来了解如何调用这些方法，来实现我们想要的嵌套滑动效果吧。想要实现嵌套滑动效果，根据嵌套滑动的原理，事件必须传递到子控件，也就是说父控件是不能拦截事件的。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。也就是如下情况：
+
+通过上文，我相信大家大概了解了这两个接口方法的作用，但是我们并不知道这些方法之间对应的关系与调用的时机。那么现在我们一起来分析谷歌对整个嵌套滑动过程的实现与设计。如下图所示：
+
+![方法对应关系.png](https://upload-images.jianshu.io/upload_images/2824145-3b5e5f5789fbe0e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+想要实现嵌套滑动效果，根据嵌套滑动的机制设定，事件必须传递到子控件，也就是说父控件是不能拦截事件的。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。
 
 #### 子控件如何找到嵌套滑动的父控件
+实现嵌套滑动，我们需要字控件与父控件共同作用，缺一不可，那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，代码如下所示：
+```
+    public boolean startNestedScroll(@ScrollAxis int axes, @NestedScrollType int type) {
+        if (hasNestedScrollingParent(type)) {
+            // Already in progress
+            return true;
+        }
+        if (isNestedScrollingEnabled()) {
+            //获取当前的view的父控件
+            ViewParent p = mView.getParent();
+            View child = mView;
+            while (p != null) {
+                 //判断当前父控件是否支持嵌套滑动
+                if (ViewParentCompat.onStartNestedScroll(p, child, mView, axes, type)) {
+                    setNestedScrollingParentForType(type, p);
+                    ViewParentCompat.onNestedScrollAccepted(p, child, mView, axes, type);
+                    return true;
+                }
+                if (p instanceof View) {
+                    child = (View) p;
+                }
+                p = p.getParent();
+            }
+        }
+        return false;
+    }
+```
+从代码中我们可以看出，子控件会获取当前父控件，并调用ViewParentCompat.onStartNestedScroll方法来判断，当前父控件是否能够接受嵌套滑动，如果不能接受。那么会一直
 
 #### 子控件如何将滑动事件传给父控件
 
