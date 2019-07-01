@@ -195,11 +195,27 @@ NestedScrolling机制与传统的事件分发机制最大的不同，就是Neste
 
 ![方法对应关系.png](https://upload-images.jianshu.io/upload_images/2824145-3b5e5f5789fbe0e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
-想要实现嵌套滑动效果，根据嵌套滑动的机制设定，事件必须传递到子控件，也就是说父控件是不能拦截事件的。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。
-
 #### 子控件如何找到嵌套滑动的父控件
-实现嵌套滑动，我们需要子控件与父控件共同作用，缺一不可，那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，代码如下所示：
+
+想要实现嵌套滑动效果，根据嵌套滑动的机制设定，事件必须传递到子控件，也就是说父控件是不能拦截事件的。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。需要注意的当子控件调用startNestedScroll方法时，只是判断是否有支持嵌套滑动的父控件，并通知父控件嵌套滑动开始。这个时候并没有真正的传递相应的事件。故该方法只能在子控件的onTouchEvent方法中事件为MotionEvent.ACTION_DOWN时调用。伪代码如下所示：
+```
+public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN: {
+                mLastX = x;
+                mLastY = y;
+                //查找嵌套滑动的父控件，并通知父控件嵌套滑动开始。这里默认是设置的竖直方向
+                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                break;
+            }
+        
+        }
+        return super.onTouchEvent(event);
+    }
+```
+那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，代码如下所示：
+
 ```
     public boolean startNestedScroll(@ScrollAxis int axes, @NestedScrollType int type) {
         if (hasNestedScrollingParent(type)) {
@@ -220,30 +236,213 @@ NestedScrolling机制与传统的事件分发机制最大的不同，就是Neste
                 if (p instanceof View) {
                     child = (View) p;
                 }
+                //继续向上寻找
                 p = p.getParent();
             }
         }
         return false;
     }
 ```
-从代码中我们可以看出，子控件会获取当前父控件，并调用ViewParentCompat.onStartNestedScroll方法来判断，当前父控件是否能够接受嵌套滑动，如果不能接受。那么会一直
+从代码中我们可以看出，子控件会获取当前父控件，并调用ViewParentCompat.onStartNestedScroll方法，来判断当前父控件是否支持嵌套滑动。如果当前父控件不支持，那么会一直向上寻找，直到找到为止。如果仍然没有找到，那么接下来的子父控件的嵌套滑动方法都不会调用。如果子控件找到了支持嵌套滑动的父控件，那么接下来会调用父控件的onNestedScrollAccepted方法，表示父控件接受嵌套滑动。
 
 #### 子控件如何将滑动事件传给父控件
+当父控件接受嵌套滑动后，那么子控件需要将滑动事件传递给父控件，那么就会在OnTouchEvent中筛选为MotionEvent.ACTION_MOVE中的事件，然后调用dispatchNestedPreScroll（）方法这些将滑动事件传递给父控件。伪代码如下所示：
+
+```
+    private final int[] mScrollConsumed = new int[2];//记录父控件消耗的距离
+
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_MOVE: {
+                int dy = mLastY - y;
+                int dx = mLastX - x;
+                //将事件传递给父控件，并记录父控件消耗的距离。
+                if (dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset)) {
+                    dx -= mScrollConsumed[0];
+                    dy -= mScrollConsumed[1];
+                }
+            }
+        }
+
+        return super.onTouchEvent(event);
+    }
+```
+在上述代码中，dy与dx分别为子控件竖直与水平方向上的距离，`int[] mScrollConsumed`竖直用于记录父控件消耗的距离。那么当我们调用dispatchNestedPreScroll的方法，将事件传递给父控件进行消耗时，那么子控件实际能处理的距离为：
+
+- 水平方向： dx -= mScrollConsumed[0];
+- 竖直方向： dy -= mScrollConsumed[1];
+
+接下来，我们继续查看dispatchNestedPreScroll的方法，具体代码如下：
+```
+  public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed,
+            @Nullable int[] offsetInWindow, @NestedScrollType int type) {
+        if (isNestedScrollingEnabled()) {
+            //获取当前嵌套滑动的父控件，如果为null，直接返回
+            final ViewParent parent = getNestedScrollingParentForType(type);
+            if (parent == null) {
+                return false;
+            }
+
+            if (dx != 0 || dy != 0) {
+                int startX = 0;
+                int startY = 0;
+                if (offsetInWindow != null) {
+                    mView.getLocationInWindow(offsetInWindow);
+                    startX = offsetInWindow[0];
+                    startY = offsetInWindow[1];
+                }
+
+                if (consumed == null) {
+                    if (mTempNestedScrollConsumed == null) {
+                        mTempNestedScrollConsumed = new int[2];
+                    }
+                    consumed = mTempNestedScrollConsumed;
+                }
+                consumed[0] = 0;
+                consumed[1] = 0;
+                //调用父控件的onNestedPreScroll处理事件
+                ViewParentCompat.onNestedPreScroll(parent, mView, dx, dy, consumed, type);
+
+                if (offsetInWindow != null) {
+                    mView.getLocationInWindow(offsetInWindow);
+                    offsetInWindow[0] -= startX;
+                    offsetInWindow[1] -= startY;
+                }
+                return consumed[0] != 0 || consumed[1] != 0;
+            } else if (offsetInWindow != null) {
+                offsetInWindow[0] = 0;
+                offsetInWindow[1] = 0;
+            }
+        }
+        return false;
+    }
+```
+在dispatchNestedPreScroll（）方法中，会先判断获取当前嵌套滑动的父控件。如果父控件不为null且支持嵌套滑动，那么接下来会调用父控件的onNestedPreScroll（）方法，其中`int[] consumed`这个数组，就是子控件记录父控件在水平与竖直方向上消耗的距离。需要注意的是，父控件可能会将子控件传递的滑动事件全部消耗。那么子控件就没有继续可处理的事件了。onNestedPreScroll()方法在嵌套滑动判断父控件的滑动距离时尤为重要。
+
+#### 父控件预先处理后再交给子控件
+当父控件预先处理滑动事件后，子控件会获取剩下的消耗的事件并消耗。如果子控件仍然没有消耗完,那么会调用dispatchNestedScroll将剩下的事件传递给父控件。如果父控件不处理。那么又会传递给子控件进行处理。
+伪代码如下：
+```
+    private final int[] mScrollConsumed = new int[2];//记录父控件消耗的距离
+
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_MOVE: {
+                int dy = mLastY - y;
+                int dx = mLastX - x;
+                //将事件传递给父控件，并记录父控件消耗的距离。
+                if (dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset)) {
+                    dx -= mScrollConsumed[0];
+                    dy -= mScrollConsumed[1];
+                    scrollNested(dx,dy);
+                }
+            }
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    /**
+     * 子控件滑动逻辑
+     */
+    private void childScroll(int x, int y) {
+        //子控件怎么滑动，自己实现
+    }
+
+
+    /**
+     * 子控件水平方向消耗多少距离
+     */
+    private int childConsumeX(int x) {
+        //具体逻辑由自己实现
+        return 0;
+    }
+
+    /**
+     * 子控件竖直方向消耗距离
+     */
+    private int childConsumeY(int y) {
+        //具体逻辑由自己实现
+        return 0;
+    }
+
+    private void scrollNested(int x, int y) {
+        int unConsumedX = 0, unConsumedY = 0;
+        int consumedX = 0, consumedY = 0;
+
+        //子控件消耗多少事件，由自己决定
+        if (x != 0) {
+            consumedX = childConsumeX(x);
+            unConsumedX = x - consumedX;
+        }
+        if (y != 0) {
+            consumedY = childConsumeY(y);
+            unConsumedY = y - consumedY;
+        }
+
+        //子控件处理事件
+        childScroll(consumedX, consumedY);
+
+        if (dispatchNestedScroll(consumedX, consumedY, unConsumedX, unConsumedY, mScrollOffset)) {
+            //传给父控件处理后，剩下的逻辑自己实现
+        }
+        //传递给父控件，父控件不处理，那么子控件就继续处理。
+        childScroll(unConsumedX, unConsumedY);
+
+    }
+```
+
+```
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed,
+            int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow,
+            @NestedScrollType int type) {
+        if (isNestedScrollingEnabled()) {
+            final ViewParent parent = getNestedScrollingParentForType(type);
+            if (parent == null) {
+                return false;
+            }
+
+            if (dxConsumed != 0 || dyConsumed != 0 || dxUnconsumed != 0 || dyUnconsumed != 0) {
+                int startX = 0;
+                int startY = 0;
+                if (offsetInWindow != null) {
+                    mView.getLocationInWindow(offsetInWindow);
+                    startX = offsetInWindow[0];
+                    startY = offsetInWindow[1];
+                }
+                //调用父控件的onNestedScroll方法。
+                ViewParentCompat.onNestedScroll(parent, mView, dxConsumed,
+                        dyConsumed, dxUnconsumed, dyUnconsumed, type);
+
+                if (offsetInWindow != null) {
+                    mView.getLocationInWindow(offsetInWindow);
+                    offsetInWindow[0] -= startX;
+                    offsetInWindow[1] -= startY;
+                }
+                return true;
+            } else if (offsetInWindow != null) {
+                // No motion, no dispatch. Keep offsetInWindow up to date.
+                offsetInWindow[0] = 0;
+                offsetInWindow[1] = 0;
+            }
+        }
+        return false;
+    }
+```
+
 
 #### 子控件如何将fling传给父控件
 
-#### NestedScrollingChild与NestedScrollingParent方法调用的关系
 
 ### 嵌套滑动基本范式
 
-```
-
-```
 
 ### NestedScrollingChild2与NestedScrollingChild 区别
 parent很可能并不想一下子消费整个fling手势，而是像响应一个scroll一样去处理
 
-#### 
+###
 
 ### 最后
 
