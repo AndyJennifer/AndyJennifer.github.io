@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ##ButterK">
+  <meta name="description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ButterKni">
 <meta name="keywords" content="kotlin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从ButterKnife.kt 了解Kotlin 委托与扩展">
 <meta property="og:url" content="http://yoursite.com/2019/02/23/从ButterKnife-kt-了解Kotlin-委托与扩展/index.html">
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
-<meta property="og:description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ##ButterK">
+<meta property="og:description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ButterKni">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-02T07:11:25.741Z">
+<meta property="og:updated_time" content="2019-07-02T07:42:37.323Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从ButterKnife.kt 了解Kotlin 委托与扩展">
-<meta name="twitter:description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ##ButterK">
+<meta name="twitter:description" content="最近学了Kotlin这门新语言用于Android开发。其中不免遇上findViewById(),原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现kotterknife。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库) ButterKni">
 
 
 
@@ -413,7 +413,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
+                <time title="修改时间：2019-07-02 15:42:37" itemprop="dateModified" datetime="2019-07-02T15:42:37+08:00">2019-07-02</time>
               
             
           </span>
@@ -448,8 +448,7 @@
 
       
         <p> 最近学了<strong>Kotlin</strong>这门新语言用于Android开发。其中不免遇上<strong>findViewById()</strong>,原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现<a href="https://github.com/JakeWharton/kotterknife" target="_blank" rel="noopener">kotterknife</a>。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库)</p>
-<p>##ButterKnife的使用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private val mIcon by bindView&lt;ImageView&gt;(R.id.iv_image)</span><br></pre></td></tr></table></figure>
+<h2 id="ButterKnife的使用"><a href="#ButterKnife的使用" class="headerlink" title="ButterKnife的使用"></a>ButterKnife的使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private val mIcon by bindView&lt;ImageView&gt;(R.id.iv_image)</span><br></pre></td></tr></table></figure>
 <p>通过以上代码，我们发现。只需要通过 by bindView&lt;View类型&gt;（id）就能获得我们需要找到的View,那其中涉及到的知识点是哪几个呢？</p>
 <p>主要知识点</p>
 <ul>
@@ -564,8 +563,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -757,6 +765,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ButterKnife的使用"><span class="nav-number">1.</span> <span class="nav-text">ButterKnife的使用</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
