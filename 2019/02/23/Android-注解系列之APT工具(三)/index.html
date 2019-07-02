@@ -104,17 +104,17 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="该文章中涉及的代码，我已经提交到GitHub上了，大家按需下载—-&amp;gt;源码   前言在上篇文章Android 注解系列之Annotation(二)中，简要的介绍了注解的基本使用与定义。同时也提出了以下几个问题，当我们声明了一个注解后，是不是需要手动找到所有的Class对象或Field、Method？，怎么通过注解生成新的类的定义呢？当面对这些问题的时候，我相信大家的第一反应肯定会想，”有不有">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-1f146c8640782324.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-c1ef896348dd225e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-add6236329f14878.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-4c3e9534ab7839c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-be96d0fe35599a5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-94edf5bddf649087.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.860Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/骑车车.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/apt使用流程图.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/apt_rule.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/放入特定文件夹.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/element继承关系.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/生成文件结果.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.729Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 注解系列之APT工具(三)">
 <meta name="twitter:description" content="该文章中涉及的代码，我已经提交到GitHub上了，大家按需下载—-&amp;gt;源码   前言在上篇文章Android 注解系列之Annotation(二)中，简要的介绍了注解的基本使用与定义。同时也提出了以下几个问题，当我们声明了一个注解后，是不是需要手动找到所有的Class对象或Field、Method？，怎么通过注解生成新的类的定义呢？当面对这些问题的时候，我相信大家的第一反应肯定会想，”有不有">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-1f146c8640782324.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Android-注解系列之APT工具(三)/骑车车.jpg">
 
 
 
@@ -420,7 +420,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -475,12 +475,12 @@
         <blockquote>
 <p>该文章中涉及的代码，我已经提交到GitHub上了，大家按需下载—-&gt;<a href="https://github.com/AndyJennifer/AptDemo" target="_blank" rel="noopener">源码</a></p>
 </blockquote>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-1f146c8640782324.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="骑车车.jpg"></p>
+<img src="/2019/02/23/Android-注解系列之APT工具(三)/骑车车.jpg" title="骑车车">
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章<a href="/2019/02/23/Android-注解系列之Annotation(二)/" title="Android 注解系列之Annotation(二)">Android 注解系列之Annotation(二)</a>中，简要的介绍了注解的基本使用与定义。同时也提出了以下几个问题，<code>当我们声明了一个注解后，是不是需要手动找到所有的Class对象或Field、Method？</code>，<code>怎么通过注解生成新的类的定义呢？</code>当面对这些问题的时候，我相信大家的第一反应肯定会想，”有不有相应的三方库呢？Java是否提供了相应库或者方法来解决呢？”，当然Java肯定给我们提供了啦，就是我们既陌生又熟悉的<code>APT</code>工具啦。</p>
 <p>为什么这里我会说既陌生又熟悉呢？我相信对于大多数安卓程序，我们都或多或少使用了一些主流库，如<code>Dagger2、ButterKnife、EventBus</code>等，这些库都使用了APT技术。既然大佬们都在使用，那我们怎么不去了解呢？好了，书归正传，下面我们就来看看怎么通过APT来处理之前我们提到的问题。</p>
 <h3 id="APT技术简介"><a href="#APT技术简介" class="headerlink" title="APT技术简介"></a>APT技术简介</h3><p>在具体了解APT技术之前，先简单的对其进行介绍。<code>APT(Annotation Processing Tool)</code>是javac中提供的一种编译时扫描和处理注解的工具，它会对源代码文件进行检查，并找出其中的注解，然后根据用户自定义的注解处理方法进行额外的处理。APT工具不仅能解析注解，还能根据注解生成其他的源文件，最终将生成的新的源文件与原来的源文件共同编译（<code>注意：APT并不能对源文件进行修改操作，只能生成新的文件，例如在已有的类中添加方法</code>）。具体流程图如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-c1ef896348dd225e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="apt使用流程图.png"></p>
-<h3 id="APT技术使用规则"><a href="#APT技术使用规则" class="headerlink" title="APT技术使用规则"></a>APT技术使用规则</h3><p>APT技术的使用，需要我们遵守一定的规则。大家先看一下整个APT项目项目构建的一个规则图，具体如下所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-add6236329f14878.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="apt_rule.png"></p>
+<img src="/2019/02/23/Android-注解系列之APT工具(三)/apt使用流程图.png" title="apt使用流程图">
+<h3 id="APT技术使用规则"><a href="#APT技术使用规则" class="headerlink" title="APT技术使用规则"></a>APT技术使用规则</h3><p>APT技术的使用，需要我们遵守一定的规则。大家先看一下整个APT项目项目构建的一个规则图，具体如下所示：<br><img src="/2019/02/23/Android-注解系列之APT工具(三)/apt_rule.png" title="apt_rule"></p>
 <h4 id="APT使用依赖"><a href="#APT使用依赖" class="headerlink" title="APT使用依赖"></a>APT使用依赖</h4><p>从图中我们可以整个APT项目的构建需要三个部分：</p>
 <ul>
 <li>注解处理器库(包含我们的注解处理器)</li>
@@ -503,13 +503,13 @@
 <blockquote>
 <p>META-INF/services 相当于一个信息包，目录中的文件和目录获得Java平台的认可与解释用来配置应用程序、扩展程序、类加载器和服务文件，在jar打包时自动生成</p>
 </blockquote>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-4c3e9534ab7839c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="放入特定文件夹.png"></p>
+<img src="/2019/02/23/Android-注解系列之APT工具(三)/放入特定文件夹.png" title="放入特定文件夹">
 <p>其中javax.annotation.processing.Processor文件中的内容为每个注解处理器的合法的全名列表，每一个元素换行分割，也就是类似下面这样:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">com.jennifer.andy.processor.MineProcessor1</span><br><span class="line">com.jennifer.andy.processor.MineProcessor2</span><br><span class="line">com.jennifer.andy.processor.MineProcessor3</span><br></pre></td></tr></table></figure></p>
 <p>最后我们只要将你生成的<code>.jar</code>放到你的buildPath中，那么Java编译器会自动的检查和读取<code>javax.annotation.processing.Processor</code>中的内容，并注册该注解处理器。</p>
 <p>当然对于现在我们的编译器，如IDEA、AndroidStudio等中，我们只创建相应文件与文件夹就行了，并不同用放在buildPath中去。当然原因是这些编译器都帮我们处理了啦。如果你还是嫌麻烦，那我们可以使用Google为我们提供的<code>AutoService</code><br>注解处理器，用于生成META-INF/services/javax.annotation.processing.Processor文件的。也就是我们可以像下面这样使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@SupportedSourceVersion(SourceVersion.RELEASE_6)</span><br><span class="line">@SupportedAnnotationTypes(&#123;&quot;合法注解的名称&quot;&#125;)</span><br><span class="line">@AutoService(Processor.class)</span><br><span class="line">class MineProcessor extends AbstractProcessor &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public synchronized void init(ProcessingEnvironment processingEnv) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>我们只需要在类上声明<code>@AutoService(Processor.class)</code>，那么就不用考虑其他的东西啦。是不是很方便呢？（当然使用AutoService在Gralde中你需要添加依赖<code>compile &#39;com.google.auto.service:auto-service:1.0-rc2&#39;</code>）。</p>
 <h3 id="注解处理器的扫描"><a href="#注解处理器的扫描" class="headerlink" title="注解处理器的扫描"></a>注解处理器的扫描</h3><p>在注解处理过程中，我们需要扫描所有的Java源文件，源代码的每一个部分都是一个特定类型的<code>Element</code>，也就是说Element代表源文件中的元素，例如包、类、字段、方法等。整体的关系如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-be96d0fe35599a5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="element继承关系.png"></p>
+<img src="/2019/02/23/Android-注解系列之APT工具(三)/element继承关系.png" title="element继承关系">
 <ul>
 <li>Parameterizable：表示混合类型的元素（不仅只有一种类型的Element)</li>
 <li>TypeParameterElement：带有泛型参数的类、接口、方法或者构造器。</li>
@@ -669,7 +669,7 @@
 <p>当进行注释处理或与元数据文件（例如，数据库模式、协议格式）交互时，JavaPoet对于源文件的生成可能非常有用。通过生成代码，消除了编写样板的必要性，同时也保持了元数据的单一来源。</p>
 </blockquote>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">@AutoService(Processor.class)</span><br><span class="line">@SupportedAnnotationTypes(&quot;com.jennifer.andy.apt.annotation.Who&quot;)</span><br><span class="line">@SupportedSourceVersion(SourceVersion.RELEASE_7)</span><br><span class="line">public class CreateFileByJavaPoetProcessor extends AbstractProcessor &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean process(Set&lt;? extends TypeElement&gt; set, RoundEnvironment roundEnvironment) &#123;</span><br><span class="line">        createFileByJavaPoet(set, roundEnvironment);</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">     * 通过JavaPoet生成新的源文件</span><br><span class="line">     */</span><br><span class="line">    private void createFileByJavaPoet(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv) &#123;</span><br><span class="line">        //创建main方法</span><br><span class="line">        MethodSpec main = MethodSpec.methodBuilder(&quot;main&quot;)</span><br><span class="line">                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)//设置可见性修饰符public static</span><br><span class="line">                .returns(void.class)//设置返回值为void</span><br><span class="line">                .addParameter(String[].class, &quot;args&quot;)//添加参数类型为String数组，且参数名称为args</span><br><span class="line">                .addStatement(&quot;$T.out.println($S)&quot;, System.class, &quot;Hello, JavaPoet!&quot;)//添加语句</span><br><span class="line">                .build();</span><br><span class="line">        //创建类</span><br><span class="line">        TypeSpec helloWorld = TypeSpec.classBuilder(&quot;HelloWorld&quot;)</span><br><span class="line">                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)</span><br><span class="line">                .addMethod(main)//将main方法添加到HelloWord类中</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        //创建文件，第一个参数是包名，第二个参数是相关类</span><br><span class="line">        JavaFile javaFile = JavaFile.builder(&quot;com.jennifer.andy.aptdemo.domain&quot;, helloWorld)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            //创建文件</span><br><span class="line">            javaFile.writeTo(processingEnv.getFiler());</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            log(e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 调用打印语句而已</span><br><span class="line">     */</span><br><span class="line">    private void log(String msg) &#123;</span><br><span class="line">        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, msg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当我们build上述代码后，我们可以在我们的build目录下得到下列文件：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-94edf5bddf649087.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="生成文件结果.png"></p>
+<p>当我们build上述代码后，我们可以在我们的build目录下得到下列文件：<br><img src="/2019/02/23/Android-注解系列之APT工具(三)/生成文件结果.png" title="生成文件结果"></p>
 <p>关于JavaPoet的更多的详细使用，大家可以参考官方文档——–&gt;<a href="https://github.com/square/javapoet" target="_blank" rel="noopener">JavaPoet</a></p>
 <h3 id="分离处理器和项目"><a href="#分离处理器和项目" class="headerlink" title="分离处理器和项目"></a>分离处理器和项目</h3><p>在上文中描述的APT使用规则中，我们是将<code>注解声明库</code>与<code>注解处理器库</code>分成了两个库，具体原因我也做了详细的解释，现在我们来思考如下问题。就算我们把两个库都抽成了两个独立的库，但是如果有开发者想把我们自定义的注解处理器用于他的项目中，那么他整个项目的编译就必须也要把注解处理器与注解声明库包括进来。对于开发者来说，他们并不希望已经编译好的项目中有包含注解处理器的相关代码。所以将<code>注解声明库与注解处理器库不打包进入项目是非常有必要的！！</code>换句话说，注解处理器只在编译处理期间需要用到，编译处理完后就没有实际作用了，而主项目添加了这个库会引入很多不必要的文件。</p>
 <p><code>因为作者我本身是Android开发人员，所以以下都是针对Android项目展开讨论。</code></p>
@@ -853,6 +853,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -865,6 +867,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

@@ -104,17 +104,17 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="前言最近开发中遇到了一个需求，需要RecyclerView滚动到指定位置后置顶显示，当时遇到这个问题的时候，心里第一反应是直接使用RecyclerView的smoothScrollToPosition()方法，实现对应位置的平滑滚动。但是在实际使用中发现并没有到底自己想要的效果。本想着偷懒直接从网上Copy下，但是发现效果并不是很好。于是就自己去研究源码。 该系列文章分为两篇文章。  如果你想了">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-48cb9d674242f237.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-adfb99815ff0749c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-a93317f4d1132363.gif?imageMogr2/auto-orient/strip">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-dd8dbff1903166fd.gif?imageMogr2/auto-orient/strip">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-b382d5e31904f16a.gif?imageMogr2/auto-orient/strip">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-26280c06b41544a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.873Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/小狗狗.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/可见范围.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/不会滚动.gif">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/滚动到底部.gif">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/滚动到顶部.gif">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/基本流程图.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.573Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView.smoothScrollToPosition了解一下">
 <meta name="twitter:description" content="前言最近开发中遇到了一个需求，需要RecyclerView滚动到指定位置后置顶显示，当时遇到这个问题的时候，心里第一反应是直接使用RecyclerView的smoothScrollToPosition()方法，实现对应位置的平滑滚动。但是在实际使用中发现并没有到底自己想要的效果。本想着偷懒直接从网上Copy下，但是发现效果并不是很好。于是就自己去研究源码。 该系列文章分为两篇文章。  如果你想了">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-48cb9d674242f237.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/小狗狗.jpg">
 
 
 
@@ -420,7 +420,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -472,7 +472,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-48cb9d674242f237.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="小狗狗.jpg"></p>
+        <img src="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/小狗狗.jpg" title="小狗狗">
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近开发中遇到了一个需求，需要RecyclerView滚动到指定位置后置顶显示，当时遇到这个问题的时候，心里第一反应是直接使用RecyclerView的smoothScrollToPosition()方法，实现对应位置的平滑滚动。但是在实际使用中发现并没有到底自己想要的效果。本想着偷懒直接从网上Copy下，但是发现效果并不是很好。于是就自己去研究源码。</p>
 <p>该系列文章分为两篇文章。</p>
 <ul>
@@ -480,13 +480,13 @@
 <li>如果你想解决通过smoothScrollToPosition滚动到顶部，或者修改滚动加速，请观看<a href="/2019/02/23/RecyclerView滚动位置，滚动速度设置/" title="RecyclerView滚动位置，滚动速度设置">RecyclerView滚动位置，滚动速度设置</a></li>
 </ul>
 <h3 id="什么是可见范围？"><a href="#什么是可见范围？" class="headerlink" title="什么是可见范围？"></a>什么是可见范围？</h3><p>在了解RecyclerView的smoothScrollToPosition方法之前，有个知识点，我觉得有必要给大家说一下，因为使用smoothScrollToPosition中遇到的问题都与可见范围有关。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-adfb99815ff0749c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="可见范围.png"></p>
+<img src="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/可见范围.png" title="可见范围">
 <p><strong>这里所说的可见范围是，RecyclerView第一个可见item的位置与最后一个可见item的位置之间的范围。</strong></p>
-<h3 id="一、实际使用中遇见的问题"><a href="#一、实际使用中遇见的问题" class="headerlink" title="一、实际使用中遇见的问题"></a>一、实际使用中遇见的问题</h3><h4 id="如果当前滚动位置在可见范围内，是不会发生滚动的"><a href="#如果当前滚动位置在可见范围内，是不会发生滚动的" class="headerlink" title="如果当前滚动位置在可见范围内，是不会发生滚动的"></a>如果当前滚动位置在可见范围内，是不会发生滚动的</h4><p><img src="https://upload-images.jianshu.io/upload_images/2824145-a93317f4d1132363.gif?imageMogr2/auto-orient/strip" alt="不会滚动.gif"></p>
+<h3 id="一、实际使用中遇见的问题"><a href="#一、实际使用中遇见的问题" class="headerlink" title="一、实际使用中遇见的问题"></a>一、实际使用中遇见的问题</h3><h4 id="如果当前滚动位置在可见范围内，是不会发生滚动的"><a href="#如果当前滚动位置在可见范围内，是不会发生滚动的" class="headerlink" title="如果当前滚动位置在可见范围内，是不会发生滚动的"></a>如果当前滚动位置在可见范围内，是不会发生滚动的</h4><img src="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/不会滚动.gif" title="不会滚动">
 <p>当前RecyclerView的可见范围为0到9，当我们想要滚动到1位置时，发现当前RecyclerView并没有发生滚动。</p>
-<h4 id="二、如果当前滚动位置在可见范围之后，会滚动到底部"><a href="#二、如果当前滚动位置在可见范围之后，会滚动到底部" class="headerlink" title="二、如果当前滚动位置在可见范围之后，会滚动到底部"></a>二、如果当前滚动位置在可见范围之后，会滚动到底部</h4><p><img src="https://upload-images.jianshu.io/upload_images/2824145-dd8dbff1903166fd.gif?imageMogr2/auto-orient/strip" alt="滚动到底部.gif"></p>
+<h4 id="二、如果当前滚动位置在可见范围之后，会滚动到底部"><a href="#二、如果当前滚动位置在可见范围之后，会滚动到底部" class="headerlink" title="二、如果当前滚动位置在可见范围之后，会滚动到底部"></a>二、如果当前滚动位置在可见范围之后，会滚动到底部</h4><img src="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/滚动到底部.gif" title="滚动到底部">
 <p>当前RecyclerView的可见范围为0到9，当我们想要滚动到10位置时，发现RecyclerView滚动了，且当前位置对应的视图在RecyclreView的底部。</p>
-<h4 id="三、如果当前滚动位置在可见范围之前，会滚动到顶部"><a href="#三、如果当前滚动位置在可见范围之前，会滚动到顶部" class="headerlink" title="三、如果当前滚动位置在可见范围之前，会滚动到顶部"></a>三、如果当前滚动位置在可见范围之前，会滚动到顶部</h4><p><img src="https://upload-images.jianshu.io/upload_images/2824145-b382d5e31904f16a.gif?imageMogr2/auto-orient/strip" alt="滚动到顶部.gif"></p>
+<h4 id="三、如果当前滚动位置在可见范围之前，会滚动到顶部"><a href="#三、如果当前滚动位置在可见范围之前，会滚动到顶部" class="headerlink" title="三、如果当前滚动位置在可见范围之前，会滚动到顶部"></a>三、如果当前滚动位置在可见范围之前，会滚动到顶部</h4><img src="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/滚动到顶部.gif" title="滚动到顶部">
 <p>这里我们滚动RecyclerView,使其可见范围为10到19，当我们分别滚动到1、3位置时，RecyclerView滚动了。且当前位置对应的视图在RecyclerView的顶部。</p>
 <h3 id="二、RecyclerView-smoothScrollToPosition源码解析"><a href="#二、RecyclerView-smoothScrollToPosition源码解析" class="headerlink" title="二、RecyclerView smoothScrollToPosition源码解析"></a>二、RecyclerView smoothScrollToPosition源码解析</h3><p>到了这里我们发现对于不同情况，RecyclerView内部处理是不一样的，所以为了解决实际问题，看源码是必不可少的，接下来我们就一起跟着源码走一遍。来看看RecyclerView具体的滚动实现。（这里需要提醒大家的是这里我采用的是<strong>LinearLayoutManager</strong>，本文章都是基于LinearLayoutManager进行分析的）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public void smoothScrollToPosition(int position) &#123;</span><br><span class="line">      if (mLayoutFrozen) &#123;</span><br><span class="line">          return;</span><br><span class="line">      &#125;</span><br><span class="line">      if (mLayout == null) &#123;</span><br><span class="line">          Log.e(TAG, &quot;Cannot smooth scroll without a LayoutManager set. &quot;</span><br><span class="line">                  + &quot;Call setLayoutManager with a non-null argument.&quot;);</span><br><span class="line">          return;</span><br><span class="line">      &#125;</span><br><span class="line">      mLayout.smoothScrollToPosition(this, mState, position);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
@@ -544,7 +544,7 @@
 <li>当滚动位置在可见范围距离之外时<br>boxEnd - viewEnd&lt;0<br><strong>那么实际滚动距离为其差值，内容向下滚动，故只能滚动到底部</strong></li>
 </ul>
 <p>有可能大家现在看代码已经看晕了，下面我就用一张图来总结整个流程，结合流程图再去看代码，我相信大家能有更好的理解。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-26280c06b41544a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="基本流程图.png"></p>
+<img src="/2019/02/23/RecyclerView-smoothScrollToPosition了解一下/基本流程图.png" title="基本流程图">
 
       
     </div>
@@ -709,6 +709,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -721,6 +723,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

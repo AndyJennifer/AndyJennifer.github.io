@@ -104,14 +104,14 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="前言在上篇文章Java并发编程之锁机制之引导篇(六)中，我们大致了解了Lock接口（以及相关实现类）在并发编程重要作用。接下来我们就来具体了解Lock接口中声明的方法以及使用优势。 Lock简介Lock 接口实现类提供了比使用 synchronized 方法和语句可获得的更广泛的锁定操作。此实现允许更灵活的结构，可以具有差别很大的属性，可以支持多个相关的 Condition (Condition">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-99cbcbf1c00c2fc8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-8b6274b75d4d2022.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-0413ea5589564dfc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.866Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/小盒子.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock_method.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.577Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程之锁机制之Lock接口(七)">
 <meta name="twitter:description" content="前言在上篇文章Java并发编程之锁机制之引导篇(六)中，我们大致了解了Lock接口（以及相关实现类）在并发编程重要作用。接下来我们就来具体了解Lock接口中声明的方法以及使用优势。 Lock简介Lock 接口实现类提供了比使用 synchronized 方法和语句可获得的更广泛的锁定操作。此实现允许更灵活的结构，可以具有差别很大的属性，可以支持多个相关的 Condition (Condition">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-99cbcbf1c00c2fc8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/小盒子.jpg">
 
 
 
@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -469,12 +469,12 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-99cbcbf1c00c2fc8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="小盒子.jpg"></p>
+        <img src="/2019/02/23/Java并发编程之锁机制之Lock接口(七)/小盒子.jpg" title="小盒子">
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章<a href="/2019/02/23/Java并发编程之锁机制之引导篇(六)/" title="Java并发编程之锁机制之引导篇(六)">Java并发编程之锁机制之引导篇(六)</a>中，我们大致了解了Lock接口（以及相关实现类）在并发编程重要作用。接下来我们就来具体了解Lock接口中声明的方法以及使用优势。</p>
 <h3 id="Lock简介"><a href="#Lock简介" class="headerlink" title="Lock简介"></a>Lock简介</h3><p>Lock 接口实现类提供了比使用 synchronized 方法和语句可获得的更广泛的锁定操作。此实现允许更灵活的结构，可以具有差别很大的属性，可以支持多个相关的 <code>Condition</code> (Condition实现类ConditonObject来实现线程的通知/与唤醒机制，关于Condition后期会进行介绍)对象。</p>
 <p>锁是用于控制多线程访问共享资源的工具。通常，锁提供对共享资源的独占访问：一次只有一个线程可以获取锁，对共享资源的所有访问都需要首先获取锁。但是，一些锁可以允许同时访问共享资源，例如<code>ReadWriteLock</code>。</p>
 <p>虽然使用关键字synchronized修饰的方法或代码块，会使得在监视器模式（ObjectMonitor)下编程变得非常容易(通过synchronized块或者方法所提供的隐式获取释放锁的便捷性)。虽然这种方式简化了锁的管理，但是某些情况下，还是建议采用Lock接口（及其相关子类）提供的显示的锁的获取和释放。例如，针对一个场景，手把手进行锁获取和释放，先获得锁A，然后再获取锁B，当锁B获得后，释放锁A同时获取锁C，当锁C获得后，再释放B同时获取锁D，以此类推。这种场景下，<br>synchronized关键字就不那么容易实现了，而Lock接口的实现类<code>允许锁在不同的作用范围内获取和释放</code>，并允许以任何顺序获取和释放多个锁。</p>
-<h3 id="Lock接口中的方法"><a href="#Lock接口中的方法" class="headerlink" title="Lock接口中的方法"></a>Lock接口中的方法</h3><p>关于Lock接口中涉及到的方法具体如下：（建议直接在PC端查看，手机上有可能看的不是很清楚）<br><img src="https://upload-images.jianshu.io/upload_images/2824145-8b6274b75d4d2022.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="lock_method.png"><br>从上表中，我们就可以得出使用Lock接口实现的锁机制与使用传统的synchronized的区别</p>
+<h3 id="Lock接口中的方法"><a href="#Lock接口中的方法" class="headerlink" title="Lock接口中的方法"></a>Lock接口中的方法</h3><p>关于Lock接口中涉及到的方法具体如下：（建议直接在PC端查看，手机上有可能看的不是很清楚）<br><img src="/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock_method.png" title="lock_method"><br>从上表中，我们就可以得出使用Lock接口实现的锁机制与使用传统的synchronized的区别</p>
 <ol>
 <li>尝试非阻塞地获取锁：当线程尝试获取锁，如果这一时刻锁没有被其他线程获取到，则成功获取并持有锁。</li>
 <li>能被中断的获取锁：与synchronized不同，获取到锁的线程能够响应中断，当获取到锁的线程被中断时，中断异常会被抛出，同时锁也会被释放。</li>
@@ -483,7 +483,7 @@
 <h3 id="Lock简单使用与注意事项"><a href="#Lock简单使用与注意事项" class="headerlink" title="Lock简单使用与注意事项"></a>Lock简单使用与注意事项</h3><p>其中Lock的使用方式也很简单，具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Lock lock = ....;具体实现类</span><br><span class="line">lock.lock();</span><br><span class="line">try &#123;</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">lock.unlock();//建议在finally中释放锁</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>当锁定和解锁发生在不同的范围时，一定要注意确保在持有锁时执行的所有代码都受到try-finally或try-catch的保护，以确保在必要时释放锁。<code>不要将获取锁的过程写在try块中</code>，因为如果在获取锁（自定义锁的实现）时发生了异常，异常抛出的同时，也会导致锁无故释放（因为一旦发生异常，就会走finally语句，如果这个异常（可能是用户自定义异常，用户可以自己处理）需要线程1来处理，但是接着执行了lock.unlock()语句导致了锁的释放。那么其他线程就可以操作共享资源。有可能破坏程序的执行结果）。</p>
 <h3 id="Lock相关实现类实现锁机制"><a href="#Lock相关实现类实现锁机制" class="headerlink" title="Lock相关实现类实现锁机制"></a>Lock相关实现类实现锁机制</h3><p>为了使用Lock接口实现相关锁功能时，会涉及以下类和接口，这里还是把上篇文章提到的UML图展示出来：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-0413ea5589564dfc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="lock.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock.png" title="lock">
 <p>上图中，</p>
 <ol>
 <li>绿色部分为：其中<code>ReentrantLock（重入锁）</code>、WriteLock、ReadLock都是Lock的实现类。<code>Segment为ReentrantLock的子类（在后续文章，ConcurrentHashMap的讲解中我们会提及）。</code> <code>ReentrantReadWriteLock （读写锁）</code>的实现使用了WriteLock与ReadLock类。</li>
@@ -667,6 +667,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -679,6 +681,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

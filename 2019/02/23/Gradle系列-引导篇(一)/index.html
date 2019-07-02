@@ -104,14 +104,14 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-3f62357c67fc183d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-eb33e56f256fe391.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.862Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/gradle.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/gradle-java-builds.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/Android构建流程图.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.739Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Gradle系列-引导篇(一)">
 <meta name="twitter:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/gradle.png">
 
 
 
@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -469,7 +469,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="gradle.png"></p>
+        <img src="/2019/02/23/Gradle系列-引导篇(一)/gradle.png" title="gradle">
 <blockquote>
 <p>题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。</p>
 </blockquote>
@@ -481,7 +481,7 @@
 <li>…..等</li>
 </ul>
 <p>相信大家在平时使用的时候，遇到问题都通过搜索引擎来解决，有些小伙伴可定会想,”<code>作为一个Android开发者，我没有必要去详细的了解Gradle到底去这么使用，平时开发任务本来就比较重，哪里有时间有精力来学习呢</code>“ 但是个人觉得对Gradle的了解，对于我们平时开发项目有很重要的帮助。</p>
-<h3 id="Java项目的构建"><a href="#Java项目的构建" class="headerlink" title="Java项目的构建"></a>Java项目的构建</h3><p>要知道Gradle是什么以及其作用。我们需要从整个Java项目的构建说起，看下图：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-3f62357c67fc183d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="gradle-java-builds.png"></p>
+<h3 id="Java项目的构建"><a href="#Java项目的构建" class="headerlink" title="Java项目的构建"></a>Java项目的构建</h3><p>要知道Gradle是什么以及其作用。我们需要从整个Java项目的构建说起，看下图：<br><img src="/2019/02/23/Gradle系列-引导篇(一)/gradle-java-builds.png" title="gradle-java-builds"></p>
 <p>从上图中我们可以看出在平时Java项目的构建流程，或多或少我们会涉及以下操作：</p>
 <ul>
 <li>通过<code>javac</code>命令将一些Java源文件编译为class文件。</li>
@@ -499,7 +499,7 @@
 <li>Android应用多数情况下会对应用进行加密。</li>
 </ul>
 <p>那么汇集所有的资源以及情况后，整个Android的构建流程看起来是这个样子：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-eb33e56f256fe391.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Android构建流程图.png"></p>
+<img src="/2019/02/23/Gradle系列-引导篇(一)/Android构建流程图.png" title="Android构建流程图">
 <p>为了方便大家理解这里对其中主要的构建过程进行描述(<code>上图中绿色椭圆部分</code>)：</p>
 <ul>
 <li>aapt：aapt(Android Asset Packaging Tool)工具会打包应用中的资源文件，如AndroidManifest.xml、layout布局中的xml等，并将xml文件编译为二进制形式，当然assets文件夹中的文件不会被编译，图片及raw文件夹中的资源也会保持原来的形态，(<code>需要注意的是raw文件夹中的资源也会生成资源id。AAPT编译完成之后会生成R.java文件</code>)。</li>
@@ -690,6 +690,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -702,6 +704,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

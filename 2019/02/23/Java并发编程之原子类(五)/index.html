@@ -104,13 +104,13 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="前言在上篇文章Java并发编程之Synchronized(三)中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如Atomi">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-2ec245c061aea68e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.864Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之原子类(五)/天天.jpeg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之原子类(五)/aba.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.767Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程之原子类(五)">
 <meta name="twitter:description" content="前言在上篇文章Java并发编程之Synchronized(三)中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如Atomi">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Java并发编程之原子类(五)/天天.jpeg">
 
 
 
@@ -416,7 +416,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -468,7 +468,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="天天.jpeg"></p>
+        <img src="/2019/02/23/Java并发编程之原子类(五)/天天.jpeg" title="天天">
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章<a href="/2019/02/23/Java并发编程之Synchronized(三)/" title="Java并发编程之Synchronized(三)">Java并发编程之Synchronized(三)</a>中，曾描述Java提供了两种方式来处理线程安全的问题。第一种是互斥同步（悲观锁），第二种是采用非阻塞式同步（乐观锁）。虽然以上两种方案都能解决线程安全的问题。但是在JDK1.5开始，就提供了java.util.concurrent.atomic包，这个包中的原子操作类提供了更为简单高效、线程安全的方式来更新一个变量的值。例如AtomicBoolean、AtomicLong、AtomicInteger等。（这里提到的Atomic系列类原理都是CAS操作，如果你对CAS操作并不是是很熟悉，建议先阅读<a href="/2019/02/23/Java并发编程之Java的CAS操作(四)/" title="Java并发编程之Java的CAS操作(四)">Java并发编程之Java的CAS操作(四)</a>。</p>
 <h4 id="原子类的使用方式"><a href="#原子类的使用方式" class="headerlink" title="原子类的使用方式"></a>原子类的使用方式</h4><p>既然我们提到Atomic系列类是简单高效且线程安全的。光说没用，我们直接来实际例子，具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line">    private AtomicInteger mAtomicInteger = new AtomicInteger();//如果没有指定值，默认是1</span><br><span class="line">    </span><br><span class="line">    private void doAdd() &#123;</span><br><span class="line">        for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">            int value = mAtomicInteger.addAndGet(1);</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + &quot;---&gt;&quot; + value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(demo::doAdd, &quot;线程1&quot;).start();</span><br><span class="line">        new Thread(demo::doAdd, &quot;线程2&quot;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">线程1---&gt;1</span><br><span class="line">线程1---&gt;2</span><br><span class="line">线程1---&gt;3</span><br><span class="line">线程2---&gt;4</span><br><span class="line">线程1---&gt;5</span><br><span class="line">线程2---&gt;6</span><br><span class="line">线程1---&gt;7</span><br><span class="line">线程2---&gt;8</span><br><span class="line">线程2---&gt;9</span><br><span class="line">线程2---&gt;10</span><br></pre></td></tr></table></figure></p>
 <p>在上述代码逻辑非常简单，主要是想通过通过2个线程将mAtomicInteger 的值分别加1,每个线程执行加1并操作5次。</p>
@@ -512,7 +512,7 @@
 <h5 id="多个变量的CAS操作"><a href="#多个变量的CAS操作" class="headerlink" title="多个变量的CAS操作"></a>多个变量的CAS操作</h5><p>这里我们先解决第一个问题，关系多个变量的CAS操作，我们先以AtomicReference来进行讲解，具体代码如下所示：<br>（这里提一嘴，关于引用类型的原子类，内部都调用的是<strong>compareAndSwapObject</strong>（）方法来实现CAS操作的。）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">class AtomicDemo &#123;</span><br><span class="line"></span><br><span class="line">    Person mPerson = new Person(&quot;红红&quot;, 1);</span><br><span class="line">    private AtomicReference&lt;Person&gt; mAtomicReference = new AtomicReference&lt;&gt;(mPerson);</span><br><span class="line"></span><br><span class="line">    private class Person &#123;</span><br><span class="line">        String name;</span><br><span class="line">        int age;</span><br><span class="line"></span><br><span class="line">        Person(String name, int age) &#123;</span><br><span class="line">            this.name = name;</span><br><span class="line">            this.age = age;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    private void updatePersonInfo(String name, int age) throws Exception &#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + &quot;更新前---&gt;&quot; + mAtomicReference.get().name + &quot;----&gt;&quot; + mAtomicReference.get().age);</span><br><span class="line">        mAtomicReference.getAndUpdate(person -&gt; new Person(name, age));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        AtomicDemo demo = new AtomicDemo();</span><br><span class="line">        new Thread(() -&gt; demo.updatePersonInfo(&quot;蓝蓝&quot;, 2), &quot;线程1&quot;).start();</span><br><span class="line">   </span><br><span class="line">        Thread.sleep(1000);</span><br><span class="line">        System.out.println(&quot;暂停一秒---&gt;&quot; + demo.mAtomicReference.get().name + &quot;----&gt;&quot; + demo.mAtomicReference.get().age);</span><br><span class="line">     </span><br><span class="line">        System.out.println(&quot;更新后----&gt;&quot; + demo.mAtomicReference.get().name + &quot;----&gt;&quot; + demo.mAtomicReference.get().age);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">线程1更新前---&gt;红红----&gt;1</span><br><span class="line">暂停一秒---&gt;蓝蓝----&gt;2</span><br><span class="line">更新后----&gt;蓝蓝----&gt;2</span><br></pre></td></tr></table></figure></p>
 <p>上述代码中创建了Person 类，且当前AtomicReference传入的是当前 mPerson =new Person(“红红”, 1)，在Main方法中创建线程1使其调用mAtomicReference.getAndUpdate(new Person(“蓝蓝”，2))来更新Person信息。更新完成后休眠一秒后，获取更新结果并打印。从结果上来看，的确是对多个变量进行了更新的操作。</p>
 <h5 id="ABA问题"><a href="#ABA问题" class="headerlink" title="ABA问题"></a>ABA问题</h5><p>关于ABA问题，大家已经知道其出现的原因，现在我们就用具体例子让大家来了解一下。ABA会引发的问题。<br>这里我们以具体的例子来进行讲解。具体例子如下所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-2ec245c061aea68e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aba.png"></p>
+<img src="/2019/02/23/Java并发编程之原子类(五)/aba.png" title="aba">
 <p>观察上图，我们初始化了一个单向的链表结构，其中Header指向链表头节点，其中A节点的下一节点为B节点。<br>这个时候我们希望通过线程1，通过CAS操作将链表中的B节点放入头节点中,且B的next节点为A节点。具体为代码如下所示：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if(header.compareAndSet(A,B))&#123;</span><br><span class="line">	B.next = A;</span><br><span class="line">	A.next = null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当线程1已经拿到header.compareAndSet(A,B)的结果正准备执行下一行代码时，突然线程2介入，将A、B两个节点移除，同时重新将A、C、D三个节点依次加入链表中。当线程2操作完毕的时候，这个时候线程1接着执行。线程1在执行的时候，会检查当前链表中A是否为头节点，当前情况A是头节点（通过线程2添加的）。那么就会执行剩余代码也就是（B.next =A, A.next = null)。那么通过线程1操作完成后，就出现上图中当前链表中C、D两个节点丢失的情况。所以为了解决ABA问题，Java中提供了<strong>AtomicStampedReference</strong>来解决。</p>
@@ -695,6 +695,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -707,6 +709,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

@@ -104,22 +104,22 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="前言在上篇文章Java并发编程之锁机制之Lock接口(七)中，我们已经了解了，Java下整个Lock接口下实现的锁机制是通过AQS(这里我们将AbstractQueuedSynchronizer 或AbstractQueuedLongSynchronizer统称为AQS)与Condition来实现的。那下面我们就来具体了解AQS的内部细节与实现原理。  PS:该篇文章会以AbstractQueu">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-0e04abe007aee52d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-62c705bac15d1b1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/爆炸.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs.png">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-0c6db04f40503219.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-7a0e99472ad06aad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-577539f984ab6e45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-7d9fbf3bebdddfda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-15ff4717041cc3bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-aa83713dcb855990.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-95d89529fae7df5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-3794d9b6c9f71b05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-380e27c34be98551.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.865Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs_save_head.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs_self_rotate.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs_get_head.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/跳过已经取消的节点.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/重新设置尾节点Tail.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/共享式自旋判断.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/共享式线程阻塞.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.461Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)">
 <meta name="twitter:description" content="前言在上篇文章Java并发编程之锁机制之Lock接口(七)中，我们已经了解了，Java下整个Lock接口下实现的锁机制是通过AQS(这里我们将AbstractQueuedSynchronizer 或AbstractQueuedLongSynchronizer统称为AQS)与Condition来实现的。那下面我们就来具体了解AQS的内部细节与实现原理。  PS:该篇文章会以AbstractQueu">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-0e04abe007aee52d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/爆炸.png">
 
 
 
@@ -425,7 +425,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -477,7 +477,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-0e04abe007aee52d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="爆炸.png"></p>
+        <img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/爆炸.png" title="爆炸">
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章<a href="/2019/02/23/Java并发编程之锁机制之Lock接口(七)/" title="Java并发编程之锁机制之Lock接口(七)">Java并发编程之锁机制之Lock接口(七)</a>中，我们已经了解了，Java下整个Lock接口下实现的锁机制是通过<code>AQS(这里我们将AbstractQueuedSynchronizer 或AbstractQueuedLongSynchronizer统称为AQS)</code>与Condition来实现的。那下面我们就来具体了解AQS的内部细节与实现原理。</p>
 <blockquote>
 <p>PS:该篇文章会以<code>AbstractQueuedSynchronizer</code>来进行讲解，对AbstractQueuedLongSynchronizer有兴趣的小伙伴，可以自行查看相关资料。</p>
@@ -537,10 +537,10 @@
 <li>Thread thread：当前转换为Node节点的线程。</li>
 <li>Node nextWaiter：当前节点在Condition中等待队列上的下一个节点，（关于Condition会在下篇文章进行介绍）。</li>
 </ul>
-<h4 id="AQS同步队列具体实现结构"><a href="#AQS同步队列具体实现结构" class="headerlink" title="AQS同步队列具体实现结构"></a>AQS同步队列具体实现结构</h4><p>通过上文的描述我们大概了解了Node节点中存储的数据与信息，现在我们来看看整个AQS下同步队列的结构。具体如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-62c705bac15d1b1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs.png"><br>在AQS中的同步队列中，分别有两个指针（你也可以叫做对象的引用），一个<code>head</code>指针指向队列中的头节点，一个<code>tail</code>指针指向队列中的尾节点。</p>
+<h4 id="AQS同步队列具体实现结构"><a href="#AQS同步队列具体实现结构" class="headerlink" title="AQS同步队列具体实现结构"></a>AQS同步队列具体实现结构</h4><p>通过上文的描述我们大概了解了Node节点中存储的数据与信息，现在我们来看看整个AQS下同步队列的结构。具体如下图所示：<br><img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs.png" title="aqs"><br>在AQS中的同步队列中，分别有两个指针（你也可以叫做对象的引用），一个<code>head</code>指针指向队列中的头节点，一个<code>tail</code>指针指向队列中的尾节点。</p>
 <h5 id="AQS添加尾节点"><a href="#AQS添加尾节点" class="headerlink" title="AQS添加尾节点"></a>AQS添加尾节点</h5><p> 当一个线程成功获取了同步状态（或者锁），其他线程无法获取到同步状态，这个时候会将该线程构造成Node节点，并加入到同步队列中，而这个加入队列的过程必须要确保线程安全，所以在AQS中提供了一个基于CAS的设置尾节点的方法：<code>compareAndSetTail(Node expect,Nodeupdate)</code>，它需要传递当前线程“认为”的尾节点和当前节点，只有设置成功后，当前节点才正式与之前的尾节点建立关联。具体过程如下图所示：</p>
 <p>   <img src="https://upload-images.jianshu.io/upload_images/2824145-0c6db04f40503219.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs_save_tail.png"><br>上图中，虚线部分为之前tail指向的节点。</p>
-<h5 id="AQS添加头节点"><a href="#AQS添加头节点" class="headerlink" title="AQS添加头节点"></a>AQS添加头节点</h5><p>在AQS中的同步队列中，头节点是获取同步状态成功的节点，头节点的线程会在释放同步状态时，将会唤醒其下一个节点，而下一个节点会在获取同步状态成功时将自己设置为头节点，具体过程如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-7a0e99472ad06aad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs_save_head.png"></p>
+<h5 id="AQS添加头节点"><a href="#AQS添加头节点" class="headerlink" title="AQS添加头节点"></a>AQS添加头节点</h5><p>在AQS中的同步队列中，头节点是获取同步状态成功的节点，头节点的线程会在释放同步状态时，将会唤醒其下一个节点，而下一个节点会在获取同步状态成功时将自己设置为头节点，具体过程如下图所示：<br><img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs_save_head.png" title="aqs_save_head"></p>
 <p>上图中，<code>虚线部分为之前head指向的节点</code>。因为设置头节点是获取同步状态成功的线程来完成的，由于只有一个线程能够成功获取到同步状态，因此设置头节点的方法并不需要CAS来进行保证，只需要将原头节点的next指向断开就行了。</p>
 <p>现在我们已经了解了AQS中同步队列的头节点与尾节点的设置过程。现在我们根据实际代码进行分析，因为涉及到不同状态对同步状态的获取(<code>独占式与共享式</code>)，所以下面会分别对这两种状态进行讲解。</p>
 <h4 id="独占式同步状态获取与释放"><a href="#独占式同步状态获取与释放" class="headerlink" title="独占式同步状态获取与释放"></a>独占式同步状态获取与释放</h4><h5 id="独占式同步状态获取"><a href="#独占式同步状态获取" class="headerlink" title="独占式同步状态获取"></a>独占式同步状态获取</h5><p>通过<code>acquire(int arg)</code>方法我们可以获取到同步状态，但是需要注意的是该方法并不会响应线程的中断与获取同步状态的超时机制。同时即使当前线程已经中断了，通过该方法放入的同步队列的Node节点（该线程构造的Node），也不会从同步队列中移除。具体代码如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">      if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">          acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">          selfInterrupt();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
@@ -554,9 +554,10 @@
 <p>在enq(final Node node)方法中，通过<code>死循环（你也可以叫做自旋）</code>的方式来保证节点的正确的添加。接下来，我们继续查看acquireQueued(final Node node, int arg)方法的处理。<code>该方法才是整个多线程竞争同步状态的关键，大家一定要注意看！！！</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">final boolean acquireQueued(final Node node, int arg) &#123;</span><br><span class="line">    boolean failed = true;</span><br><span class="line">    try &#123;</span><br><span class="line">        boolean interrupted = false;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            final Node p = node.predecessor();//获取该节点的上一节点</span><br><span class="line">            //如果上一节点是head锁指向的节点，且该节点获取同步状态成功</span><br><span class="line">            if (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">          //设置head指向该节点，</span><br><span class="line">                setHead(node);</span><br><span class="line">                p.next = null; // 将上一节点的next指向断开</span><br><span class="line">                failed = false;</span><br><span class="line">                return interrupted;</span><br><span class="line">            &#125;</span><br><span class="line">            //判断获取同步状态失败的线程是否需要阻塞</span><br><span class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())//阻塞并判断当前线程是否已经中断了</span><br><span class="line">                interrupted = true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (failed)</span><br><span class="line">        //如果线程中断了，那么就将该线程从同步队列中移除，同时唤醒下一节点</span><br><span class="line">            cancelAcquire(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>在该方法中主要分为三个步骤:</p>
 <ul>
-<li>通过<code>死循环（你也可以叫做自旋）</code>的方式来获取同步状态，如果当前节点的<code>上一节点是head指向的节点</code>且<code>该节点获取同步状态成功</code>，那么会设置head指向该节点 ，同时将上一节点的next指向断开。<br><img src="https://upload-images.jianshu.io/upload_images/2824145-577539f984ab6e45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs_self_rotate.png"></li>
+<li>通过<code>死循环（你也可以叫做自旋）</code>的方式来获取同步状态，如果当前节点的<code>上一节点是head指向的节点</code>且<code>该节点获取同步状态成功</code>，那么会设置head指向该节点 ，同时将上一节点的next指向断开。<img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs_self_rotate.png" title="aqs_self_rotate">
+</li>
 </ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-7d9fbf3bebdddfda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs_get_head.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs_get_head.png" title="aqs_get_head">
 <ul>
 <li>如果当前节点的上一节点不是head指向的节点，或者获取当前节点同步状态失败，那么会先调用<code>shouldParkAfterFailedAcquire(Node pred, Node node)</code>方法来判断是需要否阻塞当前线程，如果该方法返回<code>true</code>，则调用<code>parkAndCheckInterrupt()</code>方法来阻塞线程。如果该方法返回<code>false</code>,那么该方法内部会把当前节点的上一节点的状态修改为Node.SINGAL。</li>
 <li>在finally语句块中，判断当前线程是否已经中断。如果中断，则通过那么<code>cancelAcquire(Node node)</code>方法将该线程（对应的Node节点）从同步队列中移除，同时唤醒下一节点。</li>
@@ -574,19 +575,20 @@
 <p>观察上诉代码，我们可以知道该方法干了以下这几件事</p>
 <ul>
 <li>（1）将中断线程对应的节点对应的线程置为null</li>
-<li><p>（2）跳过当前节点之前已经取消的节点（我们已经知道在Node.waitStatus的枚举中，只有CANCELLED 大于0 ）<br><img src="https://upload-images.jianshu.io/upload_images/2824145-15ff4717041cc3bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="跳过已经取消的节点.png"></p>
+<li><p>（2）跳过当前节点之前已经取消的节点（我们已经知道在Node.waitStatus的枚举中，只有CANCELLED 大于0 ）</p>
+<img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/跳过已经取消的节点.png" title="跳过已经取消的节点">
 </li>
 <li><p>（3）将当前中断的线程对应节点状态设置为CANCELLED</p>
 </li>
 <li>（4）在（2）的前提下，如果当前中断的节点<code>是尾节点</code>，那么通过CAS操作将尾节点指向（2）操作后的的节点。</li>
 </ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-aa83713dcb855990.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="重新设置尾节点Tail.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/重新设置尾节点Tail.png" title="重新设置尾节点Tail">
 <ul>
 <li>（5）如果当前中断节点<code>不是尾节点</code>,且当前中断的节点的上一个节点的状态，为SINGAL或者即将为SINGAL，那么将该当前中断节点移除。</li>
 <li>（6）如果（5）条件不满足，那么调用<code>unparkSuccessor(Node node)</code>方法将该节点移除，同时唤醒下一个节点。具体代码如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private void unparkSuccessor(Node node) &#123;</span><br><span class="line">     //重置该节点为初始状态</span><br><span class="line">    int ws = node.waitStatus;</span><br><span class="line">    if (ws &lt; 0)</span><br><span class="line">        compareAndSetWaitStatus(node, ws, 0);</span><br><span class="line">    //获取中断节点的下一节点    </span><br><span class="line">    Node s = node.next;</span><br><span class="line">    //判断下一节点的状态，如果为Node.CANCELED状态</span><br><span class="line">    if (s == null || s.waitStatus &gt; 0) &#123;</span><br><span class="line">        s = null;</span><br><span class="line">        //则通过尾节点向前遍历，获取最近的waitStatus&lt;=0的节点</span><br><span class="line">        for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)</span><br><span class="line">            if (t.waitStatus &lt;= 0)</span><br><span class="line">                s = t;</span><br><span class="line">    &#125;</span><br><span class="line">    //如果该节点不会null，则唤醒该节点中的线程。</span><br><span class="line">    if (s != null)</span><br><span class="line">        LockSupport.unpark(s.thread);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p>这里为了方便大家理解，我还是将图补充了出来，（图片有可能不是很清晰，建议大家点击浏览大图），<br><img src="https://upload-images.jianshu.io/upload_images/2824145-95d89529fae7df5a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs.png"><br>整体来说，unparkSuccessor（Node node）方法主要是获取中断节点后的可用节点（Node.waitStatus&lt;=0),然后将该节点对应的线程唤醒。</p>
+<p>这里为了方便大家理解，我还是将图补充了出来，（图片有可能不是很清晰，建议大家点击浏览大图），<br><img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/aqs.png" title="aqs"><br>整体来说，unparkSuccessor（Node node）方法主要是获取中断节点后的可用节点（Node.waitStatus&lt;=0),然后将该节点对应的线程唤醒。</p>
 <h5 id="独占式同步状态释放"><a href="#独占式同步状态释放" class="headerlink" title="独占式同步状态释放"></a>独占式同步状态释放</h5><p>当线程获取同步状态成功并执行相应逻辑后，需要释放同步状态，使得后继线程节点能够继续获取同步状态，通过调用AQS的relase(int arg)方法，可以释放同步状态。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public final boolean release(int arg) &#123;</span><br><span class="line">       if (tryRelease(arg)) &#123;</span><br><span class="line">           Node h = head;</span><br><span class="line">           if (h != null &amp;&amp; h.waitStatus != 0)</span><br><span class="line">               unparkSuccessor(h);</span><br><span class="line">           return true;</span><br><span class="line">       &#125;</span><br><span class="line">       return false;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
 <p>在该方法中，会调用模板方法<code>tryRelease(int  arg)</code>，也就是说同步状态的释放逻辑，是需要用户来自己定义的。当<code>tryRelease(int  arg)</code>方法返回true后，如果当前头节点不为null且头节点waitStatus!=0，接着会调用<code>unparkSuccessor(Node node)</code>方法来唤醒下一节点<code>（使其尝试获取同步状态）</code>。关于unparkSuccessor(Node node)方法，上文已经分析过了，这里就不再进行描述了。</p>
 <h4 id="共享式同步状态获取与释放"><a href="#共享式同步状态获取与释放" class="headerlink" title="共享式同步状态获取与释放"></a>共享式同步状态获取与释放</h4><p>共享式获取与独占式获取最主要的区别在于<code>同一时刻是否能有多个线程同时获取到同步状态</code>。以文件的读写为例，如果一个程序在对文件进行<code>读操作</code>，那么这一时刻对于文件的<code>写操作均会被阻塞</code>。而<code>其他读操作能够同时进行</code>。如果对文件进行<code>写操作</code>，那么这一时刻<code>其他的读写操作都会被阻塞</code>，写操作要求对资源的独占式访问，而读操作可以是共享访问的。</p>
@@ -600,11 +602,11 @@
 <ul>
 <li>(2)自旋获取同步状态，如果当前节点的上一节点为head节点，其获取同步状态成功，那么将调用<code>setHeadAndPropagate(node, r);</code>，重新设置head指向当前节点。<code>同时重新设置该节点状态waitStutas = Node.PROPAGATE(共享状态)</code>,然后直接退出doAcquireShared(int arg)方法。具体情况如下图所示：</li>
 </ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-3794d9b6c9f71b05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="共享式自旋判断.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/共享式自旋判断.png" title="共享式自旋判断">
 <ul>
 <li>(3)如果不满足条件（2），那么会判断当前节点的上一节点不是head指向的节点，或者获取当前节点同步状态失败，那么会先调用<code>shouldParkAfterFailedAcquire(Node pred, Node node)</code>方法来判断是需要否阻塞当前线程，如果该方法返回<code>true</code>，则调用<code>parkAndCheckInterrupt()</code>方法来阻塞线程。如果该方法返回<code>false</code>,那么该方法内部会把当前节点的上一节点的状态修改为Node.SINGAL。具体情况如下图所示：</li>
 </ul>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-380e27c34be98551.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="共享式线程阻塞.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/共享式线程阻塞.png" title="共享式线程阻塞">
 <ul>
 <li>(4)如果线程已经中断，则唤醒下一节点</li>
 </ul>
@@ -803,6 +805,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -815,6 +819,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

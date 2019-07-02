@@ -104,15 +104,15 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="注解基本概念注解（也称为元数据），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到JAVA SE5的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-7e5f11afb642739f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-3ba27f5378be074d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-eee4879fa122ddc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.861Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/居家程序员.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/doc文档.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/java类加载图.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/整体继承关系图.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.779Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 注解系列之Annotation(二)">
 <meta name="twitter:description" content="注解基本概念注解（也称为元数据），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到JAVA SE5的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Android-注解系列之Annotation(二)/居家程序员.jpg">
 
 
 
@@ -418,7 +418,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -470,7 +470,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="居家程序员.jpg"></p>
+        <img src="/2019/02/23/Android-注解系列之Annotation(二)/居家程序员.jpg" title="居家程序员">
 <h3 id="注解基本概念"><a href="#注解基本概念" class="headerlink" title="注解基本概念"></a>注解基本概念</h3><p>注解（<code>也称为元数据</code>），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到<code>JAVA SE5</code>的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻编写<code>样板</code>代码的负担。通过使用注解。我们可以将这些元数据保存在Java源代码中，并利用<code>annotation API为自己的注解构造处理工具</code>。</p>
 <h3 id="注解的声明"><a href="#注解的声明" class="headerlink" title="注解的声明"></a>注解的声明</h3><p>说了这么多，我们先来看看注解的声明。具体参看下面的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Documented</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Target(value = &#123;TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, ANNOTATION_TYPE,PACKAGE&#125;)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>观看上述例子，我们发现注解的声明其实有点类似于Java接口的声明。除了@符号以外，@HelloAnnotation 定义更像是一个空的接口。事实上，它与其他任何Java接口一样。注解也会被编译成class文件。在定义注解时需要一些<code>元注解</code>，如<code>@Retention</code>和<code>@Target</code>。要知道注解的正确使用，我们需要了解<code>元注解</code>的使用方法与作用。</p>
@@ -508,7 +508,7 @@
 </li>
 </ul>
 <p>我们跳转到项目的目录，打开命令行，执行<code>javadoc -encoding utf-8 -charset utf-8 -package annotation</code>命令(这里我是所有的文件都是放在annotaton包下的，所以你可以根据你自己的包名为该包下的所有.java文件生成Doc文档)。运行完命令后我们找到自动生成的Doc文档。点击后如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-7e5f11afb642739f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="doc文档.png"></p>
+<img src="/2019/02/23/Android-注解系列之Annotation(二)/doc文档.png" title="doc文档">
 <p>从上图中我们可以发现，如果为注解指定了<code>@Documented</code>元注解，那么在生成的Doc文档中是会有相应注解的（<code>如图上红箭头所指</code>）。</p>
 <h5 id="Inherited元注解"><a href="#Inherited元注解" class="headerlink" title="@Inherited元注解"></a>@Inherited元注解</h5><p>该注解表示，允许子类继承父类中的注解。其实理解起来也简单。看下面的列子：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Inherited</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface Hello &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface World &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Hello</span><br><span class="line">class Person &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@World</span><br><span class="line">class Man extends Person &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Annotation[] annotations = Man.class.getAnnotations();</span><br><span class="line">        for (Annotation annotation : annotations) &#123;</span><br><span class="line">            System.out.println(annotation.annotationType());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//输出结果</span><br><span class="line">interface annotation.Hello</span><br><span class="line">interface annotation.World</span><br></pre></td></tr></table></figure>
@@ -540,7 +540,7 @@
 <h5 id="value属性"><a href="#value属性" class="headerlink" title="value属性"></a>value属性</h5><p>如果一个注解中有一个<code>名称为value</code>的属性，且你只想设置value属性(即其他属性都采用默认值或者你只有一个value属性)，那么可以省略掉<code>“value=”</code>部分。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//第一种情况，只有一个vaule属性，那么你在使用时候可以直接@WorldAnnotation(&quot;hello&quot;)</span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface WorldAnnotation &#123;</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//第二种情况，有多个属性但是其属性都有默认值，</span><br><span class="line">//你只使用value属性，那么你在使用时候可以直接@WorldAnnotation(&quot;hello&quot;)</span><br><span class="line">@Target(ElementType.TYPE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@interface WorldAnnotation &#123;</span><br><span class="line">    int intAttr() default -1;</span><br><span class="line">    float floatAttr() default -1f;</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="注解与反射机制"><a href="#注解与反射机制" class="headerlink" title="注解与反射机制"></a>注解与反射机制</h3><p>在了解了注解的定义与属性的添加后，现在我们在来看看注解的实际运用情况。注解的使用需要与<code>Java的反射机制</code>结合使用。所以了解其中的了解两者之前的关系尤为重要。</p>
 <h4 id="注解与反射机制的关系"><a href="#注解与反射机制的关系" class="headerlink" title="注解与反射机制的关系"></a>注解与反射机制的关系</h4><p>众所周知，JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。那么从Java的整个类加载机制来看，过程是如下这样：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-3ba27f5378be074d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="java类加载图.png"></p>
+<img src="/2019/02/23/Android-注解系列之Annotation(二)/java类加载图.png" title="java类加载图">
 <p>对于Java类的加载主要分为以下步骤：</p>
 <ul>
 <li>将程序中的<code>*.java</code>文件通过javac命令编译成扩展名为<code>*.class</code>文件。其中<code>*.class</code>文件保存着Java代码转换后的虚拟机指令。</li>
@@ -550,7 +550,7 @@
 <p>这里我们还是以@HelloAnnotation 注解为例，当我们声明了注解后，通过<code>javap</code>命令获取编译后的的字节码信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Target(ElementType.TYPE_USE)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface HelloAnnotation &#123;</span><br><span class="line">    String value();</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">//通过javap -p HelloAnnotation.class</span><br><span class="line">public interface annotation.HelloAnnotation extends java.lang.annotation.Annotation &#123;</span><br><span class="line">  public abstract java.lang.String value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>从上图中，我们可以得知经过编译后，其实注解最终会<code>继承Annotation接口</code>。也就是说注解最终会以<code>java.lang.annotation.Annotation</code>对象的形式在Class对象中进行展示或存储。</p>
 <h5 id="注解的处理"><a href="#注解的处理" class="headerlink" title="注解的处理"></a>注解的处理</h5><p>为了方便处理接口信息以及实现面向对象的规则，其中<code>Constructor、Field、Method、Class、Package</code>类都实现了<code>AnnotatedElement</code>接口。具体关系如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-eee4879fa122ddc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整体继承关系图.png"></p>
+<img src="/2019/02/23/Android-注解系列之Annotation(二)/整体继承关系图.png" title="整体继承关系图">
 <p>也就是最终的注解注解处理全部都交给了<code>AnnotatedElement</code>接口来实现。那现在我们来看看该接口的方法声明。</p>
 <h5 id="AnnotatedElement中的方法声明"><a href="#AnnotatedElement中的方法声明" class="headerlink" title="AnnotatedElement中的方法声明"></a>AnnotatedElement中的方法声明</h5><p>在<code>AnnotatedElement</code>接口中为我们提供了以下几个方法来获取注解信息：</p>
 <table>
@@ -771,6 +771,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -783,6 +785,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

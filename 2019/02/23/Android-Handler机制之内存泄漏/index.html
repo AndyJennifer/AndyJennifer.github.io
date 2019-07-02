@@ -104,14 +104,14 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言整个Handler机制系列文章到此就结束了，相信大家基本已经将整个Handler机制消化的差不多了，现在就剩下最后一个知识点，在平时开发中使用Handler有可能会导致内存泄漏的问题。下面我们就一起去了解了解~~ 内存泄漏内存泄漏在官方的定义如下:  内存泄漏（Memory">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-73ede8ebabc4c5a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-5c954ec52cdd8638.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-dce1099c23153126.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.859Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-Handler机制之内存泄漏/溢出啦啦.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-Handler机制之内存泄漏/handler_refrence.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Android-Handler机制之内存泄漏/handler_leakage.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.583Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Handler机制之内存泄漏">
 <meta name="twitter:description" content="该文章属于Android Handler系列文章，如果想了解更多，请点击Android Handler机制之总目录  前言整个Handler机制系列文章到此就结束了，相信大家基本已经将整个Handler机制消化的差不多了，现在就剩下最后一个知识点，在平时开发中使用Handler有可能会导致内存泄漏的问题。下面我们就一起去了解了解~~ 内存泄漏内存泄漏在官方的定义如下:  内存泄漏（Memory">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-73ede8ebabc4c5a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Android-Handler机制之内存泄漏/溢出啦啦.jpg">
 
 
 
@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -469,7 +469,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-73ede8ebabc4c5a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="溢出啦啦.jpg"></p>
+        <img src="/2019/02/23/Android-Handler机制之内存泄漏/溢出啦啦.jpg" title="溢出啦啦">
 <blockquote>
 <p>该文章属于Android Handler系列文章，如果想了解更多，请点击<a href="/2019/02/23/Android-Handler机制之总目录/" title="Android Handler机制之总目录">Android Handler机制之总目录</a></p>
 </blockquote>
@@ -482,8 +482,9 @@
 <p>那么针对于Android系统来说，在Android系统中会为每个应用程序分配相应的内存（根据手机厂商的不同，分配的内存大小会有所差异）。也就是说对于每一个应用程序来说其内存是有限的。那么当某个应用程序产生的内存泄漏较多时，导致达到应用总的内存阀值，那么就会导致应用崩溃。</p>
 <h3 id="Handler内存泄漏的情况讨论"><a href="#Handler内存泄漏的情况讨论" class="headerlink" title="Handler内存泄漏的情况讨论"></a>Handler内存泄漏的情况讨论</h3><p>为了分析Handler内存泄漏的具体情况，请参看以下示例代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public class HandlerLeakageActivity extends BaseActivity &#123;</span><br><span class="line"></span><br><span class="line">    public static final int UPDATE_UI = 1;</span><br><span class="line">    </span><br><span class="line">    private Handler mHandler = new Handler() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void handleMessage(Message msg) &#123;</span><br><span class="line">            if (msg.what == UPDATE_UI) &#123;</span><br><span class="line">                updateUI();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_handler_leakage);</span><br><span class="line">        Message message = Message.obtain();</span><br><span class="line">        message.what = UPDATE_UI;</span><br><span class="line">        mHandler.sendMessageDelayed(message, 1000 * 3600 * 24);//发送延时24小时消息</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	//更新ui</span><br><span class="line">    private void updateUI() &#123;...&#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
 <p>上述代码逻辑很简单，我们在HandlerLeakageActivity 中创建了内部类Handler，同时发送了一个延时为24小时的消息。当HandlerLeakageActivity 收到这个延迟消息后，那么接着会来更新UI，同时我们可以得到以下引用链：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-5c954ec52cdd8638.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="handler_refrence.png"><br>其中的内部类Handler 拥有当前Activity的引用，是因为<code>在Java中，非静态内部类会持有外部类的引用</code>，而Messagey拥有Handler的引用，是因为Message通过Looper的loop（）方法取出后，需要相应的Handler来处理消息（<code>msg.target ==发送消息的Handler</code>）。</p>
-<p>那么在整个Handler机制下的引用关系如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-dce1099c23153126.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="handler_leakage.png"></p>
+<img src="/2019/02/23/Android-Handler机制之内存泄漏/handler_refrence.png" title="handler_refrence">
+<p>其中的内部类Handler 拥有当前Activity的引用，是因为<code>在Java中，非静态内部类会持有外部类的引用</code>，而Messagey拥有Handler的引用，是因为Message通过Looper的loop（）方法取出后，需要相应的Handler来处理消息（<code>msg.target ==发送消息的Handler</code>）。</p>
+<p>那么在整个Handler机制下的引用关系如下图所示：<br><img src="/2019/02/23/Android-Handler机制之内存泄漏/handler_leakage.png" title="handler_leakage"></p>
 <p>参照上图，我们设想一种情况，假设我们在程序启动的时候，首先进入HandlerLeakageActivity ，然后又将其finish掉。那么就会出现，因为延迟消息的迟迟不能被取出执行，导致该Activity不能被系统回收。从而造成上文我们提到过的<code>内存泄漏</code>。</p>
 <h4 id="那么问题来了，什么时候引用链会断开？"><a href="#那么问题来了，什么时候引用链会断开？" class="headerlink" title="那么问题来了，什么时候引用链会断开？"></a>那么问题来了，什么时候引用链会断开？</h4><p>在文章<a href="/2019/02/23/Android-Handler机制之Message及Message回收机制/" title="Android Handler机制之Message及Message回收机制">Android Handler机制之Message及Message回收机制</a><br>中，我们曾经提到过，当消息被Looper通过Loop（）方法取出并执行的时候，会执行recycleUnchecked（）方法来重置消息中的数据，具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">void recycleUnchecked() &#123;</span><br><span class="line">        flags = FLAG_IN_USE;</span><br><span class="line">        what = 0;</span><br><span class="line">        arg1 = 0;</span><br><span class="line">        arg2 = 0;</span><br><span class="line">        obj = null;</span><br><span class="line">        replyTo = null;</span><br><span class="line">        sendingUid = -1;</span><br><span class="line">        when = 0;</span><br><span class="line">        target = null;//将关联handler对象置为null</span><br><span class="line">        callback = null;</span><br><span class="line">        data = null;</span><br><span class="line">		//省略部分代码</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <p>在该方法中将<code>target =null</code>，其中消息中的<code>target</code>为当前发送该消息的Handler对象。也就说只有消息被取出执行后，整个引用链才会断开，那么相应的Handler与使用该Handler的Activity才会被系统回收。</p>
@@ -675,6 +676,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -687,6 +690,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

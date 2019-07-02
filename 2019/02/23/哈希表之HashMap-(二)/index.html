@@ -104,16 +104,16 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：   哈希表初识(一) 哈希表之HashMap(二)  提示：该篇文章作为彻底理解哈希表的第二个部分">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-c6655b07bfd9b105.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-23a8b487bb761aac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-bd641cc0ee4fd0b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-6d1e5de02c67b206.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-c6b296754a7c63c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.875Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/哈希表之HashMap-(二)/你说是什么图就是什么图.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/哈希表之HashMap-(二)/Map类关系图.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/哈希表之HashMap-(二)/内部结构.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/哈希表之HashMap-(二)/取余流程.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/哈希表之HashMap-(二)/实例分析.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.598Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="哈希表之HashMap(二)">
 <meta name="twitter:description" content="在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：   哈希表初识(一) 哈希表之HashMap(二)  提示：该篇文章作为彻底理解哈希表的第二个部分">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-c6655b07bfd9b105.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/哈希表之HashMap-(二)/你说是什么图就是什么图.jpg">
 
 
 
@@ -419,7 +419,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -471,7 +471,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-c6655b07bfd9b105.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="你说是什么图就是什么图.jpg"></p>
+        <img src="/2019/02/23/哈希表之HashMap-(二)/你说是什么图就是什么图.jpg" title="你说是什么图就是什么图">
 <blockquote>
 <p>在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：</p>
 </blockquote>
@@ -481,7 +481,7 @@
 </ul>
 <p>提示：该篇文章作为彻底理解哈希表的第二个部分。主要讲了HashMap在Java中基于JDK1.8(不同版本HashMap可能实现不同)的具体实现。如果你对哈希表还不算太熟，建议先阅读上一篇文章，我相信等你看完之后，在回来看这篇文章，会有一种<strong>飞翔的感觉</strong>。</p>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在Java中java.util包下，定义了Map接口来实现键值对的映射关系。常用的类为HashMap,LinkedHashMap,TreeMap。其主要的类关系如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-23a8b487bb761aac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Map类关系图.png"></p>
+<img src="/2019/02/23/哈希表之HashMap-(二)/Map类关系图.png" title="Map类关系图">
 <p>在平时项目的开发中，我们主要使用的是HashMap及其子类，那我们接下来就了解一下HashMap的主要特征。</p>
 <ul>
 <li>采用数组+链表的形式对数据进行存储。</li>
@@ -491,7 +491,7 @@
 <li>线程非安全。</li>
 </ul>
 <h3 id="内部结构"><a href="#内部结构" class="headerlink" title="内部结构"></a>内部结构</h3><p>既然上文提到了数组+链表的形式，大家是否想起我们上篇文章提到的<strong>链地址法</strong>呢？如果你忘记了链地址法的具体实现，没关系，让我们一起看看在Java中HashMap具体的内部结构,具体的结构如下图所示：(注意:<strong>在JDK1.8中如果链表的长度大于8时会将该链表转换为红黑树</strong>)</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-bd641cc0ee4fd0b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="内部结构.png"></p>
+<img src="/2019/02/23/哈希表之HashMap-(二)/内部结构.png" title="内部结构">
 <p>从图中看出，HashMap底层存储的是<strong>Node</strong>节点，本质是一个映射（键值对）。上图中，每个<strong>黑色圆点</strong>就是一个<strong>Node</strong>对象，<strong>数组table</strong>对应Node&lt;K,V&gt;[] table。</p>
 <p>查看Node对应源码:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; &#123;</span><br><span class="line">       final int hash;</span><br><span class="line">       final K key;</span><br><span class="line">       V value;</span><br><span class="line">       Node&lt;K,V&gt; next;</span><br><span class="line"></span><br><span class="line">       Node(int hash, K key, V value, HashMapEntry&lt;K,V&gt; next) &#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final K getKey()       &#123;...&#125;</span><br><span class="line">       public final V getValue()      &#123;...&#125;</span><br><span class="line">       public final String toString() &#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final int hashCode()&#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final V setValue(V newValue) &#123;...&#125;</span><br><span class="line"></span><br><span class="line">       public final boolean equals(Object o) &#123;...&#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
@@ -524,9 +524,9 @@
 <h3 id="HashMap的扩容机制"><a href="#HashMap的扩容机制" class="headerlink" title="HashMap的扩容机制"></a>HashMap的扩容机制</h3><p>上面我们省略了扩容代码的具体，下面我们来仔细探讨一下HashMap的扩容机制。<br>主要扩容代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">//oldTab是原来的talble 数组</span><br><span class="line">if (oldTab != null) &#123;</span><br><span class="line">			  //遍历原来数组单元中对应的链表，oldCap是原来数组的容量</span><br><span class="line">          for (int j = 0; j &lt; oldCap; ++j) &#123;</span><br><span class="line">              Node&lt;K,V&gt; e;</span><br><span class="line">              if ((e = oldTab[j]) != null) &#123;</span><br><span class="line">                  oldTab[j] = null;</span><br><span class="line">                  //如果数组单元只有一个节点则计算其新位置，</span><br><span class="line">                  if (e.next == null)</span><br><span class="line">                      newTab[e.hash &amp; (newCap - 1)] = e;</span><br><span class="line">                  //如果是红黑树，特殊处理</span><br><span class="line">                  else if (e instanceof TreeNode)</span><br><span class="line">                      ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);</span><br><span class="line">                  //获取数组单元中的链表中的节点，并且重新定义位置。</span><br><span class="line">                  else &#123; // preserve order</span><br><span class="line">                      Node&lt;K,V&gt; loHead = null, loTail = null;</span><br><span class="line">                      Node&lt;K,V&gt; hiHead = null, hiTail = null;</span><br><span class="line">                      Node&lt;K,V&gt; next;</span><br><span class="line">                      do &#123;</span><br><span class="line">                          next = e.next;</span><br><span class="line">                          //原位置的节点</span><br><span class="line">                          if ((e.hash &amp; oldCap) == 0) &#123;</span><br><span class="line">                              if (loTail == null)</span><br><span class="line">                                  loHead = e;</span><br><span class="line">                              else</span><br><span class="line">                                  loTail.next = e;</span><br><span class="line">                              loTail = e;</span><br><span class="line">                          &#125;</span><br><span class="line">                          //原位置+oldCap的节点</span><br><span class="line">                          else &#123;</span><br><span class="line">                              if (hiTail == null)</span><br><span class="line">                                  hiHead = e;</span><br><span class="line">                              else</span><br><span class="line">                                  hiTail.next = e;</span><br><span class="line">                              hiTail = e;</span><br><span class="line">                          &#125;</span><br><span class="line">                      &#125; while ((e = next) != null);</span><br><span class="line">                      //把原位置的节点放入</span><br><span class="line">                      if (loTail != null) &#123;</span><br><span class="line">                          loTail.next = null;</span><br><span class="line">                          newTab[j] = loHead;</span><br><span class="line">                      &#125;</span><br><span class="line">                      //把新位置的节点放入</span><br><span class="line">                      if (hiTail != null) &#123;</span><br><span class="line">                          hiTail.next = null;</span><br><span class="line">                          newTab[j + oldCap] = hiHead;</span><br><span class="line">                      &#125;</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
 <p>直接去理解这段代码很难，根据上篇文章的经验，我们知道在数组进行扩容的时候，需要根据hash值去与新的数组长度进行取余运算（hash&amp;length -1),但是从上述代码中，我们没有发现进行取余的操作。这是怎么回事呢？没事大家一起来看下图。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-6d1e5de02c67b206.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="取余流程.png"></p>
+<img src="/2019/02/23/哈希表之HashMap-(二)/取余流程.png" title="取余流程">
 <p>上图中，我们假设某个节点hash值为1111 1111 1111 1111 11111 0000 1011 1111，并且在添加该值时，数组进行了扩容操作（为原来的数组长度的2倍）。我们发现节点在重新计算角标的时候，因为数组的长度变为之前的两倍，所以在新数组中的bit位中，始终要比原来的高一位（图中红色以表示区分），那么我们就可以根据下图得知。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-c6b296754a7c63c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="实例分析.png"></p>
+<img src="/2019/02/23/哈希表之HashMap-(二)/实例分析.png" title="实例分析">
 <p>从上图可以得知，只要我们通过<strong>e.hash &amp; oldCap==0</strong>，我们就可以得知，该节点的新位置是在原位置，还是在原来的位置基础上+oldCap。不得不说这段代码非常优雅与巧妙，提高的效率不是吹的（因为没有重新取余去计算角标）。</p>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>站在巨人的肩膀上。可以看得更远。<br>[Java 8系列之重新认识HashMap]–美团技术团队</p>
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>最后，附上我写的一个基于Kotlin 仿开眼的项目<a href="https://github.com/AndyJennifer/SimpleEyes" target="_blank" rel="noopener">SimpleEyes</a>(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start.</p>
@@ -694,6 +694,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -706,6 +708,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

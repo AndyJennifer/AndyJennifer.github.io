@@ -104,18 +104,18 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="最近在忙公司的项目，现在终于有时间来写博客啦~开心开心  前言通过前面的文章，我们已经了解了AQS(AbstractQueuedSynchronizer)内部的实现与基本原理。现在我们来了解一下，Java中为我们提供的Lock机制下的锁实现–ReentrantLock（重入锁），阅读该篇文章之前，希望你已阅读以下文章。  Java并发编程之锁机制之Lock接口(七) Java并发编程之锁机制之">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-b990e9d2f1578e83.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-435e7270822a79cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-b899bb6db2704676.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-30ff585cc5da6453.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-a071107319267a4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-b6351764588542ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-28ccbe3b0cb6c3e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.864Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/小兔子.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/ReentrantLock.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/aqs同步队列中线程节点的情况.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/突然线程请求锁的情况.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/线程抢占后最终的情况.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/非公平锁与公平锁源码区别.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/公平锁抢占情况.png">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.770Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程之锁机制之(ReentrantLock)重入锁(十一)">
 <meta name="twitter:description" content="最近在忙公司的项目，现在终于有时间来写博客啦~开心开心  前言通过前面的文章，我们已经了解了AQS(AbstractQueuedSynchronizer)内部的实现与基本原理。现在我们来了解一下，Java中为我们提供的Lock机制下的锁实现–ReentrantLock（重入锁），阅读该篇文章之前，希望你已阅读以下文章。  Java并发编程之锁机制之Lock接口(七) Java并发编程之锁机制之">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-b990e9d2f1578e83.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/小兔子.jpg">
 
 
 
@@ -421,7 +421,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -473,7 +473,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-b990e9d2f1578e83.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="小兔子.jpg"></p>
+        <img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/小兔子.jpg" title="小兔子">
 <blockquote>
 <p>最近在忙公司的项目，现在终于有时间来写博客啦~开心开心</p>
 </blockquote>
@@ -489,7 +489,7 @@
 <p><code>ReentrantLock</code> 将由最近成功获得锁，并且还没有释放该锁的线程所拥有。当锁没有被另一个线程所拥有时，调用 lock 的线程将成功获取该锁并返回。如果当前线程已经拥有该锁，此方法将立即返回。可以使用<code>isHeldByCurrentThread()</code> 和 <code>getHoldCount()</code>方法来检查此情况是否发生。</p>
 <p>此类的构造方法接受一个可选的<code>公平</code>参数。当设置为 true 时(也是当前<code>ReentrantLock为公平锁的情况</code>)，在多个线程的争用下，这些锁倾向于将访问权授予等待时间最长的线程。否则此锁将无法保证任何特定访问顺序。与采用默认设置（使用不公平锁）相比，使用公平锁的程序在许多线程访问时表现为很低的总体吞吐量（即速度很慢，常常极其慢），但是在获得锁和保证锁分配的均衡性时差异较小。不过要注意的是，公平锁不能保证线程调度的公平性。因此，使用公平锁的众多线程中的一员可能获得多倍的成功机会，这种情况发生在其他活动线程没有被处理并且目前并未持有锁时。还要注意的是，未定时的 tryLock 方法并没有使用公平设置。因为即使其他线程正在等待，只要该锁是可用的，此方法就可以获得成功。</p>
 <h3 id="ReentrantLock-类基本结构"><a href="#ReentrantLock-类基本结构" class="headerlink" title="ReentrantLock 类基本结构"></a>ReentrantLock 类基本结构</h3><p>通过上文的简单介绍后，我相信很多小伙伴还是一脸懵逼，只知道上文我们提到了<code>ReentrantLock</code>与<code>synchronized</code>相比有相同的语义，同时其内部分为了<code>公平锁</code>与<code>非公平锁</code>两种锁的类型，且该锁是支持<code>重进入</code>的。那么为了方便大家理解这些知识点，我们先从其类的基本结构讲起。具体类结构如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-435e7270822a79cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ReentrantLock.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/ReentrantLock.png" title="ReentrantLock">
 <p>从上图中我们可以看出，在<code>ReentrantLock</code>类中，定义了三个静态内部类，<strong>Sync</strong>、<strong>FairSync（公平锁）</strong>、<strong>NonfairSync（非公平锁</strong>）。其中<code>Sync</code>继承了<code>AQS（AbstractQueuedSynchronizer）</code>，而<code>FairSync</code>与<code>NonfairSync</code>又分别继承了<code>Sync</code>。关于<code>ReentrantLock</code>基本类结构如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">public class ReentrantLock implements Lock, java.io.Serializable &#123;</span><br><span class="line">    private final Sync sync;</span><br><span class="line"></span><br><span class="line">	//默认无参构造函数，默认为非公平锁</span><br><span class="line">    public ReentrantLock() &#123;</span><br><span class="line">        sync = new NonfairSync();</span><br><span class="line">    &#125;</span><br><span class="line">	//带参数的构造函数，用户自己来决定是公平锁还是非公平锁</span><br><span class="line">    public ReentrantLock(boolean fair) &#123;</span><br><span class="line">        sync = fair ? new FairSync() : new NonfairSync();</span><br><span class="line">    &#125;</span><br><span class="line">    //抽象基类继承AQS，公平锁与非公平锁继承该类，并分别实现其lock()方法</span><br><span class="line">    abstract static class Sync extends AbstractQueuedSynchronizer &#123;</span><br><span class="line">        abstract void lock();</span><br><span class="line">        //省略部分代码..</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	//非公平锁实现</span><br><span class="line">    static final class NonfairSync extends Sync &#123;...&#125;</span><br><span class="line">    </span><br><span class="line">    //公平锁实现</span><br><span class="line">    static final class FairSync extends Sync &#123;....&#125;</span><br><span class="line">   </span><br><span class="line">    //锁实现，根据具体子类实现调用</span><br><span class="line">    public void lock() &#123;</span><br><span class="line">        sync.lock();</span><br><span class="line">    &#125;</span><br><span class="line">	//响应中断的获取锁</span><br><span class="line">    public void lockInterruptibly() throws InterruptedException &#123;</span><br><span class="line">        sync.acquireInterruptibly(1);</span><br><span class="line">    &#125;</span><br><span class="line">	//尝试获取锁，默认采用非公平锁方法实现</span><br><span class="line">    public boolean tryLock() &#123;</span><br><span class="line">        return sync.nonfairTryAcquire(1);</span><br><span class="line">    &#125;</span><br><span class="line">	//超时获取锁</span><br><span class="line">    public boolean tryLock(long timeout, TimeUnit unit)</span><br><span class="line">            throws InterruptedException &#123;</span><br><span class="line">        return sync.tryAcquireNanos(1, unit.toNanos(timeout));</span><br><span class="line">    &#125;</span><br><span class="line">	//释放锁</span><br><span class="line">    public void unlock() &#123;</span><br><span class="line">        sync.release(1);</span><br><span class="line">    &#125;</span><br><span class="line">    //创建锁条件（从Condetion来理解，就是创建等待队列）</span><br><span class="line">    public Condition newCondition() &#123;</span><br><span class="line">        return sync.newCondition();</span><br><span class="line">    &#125;</span><br><span class="line">    //省略部分代码....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <blockquote>
 <p>这里为了方便大家理解<code>ReentrantLock</code>类的整体结构，我省略了一些代码及重新排列了一些代码的顺序。</p>
@@ -514,15 +514,15 @@
 </blockquote>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">static final class NonfairSync extends Sync &#123;</span><br><span class="line">    private static final long serialVersionUID = 7316153563782823691L;</span><br><span class="line"></span><br><span class="line">    final void lock() &#123;</span><br><span class="line">        if (compareAndSetState(0, 1))//直接获取同步状态成功，那么就不再走尝试获取锁的过程</span><br><span class="line">            setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">        else</span><br><span class="line">            acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line">    //省略部分代码...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当在ReentrantLock在<code>非公平锁的模式下</code>，去调用lock（）方法。那么接下来最终会走<code>AQS(AbstractQueuedSynchronizer)</code>下的<code>acquire(int arg)（独占式的获取同步状态）</code>，也就是如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">      if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">          acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">          selfInterrupt();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
-<p>那么结合之前我们所讲的AQS知识，在多个线程在<code>独占式</code>请求共享状态下（也就是请求锁）的情况下，在AQS中的同步队列中的线程节点情况如下图所示：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-b899bb6db2704676.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="aqs同步队列中线程节点的情况.png"></p>
+<p>那么结合之前我们所讲的AQS知识，在多个线程在<code>独占式</code>请求共享状态下（也就是请求锁）的情况下，在AQS中的同步队列中的线程节点情况如下图所示：<br><img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/aqs同步队列中线程节点的情况.png" title="aqs同步队列中线程节点的情况"></p>
 <p>那么我们试想一种情况，当Nod1中的线程执行完相应任务后，释放锁后。这个时候本来该唤醒当前线程节点的<code>下一个节点</code>,也就是<code>Node2中的线程</code>。这个时候突然另一线程突然来获取线程（这里我们用节点<code>Node5</code>来表示）。具体情况如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-30ff585cc5da6453.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="突然线程请求锁的情况.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/突然线程请求锁的情况.png" title="突然线程请求锁的情况">
 <p>那么根据AQS中独占式获取同步状态的逻辑。只要<code>Node5对应的线程获取同步状态成功</code>。那么就会出现下面的这种情况，具体情况如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-a071107319267a4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="线程抢占后最终的情况.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/线程抢占后最终的情况.png" title="线程抢占后最终的情况">
 <p>从上图中我们可以看出，由于Node5对象的线程抢占了获取同步状态(获取锁)的机会，本身应该被唤醒的<code>Node2</code>线程节点。因为获取同步状态失败。所以只有再次的陷入阻塞。那么综上。我们可以知道。<code>非公平锁获取同步状态（获取锁）时不会考虑同步队列中中等待的问题。会直接尝试获取锁。也就是会存在后申请，但是会先获得同步状态（获取锁）的情况。</code></p>
-<h3 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h3><p>理解了非公平锁，再来理解公平锁就非常简单了。下面我们来看一下公平锁与非公平锁的加锁的源码：<br><img src="https://upload-images.jianshu.io/upload_images/2824145-b6351764588542ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="非公平锁与公平锁源码区别.png"><br>从源码我们可以看出，非公平锁与公平锁之间的代码唯一区别就是多了一个判断条件<code>!hasQueuedPredecessors()(图中红框所示)</code>。那我们查看其源码（该代码在AQS中，强烈建议阅读<a href="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/" title="Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)">Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)</a>）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public final boolean hasQueuedPredecessors() &#123;</span><br><span class="line">    Node t = tail;</span><br><span class="line">    Node h = head;</span><br><span class="line">    Node s;</span><br><span class="line">    return h != t &amp;&amp;</span><br><span class="line">        ((s = h.next) == null || s.thread != Thread.currentThread());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h3><p>理解了非公平锁，再来理解公平锁就非常简单了。下面我们来看一下公平锁与非公平锁的加锁的源码：<br><img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/非公平锁与公平锁源码区别.png" title="非公平锁与公平锁源码区别"><br>从源码我们可以看出，非公平锁与公平锁之间的代码唯一区别就是多了一个判断条件<code>!hasQueuedPredecessors()(图中红框所示)</code>。那我们查看其源码（该代码在AQS中，强烈建议阅读<a href="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/" title="Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)">Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)</a>）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public final boolean hasQueuedPredecessors() &#123;</span><br><span class="line">    Node t = tail;</span><br><span class="line">    Node h = head;</span><br><span class="line">    Node s;</span><br><span class="line">    return h != t &amp;&amp;</span><br><span class="line">        ((s = h.next) == null || s.thread != Thread.currentThread());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>代码理解理解起来非常简单，就是判断当前当前head节点的next节点是不是当前请求同步状态（请求锁）的线程。也就是语句<br><code>((s = h.next) == null || s.thread != Thread.currentThread()</code>。那么接下来结合AQS中的同步队列我们可以得到下图：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-28ccbe3b0cb6c3e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="公平锁抢占情况.png"></p>
+<img src="/2019/02/23/Java并发编程之锁机制之(ReentrantLock)重入锁(十一)/公平锁抢占情况.png" title="公平锁抢占情况">
 <p>那么综上我们可以得出，公平锁保证了线程请求的同步状态（请求锁）的顺序。不会出现另一个线程抢占的情况。</p>
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>该文章参考以下图书，站在巨人的肩膀上。可以看得更远。</p>
 <ul>
@@ -531,7 +531,8 @@
 <h3 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h3><ul>
 <li><a href="/2019/02/23/Java并发编程之锁机制之引导篇(六)/" title="Java并发编程之锁机制之引导篇(六)">Java并发编程之锁机制之引导篇(六)</a></li>
 <li><a href="/2019/02/23/Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)/" title="Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)">Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八)</a></li>
-<li><a href="/2019/02/23/Java并发编程之锁机制之LockSupport工具(九)/" title="Java并发编程之锁机制之LockSupport工具(九)">Java并发编程之锁机制之LockSupport工具(九)</a></li>
+<li><a href="/2019/02/23/Java并发编程之锁机制之LockSupport工具(九)/" title="Java并发编程之锁机制之LockSupport工具(九)">Java并发编程之锁机制之LockSupport工具(九)</a>
+</li>
 </ul>
 
       
@@ -697,6 +698,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -709,6 +712,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     

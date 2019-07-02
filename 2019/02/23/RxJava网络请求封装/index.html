@@ -104,12 +104,12 @@
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
 <meta property="og:description" content="最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下： 12345678910111213public void login(String userName, String password) &amp;#123;       mModel.login(userName,passWor">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-17T06:37:17.874Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/23/RxJava网络请求封装/漫长的婚约.jpg">
+<meta property="og:updated_time" content="2019-07-02T07:11:25.748Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RxJava网络请求封装">
 <meta name="twitter:description" content="最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下： 12345678910111213public void login(String userName, String password) &amp;#123;       mModel.login(userName,passWor">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/23/RxJava网络请求封装/漫长的婚约.jpg">
 
 
 
@@ -415,7 +415,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-17 14:37:17" itemprop="dateModified" datetime="2019-06-17T14:37:17+08:00">2019-06-17</time>
+                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
               
             
           </span>
@@ -449,7 +449,7 @@
       
 
       
-        <p><img src="https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="漫长的婚约.jpg"></p>
+        <img src="/2019/02/23/RxJava网络请求封装/漫长的婚约.jpg" title="漫长的婚约">
 <p>最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public void login(String userName, String password) &#123;</span><br><span class="line">       mModel.login(userName,passWord).subscribe(new Consumer&lt;UserLoginInfo&gt;() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void accept(UserLoginInfo loginInfo) throws Exception &#123;</span><br><span class="line">             //省略逻辑代码</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;, new Consumer&lt;Throwable&gt;() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void accept(Throwable throwable) throws Exception &#123;</span><br><span class="line">           Toast.makeText(mContext, throwable.getMessage(), Toast.LENGTH_SHORT).show();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 <p>上述代码中，我是直接将错误信息打印出来的。当网络情况下。程序会直接抛出<strong>java.net.ConnectException: Failed to connect to /192.168.1.107:8080</strong>，为了良好的用户体验，不应该将网络异常提示出来。用户看后也是<strong>一脸懵逼</strong>，所以必须将此异常进行处理。提示正常的信息。如<strong>网络异常，请检查网络重试</strong>。那下面我们就开始封装吧。</p>
@@ -633,6 +633,8 @@
                     
                       
                     
+                      
+                    
                     <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
@@ -645,6 +647,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     
