@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![模仿游戏.jpeg](http://upload-images.jianshu.io/upload_images/2824145-09c6c13397af88ee.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 模仿游戏.jpeg 模仿游戏 %}
 
 上次我们分析了ArrayList,大家都已经了解了分析一个集合的步骤。那接下来，我们继续分析LinkedList。废话不不多说，直接整。
 

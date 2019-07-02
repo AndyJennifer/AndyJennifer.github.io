@@ -14,7 +14,7 @@ tags:
 ### 前言
 在前面的文章中，我们已经大概了解了ThreadLocal的内部原理，以及Handler发消息的大概流程。如果小伙伴如果对Handler机制不熟，建议阅读{% post_link Android-Handler机制之ThreadLocal %}与{% post_link Android-Handler机制之Handler-、MessageQueue-、Looper %}。该篇文章主要着重讲解Message的发送与取出的具体逻辑细节。在此之前，我们先回顾一下Handler发送消息的具体流程。
 
-![HandlerLooperMessage关系.png](https://upload-images.jianshu.io/upload_images/2824145-b3c798765233c278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img HandlerLooperMessage关系.png HandlerLooperMessage关系 %}
 ### 消息的发送
 我们都知道当调用Handler发送消息的时候，不管是调用sendMessage,sendEmptyMessage,sendMessageDelayed还是其他发送一系列方法。最终都会调用**sendMessageDelayed(Message msg, long delayMillis)**方法。
 
@@ -114,7 +114,7 @@ boolean enqueueMessage(Message msg, long when) {
 
 
  * 第二种：反之，循环遍历消息队列，把当前进入的消息放入合适的位置（比较等待时间）
-![第二种情况.png](https://upload-images.jianshu.io/upload_images/2824145-09c5226cc93a80c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 第二种情况.png 第二种情况 %}
 
 综上，我们了解了在我们使用Handler发送消息时，当消息进入到MessageQueue(消息队列)中时，已经按照等待时间进行了排序，且其头部对应的消息是Loop即将取出的消息。
 
@@ -418,7 +418,7 @@ int Looper::pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outDa
 ```
 其实通过代码，当出现屏障的时候，会滤过同步消息，而是直接获取其中的异步消息并返回。如下图所示：
 
-![屏障与异步消息.png](https://upload-images.jianshu.io/upload_images/2824145-15c235ff4f8d9a97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 屏障与异步消息.png 屏障与异步消息 %}
 
 **在Hadnler无参的构造函数中，默认设置的消息都是同步的。**那我们就可以知道在Android中消息分为了两种，一种是同步消息，另一种是异步消息。在官方的解释中，异步消息通常代表着中断，输入事件和其他信号，这些信号必须独立处理，即使其他工作已经暂停。
 
@@ -467,7 +467,7 @@ int Looper::pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outDa
 #### 有哪些操作是异步消息呢？
 这里我就直接通过ActivityThread中的几个异步消息给大家做一些简单介绍。这里我就不用代码展示了，用图片来表示更清晰明了。
 
-![ActivityThread中的异步消息.png](https://upload-images.jianshu.io/upload_images/2824145-8fae432825308828.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ActivityThread中的异步消息.png ActivityThread中的异步消息 %}
 在ActivityThread中，有一个sendMessage()多个参数方法。我们明显的看出，有四个消息是设置为异步消息的。DUMP_SERVICE、DUMP_HEAP、DUMP_ACTIVITY、DUMP_PROVIDER。从字面意思就可以看出来。回收service、回收堆内存、回收Activity、回收Provider都属于异步消息。
 
 #### 屏障消息发送的时机
@@ -693,7 +693,7 @@ boolean enqueueMessage(Message msg, long when) {
 ### MessageQueue取出消息整体流程
 
 到目前为止，大家已经对整个消息的发送与取出有一个大概的了解了。这里我着重对MessageQueue取消息的流程画了一个简单的流程图。希望大家根据对取消息有个更好的理解。
-![整体流程.jpg](https://upload-images.jianshu.io/upload_images/2824145-be14464451c370f9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 整体流程.jpg 整体流程 %}
 
 
 ### 总结

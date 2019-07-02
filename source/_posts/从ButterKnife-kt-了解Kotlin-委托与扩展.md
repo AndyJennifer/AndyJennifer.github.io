@@ -7,7 +7,7 @@ tags:
 
  最近学了**Kotlin**这门新语言用于Android开发。其中不免遇上**findViewById()**,原来自己都是通过ButterKnife 直接进行View的查找。所有难免想用Kotlin的实现。通过网上查找，发现JakeWharton大神已经实现[kotterknife](https://github.com/JakeWharton/kotterknife)。所以我们就直接来分析了。ps:(本文章只讨论基于Kotlin实现的findViewByid,不讨论Anko库)
    
-##ButterKnife的使用
+## ButterKnife的使用
 
 ```
 private val mIcon by bindView<ImageView>(R.id.iv_image)

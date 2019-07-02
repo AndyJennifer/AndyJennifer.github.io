@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![小兔子.jpg](https://upload-images.jianshu.io/upload_images/2824145-b990e9d2f1578e83.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小兔子.jpg 小兔子 %}
 
 >最近在忙公司的项目，现在终于有时间来写博客啦~开心开心
 
@@ -29,7 +29,7 @@ tags:
 ### ReentrantLock 类基本结构
 通过上文的简单介绍后，我相信很多小伙伴还是一脸懵逼，只知道上文我们提到了`ReentrantLock`与`synchronized `相比有相同的语义，同时其内部分为了`公平锁`与`非公平锁`两种锁的类型，且该锁是支持`重进入`的。那么为了方便大家理解这些知识点，我们先从其类的基本结构讲起。具体类结构如下图所示：
 
-![ReentrantLock.png](https://upload-images.jianshu.io/upload_images/2824145-435e7270822a79cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ReentrantLock.png ReentrantLock %}
 
 从上图中我们可以看出，在` ReentrantLock`类中，定义了三个静态内部类，**Sync**、**FairSync（公平锁）**、**NonfairSync（非公平锁**）。其中`Sync`继承了`AQS（AbstractQueuedSynchronizer）`，而`FairSync`与`NonfairSync`又分别继承了`Sync`。关于`ReentrantLock `基本类结构如下所示：
 ```
@@ -221,21 +221,21 @@ static final class NonfairSync extends Sync {
     }
 ```
 那么结合之前我们所讲的AQS知识，在多个线程在`独占式`请求共享状态下（也就是请求锁）的情况下，在AQS中的同步队列中的线程节点情况如下图所示：
-![aqs同步队列中线程节点的情况.png](https://upload-images.jianshu.io/upload_images/2824145-b899bb6db2704676.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img aqs同步队列中线程节点的情况.png aqs同步队列中线程节点的情况 %}
 
 那么我们试想一种情况，当Nod1中的线程执行完相应任务后，释放锁后。这个时候本来该唤醒当前线程节点的`下一个节点`,也就是`Node2中的线程`。这个时候突然另一线程突然来获取线程（这里我们用节点`Node5`来表示）。具体情况如下图所示：
 
-![突然线程请求锁的情况.png](https://upload-images.jianshu.io/upload_images/2824145-30ff585cc5da6453.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 突然线程请求锁的情况.png 突然线程请求锁的情况 %}
 
 那么根据AQS中独占式获取同步状态的逻辑。只要`Node5对应的线程获取同步状态成功`。那么就会出现下面的这种情况，具体情况如下图所示：
 
-![线程抢占后最终的情况.png](https://upload-images.jianshu.io/upload_images/2824145-a071107319267a4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 线程抢占后最终的情况.png 线程抢占后最终的情况 %}
 
 从上图中我们可以看出，由于Node5对象的线程抢占了获取同步状态(获取锁)的机会，本身应该被唤醒的`Node2`线程节点。因为获取同步状态失败。所以只有再次的陷入阻塞。那么综上。我们可以知道。`非公平锁获取同步状态（获取锁）时不会考虑同步队列中中等待的问题。会直接尝试获取锁。也就是会存在后申请，但是会先获得同步状态（获取锁）的情况。`
 
 ### 公平锁
 理解了非公平锁，再来理解公平锁就非常简单了。下面我们来看一下公平锁与非公平锁的加锁的源码：
-![非公平锁与公平锁源码区别.png](https://upload-images.jianshu.io/upload_images/2824145-b6351764588542ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 非公平锁与公平锁源码区别.png 非公平锁与公平锁源码区别 %}
 从源码我们可以看出，非公平锁与公平锁之间的代码唯一区别就是多了一个判断条件`!hasQueuedPredecessors()(图中红框所示)`。那我们查看其源码（该代码在AQS中，强烈建议阅读{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}）
 ```
     public final boolean hasQueuedPredecessors() {
@@ -249,7 +249,7 @@ static final class NonfairSync extends Sync {
 代码理解理解起来非常简单，就是判断当前当前head节点的next节点是不是当前请求同步状态（请求锁）的线程。也就是语句
 ` ((s = h.next) == null || s.thread != Thread.currentThread()`。那么接下来结合AQS中的同步队列我们可以得到下图：
 
-![公平锁抢占情况.png](https://upload-images.jianshu.io/upload_images/2824145-28ccbe3b0cb6c3e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 公平锁抢占情况.png 公平锁抢占情况 %}
 
 那么综上我们可以得出，公平锁保证了线程请求的同步状态（请求锁）的顺序。不会出现另一个线程抢占的情况。
 

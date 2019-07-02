@@ -7,7 +7,7 @@ tags:
 - 异步任务
 ---
 
-![小花花.jpg](https://upload-images.jianshu.io/upload_images/2824145-b52c19b7eff35733.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小花花.jpg 小花花 %}
 
 ### 前言
 Handler机制一直都是面试常问的一些知识点，如果想将其机制彻底弄懂，仍然需要花费不少的时间，但是想着准备面试，所以就想总结哈所有Handler机制可能会出现的考点。一是自己总结复写，而是给大家分享参考。

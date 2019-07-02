@@ -7,7 +7,7 @@ tags:
 - 集合
 ---
 
-![超杀女.jpg](http://upload-images.jianshu.io/upload_images/2824145-5dda6fec988df5dd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 超杀女.jpg 超杀女 %}
 
 
  对于集合的源码分析，一般我会采用这几种方式

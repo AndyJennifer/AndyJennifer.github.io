@@ -7,7 +7,7 @@ tags:
 ---
 
 
-![bat.jpeg](https://upload-images.jianshu.io/upload_images/2824145-b25f520b367237d1.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img bat.jpeg bat %}
 
 ## 前言
 年年寒冬，年年也挡不住一个安卓程序员追求大厂的决心。想要进入大厂，我们需要掌握哪些知识点呢？这里，我为大家梳理了一个整体的知识架构。整体包括Java、Android、算法、网络等，并且我也在相应知识点下推荐了与该知识点相关的书籍与博客。希望大家阅读之后，能帮助大家完善与整理自己的知识体系。祝大家早日进入自己理想的公司~~

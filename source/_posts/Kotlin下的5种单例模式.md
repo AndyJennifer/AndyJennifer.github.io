@@ -6,7 +6,7 @@ tags:
 ---
 
 
-![Kotlin.jpg](https://upload-images.jianshu.io/upload_images/2824145-e740353ee09bfb69.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Kotlin.jpg Kotlin %}
 
 #### 前言
 
@@ -43,12 +43,12 @@ object SingletonDemo
 到这里，如果还是有很多小伙伴不是很相信一行代码就能解决这个功能，我们可以通过一下方式查看Kotlin的字节码。
 
 ##### 查看Kotlin对应字节码
-![查看Kotlin字节码.png](https://upload-images.jianshu.io/upload_images/2824145-5fe46fc3107931b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 查看Kotlin字节码1.png 查看Kotlin字节码 %}
 
 我们进入我们的Android Studio(我的Android Studio 3.0,如果你的编译器版本过低，请自动升级) 选择**Tools工具栏**，选择"**Kotlin**",选择“**Show Kotlin Bytecode**"
 
 选择过后就会进入到下方界面：
-![查看Kotlin字节码.png](https://upload-images.jianshu.io/upload_images/2824145-8056feb96cf437ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 查看Kotlin字节码2.png 查看Kotlin字节码 %}
 
 点击"**Decompile**" 根据字节码得到以下代码
 ```

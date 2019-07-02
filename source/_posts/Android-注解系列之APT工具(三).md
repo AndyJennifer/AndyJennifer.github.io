@@ -10,7 +10,7 @@ tags:
 
 >该文章中涉及的代码，我已经提交到GitHub上了，大家按需下载---->[源码](https://github.com/AndyJennifer/AptDemo)
 
-![骑车车.jpg](https://upload-images.jianshu.io/upload_images/2824145-1f146c8640782324.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 骑车车.jpg 骑车车 %}
 
 ### 前言
 在上篇文章{% post_link Android-注解系列之Annotation(二) %}中，简要的介绍了注解的基本使用与定义。同时也提出了以下几个问题，`当我们声明了一个注解后，是不是需要手动找到所有的Class对象或Field、Method？`，`怎么通过注解生成新的类的定义呢？`当面对这些问题的时候，我相信大家的第一反应肯定会想，"有不有相应的三方库呢？Java是否提供了相应库或者方法来解决呢？"，当然Java肯定给我们提供了啦，就是我们既陌生又熟悉的`APT`工具啦。
@@ -20,11 +20,11 @@ tags:
 ### APT技术简介
 在具体了解APT技术之前，先简单的对其进行介绍。`APT(Annotation Processing Tool)`是javac中提供的一种编译时扫描和处理注解的工具，它会对源代码文件进行检查，并找出其中的注解，然后根据用户自定义的注解处理方法进行额外的处理。APT工具不仅能解析注解，还能根据注解生成其他的源文件，最终将生成的新的源文件与原来的源文件共同编译（`注意：APT并不能对源文件进行修改操作，只能生成新的文件，例如在已有的类中添加方法`）。具体流程图如下图所示：
 
-![apt使用流程图.png](https://upload-images.jianshu.io/upload_images/2824145-c1ef896348dd225e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img apt使用流程图.png apt使用流程图 %}
 
 ### APT技术使用规则
 APT技术的使用，需要我们遵守一定的规则。大家先看一下整个APT项目项目构建的一个规则图，具体如下所示：
-![apt_rule.png](https://upload-images.jianshu.io/upload_images/2824145-add6236329f14878.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img apt_rule.png apt_rule %}
 
 
 #### APT使用依赖
@@ -93,7 +93,7 @@ class MineProcessor extends AbstractProcessor {
 >META-INF/services 相当于一个信息包，目录中的文件和目录获得Java平台的认可与解释用来配置应用程序、扩展程序、类加载器和服务文件，在jar打包时自动生成
 
 
-![放入特定文件夹.png](https://upload-images.jianshu.io/upload_images/2824145-4c3e9534ab7839c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 放入特定文件夹.png 放入特定文件夹 %}
 
 
 其中javax.annotation.processing.Processor文件中的内容为每个注解处理器的合法的全名列表，每一个元素换行分割，也就是类似下面这样:
@@ -128,7 +128,7 @@ class MineProcessor extends AbstractProcessor {
 ### 注解处理器的扫描
 在注解处理过程中，我们需要扫描所有的Java源文件，源代码的每一个部分都是一个特定类型的`Element`，也就是说Element代表源文件中的元素，例如包、类、字段、方法等。整体的关系如下图所示：
 
-![element继承关系.png](https://upload-images.jianshu.io/upload_images/2824145-be96d0fe35599a5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img element继承关系.png element继承关系 %}
 - Parameterizable：表示混合类型的元素（不仅只有一种类型的Element)
 - TypeParameterElement：带有泛型参数的类、接口、方法或者构造器。
 - VariableElement：表示字段、常量、方法或构造函数。参数、局部变量、资源变量或异常参数。
@@ -367,7 +367,7 @@ public class CreateFileByJavaPoetProcessor extends AbstractProcessor {
 }
 ```
 当我们build上述代码后，我们可以在我们的build目录下得到下列文件：
-![生成文件结果.png](https://upload-images.jianshu.io/upload_images/2824145-94edf5bddf649087.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 生成文件结果.png 生成文件结果 %}
 
 关于JavaPoet的更多的详细使用，大家可以参考官方文档-------->[JavaPoet](https://github.com/square/javapoet)
 

@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![长鼻子.jpg](https://upload-images.jianshu.io/upload_images/2824145-77a37f0a5b7690cc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 长鼻子.jpg 长鼻子 %}
 
 >关于文章涉及到的jdk源码，这里把最新的jdk源码分享给大家----->[jdk源码](https://pan.baidu.com/s/1Lk9yp8cEpSAnLvw5NJdqZg)
 
@@ -92,7 +92,7 @@ public class LockSupport {
 ```
 从上面的代码中，我们可以知道LockSupport中的对外提供的方法都是`静态方法`。这些方法提供了最基本的线程阻塞和唤醒功能，在LockSupport类中定义了一组以park开头的方法用来阻塞当前线程。以及`unPark(Thread thread)`方法来唤醒一个被阻塞的线程。关于park开头的方法具体描述如下表所示：
 
-![park.png](https://upload-images.jianshu.io/upload_images/2824145-291438fe9894d7c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img park.png park %}
 
 其中`park(Object blocker)`与`parkNanos(Object blocker, long nanos)`及` parkUntil(Object blocker, long deadline)`三个方法是Java 6中新增加的方法。其中参数blocker是用来标识当前线程等待的对象（下文简称为阻塞对象），`该对象主要用于问题排查和系统监控`。
 >由于在Java 5之前，当线程阻塞时（使用synchronized关键字）在一个对象上时，通过线程dump能够查看到该线程的阻塞对象。方便问题定位，而Java 5退出的Lock等并发工具却遗漏了这一点，致使在线程dump时无法提供阻塞对象的信息。因此，在Java 6中，LockSupport新增了含有阻塞对象的park方法。用以替代原有的park方法。
@@ -123,13 +123,13 @@ private static final sun.misc.Unsafe U = sun.misc.Unsafe.getUnsafe();
 在描述该方法之前，需要给大家讲一个知识点。在JVM中，可以自由选择如何实现Java对象的`"布局"`,也就Java对象的各个部分分别放在内存那个地方，JVM是可以感知和决定的。 在sun.misc.Unsafe中提供了`objectFieldOffset()`方法用于获取某个字段相对 Java对象的“起始地址”的偏移量,也提供了getInt、getLong、getObject之类的方法可以使用前面获取的偏移量来访问某个Java 对象的某个字段。
 
  有可能大家理解起来比较困难，这里给大家画了一个图，帮助大家理解，具体如下图所示：
-![blocker.png](https://upload-images.jianshu.io/upload_images/2824145-7636697f1503ed60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img blocker.png blocker %}
 
 在上图中，我们创建了两个Thread对象，其中Thread对象1在内存中分配的地址为`0x10000-0x10100`,Thread对象2在内存中分配的地址为`0x11000-0x11100`,其中`parkBlocker`对应内存偏移量为2（这里我们假设相对于其对象的“起始位置”的偏移量为2）。那么通过`objectFieldOffset(Field f)`就能获取该字段的偏移量。需要注意的是`某字段在其类中的内存偏移量总是相同的`，也就是对于Thread对象1与Thread对象2，parkBlocker字段在其对象所在的内存偏移量始终是相同的。
 
 那么我们再回到`setBlocker(Thread t, Object arg)`方法，当我们获取到`parkBlocker`字段在其对象内存偏移量后，
 接着会调用`U.putObject(t, PARKBLOCKER, arg);`，该方法有三个参数,第一个参数是操作对象，第二个参数是内存偏移量，第三个参数是实际存储值。该方法理解起来也很简单，就是`操作某个对象中某个内存地址下的数据`。那么结合我们上面所讲的。该方法的实际操作结果如下图所示：
-![blocker_set.png](https://upload-images.jianshu.io/upload_images/2824145-8094f6979df5fe6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img blocker_set.png blocker_set %}
 
 到现在，我们就应该懂了，`尽管当前线程已经阻塞`，但是我们还是能直接操控线程中`实际存储该字段的内存区域`来达到我们想要的结果。
 
@@ -191,7 +191,7 @@ public:
 ```
 在上述代码中，` volatile int _counter`该字段的值非常重要，`一定要注意其用volatile修饰`（在下文中会具体描述，接着当我们通过`SourceInsight`工具(推荐大家阅读代码时，使用该工具)点击其park与unpark方法时，我们会得到如下界面：
 
-![parker.png](https://upload-images.jianshu.io/upload_images/2824145-41e5cbf9d13ed218.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img parker.png parker %}
 
 从图中红色矩形中我们可也看出，针对线程的阻塞和唤醒，`不同操作系统有着不同的实现`。众所周知Java是跨平台的。针对不同的平台，做出不同的处理。也是非常理解的。因为作者对windows与solaris操作系统不是特别了解。所以这里我选择对Linux下的平台下进行分析。也就是选择`hotspot.os.posix`包下的`os_posix.cpp`文件进行分析。
 
@@ -259,7 +259,7 @@ void Parker::park(bool isAbsolute, jlong time) {
 - （7） 当线程阻塞相应时间后，通过`pthread_mutex_unlock`方法直接唤醒线程,同时将`_counter`赋值为0。
 
 因为关于Linux的阻塞涉及到其内部函数，这里将用到的函数都进行了声明。大家可以根据下表所介绍的方法进行理解。具体方法如下表所示：
-![linux方法.png](https://upload-images.jianshu.io/upload_images/2824145-95dfa50270728585.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img linux方法.png linux方法 %}
 
 
 #### Linux下的unpark实现

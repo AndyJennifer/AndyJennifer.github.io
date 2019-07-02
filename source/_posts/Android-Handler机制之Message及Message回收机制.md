@@ -7,7 +7,7 @@ tags:
 - 异步任务
 ---
 
-![小松鼠.jpg](https://upload-images.jianshu.io/upload_images/2824145-93bba9f12e53bb0d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小松鼠.jpg 小松鼠 %}
 
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
@@ -100,7 +100,7 @@ private static final int MAX_POOL_SIZE = 50;//消息池最大容量
     }
 ```
 从上述代码中，我们可以了解，也就是当前 消息池不为空（sPool !=null)的情况下，那么我们就可以从消息池中获取数据，相应的消息池中的消息数量会减少。**消息池的内部实现是以链表的形式**，其中spol指针指向当前链表的头结点，从消息池中获取消息是**以移除链表中sPool所指向的节点的形式**，具体原理如下图所示：
-![获取消息.png](https://user-gold-cdn.xitu.io/2018/9/22/16601c88465668b4?w=883&h=562&f=png&s=24696)
+{% asset_img 获取消息.png 获取消息 %}
 
 #### 回收消息到消息池
 在Meaage的消息回收中，消息的实际回收方法是recycleUnchecked（）方法，具体如下图所示：
@@ -130,7 +130,7 @@ private static final int MAX_POOL_SIZE = 50;//消息池最大容量
     }
 ```
 在recycleUnchecked（）方法中，大致分为三步，第一步将该条回收的消息状态设置为正在使用，第二步将Message所有的存储信息都变为初始值，第三步，如果当前消息池仍能够存储回收的消息，那么就将消息存储在消息池中。**其中将回收消息加入消息池中是使用链表的形式**，具体回收消息到消息池如下图所示：
-![加入消息.png](https://user-gold-cdn.xitu.io/2018/9/22/16601c88462010a4?w=883&h=591&f=png&s=21165)
+{% asset_img 加入消息.png 加入消息 %}
 
 ###  Message 消息回收时机
 这里为了方便大家梳理逻辑，我提前将几种会调用消息进行回收的情况都描述出来了，具体的情况如下所示：
@@ -188,12 +188,12 @@ void removeCallbacksAndMessages(Handler h, Object object)
 ##### 第一次循环
 根据上文对代码的理解，第一次循环会将MessageQueue中，当前Handler发送的所有消息移除，`注意!!!!!!!!!这里并不会将整个MessageQueue中的当前Handler发送的消息全部移除`，而是在遍历过程中，如果有其他Handler发送的消息,那么就会将mMessages指向头结点并跳出循环。如下图所示：
 
-![第一次循环.png](https://upload-images.jianshu.io/upload_images/2824145-451f619f15b42f36.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 第一次循环.png 第一次循环 %}
 
 ##### 第二次循环
 经过上文的分析，我们已经知道了，在进行第一次循环后，已经将在removeCallbacksAndMessages方法执行时所有对应的Handler发送的消息移除掉了，但是MessageQueue中可能任然会残留没有移除掉的消息。那么第二次循环，根据代码来理解的话，我们可以得到下图：
 
-![第二次循环.png](https://upload-images.jianshu.io/upload_images/2824145-8d6a841222333799.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 第二次循环.png 第二次循环 %}
 
 到这里有可能有小伙伴就会想，为什么不执行一次循环就将所有的对应Handler发送的消息全部移除了呢？这里之所以要执行两次循环的原因是，你并不能保证当移除消息的时候，对应的Handler就不继续发送消息了，也就是说该Handler发送的消息仍然会被添加到MessageQueue中，`所以为了保证将整个MessageQueue中该Handler发送的消息全部被移除，在第一次循环移除之后，我们必须要再执行一次循环移除操作`。
 
@@ -270,7 +270,7 @@ public void quit() { mQueue.quit(false); }
 ```
 非安全退出其实很简单，就是将所有消息队列中的消息全部回收。具体示意图如下所示：
 
-![回收全部消息.png](https://user-gold-cdn.xitu.io/2018/9/22/16601c884690d0ad?w=1240&h=517&f=png&s=91646)
+{% asset_img 回收全部消息.png 回收全部消息 %}
 
 ##### 安全退出
 ```
@@ -305,7 +305,7 @@ public void quit() { mQueue.quit(false); }
 观察上诉代码，在该方法中，会判断当前消息队列中的头消息的时间是否大于当前时间，如果大于当前时间就会removeAllMessagesLocked（）方法（也就是回收全部消息），反之，则回收部分消息，同时没有被回收的消息任然可以被取出执行。具体示意图如下所示：
 
 
-![回收部分消息.png](https://user-gold-cdn.xitu.io/2018/9/22/16601c8846acbc2c?w=1240&h=487&f=png&s=89553)
+{% asset_img 回收部分消息.png 回收部分消息 %}
 
 
 

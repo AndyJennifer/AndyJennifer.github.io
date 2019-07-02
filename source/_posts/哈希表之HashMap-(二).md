@@ -7,7 +7,7 @@ tags:
 - 集合
 ---
 
-![你说是什么图就是什么图.jpg](https://upload-images.jianshu.io/upload_images/2824145-c6655b07bfd9b105.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 你说是什么图就是什么图.jpg 你说是什么图就是什么图 %}
 
 >在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：
 
@@ -20,7 +20,7 @@ tags:
 ### 前言
 在Java中java.util包下，定义了Map接口来实现键值对的映射关系。常用的类为HashMap,LinkedHashMap,TreeMap。其主要的类关系如下图所示：
 
-![Map类关系图.png](https://upload-images.jianshu.io/upload_images/2824145-23a8b487bb761aac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Map类关系图.png Map类关系图 %}
 
 在平时项目的开发中，我们主要使用的是HashMap及其子类，那我们接下来就了解一下HashMap的主要特征。
 
@@ -33,7 +33,7 @@ tags:
 ### 内部结构
 既然上文提到了数组+链表的形式，大家是否想起我们上篇文章提到的**链地址法**呢？如果你忘记了链地址法的具体实现，没关系，让我们一起看看在Java中HashMap具体的内部结构,具体的结构如下图所示：(注意:**在JDK1.8中如果链表的长度大于8时会将该链表转换为红黑树**)
 
-![内部结构.png](https://upload-images.jianshu.io/upload_images/2824145-bd641cc0ee4fd0b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 内部结构.png 内部结构 %}
 
 从图中看出，HashMap底层存储的是**Node**节点，本质是一个映射（键值对）。上图中，每个**黑色圆点**就是一个**Node**对象，**数组table**对应Node<K,V>[] table。
 
@@ -316,11 +316,11 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 ```
 直接去理解这段代码很难，根据上篇文章的经验，我们知道在数组进行扩容的时候，需要根据hash值去与新的数组长度进行取余运算（hash&length -1),但是从上述代码中，我们没有发现进行取余的操作。这是怎么回事呢？没事大家一起来看下图。
 
-![取余流程.png](https://upload-images.jianshu.io/upload_images/2824145-6d1e5de02c67b206.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 取余流程.png 取余流程 %}
 
 上图中，我们假设某个节点hash值为1111 1111 1111 1111 11111 0000 1011 1111，并且在添加该值时，数组进行了扩容操作（为原来的数组长度的2倍）。我们发现节点在重新计算角标的时候，因为数组的长度变为之前的两倍，所以在新数组中的bit位中，始终要比原来的高一位（图中红色以表示区分），那么我们就可以根据下图得知。
 
-![实例分析.png](https://upload-images.jianshu.io/upload_images/2824145-c6b296754a7c63c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 实例分析.png 实例分析 %}
 
 从上图可以得知，只要我们通过**e.hash & oldCap==0**，我们就可以得知，该节点的新位置是在原位置，还是在原来的位置基础上+oldCap。不得不说这段代码非常优雅与巧妙，提高的效率不是吹的（因为没有重新取余去计算角标）。
 

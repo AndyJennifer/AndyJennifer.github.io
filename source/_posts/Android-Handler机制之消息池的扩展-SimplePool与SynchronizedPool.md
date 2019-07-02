@@ -7,7 +7,7 @@ tags:
 - 异步任务
 ---
 
-![消息池.gif](https://upload-images.jianshu.io/upload_images/2824145-0be39b98baebb871.gif?imageMogr2/auto-orient/strip)
+{% asset_img 消息池.gif 消息池 %}
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
@@ -16,7 +16,7 @@ tags:
 
 ### Android中提供的对象池
 在android.support.v4.util包下的Pools类中，分别声明了Pool接口，SimplePool实现类与SynchronizedPool实现类，其中具体的UML关系如下图所示：
-![继承关系.png](https://upload-images.jianshu.io/upload_images/2824145-0cc634c790076912.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 继承关系.png 继承关系 %}
 在上图中，Pool的具体实现类为SimplePool，而SynchronizedPool为SimplePool的子类。
 
 ### 简单对象池（SimplePool）
@@ -74,14 +74,14 @@ tags:
 对于SimplePool的代码其实很好理解，其对象池是以数组的方式来实现的。其中对象池的最大容量是通过用户手动设定。从对象池中获取数据是通过acquire方法。回收当前对象到对象池中是通过release方法。关于这两个方法的详细流程会在下文具体介绍。
 #### 关于acquire方法
 在acquire方法中，会从对象池中取出对象。具体列子如下图所示：
-![acquire.png](https://upload-images.jianshu.io/upload_images/2824145-f78d7c7a39ac57c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img acquire.png acquire %}
 在上图中，当前对象池中存储了10个object对象，当前sPoolSize = 10。当调用acquire（）方法时，会获取最后一个对象（也就是 mPool[9],将该对象取出后，会将该位置置为null（mPool9] =null)，当前sPoolSize = 9。当再次调用acquire（）方法时，会获取mPool[8]位置下的对象。同理将该位置置为null，当前sPoolSize = 8。
 
 总结：**acquire()方法总会取当前对象池中存储的最后一个数据。如果有则返回。同时将该位置置为null。反之返回为null。**
 
 #### 关于release方法
 在release方法中，会将对象缓存到对象池中。如果当前对象已经存在，会抛出异常。反之则存储。具体列子如下图所示：
-![realase.png](https://upload-images.jianshu.io/upload_images/2824145-4a6a47a74c4d2913.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img realase.png realase %}
 在上图中。当前对象池存储了8个object对象。当前sPoolSize = 8。当调用realse方法将object9对象回收到对象池中去时，会存储在 mPool[8]位置下。且当前sPoolSize = 9，那么当再次调用realse方法将object10对象放入时，会将object10对象存储在mPool[9]位置下。
 
 总结：**release( T instance)方法，总会将需要回收的对象存入当前对象池中存储的最后一个数据的下一个位置。如果当前回收的对象已经存在会抛出异常。反之则成功。**

@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![小积木.jpg](https://upload-images.jianshu.io/upload_images/2824145-04bd2a2f4dcf1849.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小积木.jpg 小积木 %}
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
@@ -20,7 +20,7 @@ tags:
 该类提供线程局部变量。这些变量不同于它们的正常变量，即每一个线程访问自身的局部变量时，都有它自己的，独立初始化的副本。该变量通常是与线程关联的私有静态字段，列如用于ID或事物ID。大家看了介绍后，有可能还是不了解其主要的主要作用，简单的画个图帮助大家理解。
 
 
-![ThreadLocal示意图.png](https://upload-images.jianshu.io/upload_images/2824145-550960f5459468ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ThreadLocal示意图.png ThreadLocal示意图 %}
 
 从图上可以看出，通过ThreadLocal，每个线程都能获取自己线程内部的私有变量，有可能大家觉得无图无真相，“你一个人在那里神吹，我怎么知道你说的对还是不对呢？”，下面我们通过具体的例子详细的介绍，来看下面的代码。
 ```
@@ -66,7 +66,7 @@ main
 ### ThreadLocal原理
 为了帮助大家快速的知晓ThreadLocal原理，这里我将ThreadLocal的原理用下图表示出来了：
 
-![threadLocal.png](https://upload-images.jianshu.io/upload_images/2824145-7b553ff229bcd302.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img threadLocal.png threadLocal %}
 
 在上图中我们可以发现，整个ThreadLocal的使用都涉及到线程中`ThreadLocalMap`,虽然我们在外部调用的是ThreadLocal.set(value)方法，但本质是通过线程中的`ThreadLocalMap中的set(key,value)方法`，那么通过该情况我们大致也能猜出get方法也是通过ThreadLocalMap。那么接下来我们一起来看看ThreadLocal中set与get方法的具体实现与ThreadLocalMap的具体结构。
 
@@ -175,14 +175,14 @@ ThreadLocalMap 具体代码如下：
 ##### 第一种情况， Key值相同
 如果当前数组中，如果当前位置对应的Entry的key值与新添加的Entry的key值相同，直接进行覆盖操作。具体情况如下图所示
 
-![key值相同情况.png](https://upload-images.jianshu.io/upload_images/2824145-70b6cc18bc656b19.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img key值相同情况.png key值相同情况 %}
 
 如果当前数组中。存在key值相同的情况，ThreadLocal内部操作是直接覆盖的。这种情况就不过多的介绍了。
 
 ##### 第二种情况，如果当前位置对应Entry的Key值为null
 第二种情况相对来说比较复杂，这里先给图，然后会根据具体代码来讲解。
 
-![对应位置Key值为null.png](https://upload-images.jianshu.io/upload_images/2824145-7bdc448fcc55fc14.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 对应位置Key值为null.png 对应位置Key值为null %}
 
 从图中我们可以看出来。当我们添加新Entry(key=19,value =200,index = 3)时，数组中已经存在旧Entry(key =null,value = 19),当出现这种情况是，方法内部会将新Entry的值全部赋值到旧Entry中，**同时会将所有数组中key为null的Entry全部置为null（图中大黄色数据）**。在源码中，当新Entry对应位置存在数据，且key为null的情况下，会走`replaceStaleEntry`方法。具体代码如下：
 ```
@@ -242,7 +242,7 @@ ThreadLocalMap 具体代码如下：
 ```
 上面代码看起来比较繁杂，但是大家仔细梳理就会发现其实该方法，主要对四种情况进行了判断，具体情况如下图表所示：
 
-![TIM截图20180731110649.png](https://upload-images.jianshu.io/upload_images/2824145-218dc09b044027f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img TIM截图20180731110649.png TIM截图20180731110649 %}
 
 我们已经了解了replaceStaleEntry方法内部会清除key==null的数据，而其中具体的方法与expungeStaleEntry()方法与cleanSomeSlots()方法有关，所以接下来我们来分析这两个方法。看看其的具体实现。
 
@@ -308,7 +308,7 @@ expungeStaleEntry（）方法主要干了三件事，第一件，将staleSlot的
 
 ##### 第三种情况，当前对应位置为null
 
-![没有数据的情况.png](https://upload-images.jianshu.io/upload_images/2824145-b33d9fa695210adf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 没有数据的情况.png 没有数据的情况 %}
 
 **图上为了方便大家，理解清空上下数据的情况，我并没有重新计算位置（希望大家注意！！！）**
 

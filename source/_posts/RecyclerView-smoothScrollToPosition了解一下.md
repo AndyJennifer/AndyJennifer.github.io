@@ -7,7 +7,7 @@ tags:
 - RecyclerView
 ---
 
-![小狗狗.jpg](https://upload-images.jianshu.io/upload_images/2824145-48cb9d674242f237.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小狗狗.jpg 小狗狗 %}
 ### 前言
 最近开发中遇到了一个需求，需要RecyclerView滚动到指定位置后置顶显示，当时遇到这个问题的时候，心里第一反应是直接使用RecyclerView的smoothScrollToPosition()方法，实现对应位置的平滑滚动。但是在实际使用中发现并没有到底自己想要的效果。本想着偷懒直接从网上Copy下，但是发现效果并不是很好。于是就自己去研究源码。
 
@@ -20,7 +20,7 @@ tags:
 ###  什么是可见范围？
 在了解RecyclerView的smoothScrollToPosition方法之前，有个知识点，我觉得有必要给大家说一下，因为使用smoothScrollToPosition中遇到的问题都与可见范围有关。
 
-![可见范围.png](https://upload-images.jianshu.io/upload_images/2824145-adfb99815ff0749c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 可见范围.png 可见范围 %}
 
 **这里所说的可见范围是，RecyclerView第一个可见item的位置与最后一个可见item的位置之间的范围。**
 
@@ -28,18 +28,18 @@ tags:
 
 #### 如果当前滚动位置在可见范围内，是不会发生滚动的
 
-![不会滚动.gif](https://upload-images.jianshu.io/upload_images/2824145-a93317f4d1132363.gif?imageMogr2/auto-orient/strip)
+{% asset_img 不会滚动.gif 不会滚动 %}
 
 当前RecyclerView的可见范围为0到9，当我们想要滚动到1位置时，发现当前RecyclerView并没有发生滚动。
 
 #### 二、如果当前滚动位置在可见范围之后，会滚动到底部
 
-![滚动到底部.gif](https://upload-images.jianshu.io/upload_images/2824145-dd8dbff1903166fd.gif?imageMogr2/auto-orient/strip)
+{% asset_img 滚动到底部.gif 滚动到底部 %}
 
 当前RecyclerView的可见范围为0到9，当我们想要滚动到10位置时，发现RecyclerView滚动了，且当前位置对应的视图在RecyclreView的底部。
 
 #### 三、如果当前滚动位置在可见范围之前，会滚动到顶部
-![滚动到顶部.gif](https://upload-images.jianshu.io/upload_images/2824145-b382d5e31904f16a.gif?imageMogr2/auto-orient/strip)
+{% asset_img 滚动到顶部.gif 滚动到顶部 %}
 
 这里我们滚动RecyclerView,使其可见范围为10到19，当我们分别滚动到1、3位置时，RecyclerView滚动了。且当前位置对应的视图在RecyclerView的顶部。
 
@@ -527,4 +527,4 @@ boxEnd - viewEnd<0
 
 有可能大家现在看代码已经看晕了，下面我就用一张图来总结整个流程，结合流程图再去看代码，我相信大家能有更好的理解。
 
-![基本流程图.png](https://upload-images.jianshu.io/upload_images/2824145-26280c06b41544a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 基本流程图.png 基本流程图 %}

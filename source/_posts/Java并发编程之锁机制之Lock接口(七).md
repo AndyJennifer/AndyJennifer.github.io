@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![小盒子.jpg](https://upload-images.jianshu.io/upload_images/2824145-99cbcbf1c00c2fc8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小盒子.jpg 小盒子 %}
 
 
 ### 前言
@@ -23,7 +23,7 @@ synchronized关键字就不那么容易实现了，而Lock接口的实现类`允
 
 ### Lock接口中的方法
 关于Lock接口中涉及到的方法具体如下：（建议直接在PC端查看，手机上有可能看的不是很清楚）
-![lock_method.png](https://upload-images.jianshu.io/upload_images/2824145-8b6274b75d4d2022.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img lock_method.png lock_method %}
 从上表中，我们就可以得出使用Lock接口实现的锁机制与使用传统的synchronized的区别
 1. 尝试非阻塞地获取锁：当线程尝试获取锁，如果这一时刻锁没有被其他线程获取到，则成功获取并持有锁。
 2. 能被中断的获取锁：与synchronized不同，获取到锁的线程能够响应中断，当获取到锁的线程被中断时，中断异常会被抛出，同时锁也会被释放。
@@ -47,7 +47,7 @@ lock.unlock();//建议在finally中释放锁
 ### Lock相关实现类实现锁机制
 为了使用Lock接口实现相关锁功能时，会涉及以下类和接口，这里还是把上篇文章提到的UML图展示出来：
 
-![lock.png](https://upload-images.jianshu.io/upload_images/2824145-0413ea5589564dfc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img lock.png lock %}
 
 上图中，
  1.  绿色部分为：其中`ReentrantLock（重入锁）`、WriteLock、ReadLock都是Lock的实现类。`Segment为ReentrantLock的子类（在后续文章，ConcurrentHashMap的讲解中我们会提及）。` `ReentrantReadWriteLock （读写锁）`的实现使用了WriteLock与ReadLock类。

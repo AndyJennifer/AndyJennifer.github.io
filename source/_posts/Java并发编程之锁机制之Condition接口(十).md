@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![book.jpg](https://upload-images.jianshu.io/upload_images/2824145-64a13d0c3114cdcb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img book.jpg book %}
 
 ### 前言
 在前面的文章中，我曾提到过，整个Lock接口下实现的锁机制中`AQS(AbstractQueuedSynchronizer，下文都称之为AQS)`与`Condition`才是真正的实现者。也就说`Condition`在整个同步组件的基础框架中也起着非常重要的作用，既然它如此重要与犀利，那么现在我们就一起去了解其内部的实际原理与具体逻辑。
@@ -18,7 +18,7 @@ tags:
 ### Condition接口方法介绍
 在正式介绍Condtion之前，我们可以先了解其中声明的方法。具体方法声明，如下表所示：
 
-![condition方法.png](https://upload-images.jianshu.io/upload_images/2824145-3de65963e92886ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img condition方法.png condition方法 %}
 
 从该表中，我们可以看出其内部定义了`等待（以await开头系列方法）`与`通知（以singal开头的系列方法)`两种类型的方法，类似于Object对象的`wait()`与`notify()/NotifyAll()`方法来对线程的阻塞与唤醒。
 
@@ -31,13 +31,13 @@ tags:
 
 在ConditionObject类中也分别定义了`firstWaiter`与`lastWaiter`两个指针，分别指向等待队列中头部与尾部。当实际线程调用其以`await开头`的系列方法后。会将该线程构造为Node节点。添加等待队列中的尾部。关于等待队列的基本结构如下图所示：
 
-![condition内部结构.png](https://upload-images.jianshu.io/upload_images/2824145-c2dbcb9a5df26c1f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img condition内部结构.png condition内部结构 %}
 
 对于等待队列中节点添加的方式也很简单，将`上一尾节点的nextWaiter指向新添加的节点`，同时使`lastWaiter`指向新添加的节点。
 
 #### 同步队列与等待队列的对应关系
 上文提到了整个Lock锁机制需要`AQS中的同步队列`与`ConditionObject的等待队列`配合使用，其对应关系如下图所示：
-![同步队列与等待队列的关系.png](https://upload-images.jianshu.io/upload_images/2824145-306028fc076c6709.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 同步队列与等待队列的关系.png 同步队列与等待队列的关系 %}
 
 在Lock锁机制下，可以`拥有一个同步队列和多个等待队列`，与我们传统的Object监视器模型上，一个对象拥有一个同步队列和等待队列不同。lock中的锁可以伴有多个条件。
 #### Condition的基本使用
@@ -187,7 +187,7 @@ class BoundedBuffer {
         }
 ```
 该方法具体流程如下图所示：
-![condition.png](https://upload-images.jianshu.io/upload_images/2824145-fd08ef7d8f05fbe5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img condition.png condition %}
 
 #### fullyRelease(Node node)
 在将阻塞线程将入到等待队列后，会将该线程节点从同步队列中移除，释放同步状态（也就是释放锁），并唤醒同步队列中的下一节点。具体代码如下所示：
@@ -239,7 +239,7 @@ class BoundedBuffer {
 
 #### 阻塞流程
 在理解了整个阻塞的流程后，现在我们来归纳总结一下，整个阻塞的流程。具体流程如下图所示：
-![阻塞流程.png](https://upload-images.jianshu.io/upload_images/2824145-fbdd2f637ac198f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 阻塞流程.png 阻塞流程 %}
 - （1）将该线程节点从同步队列中移除，并释放其同步状态。
 - （2）构造新的阻塞节点，加入到等待队列中。
 
@@ -287,7 +287,7 @@ class BoundedBuffer {
 ```
 该方法也很简单，分为两个步骤：
 - （1）将等待队列中的首节点从等待队列中移除，并设置firstWaiter的指向为首节点的下一个节点。 为了方便大家理解该步骤所描述的逻辑，这里画了具体的图，具体情况如下图所示：
-![移除首节点.png](https://upload-images.jianshu.io/upload_images/2824145-416aebe1f25d17f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 移除首节点.png 移除首节点 %}
 - （2）通过 `transferForSignal(Node node)`方法，将等待队列中的首节点，加入到同步队列中去，然后重新唤醒该线程节点。
 
 ##### transferForSignal(Node node)方法
@@ -394,7 +394,7 @@ static final long PREV;
 
 #### 唤醒流程
 在理解了唤醒的具体逻辑后，现在来总结一下，唤醒的具体流程。具体如下图所示：
-![唤醒流程.png](https://upload-images.jianshu.io/upload_images/2824145-694a82e957dce046.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 唤醒流程.png 唤醒流程 %}
 - 将等待队列中的`头`节点线程，移动到同步队列中。
 - 当移动到同步队列中后。唤醒该线程。是该线程参与同步状态的竞争。
 

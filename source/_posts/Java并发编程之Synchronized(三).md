@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![学习.jpeg](https://upload-images.jianshu.io/upload_images/2824145-4e592f4f3b8d49b5.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 学习.jpeg 学习 %}
 
 
 ### 前言
@@ -45,7 +45,7 @@ class ThreadNotSafeDemo {
 ```
 上述代码中，我们创建Count类，在该类中有一个count()方法，计算从1一直加到10的和，在计算完后输出当前线程的名称与计算的结果，我们期望线程输出的结果是首项为55且等差为55的等差数列。但是结果并不是我们期望的。具体结果如下图所示：
 
-![输出结果.png](https://upload-images.jianshu.io/upload_images/2824145-cfa91431d1aaf3b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 输出结果.png 输出结果 %}
 
 我们可以看见，线程并没有按照我们之间想的那样，线程按照从Thread-0到Thread-9依次排列，并且Thread-0与Thread-1线程输出的结果是错误的。
 
@@ -106,7 +106,7 @@ class SynchronizedDemo {
 ```
 在上诉代码中，分别创建了两个方法，normalMethod（）与blockMethod（）方法，其中normalMethod()方法为普通的同步方法，blockMethod（）方法中，是一个同步块且配置的对象是当前类的对象。在Main()方法中，分别创建两个线程执行两个不同的方法。
 ##### 程序输出结果
-![输出结果.png](https://upload-images.jianshu.io/upload_images/2824145-7616a244b81ac54f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 输出结果.png 输出结果 %}
 观察程序输出结果，我们可以看到normalMethod方法是由于blockMethod方法执行的，且blockMethod方法是在normalMethod方法执行完成之后在执行的。也就证明了我们的对于普通的同步方法锁式当前实例对象的结论。
 #### 证明对于静态同步方法，锁式当前类的Class对象
 ```
@@ -141,7 +141,7 @@ class SynchronizedDemo {
 }
 ```
 在有了第一个结论的证明后，对于静态同步方法的锁对象就不再进行描述了（但是大家要注意一下，同步方法块中配置的对象是当前类的Class对象）。下面直接给出输出结果：
-![TIM截图20180821140901.png](https://upload-images.jianshu.io/upload_images/2824145-b44650256c9ed7b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img TIM截图20180821140901.png TIM截图20180821140901 %}
 
 观察结果，也很明显的证明了对于静态同步方法，锁式当前类的Class对象的结论
 
@@ -155,7 +155,7 @@ class SynchronizedDemo {
 #### Java对象的内存布局
 在Java虚拟机中，对象在内存的存储的布局可以分为3块区域：对象头（Header)、实例数据（Instance Data)、对其填充（Padding)。其中虚拟机中的对象头包括三部分信息，分别为"Mark Word"、类型指针、记录数组长度的数据（可选），具体情况如下图所示：
 
-![对象存储结构.png](https://upload-images.jianshu.io/upload_images/2824145-81a3128a336b0a21.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 对象存储结构.png 对象存储结构 %}
 
 #### Java对象头的组成
 
@@ -200,11 +200,11 @@ epoch:保存偏向时间戳
 ```
 那么根据上述代码，我们以32位操作系统为例，可以生成如下两张表：
 ##### 在无锁状态下，32位JVM的“Mark Word"的默认存储结构
-![无锁状态.png](https://upload-images.jianshu.io/upload_images/2824145-16e9628223a24026.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 无锁状态.png 无锁状态 %}
 在无锁状态下，“Mark Word“的32bit空间中，25bit用于存储对象哈希码，4bit用于存储对象分代年龄，2bit用于存储锁标志**（其中01标识当前线程为无锁状态）**，1bit固定为0。
 
 ##### 在有锁状态态下，32位JVM的“Mark Word"的默认存储结构
-![有锁状态.png](https://upload-images.jianshu.io/upload_images/2824145-c834f8223e543eac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 有锁状态.png 有锁状态 %}
 在有锁的状态下，23个bit位用于存储当前线程id,2个bit位用于存储偏向锁时间戳，4个bit为用于存储分代年龄（用于GC),1个bit位存储当前是否是偏向锁，最后的2bit用于当前锁的不同状态。其中00标识当前锁为轻量级锁，10标识为重量级锁，01标识当前锁为偏向锁。
 
 ### synchronized锁优化
@@ -485,7 +485,7 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
 ##### 轻量级锁获与“Displaced Mark Word”
 在代码进入同步块，执行轻量级锁获取之前，如果此同步对象没有被锁定（锁标志为01状态），JVM会在当前线程的帧栈中建立一个名为锁记录（Lock Record)的空间，用于存储对象目前的"Mark Word"的拷贝（官方把这份拷贝加了一个Displaced前缀，及Displaced Mark Word）。虚拟机将使用CAS操作尝试将对象的“Mark word"更新为指向Lock Record的指针，如果这个更新动作成功了，那么这个现场就拥有了该对象的锁，及该对象处于轻量级锁定状态。关于轻量级锁的获取，具体示意图如下：
 
-![轻量级锁获取示意图.png](https://upload-images.jianshu.io/upload_images/2824145-2b7a9f4de35a2dee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 轻量级锁获取示意图.png 轻量级锁获取示意图 %}
 
 ##### ObjectSynchronizer::slow_enter（）方法
 在了解了具体的轻量级锁获取流程后，我们来查看具体的实现slow_enter()方法。该方法是在sychronizer.cpp文件进行声明的。具体代码如下：
@@ -705,10 +705,10 @@ ObjectMonitor* ObjectSynchronizer::inflate(Thread * Self,
 ### 锁升级示意图
 在了解了偏向锁、轻量级锁，与重量级锁的原理后，现在我们来总结一下整个锁升级的流程。具体如下图所示：
 #### 偏向锁获得和撤销
-![偏向锁获得和撤销示意图.png](https://upload-images.jianshu.io/upload_images/2824145-baf96b535929b672.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 偏向锁获得和撤销示意图.png 偏向锁获得和撤销示意图 %}
 
 #### 轻量级锁膨胀流程图
-![轻量级锁膨胀示意图.png](https://upload-images.jianshu.io/upload_images/2824145-11f9e59e6e2af1e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 轻量级锁膨胀示意图.png 轻量级锁膨胀示意图 %}
 
 
 ### 重量级锁的竞争

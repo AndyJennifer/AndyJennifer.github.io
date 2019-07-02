@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![居家程序员.jpg](https://upload-images.jianshu.io/upload_images/2824145-1c63a5acdf08ee85.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 居家程序员.jpg 居家程序员 %}
 
 ### 注解基本概念
 注解（`也称为元数据`），为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻非常方便的使用这些数据。其中注解是总到引入到`JAVA SE5`的重要的语言变化之一。其可以提供用来完整的描述程序所需的信息，而这些信息是无法用Java表达的。因此，注解使得我们能够以将由编译器来测试和验证的格式，存储有关程序的额外信息。注解可以用来生成描述符文件。甚至是新的类定义，并且有助于减轻编写`样板`代码的负担。通过使用注解。我们可以将这些元数据保存在Java源代码中，并利用`annotation API为自己的注解构造处理工具`。
@@ -171,7 +171,7 @@ class AnnotationDemo {
 ```
 我们跳转到项目的目录，打开命令行，执行`javadoc -encoding utf-8 -charset utf-8 -package annotation`命令(这里我是所有的文件都是放在annotaton包下的，所以你可以根据你自己的包名为该包下的所有.java文件生成Doc文档)。运行完命令后我们找到自动生成的Doc文档。点击后如下图所示：
 
-![doc文档.png](https://upload-images.jianshu.io/upload_images/2824145-7e5f11afb642739f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img doc文档.png doc文档 %}
 
 从上图中我们可以发现，如果为注解指定了`@Documented`元注解，那么在生成的Doc文档中是会有相应注解的（`如图上红箭头所指`）。
 
@@ -462,7 +462,7 @@ public @interface HelloAnnotation {
 
 众所周知，JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。那么从Java的整个类加载机制来看，过程是如下这样：
 
-![java类加载图.png](https://upload-images.jianshu.io/upload_images/2824145-3ba27f5378be074d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img java类加载图.png java类加载图 %}
 
 对于Java类的加载主要分为以下步骤：
 - 将程序中的`*.java`文件通过javac命令编译成扩展名为`*.class`文件。其中`*.class`文件保存着Java代码转换后的虚拟机指令。
@@ -489,7 +489,7 @@ public interface annotation.HelloAnnotation extends java.lang.annotation.Annotat
 ##### 注解的处理
 为了方便处理接口信息以及实现面向对象的规则，其中`Constructor、Field、Method、Class、Package`类都实现了`AnnotatedElement`接口。具体关系如下图所示：
 
-![整体继承关系图.png](https://upload-images.jianshu.io/upload_images/2824145-eee4879fa122ddc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 整体继承关系图.png 整体继承关系图 %}
 
 也就是最终的注解注解处理全部都交给了`AnnotatedElement`接口来实现。那现在我们来看看该接口的方法声明。
 

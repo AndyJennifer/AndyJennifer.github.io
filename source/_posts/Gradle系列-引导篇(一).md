@@ -9,7 +9,7 @@ tags:
 
 
 
-![gradle.png](https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img gradle.png gradle %}
 
 >题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。
 
@@ -24,7 +24,7 @@ tags:
 
 ### Java项目的构建
 要知道Gradle是什么以及其作用。我们需要从整个Java项目的构建说起，看下图：
-![gradle-java-builds.png](https://upload-images.jianshu.io/upload_images/2824145-3f62357c67fc183d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img gradle-java-builds.png gradle-java-builds %}
 
 从上图中我们可以看出在平时Java项目的构建流程，或多或少我们会涉及以下操作：
 - 通过`javac`命令将一些Java源文件编译为class文件。
@@ -45,7 +45,7 @@ tags:
 
 那么汇集所有的资源以及情况后，整个Android的构建流程看起来是这个样子：
 
-![Android构建流程图.png](https://upload-images.jianshu.io/upload_images/2824145-eb33e56f256fe391.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Android构建流程图.png Android构建流程图 %}
 
 为了方便大家理解这里对其中主要的构建过程进行描述(`上图中绿色椭圆部分`)：
 - aapt：aapt(Android Asset Packaging Tool)工具会打包应用中的资源文件，如AndroidManifest.xml、layout布局中的xml等，并将xml文件编译为二进制形式，当然assets文件夹中的文件不会被编译，图片及raw文件夹中的资源也会保持原来的形态，(`需要注意的是raw文件夹中的资源也会生成资源id。AAPT编译完成之后会生成R.java文件`)。

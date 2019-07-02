@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![自行车Boy.jpg](https://upload-images.jianshu.io/upload_images/2824145-7ae7631be0e746f0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 自行车Boy.jpg 自行车Boy %}
 
 
 ### 前言

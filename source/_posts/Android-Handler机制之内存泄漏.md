@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![溢出啦啦.jpg](https://upload-images.jianshu.io/upload_images/2824145-73ede8ebabc4c5a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 溢出啦啦.jpg 溢出啦啦 %}
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
@@ -54,11 +54,11 @@ public class HandlerLeakageActivity extends BaseActivity {
 ```
 上述代码逻辑很简单，我们在HandlerLeakageActivity 中创建了内部类Handler，同时发送了一个延时为24小时的消息。当HandlerLeakageActivity 收到这个延迟消息后，那么接着会来更新UI，同时我们可以得到以下引用链：
 
-![handler_refrence.png](https://upload-images.jianshu.io/upload_images/2824145-5c954ec52cdd8638.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img handler_refrence.png handler_refrence %}
 其中的内部类Handler 拥有当前Activity的引用，是因为`在Java中，非静态内部类会持有外部类的引用`，而Messagey拥有Handler的引用，是因为Message通过Looper的loop（）方法取出后，需要相应的Handler来处理消息（`msg.target ==发送消息的Handler`）。
 
 那么在整个Handler机制下的引用关系如下图所示：
-![handler_leakage.png](https://upload-images.jianshu.io/upload_images/2824145-dce1099c23153126.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img handler_leakage.png handler_leakage %}
 
 参照上图，我们设想一种情况，假设我们在程序启动的时候，首先进入HandlerLeakageActivity ，然后又将其finish掉。那么就会出现，因为延迟消息的迟迟不能被取出执行，导致该Activity不能被系统回收。从而造成上文我们提到过的`内存泄漏`。
 

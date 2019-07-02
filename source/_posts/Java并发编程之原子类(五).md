@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![天天.jpeg](https://upload-images.jianshu.io/upload_images/2824145-040b2bf4b2848263.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 天天.jpeg 天天 %}
 
 
 ### 前言
@@ -231,7 +231,7 @@ class AtomicDemo {
 关于ABA问题，大家已经知道其出现的原因，现在我们就用具体例子让大家来了解一下。ABA会引发的问题。
 这里我们以具体的例子来进行讲解。具体例子如下所示：
 
-![aba.png](https://upload-images.jianshu.io/upload_images/2824145-2ec245c061aea68e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img aba.png aba %}
 
 
 观察上图，我们初始化了一个单向的链表结构，其中Header指向链表头节点，其中A节点的下一节点为B节点。

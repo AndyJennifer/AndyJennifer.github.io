@@ -6,7 +6,7 @@ tags:
 - Retrofit
 ---
 
-![漫长的婚约.jpg](https://upload-images.jianshu.io/upload_images/2824145-fbf38f9d1a229dfd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 漫长的婚约.jpg 漫长的婚约 %}
 
 最近平时开发中，用到了RxJava进行网络请求的封装，其中遇到了一个问题与大家分享一下。在无网络的情况下，我的程序直接抛出了不能连接某某地址。就以登录请求为例，具体代码如下：
 

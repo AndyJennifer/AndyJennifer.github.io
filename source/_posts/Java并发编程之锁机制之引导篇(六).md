@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![小石头.jpg](https://upload-images.jianshu.io/upload_images/2824145-e64e7be17dce3220.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小石头.jpg 小石头 %}
 
 
 ### 前言
@@ -15,7 +15,7 @@ tags:
 
 ### concurrent包的设计
 要了解Java为我们提供的基于Lock接口（以及相关实现类）实现的锁功能，我们首先要看一下整个concurrent包下的设计。具体设计如下所示：
-![current.png](https://upload-images.jianshu.io/upload_images/2824145-db62acff4c900b57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img current.png current %}
 在上图中，我们大致可以看出courrent包下的整体结构。整个包大致分为了三层。
 - 高层：Lock、同步器、阻塞队列等。
 - 中层：AQS(AbstractQueuedSynchronizer)、非阻塞数据结构、原子变量类。
@@ -29,7 +29,7 @@ tags:
 总所周知锁是用来控制多个线程访问共享资源的方式，一般来说，一个锁就能够防止多个线程同时访问共享资源（但是有些锁可以允许多线程并发的访问共享资源，比如我们后期将会讲解的读写锁），在Lock接口出现之前，Java程序是靠synchronized关键字来实现锁功能的，而Java SE 5之后，并发包中新增了Lock接口以及相关实现类，来实现锁的功能。
 关于 Lock接口（以及相关实现类）的UML类图，具体如下所示：
 
-![继承关系.png](https://upload-images.jianshu.io/upload_images/2824145-f66e4f7b822bbc33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 继承关系.png 继承关系 %}
 
 
 关于上图中涉及到的类，我都简单的描述了出来，并没有详细的将每个类中的方法描述出来。因为我觉得前期大家只要了解其中的使用关系就行了。后续的相关文章会对其中涉及到的类及使用会有具体的描述。（**如果在手机端阅览的同学，图片有可能不是很清楚，建议直接在PC端阅读**）

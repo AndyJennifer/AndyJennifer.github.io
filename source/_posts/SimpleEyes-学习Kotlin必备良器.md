@@ -13,10 +13,10 @@ tags:
 #### 切图
 
 
-![picture_1.png](https://upload-images.jianshu.io/upload_images/2824145-9c4c8943bc9eebc7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img picture_1.png picture_1 %}
 
 
-![picture_2.png](https://upload-images.jianshu.io/upload_images/2824145-499b2c209643ce12.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img picture_2.png picture_2 %}
 
 ##### 目前完成的功能
 - 闪屏页实现

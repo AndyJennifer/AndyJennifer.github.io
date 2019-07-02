@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![认真.png](https://upload-images.jianshu.io/upload_images/2824145-358b7664b318447b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 认真.png 认真 %}
 
 
 ### 前言
@@ -18,7 +18,7 @@ tags:
 #### 线程的可见性
 当一个变量定义为volatile后，那么该变量对所有线程都是“可见的”，其中“可见的”是指当一条线程修改了这个变量的值，那么新值对于其他线程来说是可以立即知道的。可能大家还是不好的理解。如果你阅读过上篇文章{% post_link Java并发编程之Java内存模型(一) %}，你应该很快的理解。不过没有大碍，通过下列图片大家应该很快的了解。
 
-![volatile可见性.png](https://upload-images.jianshu.io/upload_images/2824145-1f1b6e527993d110.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img volatile可见性.png volatile可见性 %}
 
 我们已经知道在Java内存模型中，内存分为了线程的工作内存及主内存。在上图中，线程A与线程B分别从主内存中获取变量a(**用volatile修饰**)到自己的工作内存中，也就是现在线程A与线程B中工作内存中的a现在的变量为12，当线程A修改a的值为8时，会将修改后的值（a=8)同步到主内存中，同时那么会导致线程B中的**缓存a变量的值（a=12)无效**，会让线程B重新重主内存中**获取新的值(a=8)**。
 
@@ -51,7 +51,7 @@ public class Demo {
 ```
 isInit用来标志是否已经初始化配置。其中1，2操作是没有数据依赖性，同理3、4操作也是没有数据依赖性的。那么CPU(处理器)可能对1、2操作进行重排序。对3、4操作进行重排序。现在我们加入线程A操作Init()方法，线程B操作doSomething()方法，那么我们看看重排序对多线程情况下的影响。
 
-![程序执行顺序.png](https://upload-images.jianshu.io/upload_images/2824145-a8134e7dee718eea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 程序执行顺序.png 程序执行顺序 %}
 
 上图中2操作排在了1操作前面。当CPU时间片转到线程B。线程B判断 if (isInit)为true,接下来接着执行 doSomethingWithconfig(),但是我们Config还没有初始化。所以在多线程的情况下。重排序会影响程序的执行结果。所以为了防止重排序带来的问题。Java内存模型规定了使用volatile来修饰相应变量时，可以防止CPU(处理器)在处理指令的时候禁止重排序。具体如下图所示。
 
@@ -75,7 +75,7 @@ public class Demo {
 #### volatile防止重排序规则
 那么为了处理CPU重排序的问题。Java定义了以下规则防止CPU的重排序。
 
-![volatile重排序规则.png](https://upload-images.jianshu.io/upload_images/2824145-1c644c59dafc8ac9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img volatile重排序规则.png volatile重排序规则 %}
 
 从上表我们可以看出
 - 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序，这个规则确保voatile写之前的操作不会被编译器排序到volatile之后。
@@ -87,7 +87,7 @@ public class Demo {
 ####  volatile防止重排序原理
 为了具体实现上诉我们提到的重排序规则，在Java中对于volatile修饰的变量，编译器在生成字节码时，会在指令序列中插入**内存屏障**来禁止特定类型的处理器重排序问题。在了解**内存屏障**之前，我们先复习之前的主内存与工作内存交互的8种原子操作，因为内存屏障主要是对Java内存模型的几种原子操作进行限制的。具体内存8种原子操作，如下图所示：
 
-![8种操作.png](https://upload-images.jianshu.io/upload_images/2824145-c71aa78c0a3ca6fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 8种操作.png 8种操作 %}
 
 上述8中原子操作中，我们所涉及的是store与load操作，如果需要了解剩余6种操作，请参看上篇文章{% post_link Java并发编程之Java内存模型(一) %}。
 
@@ -105,14 +105,14 @@ public class Demo {
 
 #### volatile写内存屏障
 
-![volatile写屏障.png](https://upload-images.jianshu.io/upload_images/2824145-e82e7109769d664a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img volatile写屏障.png volatile写屏障 %}
 
 - storestore屏障：对于这样的语句store1; storestore; store2，在store2及后续写入操作执行前，保证store1的写入操作对其它处理器可见。(也就是说如果出现storestore屏障，那么store1指令一定会在store2之前执行，CPU不会store1与store2进行重排序)
 - storeload屏障：对于这样的语句store1; storeload; load2，在load2及后续所有读取操作执行前，保证store1的写入对所有处理器可见。(也就是说如果出现storeload屏障，那么store1指令一定会在load2之前执行,CPU不会对store1与load2进行重排序)
 
 #### volatile读内存屏障
 
-![volatile读屏障.png](https://upload-images.jianshu.io/upload_images/2824145-09aecb1676378953.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img volatile读屏障.png volatile读屏障 %}
 
 - loadload屏障：对于这样的语句load1; loadload; load2，在load2及后续读取操作要读取的数据被访问前，保证load1要读取的数据被读取完毕。（也就是说，如果出现loadload屏障，那么load1指令一定会在load2之前执行，CPU不会对load1与load2进行重排序）
 - loadstore屏障：对于这样的语句load1; loadstore; store2，在store2及后续写入操作被刷出前，保证load1要读取的数据被读取完毕。（也就是说，如果出现loadstore屏障，那么load1指令一定会在store2之前执行，CPU不会对load1与store2进行重排序）
@@ -136,7 +136,7 @@ public class VolatileBarrierDemo {
 ```
 那么针对上述代码，我们生成相应的屏障（图片在手机端观看可能会不太清除，建议在pc端上观看）
 
-![屏障优化图.png](https://upload-images.jianshu.io/upload_images/2824145-1c33efb57c437b3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 屏障优化图.png 屏障优化图 %}
 
 观察上图，我们发现，在编译器生成屏障时，省略了第一个volatile读下的loadstore屏障，省略了第二个volatile读下的loadload屏障，省略了第一个volatile写下的storeload屏障。结合上诉我们所讲的loadstore屏障、loadload屏障、storeload屏障下的语义，我们能得到省略以下屏障的原因。
 
@@ -150,7 +150,7 @@ public class VolatileBarrierDemo {
 上面我们讲了编译器在生成屏障的时候，会根据程序的逻辑操作省略不必要的内存屏障。但是由于不同的处理器有不同的“松耦度”的内存模型，内存屏障的优化根据不同的处理器有着不同的优化方式。以x86处理器为例。针对我们上面所描述的编译器内存屏障优化图。在x86处理器中，除最后的storeload屏障外，其他的屏障都会省略。
 
 
-![x86处理器优化后.png](https://upload-images.jianshu.io/upload_images/2824145-e20b80eb434f66ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img x86处理器优化后.png x86处理器优化后 %}
 
 x86处理器与其他处理器的内存屏障的优化，这里不过的描述，有兴趣的小伙伴可以查阅相关资料继续研究。
 

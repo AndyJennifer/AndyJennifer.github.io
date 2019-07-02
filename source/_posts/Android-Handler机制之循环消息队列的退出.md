@@ -8,7 +8,7 @@ tags:
 ---
 
 
-![啦啦.jpeg](https://upload-images.jianshu.io/upload_images/2824145-8bc6d10af2118f1b.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 啦啦.jpeg 啦啦 %}
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
@@ -60,7 +60,7 @@ public void quit() { mQueue.quit(false); }
 ```
 非安全退出其实很简单，就是遍历消息队列中的消息（消息队列内部结构是链表）将所有消息队列中的消息全部回收。同时将MessageQueue中的mMessages （消息队列中的头消息）置为null，其中关于Message的recycleUnchecked()方法，如果你对该方法不是很熟悉，建议先阅读{% post_link Android-Handler机制之Message及Message回收机制 %}。关于非安全退出时，消息队列中的回收示意图如下所示：
 
-![回收全部消息.png](https://upload-images.jianshu.io/upload_images/2824145-012dc5d65a9d84b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 回收全部消息.png 回收全部消息 %}
 
 #### 退出消息循环的具体逻辑
 上文中，我们描述了在非安全退出时MessageQueue中仅仅进行了消息的回收，而并没有真正涉及到循环消息队列的退出，现在我们就来看一看息循环退出的具体逻辑。我们都知道整个消息循环的消息获得，都是通过Loooper中的loop（）方法，具体代码如下所示：
@@ -140,7 +140,7 @@ public void quit() { mQueue.quit(false); }
 观察上诉代码，在该方法中，会判断当前消息队列中的头消息的时间是否大于当前时间，如果大于当前时间就会removeAllMessagesLocked（）方法（也就是回收全部消息），反之，则回收部分消息，同时没有被回收的消息任然可以被取出执行。具体示意图如下所示：
 
 
-![回收部分消息.png](https://upload-images.jianshu.io/upload_images/2824145-104a9f156f672df4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 回收部分消息.png 回收部分消息 %}
 
 当使用安全退出循环消息队列时，整个退出逻辑与非安全退出有一定的区别。在上文中我们说过。当安全退出时，程序会判断消息队列会根据消息中的message.when来判断是否回收消息。那么在消息队列中没有被回收的消息是仍然能被取出执行的。具体代码如下所示：
 

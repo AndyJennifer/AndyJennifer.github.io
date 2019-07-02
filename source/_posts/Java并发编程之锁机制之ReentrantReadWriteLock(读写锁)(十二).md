@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![蓝天.jpg](https://upload-images.jianshu.io/upload_images/2824145-12d950ee54698c34.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 蓝天.jpg 蓝天 %}
 
 ### 前言
 在前面的文章中，我们讲到了ReentrantLock(重入锁)，接下来我们讲`ReentrantReadWriteLock（读写锁）`，该锁具备重入锁的`可重入性`、`可中断获取锁`等特征，但是与`ReentrantLock`不一样的是，在`ReentrantReadWriteLock`中，维护了一对锁，一个`读锁`一个`写锁`，而读写锁在同一时刻允许多个`读`线程访问。但是在写线程访问时，所有的读线程和其他的写线程均被阻塞。在阅读本片文章之前，希望你已阅读过以下几篇文章：
@@ -20,7 +20,7 @@ tags:
 
 ### 基本结构
 在具体了解`ReentrantReadWriteLock`之前，我们先看一下其整体结构，具体结构如下图所示：
-![ReentrantReadWriteLock.png](https://upload-images.jianshu.io/upload_images/2824145-fbf5a4a890fd66f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ReentrantReadWriteLock.png ReentrantReadWriteLock %}
 
 从整体图上来看，`ReentrantReadWriteLock`实现了`ReadWriteLock`接口，其中在`ReentrantReadWriteLock`中分别声明了以下几个静态内部类：
 - `WriteLock`与`ReadLock`（维护的一对读写锁）：单从类名我们可以看出这两个类的作用，就是控制读写线程的锁
@@ -97,7 +97,7 @@ static final class FairSync extends Sync {省略部分代码...}
 这里我们又看到了我们熟悉的`AQS`，也就是说`WriteLock`与`ReadLock`这两个锁，其实是通过AQS中的同步队列来对线程的进行控制的。那么结合我们之前的AQS的知识，我们可以得到下图：
 >（如果你对AQS不熟，那么你可以阅读该篇文章----->{% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %})。
 >
-![读写锁状态关系图.png](https://upload-images.jianshu.io/upload_images/2824145-1a0de5f2e62b3ed7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 读写锁状态关系图.png 读写锁状态关系图 %}
 这里我省略了`为什么维护的是同一个同步队列的原因`，这个问题留给大家。
 
 #### 读写状态设计
@@ -105,7 +105,7 @@ static final class FairSync extends Sync {省略部分代码...}
 
 在`ReentrantReadWriteLock`中的同步队列，其实是将同步状态分为了两个部分，其中`高16位`表示`读状态`，`低16位`表示`写状态`，具体情况如下图所示：
 
-![读写锁状态划分.png](https://upload-images.jianshu.io/upload_images/2824145-d6fb58d42d2a34ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 读写锁状态划分.png 读写锁状态划分 %}
 
 在上图中，我们能得知，读写状态能表示的最大值为`65535(排除负数)`，也就是说允许锁重进入的次数为65535次。
 
@@ -117,7 +117,7 @@ static final class FairSync extends Sync {省略部分代码...}
 
 也就是如下图所示（可能图片不是很清楚，建议在pc端上观看）：
 
-![读写锁状态原理.png](https://upload-images.jianshu.io/upload_images/2824145-114bde4afbe4afed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 读写锁状态原理.png 读写锁状态原理 %}
 
 ### 细节分析
 在了解了`ReentrantReadWriteLock`的整体原理及读写状态的划分后，我们再来理解其内部的读写线程控制就容易的多了，下面的文章中，我会对读锁与写锁的获取分别进行讨论。

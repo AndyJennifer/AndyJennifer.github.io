@@ -7,7 +7,7 @@ tags:
 - 并发
 ---
 
-![小手手.jpeg](https://upload-images.jianshu.io/upload_images/2824145-f454739c9b2e5225.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 小手手.jpeg 小手手 %}
 
 ### 一、并发的起源
 为了提高计算机处理数据的速度。现代的计算机都支持多任务处理。在32位windows操作系统中 ,多任务处理是指系统可同时运行多个进程，而每个进程也可同时执行多个线程。一个线程是指程序的一条执行路径，它在系统指定的时间片中完成特定的功能。系统不停地在多个线程之间切换，由于时间很短，看上去多个线程在同时运行。或者对于在线程序可并行执行同时服务于多个用户称为多任务处理。
@@ -16,7 +16,7 @@ tags:
 在理解java内存模型之前，我们先来了解一下，物理计算机的内存模型，其对Java内存模型有着很大的参考意义。
 在物理计算机中，我们需要处理的数据都在内存中，处理器处理数据，需要从内存中获取相应的数据，然后存入内存中，为了提高计算机的处理速度（**读取数据，存储数据有IO消耗）**，我们常常会在CPU(处理器)中加入**高速缓存（Cache Memory）**，也就是将数据缓存到处理器中，当处理器处理完数据后，再将处理的数据结果存储在内存中。具体如下图所示：
 
-![cpu高速缓存.jpg](https://upload-images.jianshu.io/upload_images/2824145-b514647393adbdb1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img cpu高速缓存.jpg cpu高速缓存 %}
 
 当CPU（处理器）要读取一个数据时，首先从一级缓存中查找，如果没有找到再从二级缓存中查找，如果还是没有就从三级缓存或内存中查找。一般来说，每级缓存的命中率大概都在80%左右，也就是说全部数据量的80%都可以在一级缓存中找到，只剩下20%的总数据量才需要从二级缓存、三级缓存或内存中读取。
 
@@ -26,12 +26,12 @@ tags:
 
 虽然高速缓缓冲提高了CPU(处理器)处理数据的速度问题。在多线程中运行就会有问题了。在多核CPU中，每条线程可能运行于不同的CPU中，因此每个线程运行时有自己的高速缓存（对单核CPU来说，其实也会出现这种问题，只不过是以线程调度的形式来分别执行的）。这时CPU缓存中的值可能和缓存中的值不一样，这就会出现缓存不一致的问题。为了解决该问题。物理机算计提供了两种方案来解决该问题。具体如下图所示：
 
-![缓存一致性.png](https://upload-images.jianshu.io/upload_images/2824145-9a62884464a447b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 缓存一致性.png 缓存一致性 %}
 
 ##### 2.1.1 通过总线加LOCK#锁的方式
 >总线（Bus）是计算机各种功能部件之间传送信息的公共通信干线，它是由导线组成的传输线束，在计算机中数据是通过总线，在处理器和内存之间传递。
 
-![总线机制.png](https://upload-images.jianshu.io/upload_images/2824145-72874c2ff3245da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 总线机制.png 总线机制 %}
 在早期的CPU当中，是通过在总线上加**LOCK#锁**的形式来解决缓存不一致的问题。因为CPU和其他部件进行通信都是通过总线来进行的，如果对总线加LOCK#锁的话，也就是说阻塞了其他CPU对其他部件访问（如内存），从而使得只能有一个CPU能使用这个变量的内存。在总线上发出了LCOK#锁的信号，那么只有等待这段代码完全执行完毕之后，其他CPU才能从其内存读取变量，然后进行相应的操作。这样就解决了缓存不一致的问题。
 
 ##### 2.1.2 通过缓存一致性协议
@@ -43,17 +43,17 @@ tags:
 
 假如请A、B、C三个名人为晚会题写横幅“春节联欢晚会”六个大字，每人各写两个字。如果这时在一张大纸上按顺序由A写好"春节"后再交给B写"联欢"，然后再由C写"晚会"，那么这样在A写的时候，B和C必须等待，而在B写的时候C仍然要等待而A已经没事了。
 
-![顺序执行.png](https://upload-images.jianshu.io/upload_images/2824145-8eb1eb36c68dcabc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 顺序执行.png 顺序执行 %}
 
 但如果采用三个人分别用三张纸同时写的做法， 那么B和C都不必须等待就可以同时各写各的了，甚至C和B还可以比A先写好也没关系（就象乱序执行），但当他们都写完后就必须重新在横幅上（自然可以由别人做，就象CPU中乱序执行后的重新排列单元）按"春节联欢晚会"的顺序排好才能挂出去。
-![乱序执行.png](https://upload-images.jianshu.io/upload_images/2824145-df391c94225c1f42.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 乱序执行.png 乱序执行 %}
 
 ### 三、Java的内存模型
 看到这里大家一定会发现，我们所讨论的CPU高速缓存、指令重排序等内容都是计算机体系结构方面的东西，并不是Java语言所特有的。事实上，很多主流程序语言(如C/C++)都存在缓存不一致的问题，这些语言是借助物理硬件和操作系统的内存模型来处理缓存不一致问题的，因此不同平台上内存模型的差异，会影响到程序的执行结果。Java虚拟机规范定义了自己的内存模型JMM(Java Memory Model)来**屏蔽掉不同硬件和操作系统的内存模型差异**，以实现让Java程序在各种平台下都能达到一致的内存访问结果。所以对于Java程序员，无需了解底层硬件和操作系统内存模型的知识，只要关注Java自己的内存模型，就能够解决这些问题啦。
 
 Java内存模型如下图所示：
 
-![Java内存模型.png](https://upload-images.jianshu.io/upload_images/2824145-0ec568ea5b771095.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Java内存模型.png Java内存模型 %}
 
 - 主内存：主要存储变量（包括。实例字段，静态字段和构成对象的元素）
 - 工作内存：每个线程都有自己的工作内存，存储了对应的引用，方法参数。
@@ -63,7 +63,7 @@ Java内存模型如下图所示：
 ####  3.1 内存之间交互
 主内存与工作内存之间的内存交互，也就是从线程的私有内存数据同步到主内存中，从主内存的读取数据到线程的私有内存中。Java内存模型定义了8种操作来完成。虚拟机在实现时保证下面提到的每一种操作都是**原子的，不可再分的**。
 
-![8种操作.png](https://upload-images.jianshu.io/upload_images/2824145-c71aa78c0a3ca6fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 8种操作.png 8种操作 %}
 
 - lock：作用于主内存的变量，它把一个变量标识为一条线程独占的状态。
 - unlock：作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才能被其他线程访问。
@@ -112,9 +112,9 @@ double s = a*h/2//面积
 ```
 其中上述代码的依赖关系如下图所示：
 
-![依赖关系.png](https://upload-images.jianshu.io/upload_images/2824145-eba31d1af67b4abc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 依赖关系.png 依赖关系 %}
 如上图所示：a与s存在数据依赖关系，同时h与s也存在依赖关系。因此在程序的最终指令执行时。s是不能排在a与h之前。因为a与h不存在着数据依赖关系。所以处理器可以对a与h之前的执行顺序重排序。
-![重排序前后对比.png](https://upload-images.jianshu.io/upload_images/2824145-cf8122328352c65d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 重排序前后对比.png 重排序前后对比 %}
 经过处理器的重排序后，执行的结果并没有发生改变。
 
 #### 五、Java内存模型的需要解决的问题
@@ -144,7 +144,7 @@ public class Demo {
 ```
 isInit用来标志是否已经初始化配置。其中1，2操作是没有数据依赖性，同理3、4操作也是没有数据依赖性的。那么CPU(处理器)可能对1、2操作进行重排序。对3、4操作进行重排序。现在我们加入线程A操作Init()方法，线程B操作doSomething()方法，那么我们看看重排序对多线程情况下的影响。
 
-![程序执行顺序.png](https://upload-images.jianshu.io/upload_images/2824145-a8134e7dee718eea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 程序执行顺序.png 程序执行顺序 %}
 
 上图中2操作排在了1操作前面。当CPU时间片转到线程B。线程B判断 if (isInit)为true,接下来接着执行 doSomethingWithconfig(),但是我们Config还没有初始化。所以在多线程的情况下。重排序会影响程序的执行结果。
 

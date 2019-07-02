@@ -7,7 +7,7 @@ tags:
 - 异步任务
 ---
 
-![很随意.jpg](https://upload-images.jianshu.io/upload_images/2824145-8e0074126982e457.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 很随意.jpg 很随意 %}
 
 >该文章属于Android Handler系列文章，如果想了解更多，请点击{% post_link Android-Handler机制之总目录 %}
 
@@ -16,7 +16,7 @@ tags:
 
 ### Handler、MessageQueue、Looper三者之间的关系
 在了解其三者关系之前，我先给大家一个全局的关系图，接下来的文章会根据该关系图，进行相应的补充与描述。
-![HandlerLooperMessage关系.png](https://upload-images.jianshu.io/upload_images/2824145-b3c798765233c278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img HandlerLooperMessage关系.png HandlerLooperMessage关系 %}
 
 从上图中我们可以看出几点
 - Handler的创建是与Looper创建的线程是相同的。
@@ -355,7 +355,7 @@ public Handler(Looper looper, Callback callback, boolean async)
 ```
 
 为了方便大家记忆，我将Handler中的dispatchMessage（）具体的逻辑流程画了出来。大家按需观看。
-![dispatchMessage步骤.png](https://upload-images.jianshu.io/upload_images/2824145-d005ec9b8f4353b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img dispatchMessage步骤.png dispatchMessage步骤 %}
 
 ### 最后
 看到最后大家已经发现该篇文章主要着重于将Handler机制的整个流程，对于很多的代码细节并没有过多的描述，特别是关于Looper从MessageQueue（消息队列）中取消息与MessageQueue（消息队列）怎么放入消息的具体细节。不用担心，关于这两个知识点将会在下篇文章 {% post_link Android-Handler机制之Message的发送与取出 %}具体描述。h
