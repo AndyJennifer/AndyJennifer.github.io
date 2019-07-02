@@ -222,7 +222,7 @@ categories:
 #### 子控件方法调用时机
 
 当我们了解了接口的调用关系后，我们需要知道子控件对相应嵌套滑动方法的调用时机。因为在低版本下，子控件向父控件传递事件需要配合
-NestedScrollingChildHelper这个类一起使用。但是由于篇幅的限制。这里就不对NestedScrollingChildHelper进行介绍了。如果有小伙伴对这里有疑惑的可以查看-->[NestedScrollingChildView实现例子](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)
+NestedScrollingChildHelper这个类一起使用。但是由于篇幅的限制。这里就不对NestedScrollingChildHelper进行介绍了。下面文章涉及到的伪代码在这里都有相应实现，大家可以结合代码与博客一起理解。[----代码地址](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)
 
 ##### startNestedScroll方法调用时机
 
