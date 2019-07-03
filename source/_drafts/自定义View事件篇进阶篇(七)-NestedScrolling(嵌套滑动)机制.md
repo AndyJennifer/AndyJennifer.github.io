@@ -204,27 +204,29 @@ categories:
 ```
 ###  谷歌嵌套滑动的方法调用设计
 
-通过上文，我相信大家大概基本了解了NestedScrollingParent2与NestedScrollingChild2两个接口方法的作用，但是我们并不知道这些方法之间对应的关系与调用的时机。那么现在我们一起来分析谷歌对整个嵌套滑动过程的实现与设计。为了处理嵌套滑动，谷歌将整个过程分为了以下几个步骤：
+通过上文，我相信大家大概基本了解了NestedScrollingParent与NestedScrollingChild两个接口方法的作用，但是我们并不知道这些方法之间对应的关系与调用的时机。那么现在我们一起来分析谷歌对整个嵌套滑动过程的实现与设计。为了处理嵌套滑动，谷歌将整个过程分为了以下几个步骤：
 
 - 1.当父控件不拦截事件，子控件收到滑动事件后，会先询问父控件是否支持嵌套滑动。
 - 2.如果父控件支持嵌套滑动，那么父控件进行预先滑动。然后将处理剩余的距离交由给子控件处理。
 - 3.子控件收到父控件剩余的滑动距离并滑动结束后，如果滑动距离还有剩余，又会再问一下父控件是否需要再继续消耗剩下的距离。
-- 4.如果子控件产生了fling，会先循环父控件是否`预先拦截`fling。如果父控件预先拦截。则交由给父控件处理。子控件不处理fling。
+- 4.如果子控件产生了fling，会先询问父控件是否`预先拦截`fling。如果父控件预先拦截。则交由给父控件处理。子控件不处理fling。
 - 5.如果父控件不预先拦截fling, 那么会将fling传给父控件处理。同时子控件也会处理fling。
 - 6.当整个嵌套滑动结束时，子控件通知父控件嵌套滑动结束。
 
 >对fling效果不熟悉的小伙伴可以查看该篇文章---[RecyclerView之Scroll和Fling](https://www.jianshu.com/p/1cf7e9ade0f8)
 
-再结合之前我们对NestedScrollingParent2与NestedScrollingChild2中的方法。我们可以得到相应方法之间的调用关系。具体如下图所示：
+再结合之前我们对NestedScrollingParent与NestedScrollingChild中的方法。我们可以得到相应方法之间的调用关系。具体如下图所示：
 
 {% asset_img 方法对应关系.jpg  %}
 
 #### 子控件方法调用时机
 
-当我们了解了接口的调用关系后，我们需要知道子控件对相应嵌套滑动方法的调用时机。因为在低版本下，子控件向父控件传递事件需要配合
-NestedScrollingChildHelper这个类一起使用。但是由于篇幅的限制。这里就不对NestedScrollingChildHelper进行介绍了。下面文章涉及到的伪代码在这里都有相应实现，大家可以结合代码与博客一起理解。[----代码地址](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)
+当我们了解了接口的调用关系后，我们需要知道子控件对相应嵌套滑动方法的调用时机。因为在低版本下，子控件向父控件传递事件需要配合NestedScrollingChildHelper类与NestedScrollingChild接口一起使用。由于篇幅的限制。这里就不向大家介绍如何构造一个支持嵌套滑动的子控件了。在接下来的知识点中都会在[NestedScrollingChildView](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)
+的基础上进行讲解。希望大家可以结合代码与博客一起理解。
 
-##### startNestedScroll方法调用时机
+在接下来的章节中，会先讲解谷歌在NestedScrollingParent与NestedScrollingChild接口下嵌套滑动的API设计。关于NestedScrollingParent2与NestedScrollingChild2接口会单独进行解释。
+
+##### 子控件startNestedScroll方法调用时机
 
 根据嵌套滑动的机制设定，子控件如果想要将事件传递给父控件，那么父控件是不能拦截事件的。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。需要注意的是当子控件调用startNestedScroll方法时，只是判断是否有支持嵌套滑动的父控件，并通知父控件嵌套滑动开始。这个时候并没有真正的传递相应的事件。故该方法只能在子控件的onTouchEvent方法中事件为MotionEvent.ACTION_DOWN时调用。伪代码如下所示：
 
@@ -244,7 +246,7 @@ public boolean onTouchEvent(MotionEvent event) {
         return super.onTouchEvent(event);
     }
 ```
-那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，代码如下所示：
+那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，startNestedScroll方法内部会调用NestedScrollingChildHelper的startNestedScroll方法。具体代码如下所示：
 
 ```
     public boolean startNestedScroll(@ScrollAxis int axes, @NestedScrollType int type) {
@@ -303,11 +305,11 @@ public boolean onTouchEvent(MotionEvent event) {
 ```
 最后会调用ViewParetCompat中的onStartNestedScroll方法，该方法最终会调用父控件的onStartNestedScroll方法。绕了一大圈，也就调用了父控件的onStartNestedScroll来判断是否支持嵌套滑动。
 
-那现在我们再回到子控件的startNestedScroll方法中。如果当前父控件不支持嵌套滑动，那么会一直向上寻找，直到找到为止。如果仍然没有找到，那么接下来的子父控件的嵌套滑动方法都不会调用。如果子控件找到了支持嵌套滑动的父控件，那么接下来会调用父控件的onNestedScrollAccepted方法，表示父控件接受嵌套滑动。
+那现在我们再回到子控件的startNestedScroll方法中。我们可以得知，如果当前父控件不支持嵌套滑动，那么会一直向上寻找，直到找到为止。如果仍然没有找到，那么接下来的子父控件的嵌套滑动方法都不会调用。如果子控件找到了支持嵌套滑动的父控件，那么接下来会调用父控件的onNestedScrollAccepted方法，表示父控件接受嵌套滑动。
 
-##### dispatchNestedPreScroll方法调用时机
+##### 子控件dispatchNestedPreScroll方法调用时机
 
-当父控件接受嵌套滑动后，那么子控件需要将滑动事件传递给父控件，因为这里已经产生了滑动，故会在OnTouchEvent中筛选MotionEvent.ACTION_MOVE中的事件，然后调用dispatchNestedPreScroll方法这些将滑动事件传递给父控件。伪代码如下所示：
+当父控件接受嵌套滑动后，那么子控件需要将手势滑动传递给父控件，因为这里已经产生了滑动，故会在onTouchEvent中筛选MotionEvent.ACTION_MOVE中的事件，然后调用dispatchNestedPreScroll方法这些将滑动事件传递给父控件。伪代码如下所示：
 
 ```
     private final int[] mScrollConsumed = new int[2];//记录父控件消耗的距离
@@ -334,7 +336,9 @@ public boolean onTouchEvent(MotionEvent event) {
 - 水平方向： dx -= mScrollConsumed[0];
 - 竖直方向： dy -= mScrollConsumed[1];
 
-接下来，我们继续查看dispatchNestedPreScroll的方法，具体代码如下：
+接下来，我们继续查看dispatchNestedPreScroll的方法。
+
+在dispatchNestedPreScroll方法内部会调用NestedScrollingChildHelper的dispatchNestedPreScroll方法具体代码如下：
 
 ```
   public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed,
@@ -380,10 +384,23 @@ public boolean onTouchEvent(MotionEvent event) {
         return false;
     }
 ```
-在dispatchNestedPreScroll（）方法中，会先判断获取当前嵌套滑动的父控件。如果父控件不为null且支持嵌套滑动，那么接下来会调用父控件的onNestedPreScroll（）方法，其中`int[] consumed`这个数组，就是子控件记录父控件在水平与竖直方向上消耗的距离。需要注意的是，父控件可能会将子控件传递的滑动事件全部消耗。那么子控件就没有继续可处理的事件了。onNestedPreScroll()方法在嵌套滑动判断父控件的滑动距离时尤为重要。
+在该方法中，会先判断获取当前嵌套滑动的父控件。如果父控件不为null且支持嵌套滑动，那么接下来会调用ViewParentCompat.onNestedPreScroll（）方法。代码如下所示：
 
-##### dispatchNestedScroll方法调用时机
-当父控件预先处理滑动事件后，子控件会获取剩下的消耗的事件并消耗。如果子控件仍然没有消耗完，那么会调用dispatchNestedScroll将剩下的事件传递给父控件。如果父控件不处理。那么又会传递给子控件进行处理。具体逻辑如下伪代码所示：
+```
+       public void onNestedPreScroll(ViewParent parent, View target, int dx, int dy,
+                int[] consumed) {
+            if (parent instanceof NestedScrollingParent) {
+                ((NestedScrollingParent) parent).onNestedPreScroll(target, dx, dy, consumed);
+            }
+        }
+
+```
+观察代码最终会调用父控件的onNestedPreScroll方法。需要注意的是，父控件可能会将子控件传递的滑动事件全部消耗。那么子控件就没有继续可处理的事件了。
+
+>onNestedPreScroll方法在嵌套滑动时，判断父控件的滑动距离时尤为重要。
+
+##### 子控件dispatchNestedScroll方法调用时机
+当父控件预先处理滑动事件后，也就是调用onNestedPreScroll方法并把消耗的距离传递给子控件后，子控件会获取剩下的事件并消耗。如果子控件仍然没有消耗完，那么会调用dispatchNestedScroll将剩下的事件传递给父控件。如果父控件不处理。那么又会传递给子控件进行处理。伪代码如下所示：
 
 ```
     private final int[] mScrollConsumed = new int[2];//记录父控件消耗的距离
@@ -424,6 +441,7 @@ public boolean onTouchEvent(MotionEvent event) {
         //子控件处理事件
         childScroll(consumedX, consumedY);
 
+        //子控件处理后，又将剩下的事件传递给父控件
         if (dispatchNestedScroll(consumedX, consumedY, unConsumedX, unConsumedY, mScrollOffset)) {
             //传给父控件处理后，剩下的逻辑自己实现
         }
@@ -452,7 +470,7 @@ public boolean onTouchEvent(MotionEvent event) {
         return 0;
     }
 ```
-现在我们继续看那看dispatchNestedScroll方法的实现，具体代码如下所示：
+在上述代码中，因为子控件消耗多少距离，是由子控件进行决定的，所以将这些方法抽象了出来了。在子控件的dispatchNestedScroll方法内部会调用NestedScrollingChildHelper的dispatchNestedScroll方法，具体代码如下所示：
 
 ```
     public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed,
@@ -491,18 +509,98 @@ public boolean onTouchEvent(MotionEvent event) {
         return false;
     }
 ```
-在dispatchNestedScroll方法中，会调用父控件的onNestedScroll方法来处理子控件剩余的距离。
+该方法内部会调用ViewParentCompat.onNestedScroll方法。继续跟踪最终会调用ViewParentCompat中非静态的的onNestedScroll方法，代码如下所示：
+```
+        public void onNestedScroll(ViewParent parent, View target, int dxConsumed, int dyConsumed,
+                int dxUnconsumed, int dyUnconsumed) {
+            if (parent instanceof NestedScrollingParent) {
+                ((NestedScrollingParent) parent).onNestedScroll(target, dxConsumed, dyConsumed,
+                        dxUnconsumed, dyUnconsumed);
+            }
+        }
+```
+该方法中，最终会调用父控件的onNestedScroll方法来处理子控件剩余的距离。
 
 ##### 子控件stopNestedScroll方法调用时机
 
-##### 子控件fling方法调用合计
+当整个事件序列结束的时候(当手指抬起或取消滑动的时候)，需要通知父控件嵌套滑动已经结束。故我们需要在OnTouchEvent中筛选MotionEvent.ACTION_UP、MotionEvent.ACTION_CANCEL中的事件，并通过stopNestedScroll（）方法通知父控件。伪代码如下所示：
+```
+  public boolean onTouchEvent(MotionEvent event) {
 
-### NestedScrollingChild2与NestedScrollingChild 区别
-parent很可能并不想一下子消费整个fling手势，而是像响应一个scroll一样去处理
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_UP: {   //当手指抬起的时，结束事件传递
+                stopNestedScroll();
+                break;
+            }
+            case MotionEvent.ACTION_CANCEL: {   //当手指抬起的时，结束事件传递
+                stopNestedScroll();
+                break;
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+```
+在stopNestedScroll（）方法中，最终会调用父控件的onStopNestedScroll（）方法，这里就不做更多的分析了。
 
+##### 子控件fling分发时机
 
+现在就剩下最后一个嵌套滑动的方法了！！！对！就是fling。在了解子控件对fling的处理过程之前，我们先要知道fling代表什么样的效果。在Android系统下，手指在屏幕上滑动然后松手，控件中的内容会顺着惯性继续往手指滑动的方向继续滚动直到停止，这个过程叫做fling。也就是我们需要在onTouchEvent方法中筛选MotionEvent.ACTION_UP的事件并获取需要的滑动速度。伪代码如下：
 
-### 嵌套滑动基本范式
+>fling的中文意思为抛、扔、掷。
+
+```
+
+  public boolean onTouchEvent(MotionEvent event) {
+         //添加速度检测器，用于处理fling
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        mVelocityTracker.addMovement(event);
+
+        int action = event.getActionMasked();
+        switch (action) {
+            case MotionEvent.ACTION_UP: { 
+                mVelocityTracker.computeCurrentVelocity(1000, mMaxFlingVelocity);
+                int xvel = (int) mVelocityTracker.getXVelocity();
+                int yvel = (int) mVelocityTracker.getYVelocity();
+              
+             if (!dispatchNestedPreFling(velocityX, velocityY)) {
+                boolean consumed = canScroll();
+                //将fling效果传递给父控件
+                dispatchNestedFling(velocityX, velocityY, consumed);
+                 //然后子控件再处理fling
+                childFling();//子控件自己实现怎么处理fling
+                stopNestedScroll();//子控件通知父控件滚动结束
+              }
+              stopNestedScroll();//通知父控件结束滑动
+                break;
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+```
+这里就不在对fling效果是怎么分发到父控件进行解释啦~~。一定要结合[NestedScrollingChildView](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)类进行理解。那么假设大家都看了源码，那么我们可以得到如下几点：
+
+- 子控件dispatchNestedPreFling最终会调用父控件的onNestedPreFling方法。
+- 子控件的dispatchNestedFling最终会调用onNestedFling方法。
+- 如果父控件的拦截fling(也就是onNestedPreFling方法返回为`true`)。那么子控件是没有机会处理fling的。
+- 如果父控件`不`拦截fling((也就是onNestedPreFling方法返回为`false`)，则父控件会调用onNestedFling方法与子控件同时处理fling。
+- 当父控件与子控件同时处理fling时，子控件会立即调用stopNestedScroll方法通知父控件嵌套滑动结束。
+
+### NestedScrollingChild2与NestedScrollingParent2
+
+最后一个知识点了，大家加油啊!!!!!!
+
+在本文章前半部，我们都是围绕NestedScrollingChild与NestedScrollingParent进行讲解。并没有提及NestedScrollingChild2与NestedScrollingParent2接口。那这两个接口是处理什么的呢？这又要回到上文我们提到的NestedScrollingChild处理fling时的流程了，在之前谷歌的NestedScrollingParent与NestedScrollingChild接口下嵌套滑动的API设计中。并没有考虑如下问题：
+
+- 子控件只是将fling产生的水平方向与竖直方向的速度传递给父控件，
+- 如果父控件不想一下子处理整个fling。想进行预先处理fling。然后将处理剩余的fling距离交由给子控件处理。这种逻辑在原有谷歌提供的NestedScrollingChild与NestedScrollingParent接口中是不支持的。
+
+所以为了解决这个问题。谷歌有添加了NestedScrollingChild2与NestedScrollingParent2两个接口。
+
+todo 分析问题的原因
+### 提醒
 
 
 ### 最后
@@ -521,3 +619,5 @@ https://www.jianshu.com/p/c138055af5d2 判断recyclerView到底底部的方法
 https://www.jianshu.com/p/f55abc60a879 NestedScrollingChild2与NestedScrollingChild 区别
 
 https://www.jianshu.com/p/700ed36e83ff
+
+https://chris.banes.me/2017/06/09/carry-on-scrolling/ 对design库中AppBarLayout嵌套滚动问题的修复 
