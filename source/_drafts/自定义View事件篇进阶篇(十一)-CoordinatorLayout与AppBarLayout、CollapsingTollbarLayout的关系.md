@@ -9,8 +9,8 @@ categories:
 ### 前言
 
 一般我们使用CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的关系时这样的布局关系。
-```
-<?xml version="1.0" encoding="utf-8"?>
+
+```<?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
