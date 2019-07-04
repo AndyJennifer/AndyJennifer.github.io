@@ -29,7 +29,7 @@ categories:
 
 ### NestedScrolling机制简介
 
-为了实现连贯的嵌套滑动，谷歌在Lollipop(Android 5.0)时，推出了NestedScrolling机制。该机制并没有脱离传统的事件分发机制，而是在原有的事件分发机制之上，为系统的自带的ViewGroup和View都增加了相应的方法。同时为了兼容低版本(5.0以下，View与ViewGroup是没有对应的API)，谷歌也在support v4包中也提供了如下类与接口进行支撑：
+为了实现连贯的嵌套滑动，谷歌在Lollipop(Android 5.0)时，推出了NestedScrolling机制。该机制并没有脱离传统的事件分发机制，而是在原有的事件分发机制之上，为系统的自带的ViewGroup和View都增加了手势滑动与fling的方法。同时为了兼容低版本(5.0以下，View与ViewGroup是没有对应的API)，谷歌也在support v4包中也提供了如下类与接口进行支撑：
 
 父控件需要实现的接口与使用到的类：
 - NestedScrollingParent（接口）
@@ -585,23 +585,32 @@ public boolean onTouchEvent(MotionEvent event) {
 - 子控件dispatchNestedPreFling最终会调用父控件的onNestedPreFling方法。
 - 子控件的dispatchNestedFling最终会调用onNestedFling方法。
 - 如果父控件的拦截fling(也就是onNestedPreFling方法返回为`true`)。那么子控件是没有机会处理fling的。
-- 如果父控件`不`拦截fling((也就是onNestedPreFling方法返回为`false`)，则父控件会调用onNestedFling方法与子控件同时处理fling。
+- 如果父控件`不`拦截fling(也就是onNestedPreFling方法返回为`false`)，则父控件会调用onNestedFling方法与子控件同时处理fling。
 - 当父控件与子控件同时处理fling时，子控件会立即调用stopNestedScroll方法通知父控件嵌套滑动结束。
 
 ### NestedScrollingChild2与NestedScrollingParent2
 
 最后一个知识点了，大家加油啊!!!!!!
 
-在本文章前半部，我们都是围绕NestedScrollingChild与NestedScrollingParent进行讲解。并没有提及NestedScrollingChild2与NestedScrollingParent2接口。那这两个接口是处理什么的呢？这又要回到上文我们提到的NestedScrollingChild处理fling时的流程了，在之前谷歌的NestedScrollingParent与NestedScrollingChild接口下嵌套滑动的API设计中。并没有考虑如下问题：
+在本文章前半部，我们都是围绕NestedScrollingChild与NestedScrollingParent进行讲解。并没有提及NestedScrollingChild2与NestedScrollingParent2接口。那这两个接口是处理什么的呢？这又要回到上文我们提到的NestedScrollingChild处理fling时的流程了，在谷歌之前的NestedScrollingParent与NestedScrollingChild的API设计中。并没有考虑如下问题：
 
-- 子控件只是将fling产生的水平方向与竖直方向的速度传递给父控件，
-- 如果父控件不想一下子处理整个fling。想进行预先处理fling。然后将处理剩余的fling距离交由给子控件处理。这种逻辑在原有谷歌提供的NestedScrollingChild与NestedScrollingParent接口中是不支持的。
+- 子控件只是在`ACTION_UP`事件中将产生的fling传递给父控件。是一锤子买卖。父控件根本不可能知道子控件是否fling结束。（即使子控件调用了stopNestedScroll方法，通知父控件结束滑动。但是子控件仍然可以处于fling中）。
+- 子控件没有办法将部分fling传递给父控件。因为谷歌提供的NestedScrollingChild与NestedScrollingParent接口中是不支持的。父控件必须处理整个fling。
+
+直接将知识点大家不是很好理解，看下面这个例子。
+
+{% asset_img NestedScrollingParent.gif %}
+
+
+{% asset_img NestedScrollingParent2.gif %}
+
+
 
 所以为了解决这个问题。谷歌有添加了NestedScrollingChild2与NestedScrollingParent2两个接口。
 
 todo 分析问题的原因
-### 提醒
 
+### 提醒
 
 ### 最后
 
