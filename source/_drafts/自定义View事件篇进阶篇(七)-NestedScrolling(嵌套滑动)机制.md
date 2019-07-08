@@ -790,4 +790,4 @@ doFling方法其实很简单，就是调用OverScroller的fing方法，并调用
 
 ### 最后
 
-到现在整个NestedScrolling(嵌套滑动)机制就讲解完毕了，在接下来的文章中，会讲解相应嵌套滑动例子、CoordinatorLayout原理机器使用、AppBarLayout等。希望大家继续关注。Thanks~~~
+到现在整个NestedScrolling(嵌套滑动)机制就讲解完毕了，在接下来的文章中，会讲解相应嵌套滑动例子、CoordinatorLayout原理、CoordinatorLayout与Behavior的使用、CoordinatorLayout与AppBarLayout的关系等等相关知识点，如果大家有兴趣的话，可以持续关注~。谢谢大家花时间阅读文章啦。Thanks
