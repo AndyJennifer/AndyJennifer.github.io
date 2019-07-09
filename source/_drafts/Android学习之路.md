@@ -114,14 +114,14 @@ https://github.com/GcsSloop/AndroidNote
 - 自定义View事件篇(五)-手势检测(GestureDetecotr)
 - 自定义View事件篇(六)-缩放手势检测(ScaleGestureDetector)
 - 自定义View事件篇进阶篇(七)-NestedScrolling（嵌套滑动）机制
-- 自定义View事件篇进阶篇(八)-嵌套滑动实际例子
+- 自定义View事件篇进阶篇(八)-NestedScrolling机制效果展示
 - 自定义View事件篇进阶篇(九)-CoordinatorLayout与Behavior
 - 自定义View事件篇进阶篇(十)-CoordinatorLayout与AppBarLayout的关系
 - 自定义View事件篇进阶篇(十一)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的关系
 - 自定义View事件篇进阶篇(十二)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的使用例子
 
-
 #### 动画篇
+
 - 自定义View动画篇(一)-alpha、scale、translate、rotate、set的xml属性及用法
 - 自定义View动画篇(二)-代码生成alpha、scale、translate、rotate、set的xml属性及用法
 - 自定义View动画篇(三)-插值器
