@@ -50,7 +50,7 @@ source ~/.bash_profile
 ```
 注意，如果最后一个命令行错误，也就是`source ~/.bash_profile`，你可能需要使用`sudo`来运行它。
 
-#####Windows 用户
+##### Windows 用户
 对于Windows 用户，为了使Windows找到Gradle，我们需要通过以下方式来添加环境变量。
 首先找到我们的控制面板>系统>高级系统设置>环境变量>系统变量>新建.....
 

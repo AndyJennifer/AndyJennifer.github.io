@@ -16,6 +16,8 @@ categories:
 
 {% asset_img demo展示.gif %}
 
+>上文展示的demo,在项目[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)有具体实现。
+
 在上述Demo中，整个界面分为标题栏、展示图片、TabLayout、ViewPage。其中ViewPager中拥有多个Fragment。其中每个fragment中都对应着一个RecyclerView。整个Demo的实现效果如下所示：
 
 - 当产生`向上`的手势滑动与fling)时，如果展示图片没被父控件遮挡，那么父控件先拦截事件并滑动。当图片完全被遮挡时，子控件（RecyclerView)再接着处理。
@@ -237,26 +239,27 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 ### ViewPager高度的矫正
 
-到现在大家可能觉得基本的嵌套滑动就结束了。但是如果你这样写的话你会发现一个问题。就是当我们的父控件(StickyNavaLayout)移动到标题栏下后，我们会发现我们的ViewPager并没有填充屏幕剩下的距离，而是会有一个空白距离。如下所示：
+到现在大家可能觉得基本的嵌套滑动就结束了。但是如果你这样写的话你会发现一个问题：就是当我们的父控件(StickyNavaLayout)滚动到标题栏下后，我们会发现我们的ViewPager并没有填充屏幕剩下的距离，而是会有一个空白距离。如下所示：
 
 {% asset_img 空白区域.png %}
 
-是因为我们的ViewPager的高度实际为屏幕中剩余的高度。所以我们需要重写父控件的onMeasure方法，重新设置ViewPager的高度
+是因为我们的父控件(StickyNavaLayout)继承了LinearLayout且ViewPager的高度为`match_parent`，那么根据View的测量规则，ViewPager实际的高度为屏幕中剩余的高度。所以父控件(StickyNavaLayout)滚动到标题栏下后，会出现一段空白，那么为了使ViewPager填充整个屏幕，我们需要重新设置ViewPager的高度。也就是我们需要重写父控件(StickyNavaLayout)的onMeasure方法。具体代码如下所示：
 
 ```
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //先测量一次
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //ViewPager修改后的高度= 总高度-导航栏高度
+        //ViewPager修改后的高度= 总高度-TabLayout的高度
         ViewGroup.LayoutParams lp = mViewPager.getLayoutParams();
         lp.height = getMeasuredHeight() - mNavView.getMeasuredHeight();
         mViewPager.setLayoutParams(lp);
-        //因为ViewPager修改了高度，所以需要重写测量
+        //因为ViewPager修改了高度，所以需要重新测量
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 ```
+### 渐变效果实现
+现在我们就剩下最后两个效果了，回退键渐变与标题栏的透明度的变化了，其实实现也非常简单，因为我们的父控件(StickyNavaLayout)有一个最大滑动的范围，那么我们就可以得到当前父控件滑动的距离与最大滑动范围的比例，拿到这个比例后，我们可以设置标题栏的透明度。也可以通过谷歌提供的ArgbEvaluator得到渐变颜色。具体的实现方式，读者朋友可以自行思考解决。因为篇幅的限制，这里就不在讲解具体的实现方式了。有需要的小伙伴，可以参看项目[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)中的[NestedScrolling2DemoActivity](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/NestedScrolling2DemoActivity.java)中的具体实现。
 
 ### 最后
-
-站在巨人的肩膀上，才能看的更远~
+整个Demo就讲解完毕了，大家有什么问题，欢迎提出~
