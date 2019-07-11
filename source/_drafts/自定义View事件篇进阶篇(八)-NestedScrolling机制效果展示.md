@@ -20,8 +20,8 @@ categories:
 
 在上述Demo中，整个界面分为标题栏、展示图片、TabLayout、ViewPage。其中ViewPager中拥有多个Fragment。其中每个fragment中都对应着一个RecyclerView。整个Demo的实现效果如下所示：
 
-- 当产生`向上`的手势滑动与fling)时，如果展示图片没被父控件遮挡，那么父控件先拦截事件并滑动。当图片完全被遮挡时，子控件（RecyclerView)再接着处理。
-- 当产生`向下`的手势滑动与fling)时，如果展示图片没完全显示，那么父控件先拦截事件并滑动。当图片完全显示时，子控件（RecyclerView)再接着处理。
+- 当产生`向上`的手势滑动与fling时，如果展示图片没被父控件遮挡，那么父控件先拦截事件并滑动。当图片完全被遮挡时，子控件（RecyclerView)再接着处理。
+- 当产生`向下`的手势滑动与fling时，如果展示图片没完全显示，那么父控件先拦截事件并滑动。当图片完全显示时，子控件（RecyclerView)再接着处理。
 - 标题栏中的回退键，会随着父控件的滑动，有一个从白色到黑色的渐变效果。
 - 标题栏中的透明度，会随着父控件的滑动，透明度从0到1的变化效果。
 
@@ -189,6 +189,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 - 当向上滑动时，如果父控件(StickyNavaLayout)已经滑动了部分距离，那么父控件(StickyNavaLayout)需要消耗需要消耗。
 
 具体代码如下所示：
+
 ```
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
@@ -202,11 +203,12 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         }
     }
 ```
-在上述代码中，我们通过调用View的canScrollVertically(int direction)方法来判断是否能够向下滑动，其中当**direcation**为`负数`时，是检查对应View是否能够向下滑动，能返回为true，反之返回false。当**direcation**为`正数`时，是检查对应View是否能够向上滑动。
+
+在上述代码中，我们通过调用View的canScrollVertically(int direction)方法来判断是否能够向下滑动，其中当**direcation**为`负数`时，是检查对应View是否能够向下滑动，能，返回为true，反之返回false。当**direcation**为`正数`时，是检查对应View是否能够向上滑动，能，返回为true,反之返回false。
 
 需要注意的是在onNestedPreScroll方法中，我们并没有区分是手势滑动还是fling，也就是区分type为`TYPE_TOUCH(0)`还是`TYPE_NON_TOUCH(1)`。因为不管是手势滑动还是fling。在Demo效果中父控件都需要处理。所以我们并没有进行判断。
 
-当我们处理了onNestedPreScroll方法后，我们还需要处理`onNestedScroll`方法。因为根据嵌套滑动机制，当父控件预处理后，子控件会再消耗剩余的距离，如果子控件消耗后，还有剩余的距离。那么就又会传递给父控件。也就是会走onNestedScroll方法。在该方法中，我们只需要单独处理子控件的剩余的向下fling。具体代码如下所示：
+当我们处理了onNestedPreScroll方法后，我们还需要处理`onNestedScroll`方法。因为根据嵌套滑动机制，当父控件预处理后，子控件会再消耗剩余的距离，如果子控件消耗后，还有剩余的距离。那么就又会传递给父控件。也就是会走onNestedScroll方法。在该方法中，我们只需要单独处理子控件的剩余的`向下fling`。具体代码如下所示：
 
 ```
   @Override
@@ -258,8 +260,12 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 ```
+
+
 ### 渐变效果实现
+
 现在我们就剩下最后两个效果了，回退键渐变与标题栏的透明度的变化了，其实实现也非常简单，因为我们的父控件(StickyNavaLayout)有一个最大滑动的范围，那么我们就可以得到当前父控件滑动的距离与最大滑动范围的比例，拿到这个比例后，我们可以设置标题栏的透明度。也可以通过谷歌提供的ArgbEvaluator得到渐变颜色。具体的实现方式，读者朋友可以自行思考解决。因为篇幅的限制，这里就不在讲解具体的实现方式了。有需要的小伙伴，可以参看项目[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)中的[NestedScrolling2DemoActivity](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/NestedScrolling2DemoActivity.java)中的具体实现。
 
 ### 最后
+
 整个Demo就讲解完毕了，大家有什么问题，欢迎提出~
