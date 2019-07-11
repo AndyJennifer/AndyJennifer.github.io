@@ -8,6 +8,17 @@ categories:
 
 ### 前言
 
+在上篇文章中，我们介绍了NestedScrolling(嵌套滑动)机制，介绍了子控件与父控件嵌套滑动的处理。现在我们来了解谷歌大大为我们提供的另一个交互布局CoordainatorLayout。
+
+
+### CoordainatorLayout简介
+
+在了解CoordainatorLayout之前，我们需要知道它和NestedScrolling机制有什么不同。在NestedScrolling机制中，我们都知道，参与角色只有子控件和父控件。这种关系都是一对一的。而在CoordinatorLayout中子控件除了可以和它的父控件进行交互以外，还可以与其他兄弟控件进行交互。也就是关系可以为一对一，或者一对多。
+
+
+{% 效果展示.gif %}
+
+### Behavior介绍
 
 ### onInterceptTouchEvent
 
@@ -68,7 +79,7 @@ categories:
                     }
                     switch (type) {
                         case TYPE_ON_INTERCEPT:
-                            //一直调用拦截方法
+                            //调用拦截方法
                             b.onInterceptTouchEvent(this, child, cancelEvent);
                             break;
                         case TYPE_ON_TOUCH:
@@ -114,7 +125,7 @@ categories:
 ```
 
 
-如果behavior.onInterceptTouchEvent返回为false,那么CoordinatorLayout就不会拦截事件，事件就传递道了子View中去了，如果时候子view的onTouchEvent方法中处理滑动的时候（5.0之后viewGroup与View默认支持嵌套滑动），又因为CoordinatorLayout实现了NestedScrollingParent2接口，所以又回到了最开始的嵌套滑动机制了。那么就会走oordinatorLayout所有的嵌套滑动方法。
+如果behavior.onInterceptTouchEvent返回为false,那么CoordinatorLayout就不会拦截事件，事件就传递到了子View中去了，如果时候子view的onTouchEvent方法中处理滑动的时候（5.0之后viewGroup与View默认支持嵌套滑动），又因为CoordinatorLayout实现了NestedScrollingParent2接口，所以又回到了最开始的嵌套滑动机制了。那么就会走coordinatorLayout所有的嵌套滑动方法。
 
 
 
@@ -282,6 +293,7 @@ categories:
 ```
 
 ### CoordinatorLayout中Behavior要拦截事件
+
 如果CoordinatorLayout中的子view对应的behavior.onInterceptTouchEvent返回true,那么就会导致CoordinatorLayout拦截事件，那么走自身的onTouchEvent。而该方法也会调用behavior的onTouchEvent方法。一般情况。默认情况下基本都是返回为false,所以我们不用担心，问题走了behavior的onTouchEvent方法，那嵌套机制怎么实现？？？如AppbarLayout的Behavior的父类Behavior，HeaderBehavior中的拦截方法。
 ```
     @Override
@@ -403,4 +415,6 @@ HeaderBehavior中的拦截方法。
   又因为 private int mActivePointerId = INVALID_POINTER;所以HeaderBehavior永远都不会拦截事件的。！！！！！！也就是说事件会传递下去，不会被behavior拦截。我顶你个肺。那你写这个干吗啊？？？？
 
 ### 最后
+https://www.jianshu.com/p/f7989a2a3ec2 防UC
+https://www.jianshu.com/p/82d18b0d18f4?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation 各种behavior的效果实现
 站在巨人的肩膀上，才能看的更远~
