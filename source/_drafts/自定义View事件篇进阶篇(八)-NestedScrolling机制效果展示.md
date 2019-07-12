@@ -264,7 +264,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 ### 渐变效果实现
 
-现在我们就剩下最后两个效果了，回退键渐变与标题栏的透明度的变化了，其实实现也非常简单，因为我们的父控件(StickyNavaLayout)有一个最大滑动的范围，那么我们就可以得到当前父控件滑动的距离与最大滑动范围的比例，拿到这个比例后，我们可以设置标题栏的透明度。也可以通过谷歌提供的ArgbEvaluator得到渐变颜色。具体的实现方式，读者朋友可以自行思考解决。因为篇幅的限制，这里就不在讲解具体的实现方式了。有需要的小伙伴，可以参看项目[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)中的[NestedScrolling2DemoActivity](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/NestedScrolling2DemoActivity.java)中的具体实现。
+现在我们就剩下最后两个效果了，回退键渐变与标题栏的透明度的变化了，其实实现也非常简单，因为我们的父控件(StickyNavaLayout)有一个最大滑动的范围，那么我们就可以得到当前父控件滑动的距离与最大滑动范围的比例，拿到这个比例后，我们可以设置标题栏的透明度。也可以通过谷歌提供的ArgbEvaluator得到渐变颜色。具体的实现方式，读者朋友可以自行思考解决。因为篇幅的限制，这里就不在讲解具体的实现方式了。有需要的小伙伴，可以参看项目[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)中的[NestedScrolling2DemoActivity](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/nested/NestedScrolling2DemoActivity.java)中的具体实现。
 
 ### 最后
 

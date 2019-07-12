@@ -233,7 +233,7 @@ categories:
 
 #### 子控件方法调用时机
 
-当我们了解了接口的调用关系后，我们需要知道子控件对相应嵌套滑动方法的调用时机。因为在低版本下，子控件向父控件传递事件需要配合NestedScrollingChildHelper类与NestedScrollingChild接口一起使用。由于篇幅的限制。这里就不向大家介绍如何构造一个支持嵌套滑动的子控件了。在接下来的知识点中都会在[NestedScrollingChildView](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)
+当我们了解了接口的调用关系后，我们需要知道子控件对相应嵌套滑动方法的调用时机。因为在低版本下，子控件向父控件传递事件需要配合NestedScrollingChildHelper类与NestedScrollingChild接口一起使用。由于篇幅的限制。这里就不向大家介绍如何构造一个支持嵌套滑动的子控件了。在接下来的知识点中都会在[NestedScrollingChildView](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/nested/normal_form/NestedScrollingChildView.java)
 的基础上进行讲解。希望大家可以结合代码与博客一起理解。
 
 在接下来的章节中，会先讲解谷歌在NestedScrollingParent与NestedScrollingChild接口下嵌套滑动的API设计。关于NestedScrollingParent2与NestedScrollingChild2接口会单独进行解释。
@@ -603,7 +603,7 @@ public boolean onTouchEvent(MotionEvent event) {
     }
 ```
 
-这里就不在对fling效果是怎么分发到父控件进行解释啦~~。一定要结合[NestedScrollingChildView](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/normal_form/NestedScrollingChildView.java)类进行理解。那么假设大家都看了源码，那么我们可以得到如下几点：
+这里就不在对fling效果是怎么分发到父控件进行解释啦~~。一定要结合[NestedScrollingChildView](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/nested/normal_form/NestedScrollingChildView.java)类进行理解。那么假设大家都看了源码，那么我们可以得到如下几点：
 
 - 子控件dispatchNestedPreFling最终会调用父控件的onNestedPreFling方法。
 - 子控件的dispatchNestedFling最终会调用onNestedFling方法。
@@ -624,7 +624,7 @@ public boolean onTouchEvent(MotionEvent event) {
 
 {% asset_img NestedScrollingParent.gif %}
 
->上述效果实现，请参看[NestedScrollingLayout.java](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedScrollingLayout.java)
+>上述效果实现，请参看[NestedScrollingParentLayout.java](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedScrollingParentLayout.java)
 
 在上面例子中是实现了NestedScrollingChild(NestedScrollView或RecyclerView等)与NestedScrollingParent接口的嵌套滑动，我们可以明显的看出，当我们手指快速向下滑动并抬起的时，子控件将fling分发给父控件，因为处理的距离不同，这个时候父控件已经处理滑动并fling结束，而内部的子控件(RecyclerView或NestedScrollView还在滚动，这种给我们的感觉就非常不连贯，好像每个控件在独自滑动。
 
@@ -632,7 +632,7 @@ public boolean onTouchEvent(MotionEvent event) {
 
 {% asset_img NestedScrollingParent2.gif %}
 
->上述效果实现，请参看[NestedScrolling2Layout.java](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedScrolling2Layout.java)
+>上述效果实现，请参看[NestedScrollingParent2Layout.java](https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedScrollingParent2Layout.java)
 
 观察上图，我们能发现父控件与子控件(RecyclerView或NestedScrollView)的滑动更为顺畅与合理。那接下来我们看看谷歌对其的设计。
 

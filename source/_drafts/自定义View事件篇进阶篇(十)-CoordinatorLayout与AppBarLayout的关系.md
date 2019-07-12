@@ -10,9 +10,9 @@ categories:
 
 
 
-### 从coordinatorLayout的拦截方法说起，
+### 从CoordinatorLayout的拦截方法说起
+因为ScrollingViewBehavior中没有拦截事件，又因为CoordinatorLayout中是否拦截事件是根据内部的子控件中的Behavior是否拦截事件决定的，那么事件最终就会走到RecyclerView,又因为RecyclerView内部实现了NestedScrollingChild2接口，那么也就是说CoordinatorLayout会接受到NestedScrollingChild的发送的嵌套滑动事件后会调用onStartNestedScroll方法，在onStartNestedScroll方法中，又会调用所有子控件的Behavior的onStartNestedScroll。如下所示：
 
-coordinatorLayout在接受到NestedScrollingChild的发送的嵌套滑动事件后会调用onStartNestedScroll方法，在onStartNestedScroll方法中，又会调用所有子控件的Behavior的onStartNestedScroll。如下所示：
 ```
     @Override
     public boolean onStartNestedScroll(View child, View target, int axes, int type) {
@@ -42,6 +42,7 @@ coordinatorLayout在接受到NestedScrollingChild的发送的嵌套滑动事件�
 也就是说coordinatorLayout把嵌套滑动对应的方法全部传入子控件的Behavior中去了，顺序为NestedScrollingChild->事件->coordinatorLayout->事件->coordinatorLayout中子控件的Behavior。
 
 ### 讲讲AppBarLayout的默认Behavior
+
 AppBarLayout并没有显示的在布局中设置Behavior,而是通过使用`@CoordinatorLayout.DefaultBehavior(AppBarLayout.Behavior.class)`注解的方法设置的。那怎么找到这个默认behavior,请查看CoordinatorLayout中getResolvedLayoutParams(View child)方法
 
 CoordinatorLayout中的OnMeasure->prepareChildren()->getResolvedLayoutParams()
