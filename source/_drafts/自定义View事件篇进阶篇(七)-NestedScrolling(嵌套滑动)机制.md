@@ -15,7 +15,7 @@ categories:
 - NestedScrollingChild与NestedScrollingParent接口的调用关系。
 - NestedScrollingChild2与NestedScrollingParent2接口出现的意义。
 
-> 该博客中涉及到的示利，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
+> 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
 ### 传统事件机制处理嵌套滑动的局限性
 

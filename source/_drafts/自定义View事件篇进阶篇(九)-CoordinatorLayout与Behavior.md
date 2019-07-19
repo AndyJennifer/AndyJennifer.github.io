@@ -13,12 +13,12 @@ categories:
 通过阅读该文，你能了解如下知识点：
 
 - CoordainatorLayout中Behavior中的基础使用
-- Behavior的寻找流程
-- CoordainatorLayout中Behavior事件处理与传递过程
-- Behavior的测量与布局
-- Behavior的事件拦截
+- CoordainatorLayout中Behavior的注册过程
+- CoordainatorLayout与Behavior的测量与布局的关系
+- CoordainatorLayout与Behavior嵌套滑动的事件传递关系
+- Behavior的单独处理事件的过程
 
-> 该博客中涉及到的示利，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
+> 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
 ### CoordainatorLayout简介
 
