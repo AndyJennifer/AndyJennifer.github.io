@@ -13,15 +13,16 @@ categories:
 通过阅读该文，你能了解如下知识点：
 
 - CoordainatorLayout中Behavior中的基础使用
-- CoordainatorLayout中事件处理与传递过程
-- Behavior的onInterceptTouchEvent与OnTouchEvent的使用
+- Behavior的寻找流程
+- CoordainatorLayout中Behavior事件处理与传递过程
 - Behavior的测量与布局
+- Behavior的事件拦截
 
 > 该博客中涉及到的示利，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
 ### CoordainatorLayout简介
 
-在了解CoordainatorLayout之前，我们需要知道它和NestedScrolling机制有什么不同。在NestedScrolling机制中，我们都知道，参与角色只有子控件和父控件。这种关系都是一对一的。而在CoordinatorLayout中子控件除了可以和它的父控件进行交互以外，还可以与其他兄弟控件进行交互。也就是关系可以为一对一，或者一对多。
+在了解CoordainatorLayout之前，我们需要知道它和NestedScrolling机制有什么不同。在NestedScrolling机制中，我们都知道，参与角色只有子控件和父控件。这种关系都是一对一的。而在CoordinatorLayout中子控件除了可以和它的父控件进行交互以外，还可以与其他兄弟控件进行交互。也就是关系可以为一对一或者一对多。
 
 在官方的解释中，CoordainatorLayout是一个加强版的FrameLayout,重要用途有一下两点：
 
@@ -45,18 +46,17 @@ categories:
 | void onNestedScroll | 0          |  
 | void onNestedPreScroll | 100        | 
 | boolean onNestedFling| 1000       | 
-
 | boolean onInterceptTouchEvent | 0          |  
 | boolean onTouchEvent | 100        |
 | boolean onLayoutChild| 1000       |
 | boolean onMeasureChild | 0          |  
-
 
 ### Behavior的依赖关系
 
 如果一个View依赖另外一个View,那么可能需要下面三个方法：
 
 ```
+
 public boolean layoutDependsOn(CoordinatorLayout parent, V child, View dependency) { return false; }
 
 public boolean onDependentViewChanged(CoordinatorLayout parent, V child, View dependency) {  return false; }
@@ -108,6 +108,7 @@ public void onDependentViewRemoved(CoordinatorLayout parent, V child, View depen
 ```
 
 在上图中我们创建了一个随手势滑动的`DependedView`。具体代码如下所示：
+
 ```
 public class DependedView extends View {
 
@@ -160,6 +161,7 @@ public class DependedView extends View {
 ```
 
 变色Behavior
+
 ```
 public class BrotherChameleonBehavior extends CoordinatorLayout.Behavior<View> {
 
@@ -178,7 +180,7 @@ public class BrotherChameleonBehavior extends CoordinatorLayout.Behavior<View> {
     public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
         int color = (int) mArgbEvaluator.evaluate(dependency.getY() / parent.getHeight(), Color.WHITE, Color.BLACK);
         child.setBackgroundColor(color);
-        return true;
+        return false;
     }
 }
 ```
@@ -229,6 +231,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
         mIsAttachedToWindow = true;
     }
 ```
+
 跟踪OnPreDrawListener监听：
 
 ```
@@ -241,6 +244,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 
 ```
+
 我们发现其内部调用了`onChildViewsChanged(EVENT_PRE_DRAW);`方法。我们继续查看该方法。
 
 ```
@@ -348,6 +352,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
         setMeasuredDimension(width, height);
     }
 ```
+
 上面的代码中，我精简了一些线索无关的代码。我们重点要关注 widthUsed 和 heightUsed 两个变量，它们的作用就是为了保存 CoordinatorLayout 中最大尺寸的子 View 的尺寸。并且，在对子 View 进行遍历的时候，CoordinatorLayout 有主动向子 View 的 Behavior 传递测量的要求，如果 Behavior 自主测量了 child，则以它的结果为准，否则将调用 measureChild() 方法亲自测量。
 
 
@@ -605,6 +610,7 @@ Behavior 通过 3 种方式绑定：1. xml 布局文件。2. 代码设置 layout
         }
     }
 ```
+
 这有该方法，同样的也是先获取子控件的Behavior对应的方法，需要主要的是该方法，是获取子控件中`最大`的消耗距离。
 
 ```
