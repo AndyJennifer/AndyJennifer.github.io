@@ -15,11 +15,10 @@ tags:
 - Jvm系列之Java类加载过程(六)
 - Jvm系列之Java类加载器与双亲委派模型(七)
 
-
 ### 并发篇
 
-
 #### 锁机制篇
+
 - Java并发编程之Java内存模型(一)
 - Java并发编程之Volatile(二)
 - Java并发编程之Synchronized(三)
@@ -34,6 +33,7 @@ tags:
 - Java并发编程之锁机制之读写锁(十二)
 
 #### 线程篇
+
 - Java并发编程之线程篇之线程的由来(一) {% post_link Java并发编程之线程篇之线程的由来(一) %}
 - Java并发编程之线程篇之线程简介(二) {% post_link Java并发编程之线程篇之线程简介(二) %}
 - Java并发编程之线程篇之线程中断(三) {% post_link Java并发编程之线程篇之线程中断(三) %}
@@ -43,12 +43,14 @@ tags:
 
 
 #### 线程池篇
+
 - Java并发编程之线程池篇之线程池的实现原理(一)
 - Java并发编程之线程池篇之线程池的使用(二)
 - Java并发编程之线程池篇之线程池的分类(三)
 
 
 ### 设计模式
+
 - 设计模式之面向对象的六大原则(一)
 - 设计模式之单例模式(二)
 - 设计模式之Builder模式(三)
@@ -75,6 +77,7 @@ tags:
 
 
 ### 注解
+
 - Android 注解系列之引导篇(一)
 - Android 注解系列之Annotation(二)
 - Android 注解系列之APT工具(三)
@@ -87,6 +90,7 @@ tags:
 https://github.com/GcsSloop/AndroidNote
 
 #### 基础知识
+
  - 自定义View基础知识篇-坐标系
  - 自定义View基础知识篇-角度弧度
  - 自定义View基础知识篇-颜色
@@ -132,6 +136,7 @@ https://github.com/GcsSloop/AndroidNote
 - 自定义View动画篇(八)-ObjectAnimator原理实现
 
 #### 绘图篇
+
 - 自定义View绘图篇(一)-View绘制流程
 - 自定义View绘图篇(二)-基本图形绘制
 - 自定义View绘图篇(三)-路径(path)
@@ -141,9 +146,7 @@ https://github.com/GcsSloop/AndroidNote
 - 自定义View绘图篇(七)-区域(Range)
 - 自定义View绘图篇(八)-Canvas与图层1
 - 自定义View绘图篇(九)-Canvas与图层2
--  paint相关
-
-
+- paint相关
 
 ### 异步任务
 
@@ -163,6 +166,7 @@ https://github.com/GcsSloop/AndroidNote
 
 
 ### ListView与RecyclerView篇
+
 - ListView与RecyclerView篇(一)-RecyclerView的简单使用
 - ListView与RecyclerView篇(二)-RecyclerView的简单封装
 - ListView与RecyclerView篇(三)-RecyclerView缓存原理

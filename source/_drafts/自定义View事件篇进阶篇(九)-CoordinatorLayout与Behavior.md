@@ -8,66 +8,91 @@ categories:
 
 ### 前言
 
-在上篇文章中，我们介绍了NestedScrolling(嵌套滑动)机制，介绍了子控件与父控件嵌套滑动的处理。现在我们来了解谷歌大大为我们提供的另一个交互布局CoordainatorLayout。
+在上篇文章中，我们介绍了NestedScrolling(嵌套滑动)机制，介绍了子控件与父控件嵌套滑动的处理。现在我们来了解谷歌大大为我们提供的另一个控件的交互布局`CoordainatorLayout`。CoordainatorLayout对于Android开发老司机来说肯定不会陌生，作为控制内部一个或多个的子控件协同交互的容器，开发者可以通过设置Behavior去控制多个控件的协同交互效果，测量尺寸、布局位置及触摸响应。作为谷歌推出的明星组件，分析CoordainatorLayout的文章已是数不胜数。而分析整个CoordainatorLayout原理的相关资料在网上很少，因此本文会把重点放在分析其内部原理上。
 
 通过阅读该文，你能了解如下知识点：
 
 - CoordainatorLayout中Behavior中的基础使用
-- CoordainatorLayout中Behavior的注册过程
-- CoordainatorLayout与Behavior的测量与布局的关系
-- CoordainatorLayout与Behavior嵌套滑动的事件传递关系
+- CoordainatorLayout中多个控件协同交互的原理
+- CoordainatorLayout中Behavior的注册与寻找过程
+- CoordainatorLayout的嵌套滑动与Behavior的关系
 - Behavior的单独处理事件的过程
+- CoordainatorLayout的测量与Behavior的关系
+- CoordainatorLayout的布局与Behavior的关系
 
 > 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
 ### CoordainatorLayout简介
 
-在了解CoordainatorLayout之前，我们需要知道它和NestedScrolling机制有什么不同。在NestedScrolling机制中，我们都知道，参与角色只有子控件和父控件。这种关系都是一对一的。而在CoordinatorLayout中子控件除了可以和它的父控件进行交互以外，还可以与其他兄弟控件进行交互。也就是关系可以为一对一或者一对多。
+熟悉CoordinatorLayout的小伙伴，肯定知道CoordinatorLayout主要实现以下四个功能：
 
-在官方的解释中，CoordainatorLayout是一个加强版的FrameLayout,重要用途有一下两点：
+- 处理子控件的依赖下的交互
+- 处理子控件的嵌套滑动
+- 处理子控件的测量与布局
+- 处理子控件的事件拦截与响应。
 
-- 作为应用程序的根布局
-- 作为一个可以与一个或多个的子控件交互的容器。
+而上述四个功能，都依托于CoordainatorLayout中提供的一个叫做`Behavior`的“插件”。Behavior内部也提供了相应方法来对应这四个不同的功能，具体如下所示：
 
-需要注意的是CoordainatorLayout,本质是一个ViewGroup，它并没有继承FrameLayout，而是实现了NestedScrollingParent接口。为了达到多个子控件的交互，谷歌在CoordainatorLayout中提供了一个交互的插件--Behavior,通过Behavior,CoordinatorLayout可以定义与它 child 的交互或者是某些 child 之间的交互。那现在我们先了解Behavior这个类中的方法吧。
+{% Behavior方法设置.jpg%}
 
-### Behavior方法介绍
+那现在我们就一起来看看，谷歌是怎么围绕Behavior对上述四个功能进行设计的把。
 
-在下图中，我把Behavior中常用的方法梳理了下来如下所示：
+#### 子控件依赖下的交互设计
 
-| 方法名称 | 作用 |
-|------|------------|
-| boolean layoutDependsOn  | 0          |  
-| boolean onDependentViewChanged  | 100        |
-| void onDependentViewRemoved| 1000       |
-| boolean onStartNestedScroll  | 0          |  
-| void onNestedScrollAccepted  | 100        |
-| void onStopNestedScroll| 1000       | 
-| void onNestedScroll | 0          |  
-| void onNestedPreScroll | 100        | 
-| boolean onNestedFling| 1000       | 
-| boolean onInterceptTouchEvent | 0          |  
-| boolean onTouchEvent | 100        |
-| boolean onLayoutChild| 1000       |
-| boolean onMeasureChild | 0          |  
+对于子控件的依赖交互，谷歌是这样设计的：
 
-### Behavior的依赖关系
+{% 依赖下的交互.jpg%}
 
-如果一个View依赖另外一个View,那么可能需要下面三个方法：
+当CoordainatorLayout中子控件（childView1)的位置发生改变的时候，那么在CoordainatorLayout内部会通知所有依赖childView1的控件中的Behavior，告知其依赖的childView的位置发生改变。那么如何判断依赖，接受到通知后如何处理。这些都交由Behavior中的方法处理。
+
+#### 子控件的嵌套滑动的设计
+
+对于子控件的嵌套滑动，谷歌是这样设计的：
+
+{% 嵌套滑动设计.jpg%}
+
+CoordinatorLayout实现了NestedScrollingParent2接口。那么当事件产生后，内部实现了NestedScrollingChild接口的子控件会将事件分方法给CoordinatorLayout，CoordinatorLayout又会将事件传递给所有声明了Behavior的子控件。接着在Behavior中实现子控件的嵌套滑动。这样就达到了多个子控件协同交互的效果。那么再结合上文提到的Behavior中嵌套滑动的相关方法，我们可以得到如下流程：
+
+{% 嵌套滑动整体流程.jpg%}
+
+观察谷歌的设计，我们可以发现，相对于NestedScrolling机制（参与角色只有子控件和父控件），CoordainatorLayout中的交互角色更为丰富，在CoordainatorLayout下的子控件可以与多个兄弟控件进行交互。
+
+#### 子控件的测量、布局、事件的设计
+
+看了谷歌对子控件的嵌套滑动设计，我们再来看看子控件的测量、布局、事件的设计：
+
+{% 布局与测量及事件的设计.jpg%}
+
+因为CoordainatorLayout主要负责的是子控件之间的交互，内部控件的测量与布局，就简单的类似FrameLayout处理方式就好了。在特殊的情况下，如子控件需要处理宽高和布局的时候，那么交由Behavior内部的`onMeasureChild`与`onLayoutChild`方法来进行处理。同理对于事件的拦截与处理，如果子控件需要拦截并消耗事件，那么交由给Behavior内部的`onInterceptTouchEvent`与`onTouchEvent`方法进行处理。
+
+可能有的小伙伴会想，为什么会将这四种功能对于的方法将这些功能都抽象在Behavior中。其实原因非常简单，因为所有对应功能都对应在Behavior中，那么对于子控件来说，这种插件化的方式就非常解耦了，我们的子控件无需将效果写死在自身中，我们只需要对应不同的Behavior，就可以实现不同的效果了。如下所示：
+
+{% 控件对应多个Behavior.jpg%}
+
+### CoordainatorLayout下的多个子控件的依赖交互
+
+了解了CoordainatorLayout中四种功能的设计后，现在我们通过一个例子来讲解CoordainatorLayout下的多个子控件的交互。在讲解具体的例子之前，我们先回顾一下Behavior中对子控件依赖交互提供的方法。如下所示：
 
 ```
-
 public boolean layoutDependsOn(CoordinatorLayout parent, V child, View dependency) { return false; }
-
 public boolean onDependentViewChanged(CoordinatorLayout parent, V child, View dependency) {  return false; }
-
 public void onDependentViewRemoved(CoordinatorLayout parent, V child, View dependency) {}
 ```
 
-确定一个View依赖另外一个View的时候，是通过`layoutDependsOn`这个方法。其中child是依赖对象，而dependency是被依赖对象，其中该方法的返回值是判断是否依赖对应view。如果返回true。那么表示依赖。反之不依赖。一般情况下，在我们自定义Behavior时，我们需要重写该方法。当`layoutDependsOn`方法返回true时，后面的`onDependentViewChanged`与`onDependentViewRemoved`方法才会调用。
+layoutDependsOn方法介绍：
+
+确定一个控件（childView1)依赖另外一个控件(childView2)的时候，是通过`layoutDependsOn`这个方法。其中child是依赖对象(childView1)，而dependency是被依赖对象(childView2)，该方法的返回值是判断是否依赖对应view。如果返回true。那么表示依赖。反之不依赖。一般情况下，在我们自定义Behavior时，我们需要重写该方法。当`layoutDependsOn`方法返回true时，后面的`onDependentViewChanged`与`onDependentViewRemoved`方法才会调用。
+
+onDependentViewChanged方法介绍：
+
+当一个控件（childView1)所依赖的另一个控件(childView2)位置、大小发生改变的时候，该方法会调用。其中该方法的返回值，是由childView1来决定的，如果childView1在接受到childView2的改变通知后，如果childView1的位置或大小发生改变，那么就返回true,反之返回false。
+
+onDependentViewRemoved方法介绍：
+
+当一个控件（childView1)所依赖的另一个控件(childView2)被删除的时候，该方法会调用。
+
 
 下面我们就看一种简单的例子，来讲解在使用CoordainatorLayout下各个兄弟控件之间的依赖产生的交互效果。
-
 
 {% 效果展示.gif %}
 
@@ -270,6 +295,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 
                 //调用当前子控件的Behavior的layoutDependsOn方法判断是否依赖
                 if (b != null && b.layoutDependsOn(this, checkChild, child)) {
+
                     if (type == EVENT_PRE_DRAW && checkLp.getChangedAfterNestedScroll()) {
                         checkLp.resetChangedAfterNestedScroll();
                         continue;
@@ -854,11 +880,8 @@ https://www.jianshu.com/p/82d18b0d18f4?utm_campaign=maleskine&utm_content=note&u
 
 这篇文章洋洋洒洒已经有千字以上了，因为篇幅过长，为了防止遗忘。现在可以将文章细节总结如下：
 
-CoordinatorLayout 是一个普通的 ViewGroup，它的布局特性类似于 FrameLayout。
-CoordinatorLayout 是超级 FrameLayout，它比 FrameLayout 更强悍的原因是它能与 Behavior 交互。
-CoordinatorLayout 与 Behavior 相辅相成，它们一起构建了一个美妙的交互系统。
-自定义 Behavior 主要有 2 个目的：1 确定一个 View 依赖另外一个 View 的依赖关系。2 指定一个 View 响应嵌套滑动事件。
+- CoordinatorLayout 是一个普通的 ViewGroup，它的布局特性类似于 FrameLayout。
+- CoordinatorLayout 是超级 FrameLayout，它比 FrameLayout 更强悍的原因是它能与 Behavior 交互。
+- CoordinatorLayout 与 Behavior 相辅相成，它们一起构建了一个美妙的交互系统。
+- 自定义 Behavior 主要有 2 个目的：1 确定一个 View 依赖另外一个 View 的依赖关系。2 指定一个 View 响应嵌套滑动事件。
 确定两个 View 的依赖关系，有两种途径。一个是在 Behavior 中的 layoutDepentOn() 返回 true。另外一种就是直接通过 xml 锚定一个 View。当被依赖方尺寸和位置变化时，Behavior 中的 onDependentViewChanged 方法会被调用。如果在这个方法中改变了主动依赖的那个 view 的尺寸或者位置信息，应该在方法最后 return true。
-嵌套滑动分为 nested scroll 和 fling 两种。Behavior 中相应的 View 是否接受响应由 onStartNestedScroll() 返回值决定。一般在 onNestedPreScroll() 处理相应的 nested scroll 响应，在 onPreFling 处理 fling 事件。但是这个不绝对，根据实际情况决定。
-NestedScrollView 能够产生嵌套滑动事件是因为它本质上是一个 NestedScrollingChild 对象，而 CoordinatorLayout 能够响应是因为它本质上是一个 NestedScrollingParent 对象。
-Behavior 是一种插件机制，如果没有 Behavior 的存在，CoordinatorLayout 和普通的 FrameLayout 无异。Behavior 的存在，可以决定 CoordinatorLayout 中对应的 childview 的测量尺寸、布局位置、触摸响应。

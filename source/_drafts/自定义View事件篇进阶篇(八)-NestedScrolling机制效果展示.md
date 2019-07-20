@@ -53,7 +53,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
-        return true;
+         return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0
     }
 
     @Override
@@ -88,7 +88,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 在上述代码中，我们需要注意以下几点：
 
 - StickyNavLayout实现类默认方向为竖直方向。
-- 为了让父控件处理事件，我们需要在`onStartNestedScroll`方法中返回`true`。
+- 为了让父控件处理竖直方向上的事件，我们需要在`onStartNestedScroll`方法判断`axes & ViewCompat.SCROLL_AXIS_VERTICAL`。
 - 为了让子控件也处理fling，我们需要在`onNestedPreFling`方法中返回`false`。因为在嵌套滑动机制中，如果该方法返回true,那么子控件就没有机会处理fling了。
 - 为了兼容低版本并获得正确的嵌套滑动状态，我们需要在onNestedScrollAccepted、onStopNestedScroll、onStopNestedScroll、中调用NestedScrollingParentHelper的相应方法。
 
