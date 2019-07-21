@@ -43,7 +43,7 @@ categories:
 
 {% 依赖下的交互.jpg%}
 
-当CoordainatorLayout中子控件（childView1)的位置发生改变的时候，那么在CoordainatorLayout内部会通知所有依赖childView1的控件中的Behavior，告知其依赖的childView的位置发生改变。那么如何判断依赖，接受到通知后如何处理。这些都交由Behavior中的方法处理。
+当CoordainatorLayout中子控件（childView1)的位置、大小等发生改变的时候，那么在CoordainatorLayout内部会通知所有依赖childView1的控件，并调用对应声明的Behavior，告知其依赖的childView1发生改变。那么如何判断依赖，接受到通知后如何处理。这些都交由Behavior来处理。
 
 #### 子控件的嵌套滑动的设计
 
@@ -51,7 +51,7 @@ categories:
 
 {% 嵌套滑动设计.jpg%}
 
-CoordinatorLayout实现了NestedScrollingParent2接口。那么当事件产生后，内部实现了NestedScrollingChild接口的子控件会将事件分方法给CoordinatorLayout，CoordinatorLayout又会将事件传递给所有声明了Behavior的子控件。接着在Behavior中实现子控件的嵌套滑动。这样就达到了多个子控件协同交互的效果。那么再结合上文提到的Behavior中嵌套滑动的相关方法，我们可以得到如下流程：
+CoordinatorLayout实现了NestedScrollingParent2接口。那么当事件（scroll或fling)产生后，内部实现了NestedScrollingChild接口的子控件会将事件分方法给CoordinatorLayout，CoordinatorLayout又会将事件传递给所有的Behavior。接着在Behavior中实现子控件的嵌套滑动。那么再结合上文提到的Behavior中嵌套滑动的相关方法，我们可以得到如下流程：
 
 {% 嵌套滑动整体流程.jpg%}
 
@@ -65,72 +65,37 @@ CoordinatorLayout实现了NestedScrollingParent2接口。那么当事件产生�
 
 因为CoordainatorLayout主要负责的是子控件之间的交互，内部控件的测量与布局，就简单的类似FrameLayout处理方式就好了。在特殊的情况下，如子控件需要处理宽高和布局的时候，那么交由Behavior内部的`onMeasureChild`与`onLayoutChild`方法来进行处理。同理对于事件的拦截与处理，如果子控件需要拦截并消耗事件，那么交由给Behavior内部的`onInterceptTouchEvent`与`onTouchEvent`方法进行处理。
 
-可能有的小伙伴会想，为什么会将这四种功能对于的方法将这些功能都抽象在Behavior中。其实原因非常简单，因为所有对应功能都对应在Behavior中，那么对于子控件来说，这种插件化的方式就非常解耦了，我们的子控件无需将效果写死在自身中，我们只需要对应不同的Behavior，就可以实现不同的效果了。如下所示：
+可能有的小伙伴会想，为什么会将这四种功能对于的方法将这些功能都交由Behavior实现。其实原因非常简单，因为将所有功能都对应在Behavior中，那么对于子控件来说，这种插件化的方式就非常解耦了，我们的子控件无需将效果写死在自身中，我们只需要对应不同的Behavior，就可以实现不同的效果了。如下所示：
 
 {% 控件对应多个Behavior.jpg%}
 
 ### CoordainatorLayout下的多个子控件的依赖交互
 
-了解了CoordainatorLayout中四种功能的设计后，现在我们通过一个例子来讲解CoordainatorLayout下的多个子控件的交互。在讲解具体的例子之前，我们先回顾一下Behavior中对子控件依赖交互提供的方法。如下所示：
+了解了CoordainatorLayout中四种功能的设计后，现在我们通过一个例子来讲解CoordainatorLayout下多个子控件的交互。在讲解具体的例子之前，我们先回顾一下Behavior中对子控件依赖交互提供的方法。如下所示：
 
 ```
 public boolean layoutDependsOn(CoordinatorLayout parent, V child, View dependency) { return false; }
-public boolean onDependentViewChanged(CoordinatorLayout parent, V child, View dependency) {  return false; }
+public boolean onDependentViewChanged(CoordinatorLayout parent, V child, View dependency) {return false; }
 public void onDependentViewRemoved(CoordinatorLayout parent, V child, View dependency) {}
 ```
 
-layoutDependsOn方法介绍：
+**layoutDependsOn方法介绍：**
 
 确定一个控件（childView1)依赖另外一个控件(childView2)的时候，是通过`layoutDependsOn`这个方法。其中child是依赖对象(childView1)，而dependency是被依赖对象(childView2)，该方法的返回值是判断是否依赖对应view。如果返回true。那么表示依赖。反之不依赖。一般情况下，在我们自定义Behavior时，我们需要重写该方法。当`layoutDependsOn`方法返回true时，后面的`onDependentViewChanged`与`onDependentViewRemoved`方法才会调用。
 
-onDependentViewChanged方法介绍：
+**onDependentViewChanged方法介绍：**
 
 当一个控件（childView1)所依赖的另一个控件(childView2)位置、大小发生改变的时候，该方法会调用。其中该方法的返回值，是由childView1来决定的，如果childView1在接受到childView2的改变通知后，如果childView1的位置或大小发生改变，那么就返回true,反之返回false。
 
-onDependentViewRemoved方法介绍：
+**onDependentViewRemoved方法介绍：**
 
 当一个控件（childView1)所依赖的另一个控件(childView2)被删除的时候，该方法会调用。
 
+#### Demo展示
 
 下面我们就看一种简单的例子，来讲解在使用CoordainatorLayout下各个兄弟控件之间的依赖产生的交互效果。
 
 {% 效果展示.gif %}
-
-
-大致布局如下所示：
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
-    <com.jennifer.andy.nestedscrollingdemo.view.DependedView
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:background="#f00"
-        android:gravity="center"
-        android:textColor="#fff"
-        android:textSize="18sp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="跟随兄弟"
-        app:layout_behavior=".ui.cdl.behavior.BrotherFollowBehavior"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="变色兄弟"
-        app:layout_behavior=".ui.cdl.behavior.BrotherChameleonBehavior"/>
-
-</android.support.design.widget.CoordinatorLayout>
-```
 
 在上图中我们创建了一个随手势滑动的`DependedView`。具体代码如下所示：
 
@@ -234,6 +199,45 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 }
 ```
 
+对应的布局如下：
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <com.jennifer.andy.nestedscrollingdemo.view.DependedView
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="#f00"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="跟随兄弟"
+        app:layout_behavior=".ui.cdl.behavior.BrotherFollowBehavior"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="变色兄弟"
+        app:layout_behavior=".ui.cdl.behavior.BrotherChameleonBehavior"/>
+
+</android.support.design.widget.CoordinatorLayout>
+```
+
+#### Behavior的寻找
+
+#### 原理讲解
+
 在没有实现Nested相关接口，子控件相互交互的原理，当我们的`DependedView`在屏幕中的位置发生改变的时候，会导致父控重绘，那么也就是会调用onDraw()方法。而CoordainatorLayout在`onAttachedToWindow`有设置了绘制监听`OnPreDrawListener`。如下所示：
 
 ```
@@ -320,7 +324,6 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 ```
 
-
 ### Behavior的测量
 
 ```
@@ -382,13 +385,8 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 上面的代码中，我精简了一些线索无关的代码。我们重点要关注 widthUsed 和 heightUsed 两个变量，它们的作用就是为了保存 CoordinatorLayout 中最大尺寸的子 View 的尺寸。并且，在对子 View 进行遍历的时候，CoordinatorLayout 有主动向子 View 的 Behavior 传递测量的要求，如果 Behavior 自主测量了 child，则以它的结果为准，否则将调用 measureChild() 方法亲自测量。
 
 
-### Behavior的布局
-
-### Behavior的设置
-
 ### Behavior对事件的响应
 
-### 第一种是没有实现Nested相关接口
 
 ### 第二种是对实现了Nested接口的响应
 
