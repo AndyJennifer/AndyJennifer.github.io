@@ -55,7 +55,7 @@ CoordinatorLayout实现了NestedScrollingParent2接口。那么当事件（scrol
 
 {% 嵌套滑动整体流程.jpg%}
 
-观察谷歌的设计，我们可以发现，相对于NestedScrolling机制（参与角色只有子控件和父控件），CoordainatorLayout中的交互角色更为丰富，在CoordainatorLayout下的子控件可以与多个兄弟控件进行交互。
+观察谷歌的设计，我们可以发现，相对于NestedScrolling机制（参与角色只有子控件和父控件），CoordainatorLayout中的交互角色更为丰富，在CoordainatorLayout下的**子控件可以与多个兄弟控件进行交互。**
 
 #### 子控件的测量、布局、事件的设计
 
@@ -85,7 +85,7 @@ public void onDependentViewRemoved(CoordinatorLayout parent, V child, View depen
 
 **onDependentViewChanged方法介绍：**
 
-当一个控件（childView1)所依赖的另一个控件(childView2)位置、大小发生改变的时候，该方法会调用。其中该方法的返回值，是由childView1来决定的，如果childView1在接受到childView2的改变通知后，如果childView1的位置或大小发生改变，那么就返回true,反之返回false。
+当一个控件（childView1)所依赖的另一个控件(childView2)位置、大小发生改变的时候，该方法会调用。其中该方法的返回值，是由childView1来决定的，如果childView1在接受到childView2的改变通知后，childView1的位置或大小发生改变，那么就返回true,反之返回false。
 
 **onDependentViewRemoved方法介绍：**
 
@@ -97,7 +97,7 @@ public void onDependentViewRemoved(CoordinatorLayout parent, V child, View depen
 
 {% 效果展示.gif %}
 
-在上图中我们创建了一个随手势滑动的`DependedView`。具体代码如下所示：
+在上述Demo中，我们创建了一个随手势滑动的`DependedView`,并设定了另外两个依赖DependedView的TextView的Behavior，BrotherChameleonBehavior（变色小弟）与BrotherFollowBehavior（跟随小弟）。具体代码如下所示：
 
 ```
 public class DependedView extends View {
@@ -133,7 +133,6 @@ public class DependedView extends View {
                 int dx = (int) (event.getX() - mLastX);
                 int dy = (int) (event.getY() - mLastY);
                 if (Math.abs(dx) > mDragSlop || Math.abs(dy) > mDragSlop) {
-                    System.out.println("dx--->" + dx + "dy--->" + dy + "--->" + mDragSlop);
                     ViewCompat.offsetTopAndBottom(this, dy);
                     ViewCompat.offsetLeftAndRight(this, dx);
                 }
@@ -150,7 +149,11 @@ public class DependedView extends View {
 }
 ```
 
-变色Behavior
+DependedView逻辑非常简单，就是重写了onTouchEvent，监听滑动，并设置DependedView的位置。我们继续查看另外两个TextView的Behavior。
+
+BrotherChameleonBehavior（变色小弟）代码如下所示：
+
+>在CoordainatorLayout中要实现子控件的依赖交互，我们需要继承CoordinatorLayout.Behavior。并实现layoutDependsOn、onDependentViewChanged、onDependentViewRemoved方法，因为我们Demo中不设计关于依赖控件的删除，故没有重写onDependentViewRemoved方法。
 
 ```
 public class BrotherChameleonBehavior extends CoordinatorLayout.Behavior<View> {
@@ -175,7 +178,7 @@ public class BrotherChameleonBehavior extends CoordinatorLayout.Behavior<View> {
 }
 ```
 
-跟随Behavior
+BrotherFollowBehavior（跟随小弟)代码如下所示：
 
 ```
 public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
@@ -186,12 +189,12 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
-        return dependency instanceof DependedView;
+        return dependency instanceof DependedView;//判断依赖的是否是DependedView
     }
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
-
+        //如果DependedView的位置、大小改变，跟随小弟始终在DependedView下面
         child.setY(dependency.getBottom() + 50);
         child.setX(dependency.getX());
         return true;
@@ -199,7 +202,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 }
 ```
 
-对应的布局如下：
+比较重要的布局文件怎么能忘了呐，对应的布局如下：
 
 ```
 <?xml version="1.0" encoding="utf-8"?>
@@ -234,11 +237,9 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 </android.support.design.widget.CoordinatorLayout>
 ```
 
-#### Behavior的寻找
-
 #### 原理讲解
 
-在没有实现Nested相关接口，子控件相互交互的原理，当我们的`DependedView`在屏幕中的位置发生改变的时候，会导致父控重绘，那么也就是会调用onDraw()方法。而CoordainatorLayout在`onAttachedToWindow`有设置了绘制监听`OnPreDrawListener`。如下所示：
+大家肯定会很好奇，为什么简简单单的设置了两个Behavior,DependedView位置发生改变的时候就能通知依赖的两个TextView呢？这要从DependedView的onTouchEvent方法说起。在onTouchEvent方法中，我们根据手势修改了DependedView的位置，我们都知道当子控件位置、大小发生改变的时候，会导致父控件重绘。也就是会调用`onDraw`方法。而CoordainatorLayout在`onAttachedToWindow`中使用了`ViewTreeObserver`，并设置了绘制前监听器`OnPreDrawListener`。如下所示：
 
 ```
   @Override
@@ -252,16 +253,11 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
             final ViewTreeObserver vto = getViewTreeObserver();
             vto.addOnPreDrawListener(mOnPreDrawListener);
         }
-        if (mLastInsets == null && ViewCompat.getFitsSystemWindows(this)) {
-            // We're set to fitSystemWindows but we haven't had any insets yet...
-            // We should request a new dispatch of window insets
-            ViewCompat.requestApplyInsets(this);
-        }
-        mIsAttachedToWindow = true;
+       //省略部分代码：
     }
 ```
 
-跟踪OnPreDrawListener监听：
+熟悉ViewTreeObserver的小伙伴一定清楚，该类主要是监测整个View树的变化（状态变化，或者内部的View可见性变化等），我们继续跟踪OnPreDrawListener，查看CoordainatorLayou在绘制前做了什么。
 
 ```
   class OnPreDrawListener implements ViewTreeObserver.OnPreDrawListener {
@@ -271,7 +267,6 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
             return true;
         }
     }
-
 ```
 
 我们发现其内部调用了`onChildViewsChanged(EVENT_PRE_DRAW);`方法。我们继续查看该方法。
@@ -286,6 +281,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 
         //获取内部的所有的子控件
         for (int i = 0; i < childCount; i++) {
+
             final View child = mDependencySortedChildren.get(i);
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
@@ -293,18 +289,14 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 
             //再次获取内部的所有的子控件
             for (int j = i + 1; j < childCount; j++) {
+
                 final View checkChild = mDependencySortedChildren.get(j);
                 final LayoutParams checkLp = (LayoutParams) checkChild.getLayoutParams();
                 final Behavior b = checkLp.getBehavior();
 
                 //调用当前子控件的Behavior的layoutDependsOn方法判断是否依赖
                 if (b != null && b.layoutDependsOn(this, checkChild, child)) {
-
-                    if (type == EVENT_PRE_DRAW && checkLp.getChangedAfterNestedScroll()) {
-                        checkLp.resetChangedAfterNestedScroll();
-                        continue;
-                    }
-
+                    //省略部分代码....
                     final boolean handled;
                     switch (type) {
                         case EVENT_VIEW_REMOVED:
@@ -312,7 +304,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
                             handled = true;
                             break;
                         default:
-                            // 如果依赖，那么就会走当前子控件的onDependentViewChanged方法。
+                            // 如果依赖，那么就会走当前子控件Behavior中的onDependentViewChanged方法。
                             handled = b.onDependentViewChanged(this, checkChild, child);
                             break;
                     }
@@ -321,6 +313,149 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
             }
         }
     //省略部分代码...
+    }
+```
+
+观察代码，我们发现程序中使用了一个名为`mDependencySortedChildren`的集合，通过遍历该集合，我们可以获取集合中控件的`LayoutParam`，得到LayoutParam后，我们可以继续获取相应的`Behavior`。并调用其`layoutDependsOn`方法找到所依赖的控件，如果找到了当前控件所依赖的另一控件，那么就调用Behavior中的`onDependentViewChanged`方法。到这里，我相信大家应该明白多个控件依赖交互的原理。现在还剩下mDependencySortedChildren集合了。我们看看这个集合中是存储了什么东西。
+
+```
+ @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        prepareChildren();
+        //省略部分代码...
+    }
+```
+
+```
+  private void prepareChildren() {
+        mDependencySortedChildren.clear();
+        mChildDag.clear();
+
+        for (int i = 0, count = getChildCount(); i < count; i++) {
+            final View view = getChildAt(i);
+
+            final LayoutParams lp = getResolvedLayoutParams(view);
+            lp.findAnchorView(this, view);
+
+            mChildDag.addNode(view);
+
+            // Now iterate again over the other children, adding any dependencies to the graph
+            for (int j = 0; j < count; j++) {
+                if (j == i) {
+                    continue;
+                }
+                final View other = getChildAt(j);
+                if (lp.dependsOn(this, view, other)) {
+                    if (!mChildDag.contains(other)) {
+                        // Make sure that the other node is added
+                        mChildDag.addNode(other);
+                    }
+                    // Now add the dependency to the graph
+                    mChildDag.addEdge(other, view);
+                }
+            }
+        }
+
+        // Finally add the sorted graph list to our list
+        mDependencySortedChildren.addAll(mChildDag.getSortedList());
+        // We also need to reverse the result since we want the start of the list to contain
+        // Views which have no dependencies, then dependent views after that
+        Collections.reverse(mDependencySortedChildren);
+    }
+```
+
+
+
+
+#### Behavior的寻找
+
+```
+ public static class LayoutParams extends MarginLayoutParams {
+        /**
+         * A {@link Behavior} that the child view should obey.
+         */
+        Behavior mBehavior;
+ }
+```
+
+```
+  static Behavior parseBehavior(Context context, AttributeSet attrs, String name) {
+        if (TextUtils.isEmpty(name)) {
+            return null;
+        }
+
+        final String fullName;
+        if (name.startsWith(".")) {
+            // Relative to the app package. Prepend the app package name.
+            fullName = context.getPackageName() + name;
+        } else if (name.indexOf('.') >= 0) {
+            // Fully qualified package name.
+            fullName = name;
+        } else {
+            // Assume stock behavior in this package (if we have one)
+            fullName = !TextUtils.isEmpty(WIDGET_PACKAGE_NAME)
+                    ? (WIDGET_PACKAGE_NAME + '.' + name)
+                    : name;
+        }
+
+        try {
+            Map<String, Constructor<Behavior>> constructors = sConstructors.get();
+            if (constructors == null) {
+                constructors = new HashMap<>();
+                sConstructors.set(constructors);
+            }
+            Constructor<Behavior> c = constructors.get(fullName);
+            if (c == null) {
+                final Class<Behavior> clazz = (Class<Behavior>) context.getClassLoader()
+                        .loadClass(fullName);
+                c = clazz.getConstructor(CONSTRUCTOR_PARAMS);
+                c.setAccessible(true);
+                constructors.put(fullName, c);
+            }
+            return c.newInstance(context, attrs);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not inflate Behavior subclass " + fullName, e);
+        }
+    }
+
+```
+
+通过注解的方式设置Behavior
+
+```
+    LayoutParams getResolvedLayoutParams(View child) {
+        final LayoutParams result = (LayoutParams) child.getLayoutParams();
+        if (!result.mBehaviorResolved) {
+            if (child instanceof AttachedBehavior) {
+                Behavior attachedBehavior = ((AttachedBehavior) child).getBehavior();
+                if (attachedBehavior == null) {
+                    Log.e(TAG, "Attached behavior class is null");
+                }
+                result.setBehavior(attachedBehavior);
+                result.mBehaviorResolved = true;
+            } else {
+                // The deprecated path that looks up the attached behavior based on annotation
+                Class<?> childClass = child.getClass();
+                DefaultBehavior defaultBehavior = null;
+                while (childClass != null
+                        && (defaultBehavior = childClass.getAnnotation(DefaultBehavior.class))
+                                == null) {
+                    childClass = childClass.getSuperclass();
+                }
+                if (defaultBehavior != null) {
+                    try {
+                        result.setBehavior(
+                                defaultBehavior.value().getDeclaredConstructor().newInstance());
+                    } catch (Exception e) {
+                        Log.e(TAG, "Default behavior class " + defaultBehavior.value().getName()
+                                        + " could not be instantiated. Did you forget"
+                                        + " a default constructor?", e);
+                    }
+                }
+                result.mBehaviorResolved = true;
+            }
+        }
+        return result;
     }
 ```
 
