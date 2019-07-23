@@ -9,6 +9,110 @@ categories:
 ### 前言
 
 
+```
+
+        @Override
+        public boolean onStartNestedScroll(CoordinatorLayout parent, AppBarLayout child,
+                View directTargetChild, View target, int nestedScrollAxes, int type) {
+            // Return true if we're nested scrolling vertically, and we have scrollable children
+            // and the scrolling view is big enough to scroll
+            final boolean started = (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0
+                    && child.hasScrollableChildren()
+                    && parent.getHeight() - directTargetChild.getHeight() <= child.getHeight();
+
+            if (started && mOffsetAnimator != null) {
+                // Cancel any offset animation
+                mOffsetAnimator.cancel();
+            }
+
+            // A new nested scroll has started so clear out the previous ref
+            mLastNestedScrollingChildRef = null;
+
+            return started;
+        }
+
+
+```
+
+```
+    boolean hasScrollableChildren() {
+        return getTotalScrollRange() != 0;
+    }
+```
+
+```
+    public final int getTotalScrollRange() {
+        if (mTotalScrollRange != INVALID_SCROLL_RANGE) {
+            return mTotalScrollRange;
+        }
+
+        int range = 0;
+        for (int i = 0, z = getChildCount(); i < z; i++) {
+            final View child = getChildAt(i);
+            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            final int childHeight = child.getMeasuredHeight();
+            final int flags = lp.mScrollFlags;
+
+            if ((flags & LayoutParams.SCROLL_FLAG_SCROLL) != 0) {
+                // We're set to scroll so add the child's height
+                //注意这里
+                range += childHeight + lp.topMargin + lp.bottomMargin;
+
+                if ((flags & LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED) != 0) {
+                    // For a collapsing scroll, we to take the collapsed height into account.
+                    // We also break straight away since later views can't scroll beneath
+                    // us
+                    range -= ViewCompat.getMinimumHeight(child);
+                    break;
+                }
+            } else {
+                // As soon as a view doesn't have the scroll flag, we end the range calculation.
+                // This is because views below can not scroll under a fixed view.
+                break;
+            }
+        }
+        return mTotalScrollRange = Math.max(0, range - getTopInset());
+    }
+```
+
+其实就是获取的当前控件的总的高度与childHeight + lp.topMargin + lp.bottomMargin;就是为了判断AppBarLayout中有子控件。
+
+```
+        @Override
+        public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, AppBarLayout child,
+                View target, int dx, int dy, int[] consumed, int type) {
+            if (dy != 0) {
+                int min, max;
+                if (dy < 0) {
+                    // We're scrolling down
+                    min = -child.getTotalScrollRange();
+                    max = min + child.getDownNestedPreScrollRange();
+                } else {
+                    // We're scrolling up
+                    min = -child.getUpNestedPreScrollRange();
+                    max = 0;
+                }
+                if (min != max) {
+                    consumed[1] = scroll(coordinatorLayout, child, dy, min, max);
+                }
+            }
+        }
+
+```
+上述方法只是为了确认AppBarLayout中有控件，有控件这样才滚动。就是为了防止内部控件为0的情况
+
+
+```
+
+    final int scroll(CoordinatorLayout coordinatorLayout, V header,
+            int dy, int minOffset, int maxOffset) {
+        return setHeaderTopBottomOffset(coordinatorLayout, header,
+                getTopBottomOffsetForScrollingSibling() - dy, minOffset, maxOffset);
+    }
+
+```
+
+滚动范围只能在哪个之间，超过了就不滚动了
 
 ### 从CoordinatorLayout的拦截方法说起
 因为ScrollingViewBehavior中没有拦截事件，又因为CoordinatorLayout中是否拦截事件是根据内部的子控件中的Behavior是否拦截事件决定的，那么事件最终就会走到RecyclerView,又因为RecyclerView内部实现了NestedScrollingChild2接口，那么也就是说CoordinatorLayout会接受到NestedScrollingChild的发送的嵌套滑动事件后会调用onStartNestedScroll方法，在onStartNestedScroll方法中，又会调用所有子控件的Behavior的onStartNestedScroll。如下所示：

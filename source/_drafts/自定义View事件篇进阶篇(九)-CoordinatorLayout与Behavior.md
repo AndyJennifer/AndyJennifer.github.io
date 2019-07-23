@@ -14,11 +14,11 @@ categories:
 
 - CoordainatorLayout中Behavior中的基础使用
 - CoordainatorLayout中多个控件协同交互的原理
-- CoordainatorLayout中Behavior的注册与寻找过程
-- CoordainatorLayout的嵌套滑动与Behavior的关系
-- Behavior的单独处理事件的过程
-- CoordainatorLayout的测量与Behavior的关系
-- CoordainatorLayout的布局与Behavior的关系
+- CoordainatorLayout中Behavior的实例化过程
+- Behavior实现嵌套滑动的原理与过程
+- Behavior的事件处理
+- Behavior自定义测量的时机与过程
+- Behavior自定义布局的时机与过程
 
 > 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
@@ -326,11 +326,13 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 ```
 
+`mDependencySortedChildren`中元素是在onMeasure方法中的`prepareChildren()`中进行添加的，我们继续查看该方法。方法如下所示：
+
 ```
   private void prepareChildren() {
         mDependencySortedChildren.clear();
         mChildDag.clear();
-
+        //遍历内部所有孩子
         for (int i = 0, count = getChildCount(); i < count; i++) {
             final View view = getChildAt(i);
 
@@ -339,7 +341,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
 
             mChildDag.addNode(view);
 
-            // Now iterate again over the other children, adding any dependencies to the graph
+            // 再次迭代获取子类控件，找到依赖控件并添加到"(mchildDag)图"中
             for (int j = 0; j < count; j++) {
                 if (j == i) {
                     continue;
@@ -347,36 +349,66 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
                 final View other = getChildAt(j);
                 if (lp.dependsOn(this, view, other)) {
                     if (!mChildDag.contains(other)) {
-                        // Make sure that the other node is added
+                        //添加到图中
                         mChildDag.addNode(other);
                     }
-                    // Now add the dependency to the graph
+                    // 添加边（依赖的view)
                     mChildDag.addEdge(other, view);
                 }
             }
         }
 
-        // Finally add the sorted graph list to our list
         mDependencySortedChildren.addAll(mChildDag.getSortedList());
-        // We also need to reverse the result since we want the start of the list to contain
-        // Views which have no dependencies, then dependent views after that
-        Collections.reverse(mDependencySortedChildren);
+        //省略部分代码
     }
 ```
 
+prepareChildren方法中，会遍历内部所有的子控件，并将子控件添加到`mChildDag`集合中，大家不用去关系`mChildDag`的数据结构是什么，大家只要知道该数据类型是一种叫图的数据结构就行了。在方法最后，又会将`mChildDag`中的数据，全部添加到mDependencySortedChildren中去。
 
+#### Behavior的实例化
 
-
-#### Behavior的寻找
+现在我们来讲解下一个知识点，在上述文章中，我们只描述了CoordainatorLayout中子控件的依赖交互原理，讲解了Behavior依赖相关方法的调用时机，我们并没有讲解Behavior是如果同xml配置，生成实例Behavior对象的。现在我们来看看Behavior是何时被实例化的。
 
 ```
  public static class LayoutParams extends MarginLayoutParams {
-        /**
-         * A {@link Behavior} that the child view should obey.
-         */
         Behavior mBehavior;
  }
 ```
+
+在CoordainatorLayout中自定义了布局参数`LayoutParams`，并在LayoutParms声明了`Behavior`，同时重写了`generateLayoutParams`方法。
+
+```
+   @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new LayoutParams(getContext(), attrs);
+    }
+```
+
+熟悉自定义View的小伙伴一定熟悉`generateLayoutParams`方法，当我们自定义父控件时，如果我们的子控件需要一些特殊的布局参数，我们一般会自定义`LayoutParams`。比如Relativelayout中声明的LayoutParms中包含`alight_top`,`to_left_of`一样。好了回过头来，我们继续查看LayoutParams的构造函数。代码如下所示：
+
+```
+LayoutParams(Context context, AttributeSet attrs) {
+            super(context, attrs);
+
+            //省略部分代码....
+
+            //判断是否声明了Behavior
+            mBehaviorResolved = a.hasValue(
+                    R.styleable.CoordinatorLayout_Layout_layout_behavior);
+            if (mBehaviorResolved) {
+                mBehavior = parseBehavior(context, attrs, a.getString(
+                        R.styleable.CoordinatorLayout_Layout_layout_behavior));
+            }
+            a.recycle();
+
+            if (mBehavior != null) {
+                // If we have a Behavior, dispatch that it has been attached
+                mBehavior.onAttachedToLayoutParams(this);
+            }
+        }
+```
+
+当子控件的布局参数实例化的时候，会在布局文件中判断是否声明了`layout_behavior`，如果声明了就调用`parseBehavior`方法来实例化Behavior对象。具体代码如下所示：
 
 ```
   static Behavior parseBehavior(Context context, AttributeSet attrs, String name) {
@@ -417,120 +449,19 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
             throw new RuntimeException("Could not inflate Behavior subclass " + fullName, e);
         }
     }
-
 ```
 
-通过注解的方式设置Behavior
+parseBehavior方法其实很简单，就是根据相应的Behavior全限定名称，通过反射调用其构造函数，并实例化其对象。当然实例化Behavior的方法不止一种，Google还为我们提供了注解的方法设置Behavior。例如AppBarLayout中的设置：
 
 ```
-    LayoutParams getResolvedLayoutParams(View child) {
-        final LayoutParams result = (LayoutParams) child.getLayoutParams();
-        if (!result.mBehaviorResolved) {
-            if (child instanceof AttachedBehavior) {
-                Behavior attachedBehavior = ((AttachedBehavior) child).getBehavior();
-                if (attachedBehavior == null) {
-                    Log.e(TAG, "Attached behavior class is null");
-                }
-                result.setBehavior(attachedBehavior);
-                result.mBehaviorResolved = true;
-            } else {
-                // The deprecated path that looks up the attached behavior based on annotation
-                Class<?> childClass = child.getClass();
-                DefaultBehavior defaultBehavior = null;
-                while (childClass != null
-                        && (defaultBehavior = childClass.getAnnotation(DefaultBehavior.class))
-                                == null) {
-                    childClass = childClass.getSuperclass();
-                }
-                if (defaultBehavior != null) {
-                    try {
-                        result.setBehavior(
-                                defaultBehavior.value().getDeclaredConstructor().newInstance());
-                    } catch (Exception e) {
-                        Log.e(TAG, "Default behavior class " + defaultBehavior.value().getName()
-                                        + " could not be instantiated. Did you forget"
-                                        + " a default constructor?", e);
-                    }
-                }
-                result.mBehaviorResolved = true;
-            }
-        }
-        return result;
-    }
+@CoordinatorLayout.DefaultBehavior(AppBarLayout.Behavior.class)
+public class AppBarLayout extends LinearLayout {}
 ```
 
-### Behavior的测量
+当然使用注解的方式，其原理也是通过反射调用相应Behavior构造函数，并实例化对象。只是需要通过合适的时间解析注解罢了，因为篇幅的限制，这里不再讲解注解实例化Behavior的原理与时机了，有兴趣的小伙伴可以自行研究。
 
-```
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        prepareChildren();
-        ensurePreDrawListener();
+### Behavior实现嵌套滑动的原理与过程
 
-        final int paddingLeft = getPaddingLeft();
-        final int paddingTop = getPaddingTop();
-        final int paddingRight = getPaddingRight();
-        final int paddingBottom = getPaddingBottom();
-        final int layoutDirection = ViewCompat.getLayoutDirection(this);
-        final boolean isRtl = layoutDirection == ViewCompat.LAYOUT_DIRECTION_RTL;
-        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        final int widthPadding = paddingLeft + paddingRight;
-        final int heightPadding = paddingTop + paddingBottom;
-        int widthUsed = getSuggestedMinimumWidth();
-        int heightUsed = getSuggestedMinimumHeight();
-        int childState = 0;
-
-        final boolean applyInsets = mLastInsets != null && ViewCompat.getFitsSystemWindows(this);
-
-        final int childCount = mDependencySortedChildren.size();
-        for (int i = 0; i < childCount; i++) {
-            final View child = mDependencySortedChildren.get(i);
-            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            int childWidthMeasureSpec = widthMeasureSpec;
-            int childHeightMeasureSpec = heightMeasureSpec;
-
-            final Behavior b = lp.getBehavior();
-            //调用Behavior的测量方法。
-            if (b == null || !b.onMeasureChild(this, child, childWidthMeasureSpec, keylineWidthUsed,
-                    childHeightMeasureSpec, 0)) {
-                onMeasureChild(child, childWidthMeasureSpec, keylineWidthUsed,
-                        childHeightMeasureSpec, 0);
-            }
-
-            widthUsed = Math.max(widthUsed, widthPadding + child.getMeasuredWidth() +
-                    lp.leftMargin + lp.rightMargin);
-
-            heightUsed = Math.max(heightUsed, heightPadding + child.getMeasuredHeight() +
-                    lp.topMargin + lp.bottomMargin);
-            childState = View.combineMeasuredStates(childState, child.getMeasuredState());
-        }
-
-        final int width = View.resolveSizeAndState(widthUsed, widthMeasureSpec,
-                childState & View.MEASURED_STATE_MASK);
-        final int height = View.resolveSizeAndState(heightUsed, heightMeasureSpec,
-                childState << View.MEASURED_HEIGHT_STATE_SHIFT);
-        setMeasuredDimension(width, height);
-    }
-```
-
-上面的代码中，我精简了一些线索无关的代码。我们重点要关注 widthUsed 和 heightUsed 两个变量，它们的作用就是为了保存 CoordinatorLayout 中最大尺寸的子 View 的尺寸。并且，在对子 View 进行遍历的时候，CoordinatorLayout 有主动向子 View 的 Behavior 传递测量的要求，如果 Behavior 自主测量了 child，则以它的结果为准，否则将调用 measureChild() 方法亲自测量。
-
-
-### Behavior对事件的响应
-
-
-### 第二种是对实现了Nested接口的响应
-
-自定义 Behavior 的总结
-确定 CoordinatorLayout 中 View 与 View 之间的依赖关系，通过 layoutDependsOn() 方法，返回值为 true 则依赖，否则不依赖。
-当一个被依赖项 dependency 尺寸或者位置发生变化时，依赖方会通过 Byhavior 获取到，然后在 onDependentViewChanged 中处理。如果在这个方法中 child 尺寸或者位置发生了变化，则需要 return true。
-当 Behavior 中的 View 准备响应嵌套滑动时，它不需要通过 layoutDependsOn() 来进行依赖绑定。只需要在 onStartNestedScroll() 方法中通过返回值告知 ViewParent，它是否对嵌套滑动感兴趣。返回值为 true 时，后续的滑动事件才能被响应。
-嵌套滑动包括滑动(scroll) 和 快速滑动(fling) 两种情况。开发者根据实际情况运用就好了。
-Behavior 通过 3 种方式绑定：1. xml 布局文件。2. 代码设置 layoutparam。3. 自定义 View 的注解。
 
 ### CoordainatorLayout的事件处理过程
 
@@ -881,7 +812,7 @@ Behavior 通过 3 种方式绑定：1. xml 布局文件。2. 代码设置 layout
     }
 ```
 
-### CoordinatorLayout中Behavior要拦截事件
+### Behavior对事件的响应
 
 如果CoordinatorLayout中的子view对应的behavior.onInterceptTouchEvent返回true,那么就会导致CoordinatorLayout拦截事件，那么走自身的onTouchEvent。而该方法也会调用behavior的onTouchEvent方法。一般情况。默认情况下基本都是返回为false,所以我们不用担心，问题走了behavior的onTouchEvent方法，那嵌套机制怎么实现？？？如AppbarLayout的Behavior的父类Behavior，HeaderBehavior中的拦截方法。
 ```
@@ -1001,7 +932,69 @@ HeaderBehavior中的拦截方法。
     }
 
 ```
+
   又因为 private int mActivePointerId = INVALID_POINTER;所以HeaderBehavior永远都不会拦截事件的。！！！！！！也就是说事件会传递下去，不会被behavior拦截。我顶你个肺。那你写这个干吗啊？？？？
+
+ ### Behavior的测量
+
+```
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        prepareChildren();
+        ensurePreDrawListener();
+
+        final int paddingLeft = getPaddingLeft();
+        final int paddingTop = getPaddingTop();
+        final int paddingRight = getPaddingRight();
+        final int paddingBottom = getPaddingBottom();
+        final int layoutDirection = ViewCompat.getLayoutDirection(this);
+        final boolean isRtl = layoutDirection == ViewCompat.LAYOUT_DIRECTION_RTL;
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        final int widthPadding = paddingLeft + paddingRight;
+        final int heightPadding = paddingTop + paddingBottom;
+        int widthUsed = getSuggestedMinimumWidth();
+        int heightUsed = getSuggestedMinimumHeight();
+        int childState = 0;
+
+        final boolean applyInsets = mLastInsets != null && ViewCompat.getFitsSystemWindows(this);
+
+        final int childCount = mDependencySortedChildren.size();
+        for (int i = 0; i < childCount; i++) {
+            final View child = mDependencySortedChildren.get(i);
+            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            int childWidthMeasureSpec = widthMeasureSpec;
+            int childHeightMeasureSpec = heightMeasureSpec;
+
+            final Behavior b = lp.getBehavior();
+            //调用Behavior的测量方法。
+            if (b == null || !b.onMeasureChild(this, child, childWidthMeasureSpec, keylineWidthUsed,
+                    childHeightMeasureSpec, 0)) {
+                onMeasureChild(child, childWidthMeasureSpec, keylineWidthUsed,
+                        childHeightMeasureSpec, 0);
+            }
+
+            widthUsed = Math.max(widthUsed, widthPadding + child.getMeasuredWidth() +
+                    lp.leftMargin + lp.rightMargin);
+
+            heightUsed = Math.max(heightUsed, heightPadding + child.getMeasuredHeight() +
+                    lp.topMargin + lp.bottomMargin);
+            childState = View.combineMeasuredStates(childState, child.getMeasuredState());
+        }
+
+        final int width = View.resolveSizeAndState(widthUsed, widthMeasureSpec,
+                childState & View.MEASURED_STATE_MASK);
+        final int height = View.resolveSizeAndState(heightUsed, heightMeasureSpec,
+                childState << View.MEASURED_HEIGHT_STATE_SHIFT);
+        setMeasuredDimension(width, height);
+    }
+```
+
+上面的代码中，我精简了一些线索无关的代码。我们重点要关注 widthUsed 和 heightUsed 两个变量，它们的作用就是为了保存 CoordinatorLayout 中最大尺寸的子 View 的尺寸。并且，在对子 View 进行遍历的时候，CoordinatorLayout 有主动向子 View 的 Behavior 传递测量的要求，如果 Behavior 自主测量了 child，则以它的结果为准，否则将调用 measureChild() 方法亲自测量。
+
 
 ### 最后
 https://www.jianshu.com/p/f7989a2a3ec2 防UC
@@ -1012,6 +1005,13 @@ https://www.jianshu.com/p/82d18b0d18f4?utm_campaign=maleskine&utm_content=note&u
 如果你是从头看到这里，我不知道你有没有这种感觉，像探索一样，经历了很长一段时间，顺着一条条线索，焦急、纠结，最终走出了一条道路。回首溯望，也许会有种风轻云淡的感觉。
 
 这篇文章洋洋洒洒已经有千字以上了，因为篇幅过长，为了防止遗忘。现在可以将文章细节总结如下：
+
+自定义 Behavior 的总结
+确定 CoordinatorLayout 中 View 与 View 之间的依赖关系，通过 layoutDependsOn() 方法，返回值为 true 则依赖，否则不依赖。
+当一个被依赖项 dependency 尺寸或者位置发生变化时，依赖方会通过 Byhavior 获取到，然后在 onDependentViewChanged 中处理。如果在这个方法中 child 尺寸或者位置发生了变化，则需要 return true。
+当 Behavior 中的 View 准备响应嵌套滑动时，它不需要通过 layoutDependsOn() 来进行依赖绑定。只需要在 onStartNestedScroll() 方法中通过返回值告知 ViewParent，它是否对嵌套滑动感兴趣。返回值为 true 时，后续的滑动事件才能被响应。
+嵌套滑动包括滑动(scroll) 和 快速滑动(fling) 两种情况。开发者根据实际情况运用就好了。
+Behavior 通过 3 种方式绑定：1. xml 布局文件。2. 代码设置 layoutparam。3. 自定义 View 的注解。
 
 - CoordinatorLayout 是一个普通的 ViewGroup，它的布局特性类似于 FrameLayout。
 - CoordinatorLayout 是超级 FrameLayout，它比 FrameLayout 更强悍的原因是它能与 Behavior 交互。
