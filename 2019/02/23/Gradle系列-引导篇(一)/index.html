@@ -96,21 +96,21 @@
 
 
 
-  <meta name="description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
+  <meta name="description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通过">
 <meta name="keywords" content="Gradle">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Gradle系列-引导篇(一)">
 <meta property="og:url" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/index.html">
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
-<meta property="og:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
+<meta property="og:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通过">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/gradle.png">
 <meta property="og:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/gradle-java-builds.png">
 <meta property="og:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/Android构建流程图.png">
-<meta property="og:updated_time" content="2019-07-02T07:11:25.739Z">
+<meta property="og:updated_time" content="2019-07-27T09:22:22.840Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Gradle系列-引导篇(一)">
-<meta name="twitter:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running  Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通">
+<meta name="twitter:description" content="题外话：其实本来不想取这个名字的，但是感觉不取这个名字感觉没有几个人看啊。大家肯定觉得这个名字比较高大上吧！哈哈哈哈。好了，收。  前言在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：  开启项目提示界面一直显示Gradle Build Running Gradle传递性依赖冲突 多渠道打包 …..等  相信大家在平时使用的时候，遇到问题都通过">
 <meta name="twitter:image" content="http://yoursite.com/2019/02/23/Gradle系列-引导篇(一)/gradle.png">
 
 
@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-02 15:11:25" itemprop="dateModified" datetime="2019-07-02T15:11:25+08:00">2019-07-02</time>
+                <time title="修改时间：2019-07-27 17:22:22" itemprop="dateModified" datetime="2019-07-27T17:22:22+08:00">2019-07-27</time>
               
             
           </span>
@@ -475,7 +475,7 @@
 </blockquote>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在平时Android开发中我们常常使用Gradle来构建我们的项目，我相信大家都可能遇到以下问题：</p>
 <ul>
-<li>开启项目提示界面一直显示Gradle Build Running </li>
+<li>开启项目提示界面一直显示Gradle Build Running</li>
 <li>Gradle传递性依赖冲突</li>
 <li>多渠道打包</li>
 <li>…..等</li>
@@ -514,7 +514,7 @@
 <p>在Android中，每个应用程序中储存的数据文件都会被多个进程访问：安装程序会读取应用程序的manifest文件来处理与之相关的权限问题；Home应用程序会读取资源文件来获取应用程序的名和图标；系统服务会因为很多种原因读取资源（例如，显示应用程序的Notification）。此外，就是应用程序自身用到的资源文件。<br>在Android中，当资源文件通过内存映射对齐到4字节边界时，访问资源文件的代码才是有效率的。但是，如果资源本身没有进行对齐处理（未使用zipalign工具），它就必须回到老路上，显式地读取它们——这个过程将会比较缓慢且会花费额外的内存。</p>
 </blockquote>
 <p>从整个Android项目的构建来看，我们会感叹“为啥我就简单的创建一个应用，为毛有非常多的事情需要做。”，所以为了方便处理这些，我们都会想是不是可以写一个能自动处理这些过程的程序化脚本呢？<code>所以Gradle出现了！！！！</code>。</p>
-<h3 id="为毛选择Gradle？"><a href="#为毛选择Gradle？" class="headerlink" title="为毛选择Gradle？"></a>为毛选择Gradle？</h3><p>对于以前传统的项目构建工具，只是编译和打包源代码。而现在项目的构建需要负责更多的工作，它们会运行测试、从多个来源购买编码资源、生成文档、创建多个构建变种、发布应用程序和管理依赖性。而Gradle不仅具备这些能力与功能，还解决了Android开发人员面临的一些最棘手的问题，如下所示：</p>
+<h3 id="为毛选择Gradle"><a href="#为毛选择Gradle" class="headerlink" title="为毛选择Gradle"></a>为毛选择Gradle</h3><p>对于以前传统的项目构建工具，只是编译和打包源代码。而现在项目的构建需要负责更多的工作，它们会运行测试、从多个来源购买编码资源、生成文档、创建多个构建变种、发布应用程序和管理依赖性。而Gradle不仅具备这些能力与功能，还解决了Android开发人员面临的一些最棘手的问题，如下所示：</p>
 <ul>
 <li>如何自动构建和测试应用，以快速实现生产力？</li>
 <li>如何管理依赖和变种。使专业开发人员只需要单击一次就能提取出其应用的数十个变种？</li>
@@ -524,7 +524,7 @@
 <p>哎呀说这么多，<code>其实最大的原因是Google爸爸已经选择Gradle做为Android Studio的构建系统</code>，在Android Studio中将Android应用的整个流程指派给了Gradle。当我们点击<code>运行</code>按钮时，Android studio会在运行过程中设置Gradle，并在后台监控。通过学习有关Gradle知识。我们可以扩展此默认行为。以构建能力更强且经过适当测试的应用。</p>
 <p><code>既然Gradle大法这么好，为毛我们不去学习呢？</code></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Gradle是项目的构建工具，解决了我们平时开发中，项目测试、项目打包、项目依赖等问题。</p>
-<p>###最后<br>Gradle系列会继续写。如果大家喜欢我的写作风格的话。欢迎大家点赞。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>Gradle系列会继续写。如果大家喜欢我的写作风格的话。欢迎大家点赞。</p>
 <p>最后，附上我写的一个基于Kotlin 仿开眼的项目<a href="https://github.com/AndyJennifer/SimpleEyes" target="_blank" rel="noopener">SimpleEyes</a>(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start</p>
 
       
@@ -831,7 +831,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java项目的构建"><span class="nav-number">2.</span> <span class="nav-text">Java项目的构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android项目的构建"><span class="nav-number">3.</span> <span class="nav-text">Android项目的构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为毛选择Gradle？"><span class="nav-number">4.</span> <span class="nav-text">为毛选择Gradle？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java项目的构建"><span class="nav-number">2.</span> <span class="nav-text">Java项目的构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android项目的构建"><span class="nav-number">3.</span> <span class="nav-text">Android项目的构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为毛选择Gradle"><span class="nav-number">4.</span> <span class="nav-text">为毛选择Gradle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
             
 
           </div>
