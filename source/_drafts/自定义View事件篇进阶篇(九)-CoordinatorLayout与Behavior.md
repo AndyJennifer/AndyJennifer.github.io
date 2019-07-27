@@ -548,7 +548,7 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 - 获取内部的控件集合（**topmostChildList**），并按照z轴进行排序
 - 循环遍历**topmostChildList**，获取控件的Behavior，并调用Behavior的onInterceptTouchEvent方法判断是否拦截事件，如果拦截事件，则事件又会交给CoordinatorLayout的`onTouchEvent`方法处理。
 
->这里我们先不考虑Behavior拦截事件，一般情况下，Behavior的`onInterceptTouchEvent`方法基本都是返回false。特殊情况下Behavior拦截事件处理的列子，会在下章中介绍。
+>这里我们先不考虑Behavior拦截事件，一般情况下，Behavior的`onInterceptTouchEvent`方法基本都是返回false。特殊情况下Behavior事件拦截处理，大家可以在理解本文章所有的知识点后，结合官方提供的`BottomSheetBehavior`、`SwipeDismissBehavior`等进行深入的研究，这里因为篇幅的限制就不再深入的探讨了。
 
 那么假设现在所有的子控件中的Behavior.onInterceptTouchEvent返回为`false`,那么CoordinatorLayout就不会拦截事件，根据事件传递机制，事件就传递到了子控件中去了。如果我们的子控件实现是了NestedScrollingChild接口（如RecyclerView或NestedScrollView),并且在onTouchEvent方法调用了相关嵌套滑动API,那么再根据嵌套滑动机制，会调用实现了NestedScrollingParent2接口的父控件的相应方法。又因为CoordinatorLayout实现了NestedScrollingParent2接口。那么就又回到了我们最开始的介绍的嵌套滑动机制了。这里的理解非常重要！！！！！非常重要！！！！非常重要！！！如果没有理解，建议多读几遍。
 
@@ -777,7 +777,10 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 
 ### Behavior的布局
 
-我们都知道CoordinatorLayout中被谷歌称为超级FramaeLayout，不仅因为也就是其布局方式与测量方式都基本相识，
+还有最后两个知识点了，大家加油啊~~~
+
+我们都知道CoordinatorLayout中被谷歌称为超级FrameLayout，其中的原因不仅因为其布局方式与测量方式与FrameLayout非常相似以外，最主要的原因是CoordinatorLayout可以将滑动事件、布局、测量交给子控件中的Behavior。现在我们就来看看CoordinatorLayout下的布局实现。查看其`onLayout`方法。
+
 ```java
  @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -792,7 +795,7 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final Behavior behavior = lp.getBehavior();
-
+            //获取子控件的Behavior方法，并调用其onLayoutChild方法判断子控件是否需要自己布局
             if (behavior == null || !behavior.onLayoutChild(this, child, layoutDirection)) {
                 onLayoutChild(child, layoutDirection);
             }
@@ -800,53 +803,20 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
     }
 ```
 
-```java
-    public void onLayoutChild(View child, int layoutDirection) {
-        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        if (lp.checkAnchorChanged()) {
-            throw new IllegalStateException("An anchor may not be changed after CoordinatorLayout"
-                    + " measurement begins before layout is complete.");
-        }
-        if (lp.mAnchorView != null) {
-            layoutChildWithAnchor(child, lp.mAnchorView, layoutDirection);
-        } else if (lp.keyline >= 0) {
-            layoutChildWithKeyline(child, lp.keyline, layoutDirection);
-        } else {
-            layoutChild(child, layoutDirection);
-        }
-    }
+从代码中我们可以看出，在对子 View 进行遍历的时候，CoordinatorLayout有主动向子控件的Behavior传递布局的要求，如果Behavior调用`onLayoutChild`了方法自主布局了子控件，则以它的结果为准，否则将调用`onLayoutChild`方法亲自布局。这里就不对CoordinatorLayout下的`onLayoutChild`方法进行过多的描述了，大家知道这个方法类似于FrameLayout的布局就行了。
 
-```
+#### Behavior的布局时机
 
-在对子 View 进行遍历的时候，CoordinatorLayout 有主动向子 View 的 Behavior 传递测量的要求，如果 Behavior 自主测量了 child，则以它的结果为准，否则将调用 measureChild() 方法亲自测量。
+其实肯定会有小伙伴会疑惑，什么样的情况下，我们需要设置自主布局呢?（也就是behavior.onLayoutChild()方法返回true)。在上文中我们说过了CoordinatorLayout布局方式是类似于FrameLayout的。在FrameLayout的布局中是只支持Gravity来设置布局的。如果我们需要自主的摆放控件中的位置，那么我们就需要重写Behavior的`onLayoutChild`方法。并设置该方法返回结果为true。
 
 ### Behavior的测量
+
+最后一个知识点了！！！！！Behavior的测量。依然还是通过CoordinatorLayout传递过来的。我们查看CoordinatorLayout的`onMeasure`方法。代码如下所示：
 
 ```java
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        prepareChildren();
-        ensurePreDrawListener();
-
-        final int paddingLeft = getPaddingLeft();
-        final int paddingTop = getPaddingTop();
-        final int paddingRight = getPaddingRight();
-        final int paddingBottom = getPaddingBottom();
-        final int layoutDirection = ViewCompat.getLayoutDirection(this);
-        final boolean isRtl = layoutDirection == ViewCompat.LAYOUT_DIRECTION_RTL;
-        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        final int widthPadding = paddingLeft + paddingRight;
-        final int heightPadding = paddingTop + paddingBottom;
-        int widthUsed = getSuggestedMinimumWidth();
-        int heightUsed = getSuggestedMinimumHeight();
-        int childState = 0;
-
-        final boolean applyInsets = mLastInsets != null && ViewCompat.getFitsSystemWindows(this);
-
+        //省略部分代码....
         final int childCount = mDependencySortedChildren.size();
         for (int i = 0; i < childCount; i++) {
             final View child = mDependencySortedChildren.get(i);
@@ -878,23 +848,24 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
     }
 ```
 
-上面的代码中，我精简了一些线索无关的代码。我们重点要关注 widthUsed 和 heightUsed 两个变量，它们的作用就是为了保存 CoordinatorLayout 中最大尺寸的子 View 的尺寸。并且，在对子 View 进行遍历的时候，CoordinatorLayout 有主动向子 View 的 Behavior 传递测量的要求，如果 Behavior 自主测量了 child，则以它的结果为准，否则将调用 measureChild() 方法亲自测量。
+上面的代码中，我还是省略了一些不重要的代码。观察上述代码，我们发现该方法与CoordinatorLayout的布局逻辑非常相似，也是对子控件进行遍历，并调那个用子控件的Behavior的`onMeasureChild`方法，判断是否自主测量，如果为true,那么则以子控件的测量为准。当子控件测量完毕后。会通过`widthUsed` 和 `heightUsed` 这两个变量来保存CoordinatorLayout中子控件最大的尺寸。这两个变量的值，最终将会影响CoordinatorLayout的宽高。
+
+#### Behavior的测量时机
+
+还是相似的问题，在什么样的情况下，我们需要重写Behavior`onMeasureChild`方法来自主测量控件呢？当你的控件需要重新设置位置的时候你要考虑是否需要重写该方法。什么意思呢？看下图所示：
+
+{% asset_img  空白区域.jpg %}
+
+在上图中我们定义了两个控件A与B，我们假设这两个控件处于这三个条件下：
+
+- A、B控件都在CoordinatorLayout下，且A、B控件位置关系为控件A在B控件的下方。
+- A控件的高度为`match_parent`。
+- A、B控件的嵌套滑动关系为：B控件先处理嵌套滑动事件，当控件B向上滑动至隐藏后，控件A才能开始滑动。
+
+那么根据上述条件，在滚动的过程中，我们会发现一个问题，就是当我们的控件A逐渐滑动到顶部时，我们会发现屏幕下方会出现一个**空白区域**，那原因是什么呢？其实很简单，当控件A高度为`match_parent`时，根据View的测量规则，控件A实际的高度就是整个控件剩余的高度（屏幕高度-控件B的高度），所以当控件B滚出屏幕后，那么就会出现一段空白。
+
+那么为了使控件A在滑动过程中始终填充整个屏幕，我们需要在CoordinatorLayout测量该控件的高度之前，让控件自主的去测量高度，那么这个时候，Behavior的`onMeasureChild`方法就派上用场了。我们可以重写该方法并设定当前控件A的高度为整个屏幕的高度。当然如何通过Behavior的高度是我们后续文章将讲解的知识，大家如果有兴趣的话，可以关注后续文章。
 
 ### 总结
 
-如果你是从头看到这里，我不知道你有没有这种感觉，像探索一样，经历了很长一段时间，顺着一条条线索，焦急、纠结，最终走出了一条道路。回首溯望，也许会有种风轻云淡的感觉。
-
-这篇文章洋洋洒洒已经有千字以上了，因为篇幅过长，为了防止遗忘。现在可以将文章细节总结如下：
-
-自定义 Behavior 的总结
-确定 CoordinatorLayout 中 View 与 View 之间的依赖关系，通过 layoutDependsOn() 方法，返回值为 true 则依赖，否则不依赖。
-当一个被依赖项 dependency 尺寸或者位置发生变化时，依赖方会通过 Byhavior 获取到，然后在 onDependentViewChanged 中处理。如果在这个方法中 child 尺寸或者位置发生了变化，则需要 return true。
-当 Behavior 中的 View 准备响应嵌套滑动时，它不需要通过 layoutDependsOn() 来进行依赖绑定。只需要在 onStartNestedScroll() 方法中通过返回值告知 ViewParent，它是否对嵌套滑动感兴趣。返回值为 true 时，后续的滑动事件才能被响应。
-嵌套滑动包括滑动(scroll) 和 快速滑动(fling) 两种情况。开发者根据实际情况运用就好了。
-Behavior 通过 3 种方式绑定：1. xml 布局文件。2. 代码设置 layoutparam。3. 自定义 View 的注解。
-
-- CoordinatorLayout 是一个普通的 ViewGroup，它的布局特性类似于 FrameLayout。
-- CoordinatorLayout 是超级 FrameLayout，它比 FrameLayout 更强悍的原因是它能与 Behavior 交互。
-- CoordinatorLayout 与 Behavior 相辅相成，它们一起构建了一个美妙的交互系统。
-- 自定义 Behavior 主要有 2 个目的：1 确定一个 View 依赖另外一个 View 的依赖关系。2 指定一个 View 响应嵌套滑动事件。
-确定两个 View 的依赖关系，有两种途径。一个是在 Behavior 中的 layoutDepentOn() 返回 true。另外一种就是直接通过 xml 锚定一个 View。当被依赖方尺寸和位置变化时，Behavior 中的 onDependentViewChanged 方法会被调用。如果在这个方法中改变了主动依赖的那个 view 的尺寸或者位置信息，应该在方法最后 return true。
+看到这里的小伙伴真的非常值得鼓励。点赞！！！！！关于CoordinatorLayout的整个下的Behavior确实理解起来需要花费不少的时间。我本人从理解到写这篇博客零零散散也花费了两周多的时间。虽然说这块知识点比较偏门。但是还是希望能帮助到有需要的小伙伴们。能有幸帮助到大家，我也非常开心了。
