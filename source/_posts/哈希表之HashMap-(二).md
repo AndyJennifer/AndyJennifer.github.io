@@ -11,13 +11,13 @@ tags:
 
 >在写这篇文章之前，看了很多关于HashMap解析的文章。对于大多数人来说，可了跟着别人的文章走一遍。大家都能了解HashMap的内部结构，使用方法以及注意事项。我还是觉得知道用是一回事。知道原理是另一回事。只有了解了其数据结构设计初衷。才能更好的使用它。此系列文章主要分为两个部分，具体目录如下：
 
-
 * {% post_link 哈希表初识-(一) %}
 * 哈希表之HashMap(二)
 
 提示：该篇文章作为彻底理解哈希表的第二个部分。主要讲了HashMap在Java中基于JDK1.8(不同版本HashMap可能实现不同)的具体实现。如果你对哈希表还不算太熟，建议先阅读上一篇文章，我相信等你看完之后，在回来看这篇文章，会有一种**飞翔的感觉**。
 
 ### 前言
+
 在Java中java.util包下，定义了Map接口来实现键值对的映射关系。常用的类为HashMap,LinkedHashMap,TreeMap。其主要的类关系如下图所示：
 
 {% asset_img Map类关系图.png Map类关系图 %}
@@ -31,6 +31,7 @@ tags:
 * 线程非安全。
 
 ### 内部结构
+
 既然上文提到了数组+链表的形式，大家是否想起我们上篇文章提到的**链地址法**呢？如果你忘记了链地址法的具体实现，没关系，让我们一起看看在Java中HashMap具体的内部结构,具体的结构如下图所示：(注意:**在JDK1.8中如果链表的长度大于8时会将该链表转换为红黑树**)
 
 {% asset_img 内部结构.png 内部结构 %}
@@ -39,7 +40,7 @@ tags:
 
 查看Node对应源码:
 
-```
+```java
  static class Node<K,V> implements Map.Entry<K,V> {
         final int hash;
         final K key;
@@ -63,13 +64,13 @@ tags:
 
 从代码中我们可以看出，**Node**是HashMap的一个内部类，实现了Map.Entry接口。该类中保存了当前存储数据的hash值，关键字、和当前存储数据、及下一个Node节点的引用。既然我们已经知道了HashMap到底存储的是什么东西，那么我们继续看看HashMap的初始化。
 
-###HashMap初始化
+### HashMap初始化
 
 在我们初始化HashMap实例对象的时候，我们默认调用是其参数为空的构造函数，查看具体实现：
 
-```
+```java
     public HashMap() {
-    	  //DEFAULT_LOAD_FACTOR = 0.75
+          //DEFAULT_LOAD_FACTOR = 0.75
         this.loadFactor = DEFAULT_LOAD_FACTOR;
     }
 ```
@@ -80,24 +81,26 @@ tags:
 
 #### 查看put方法
 
-```
+```java
  public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
 ```
+
 在HashMap调用put方法，放入键值对时，会先调用hash方法计算当前key对象的哈希值，对应hash方法如下：
 
-```
+```java
 static final int hash(Object key) {
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
 ```
+
 hash方法内部会获取当前key的hashCode,通过当前hashCode与当前hashCode右移后的数字，进行异或运算得到哈希值。
 
-
 #### 查看putVal方法
-```
+
+```java
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
@@ -132,7 +135,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                     p = e;
                 }
             }
-            if (e != null) { 
+            if (e != null) {
                 V oldValue = e.value;
                 //第六步，是否覆盖已存在的key对应的value
                 if (!onlyIfAbsent || oldValue == null)
@@ -152,10 +155,11 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 从上述代码中我们可以看出，HashMap添加元素主要分为六个步骤。经过这六个步骤完成了相应的键值对的映射。下面我们将具体的来分析这六个步骤。
 
-####（一）创建table数组
+#### (一）创建table数组
+
 如果当前数组为空，会调用相应resize()方法。创建相应table数组。这里省略了扩容数组代码，因为其比较复杂，下面我们会单独进行分析。
 
-```
+```java
  final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
@@ -176,7 +180,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
         }
         else if (oldThr > 0)
             newCap = oldThr;
-        else {            
+        else {
             //默认没有数据的情况下，初始化数组，与临界值
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
@@ -191,18 +195,19 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
         @SuppressWarnings({"rawtypes","unchecked"})
             Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
         table = newTab;
-        
-     		....省略扩容代码
-     		
-     	 //返回新的数组
+
+             ....省略扩容代码
+
+          //返回新的数组
         return newTab;
     }
 ```
+
 上面的代码很好理解。判断当前数组是否为空，如果为空，则初始化当前数组，且当前数组容量为DEFAULT_INITIAL_CAPACITY=16,且临界值为12（16*0.75），最后该方法会将创建的数组进行返回。
 
-####（二）如果当前数据未放入，则添加
+#### (二）如果当前数据未放入，则添加
 
-```
+```java
  if ((p = tab[i = (n - 1) & hash]) == null)
             tab[i] = newNode(hash, key, value, null);
   
@@ -210,31 +215,33 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 上述代码，知根据当前key值计算出来的hash值。获取对应数组中的下标，如果当前数组单元没有放入数据，则添加数据到相应的数组单元中。
 
-####（三）如果当前key已存在，则进行覆盖操作
+#### (三）如果当前key已存在，则进行覆盖操作
 
-```
+```java
  if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
-        e = p;        
+        e = p;
 ```
+
 上面代码也是很好理解，如果当前数组单元有数据，且相同hash值且key值相同，那么就进行替换操作。
 
-####（四）判断当前是否是红黑树
+#### (四）判断当前是否是红黑树
 
-```
+```java
   else if (p instanceof TreeNode)
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
 ```
+
 如果当前数组单元对应的是红黑树，那么调用相应红黑树添加方法。这里我们不讨论红黑树，这里我们只要知道。在使用红黑树的时候，查找效率是要优于传统的链表就好了。
 
-####（五）、（六）添加元素到链表中
+#### (五）、（六）添加元素到链表中
 
-```
+```java
      for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
-                        if (binCount >= TREEIFY_THRESHOLD - 1) 
-                        	 //如果当前链表长度大于8，转换为红黑树
+                        if (binCount >= TREEIFY_THRESHOLD - 1)
+                             //如果当前链表长度大于8，转换为红黑树
                             treeifyBin(tab, hash);
                         break;
                     }
@@ -253,18 +260,18 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                 return oldValue;
             }
 ```
-这里我把第五步与第六部合并来讲解。从代码代码大家就可以理解。获取数组单元链表的长度，如果当前链表长度大于8，转换为红黑树，如果存在相同hash值或者key值相同的节点。直接替换对应的value,反之。添加键值对到相应链表中。
 
+这里我把第五步与第六部合并来讲解。从代码代码大家就可以理解。获取数组单元链表的长度，如果当前链表长度大于8，转换为红黑树，如果存在相同hash值或者key值相同的节点。直接替换对应的value,反之。添加键值对到相应链表中。
 
 ### HashMap的扩容机制
 
 上面我们省略了扩容代码的具体，下面我们来仔细探讨一下HashMap的扩容机制。
 主要扩容代码如下：
 
-```
+```java
   //oldTab是原来的talble 数组
   if (oldTab != null) {
-  			  //遍历原来数组单元中对应的链表，oldCap是原来数组的容量
+                //遍历原来数组单元中对应的链表，oldCap是原来数组的容量
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;
                 if ((e = oldTab[j]) != null) {
@@ -314,6 +321,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
             }
         }
 ```
+
 直接去理解这段代码很难，根据上篇文章的经验，我们知道在数组进行扩容的时候，需要根据hash值去与新的数组长度进行取余运算（hash&length -1),但是从上述代码中，我们没有发现进行取余的操作。这是怎么回事呢？没事大家一起来看下图。
 
 {% asset_img 取余流程.png 取余流程 %}
@@ -324,13 +332,11 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 从上图可以得知，只要我们通过**e.hash & oldCap==0**，我们就可以得知，该节点的新位置是在原位置，还是在原来的位置基础上+oldCap。不得不说这段代码非常优雅与巧妙，提高的效率不是吹的（因为没有重新取余去计算角标）。
 
-
 ### 参考
+
 站在巨人的肩膀上。可以看得更远。
 [Java 8系列之重新认识HashMap]--美团技术团队
 
 ### 最后
+
 最后，附上我写的一个基于Kotlin 仿开眼的项目[SimpleEyes](https://github.com/AndyJennifer/SimpleEyes)(ps: 其实在我之前，已经有很多小朋友开始仿这款应用了，但是我觉得要做就做好。所以我的项目和其他的人应该不同，不仅仅是简单的一个应用。但是，但是。但是。重要的话说三遍。还在开发阶段，不要打我)，欢迎大家follow和start.
-
-
-

@@ -33,7 +33,7 @@ categories:
 
 又因为整体布局为竖直方向，所以这里我们采用了继承LinearLayout并实现`NestedScrollingParent2`接口的方式。同时为了兼容低版本，我们也要使用`NestedScrollingParentHelper`这个帮助类。具体类实现类StickyNavLayout代码如下所示；
 
-```
+```java
 public class StickyNavLayout extends LinearLayout implements NestedScrollingParent2 {
 
     private NestedScrollingParentHelper mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
@@ -109,7 +109,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 那么再对应Android的布局文件，整个界面的布局大概是下面这个样子：
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -160,7 +160,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 在完成了整体界面的布局后，现在我们需要处理父控件的滚动。继续观察Demo，我们能发现父控件滚动的范围为展示图片的高度减去标题栏的高度。为了计算父控件的滚动范围，我们需要获取父控件内部的TopView（与展示图片高度相同的透明View)的高度。要获取父控件的子控件，我们可以通过`onFinishInflate`方法。具体代码如下所示：
 
-```
+```java
     private View mTopView;//与展示图片高度相同的透明View
 
    @Override
@@ -172,7 +172,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 获取了子控件后,我们可以在onSizeChanged中得到，可以父控件可以滑动的距离（mCanScrollDistance = 展示图片的高度 - 标题栏的高度）。具体代码如下所示：
 
-```
+```java
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mCanScrollDistance = mTopView.getMeasuredHeight() - getResources().getDimension(R.dimen.normal_title_height);
@@ -190,7 +190,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 具体代码如下所示：
 
-```
+```java
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
         //如果子view欲向上滑动，则先交给父view滑动
@@ -210,7 +210,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 当我们处理了onNestedPreScroll方法后，我们还需要处理`onNestedScroll`方法。因为根据嵌套滑动机制，当父控件预处理后，子控件会再消耗剩余的距离，如果子控件消耗后，还有剩余的距离。那么就又会传递给父控件。也就是会走onNestedScroll方法。在该方法中，我们只需要单独处理子控件的剩余的`向下fling`。具体代码如下所示：
 
-```
+```java
   @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         if (dyUnconsumed < 0 && type == ViewCompat.TYPE_NON_TOUCH) {//表示已经向下滑动到头，且为fling
@@ -224,7 +224,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 完成了嵌套滑动的处理后，我们还需要对父控件(StickyNavaLayout)的滚动范围进行校验，我们直接重写scrollTo方法。进行判断就好了。
 
-```
+```java
     @Override
     public void scrollTo(int x, int y) {
         if (y < 0) {
@@ -247,7 +247,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 是因为我们的父控件(StickyNavaLayout)继承了LinearLayout且ViewPager的高度为`match_parent`，那么根据View的测量规则，ViewPager实际的高度为屏幕中剩余的高度。所以父控件(StickyNavaLayout)滚动到标题栏下后，会出现一段空白，那么为了使ViewPager填充整个屏幕，我们需要重新设置ViewPager的高度。也就是我们需要重写父控件(StickyNavaLayout)的onMeasure方法。具体代码如下所示：
 
-```
+```java
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //先测量一次
@@ -260,7 +260,6 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 ```
-
 
 ### 渐变效果实现
 

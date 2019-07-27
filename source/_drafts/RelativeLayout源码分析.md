@@ -6,6 +6,7 @@ categories:
 - 源码分析
 ---
 ### 前言
+
 RelativeLayout中会有两次测量，因为在RelativeLayout中，View的排列方式是基于彼此的依赖关系。在确定每个子View的位置的时候，就需要先给所有的子View排序一下。又因为RelativeLayout允许A，B 2个子View，横向上B依赖A，纵向上A依赖B。所以需要横向纵向分别进行一次排序测量。
 
 #### 这里解释 
