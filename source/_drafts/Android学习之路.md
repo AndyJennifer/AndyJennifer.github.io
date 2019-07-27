@@ -157,7 +157,7 @@ https://github.com/GcsSloop/AndroidNote
 - Android Handler机制之Message的发送与取出
 - Android Handler机制之Message及Message回收机制
 - Android Handler机制之消息池的扩展 SimplePool与SynchronizedPool
-- Android Handler机制之循环消息队列的退出 
+- Android Handler机制之循环消息队列的退出
 - Android Handler机制之内存泄漏
 - Android Handler机制之HandlerThread
 
