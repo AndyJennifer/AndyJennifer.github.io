@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~  前言在Lollipop(Android 5.0)时，谷歌推出了NestedScrol">
+<meta name="keywords" content="嵌套滑动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制">
+<meta property="og:url" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~  前言在Lollipop(Android 5.0)时，谷歌推出了NestedScrol">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/例子分析.gif">
+<meta property="og:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/NestedScrollingParent.gif">
+<meta property="og:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/NestedScrollingParent2.gif">
+<meta property="og:updated_time" content="2019-07-28T16:13:51.300Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制">
+<meta name="twitter:description" content="最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~  前言在Lollipop(Android 5.0)时，谷歌推出了NestedScrol">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/例子分析.gif">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制 | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-29 00:13:51" itemprop="dateCreated datePublished" datetime="2019-07-29T00:13:51+08:00">2019-07-29</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/View事件篇/" itemprop="url" rel="index"><span itemprop="name">View事件篇</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~</p>
+</blockquote>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在Lollipop(Android 5.0)时，谷歌推出了NestedScrolling机制，也就是嵌套滑动。本文将带领大家一起去了解谷歌对该机制的设计。通过阅读该文，你能了解如下知识点：</p>
+<ul>
+<li>传统事件分发机制中嵌套滑动的实现与局限性。</li>
+<li>谷歌NestedScrolling机制的原理实现。</li>
+<li>NestedScrollingChild与NestedScrollingParent接口的调用关系。</li>
+<li>NestedScrollingChild2与NestedScrollingParent2接口出现的意义。</li>
+</ul>
+<blockquote>
+<p>该博客中涉及到的示例，在<a href="https://github.com/AndyJennifer/NestedScrollingDemo" target="_blank" rel="noopener">NestedScrollingDemo</a>项目中都有实现，大家可以按需自取。</p>
+</blockquote>
+<h3 id="传统事件机制处理嵌套滑动的局限性"><a href="#传统事件机制处理嵌套滑动的局限性" class="headerlink" title="传统事件机制处理嵌套滑动的局限性"></a>传统事件机制处理嵌套滑动的局限性</h3><p>在传统的事件分发机制中，当一个事件产生后，它的传递过程遵循如下顺序:父控件-&gt;子控件,事件总是先传递给父控件,当父控件不对事件拦截的时候，那么当前事件又会传递给它的子控件。一旦父控件需要拦截事件，那么子控件是没有机会接受该事件的。</p>
+<p>因此当在传统事件分发机制中，如果有嵌套滑动场景，我们需要手动解决事件冲突。具体嵌套滑动例子如下图所示：</p>
+<img src="/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/例子分析.gif">
+<blockquote>
+<p>上述效果实现，请参看<a href="https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedTraditionLayout.java" target="_blank" rel="noopener">NestedTraditionLayout.java</a></p>
+</blockquote>
+<p>想要实现上图效果，在传统滑动机制中，我们需要以下几个步骤：</p>
+<ul>
+<li>我们需要调用父控件中onInterceptTouchEvent方法来拦截向上滑动。</li>
+<li>当父控件拦截事件后，需要控制自身的onTouchEvent处理滑动事件,使其滑动至HeaderView隐藏。</li>
+<li>当HeaderView滑动至隐藏后，父控件就不拦截事件了，而是交给内部的子控件（RecyclerView或ListView)处理滑动事件。</li>
+</ul>
+<p>使用传统的事件拦截机制来处理嵌套滑动，我们会发现一个问题，就是整个嵌套滑动是不连贯的。也就是当父控件滑动至HeaderView隐藏的时候，这个时候如果想要内部的（RecyclerView或ListView)处理滑动事件。只有<strong>抬起手指</strong>，重新向上滑动。</p>
+<p>熟悉事件分发机制的朋友应该知道，之所以产生不连贯的原因，是因为父控件拦截了事件，所以同一事件序列的事件，仍然会传递给父控件，也就会调用其onTouchEvent方法。而不是调用子控件的onTouchEvent方法。</p>
+<h3 id="NestedScrolling机制简介"><a href="#NestedScrolling机制简介" class="headerlink" title="NestedScrolling机制简介"></a>NestedScrolling机制简介</h3><p>为了实现连贯的嵌套滑动，谷歌在<code>Lollipop(Android 5.0)</code>时，推出了NestedScrolling机制。该机制并没有脱离传统的事件分发机制，而是在原有的事件分发机制之上，为系统的自带的ViewGroup和View都增加了<code>手势滑动</code>与处理<code>fling</code>的方法。同时为了<strong>兼容低版本</strong>(5.0以下，View与ViewGroup是没有对应的API)，谷歌也在<code>support v4</code>包中也提供了如下类与接口进行支撑：</p>
+<p>父控件需要实现的接口与使用到的类：</p>
+<ul>
+<li>NestedScrollingParent（接口）</li>
+<li>NestedScrollingParent2（也是接口并继承NestedScrollingParent）</li>
+<li>NestedScrollingParentHelper（类）</li>
+</ul>
+<p>子控件需要实现的接口与使用到的类：</p>
+<ul>
+<li>NestedScrollingChild（接口）</li>
+<li>NestedScrollingChild2（也是接口并继承NestedScrollingChild）</li>
+<li>NestedScrollingChildHelper（类）</li>
+</ul>
+<p>需要注意的是，如果你的Android平台在5.0以上，那么你可以直接使用系统ViewGoup与View自带的方法。但是为了向下兼容，建议还是使用support v4包提供的相应接口来实现嵌套滑动。下文也会着重讲解这些接口的的使用方式与方法说明。</p>
+<h3 id="NestedScrollingParent与NestedScrollingChild接口介绍"><a href="#NestedScrollingParent与NestedScrollingChild接口介绍" class="headerlink" title="NestedScrollingParent与NestedScrollingChild接口介绍"></a>NestedScrollingParent与NestedScrollingChild接口介绍</h3><p>在了解嵌套滑动具体的使用方式之前，我们需要了解父控件与子控件对应接口中方法的说明。这里大家可以先忽略掉NestedScrollingParent2与NestedScrollingChild2接口，因为这两个接口是为了解决之前对嵌套滑动处理fling效果的Bug。所以对于目前阶段的我们只需要了解基础的嵌套滑动规则就够了。关于NestedScrollingParent2与NestedScrollingChild2接口相关的知识点，会在下文具体描述。那现在我们就先看看基础的接口的方法介绍吧。</p>
+<h4 id="NestedScrollingParent"><a href="#NestedScrollingParent" class="headerlink" title="NestedScrollingParent"></a>NestedScrollingParent</h4><p>如果采用接口的方式实现嵌套滑动，我们需要父控件要实现NestedScrollingParent接口。接口具体方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 有嵌套滑动到来了，判断父控件是否接受嵌套滑动</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> child            嵌套滑动对应的父类的子类(因为嵌套滑动对于的父控件不一定是一级就能找到的，可能挑了两级父控件的父控件，child的辈分&gt;=target)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> target           具体嵌套滑动的那个子类</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> nestedScrollAxes 支持嵌套滚动轴。水平方向，垂直方向，或者不指定</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 父控件是否接受嵌套滑动， 只有接受了才会执行剩下的嵌套滑动方法</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartNestedScroll</span><span class="params">(View child, View target, <span class="keyword">int</span> nestedScrollAxes)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当onStartNestedScroll返回为true时，也就是父控件接受嵌套滑动时，该方法才会调用</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedScrollAccepted</span><span class="params">(View child, View target, <span class="keyword">int</span> axes)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 在嵌套滑动的子控件未滑动之前，判断父控件是否优先与子控件处理(也就是父控件可以先消耗，然后给子控件消耗）</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> target   具体嵌套滑动的那个子类</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dx       水平方向嵌套滑动的子控件想要变化的距离 dx&lt;0 向右滑动 dx&gt;0 向左滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dy       垂直方向嵌套滑动的子控件想要变化的距离 dy&lt;0 向下滑动 dy&gt;0 向上滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> consumed 这个参数要我们在实现这个函数的时候指定，回头告诉子控件当前父控件消耗的距离</span></span><br><span class="line"><span class="comment">  *                 consumed[0] 水平消耗的距离，consumed[1] 垂直消耗的距离 好让子控件做出相应的调整</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedPreScroll</span><span class="params">(View target, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy, <span class="keyword">int</span>[] consumed)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 嵌套滑动的子控件在滑动之后，判断父控件是否继续处理（也就是父消耗一定距离后，子再消耗，最后判断父消耗不）</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> target       具体嵌套滑动的那个子类</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dxConsumed   水平方向嵌套滑动的子控件滑动的距离(消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dyConsumed   垂直方向嵌套滑动的子控件滑动的距离(消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dxUnconsumed 水平方向嵌套滑动的子控件未滑动的距离(未消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dyUnconsumed 垂直方向嵌套滑动的子控件未滑动的距离(未消耗的距离)</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 嵌套滑动结束</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStopNestedScroll</span><span class="params">(View child)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当子控件产生fling滑动时，判断父控件是否处拦截fling，如果父控件处理了fling，那子控件就没有办法处理fling了。</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> target    具体嵌套滑动的那个子类</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityX 水平方向上的速度 velocityX &gt; 0  向左滑动，反之向右滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityY 竖直方向上的速度 velocityY &gt; 0  向上滑动，反之向下滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 父控件是否拦截该fling</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onNestedPreFling</span><span class="params">(View target, <span class="keyword">float</span> velocityX, <span class="keyword">float</span> velocityY)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当父控件不拦截该fling,那么子控件会将fling传入父控件</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> target    具体嵌套滑动的那个子类</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityX 水平方向上的速度 velocityX &gt; 0  向左滑动，反之向右滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityY 竖直方向上的速度 velocityY &gt; 0  向上滑动，反之向下滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> consumed  子控件是否可以消耗该fling，也可以说是子控件是否消耗掉了该fling</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 父控件是否消耗了该fling</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onNestedFling</span><span class="params">(View target, <span class="keyword">float</span> velocityX, <span class="keyword">float</span> velocityY, <span class="keyword">boolean</span> consumed)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 返回当前父控件嵌套滑动的方向，分为水平方向与，垂直方法，或者不变</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNestedScrollAxes</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="NestedScrollingChild接口介绍"><a href="#NestedScrollingChild接口介绍" class="headerlink" title="NestedScrollingChild接口介绍"></a>NestedScrollingChild接口介绍</h4><p>如果采用接口的方式实现嵌套滑动，子控件需要实现NestedScrollingChild接口。接口具体方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 开启一个嵌套滑动</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> axes 支持的嵌套滑动方法，分为水平方向，竖直方向，或不指定</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 如果返回true, 表示当前子控件已经找了一起嵌套滑动的view</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startNestedScroll</span><span class="params">(<span class="keyword">int</span> axes)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 在子控件滑动前，将事件分发给父控件，由父控件判断消耗多少</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dx             水平方向嵌套滑动的子控件想要变化的距离 dx&lt;0 向右滑动 dx&gt;0 向左滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dy             垂直方向嵌套滑动的子控件想要变化的距离 dy&lt;0 向下滑动 dy&gt;0 向上滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> consumed       子控件传给父控件数组，用于存储父控件水平与竖直方向上消耗的距离，consumed[0] 水平消耗的距离，consumed[1] 垂直消耗的距离</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> offsetInWindow 子控件在当前window的偏移量</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 如果返回true, 表示父控件已经消耗了</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchNestedPreScroll</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy, @Nullable <span class="keyword">int</span>[] consumed, @Nullable <span class="keyword">int</span>[] offsetInWindow)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当父控件消耗事件后，子控件处理后，又继续将事件分发给父控件,由父控件判断是否消耗剩下的距离。</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dxConsumed     水平方向嵌套滑动的子控件滑动的距离(消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dyConsumed     垂直方向嵌套滑动的子控件滑动的距离(消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dxUnconsumed   水平方向嵌套滑动的子控件未滑动的距离(未消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> dyUnconsumed   垂直方向嵌套滑动的子控件未滑动的距离(未消耗的距离)</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> offsetInWindow 子控件在当前window的偏移量</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 如果返回true, 表示父控件又继续消耗了</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchNestedScroll</span><span class="params">(<span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, @Nullable <span class="keyword">int</span>[] offsetInWindow)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 子控件停止嵌套滑动</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopNestedScroll</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当子控件产生fling滑动时，判断父控件是否处拦截fling，如果父控件处理了fling，那子控件就没有办法处理fling了。</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityX 水平方向上的速度 velocityX &gt; 0  向左滑动，反之向右滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityY 竖直方向上的速度 velocityY &gt; 0  向上滑动，反之向下滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 如果返回true, 表示父控件拦截了fling</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchNestedPreFling</span><span class="params">(<span class="keyword">float</span> velocityX, <span class="keyword">float</span> velocityY)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当父控件不拦截子控件的fling,那么子控件会调用该方法将fling，传给父控件进行处理</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityX 水平方向上的速度 velocityX &gt; 0  向左滑动，反之向右滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> velocityY 竖直方向上的速度 velocityY &gt; 0  向上滑动，反之向下滑动</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> consumed  子控件是否可以消耗该fling，也可以说是子控件是否消耗掉了该fling</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 父控件是否消耗了该fling</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchNestedFling</span><span class="params">(<span class="keyword">float</span> velocityX, <span class="keyword">float</span> velocityY, <span class="keyword">boolean</span> consumed)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 设置当前子控件是否支持嵌套滑动，如果不支持，那么父控件是不能够响应嵌套滑动的</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> enabled true 支持</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNestedScrollingEnabled</span><span class="params">(<span class="keyword">boolean</span> enabled)</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 当前子控件是否支持嵌套滑动</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isNestedScrollingEnabled</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 判断当前子控件是否拥有嵌套滑动的父控件</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNestedScrollingParent</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="谷歌嵌套滑动的方法调用设计"><a href="#谷歌嵌套滑动的方法调用设计" class="headerlink" title="谷歌嵌套滑动的方法调用设计"></a>谷歌嵌套滑动的方法调用设计</h3><p>通过上文，我相信大家大概基本了解了NestedScrollingParent与NestedScrollingChild两个接口方法的作用，但是我们并不知道这些方法之间对应的关系与调用的时机。那么现在我们一起来分析谷歌对整个嵌套滑动过程的实现与设计。为了处理嵌套滑动，谷歌将整个过程分为了以下几个步骤：</p>
+<ul>
+<li>1.当父控件不拦截事件，子控件收到滑动事件后，会先询问父控件是否支持嵌套滑动。</li>
+<li>2.如果父控件支持嵌套滑动，那么父控件进行预先滑动。然后将处理剩余的距离交由给子控件处理。</li>
+<li>3.子控件收到父控件剩余的滑动距离并滑动结束后，如果滑动距离还有剩余，又会再问一下父控件是否需要再继续消耗剩下的距离。</li>
+<li>4.如果子控件产生了fling，会先询问父控件是否<code>预先拦截</code>fling。如果父控件预先拦截。则交由给父控件处理。<code>子控件则不处理fling</code>。</li>
+<li>5.如果父控件不预先拦截fling, 那么会将fling传给父控件处理。同时子控件也会处理fling。</li>
+<li>6.当整个嵌套滑动结束时，子控件通知父控件嵌套滑动结束。</li>
+</ul>
+<blockquote>
+<p>对fling效果不熟悉的小伙伴可以查看该篇文章—<a href="https://www.jianshu.com/p/1cf7e9ade0f8" target="_blank" rel="noopener">RecyclerView之Scroll和Fling</a></p>
+</blockquote>
+<p>再结合之前我们对NestedScrollingParent与NestedScrollingChild中的方法。我们可以得到相应方法之间的调用关系。具体如下图所示：</p>
+
+<h4 id="子控件方法调用时机"><a href="#子控件方法调用时机" class="headerlink" title="子控件方法调用时机"></a>子控件方法调用时机</h4><p>当我们了解了接口的调用关系后，我们需要知道子控件对相应嵌套滑动方法的调用时机。因为在低版本下，子控件向父控件传递事件需要配合NestedScrollingChildHelper类与NestedScrollingChild接口一起使用。由于篇幅的限制。这里就不向大家介绍如何构造一个支持嵌套滑动的子控件了。在接下来的知识点中都会在<a href="https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/nested/normal_form/NestedScrollingChildView.java" target="_blank" rel="noopener">NestedScrollingChildView</a><br>的基础上进行讲解。希望大家可以结合代码与博客一起理解。</p>
+<p>在接下来的章节中，会先讲解谷歌在NestedScrollingParent与NestedScrollingChild接口下嵌套滑动的API设计。关于NestedScrollingParent2与NestedScrollingChild2接口会单独进行解释。</p>
+<h5 id="子控件startNestedScroll方法调用时机"><a href="#子控件startNestedScroll方法调用时机" class="headerlink" title="子控件startNestedScroll方法调用时机"></a>子控件startNestedScroll方法调用时机</h5><p>根据嵌套滑动的机制设定，子控件如果想要将事件传递给父控件，那么<code>父控件是不能拦截事件的</code>。当子控件想要将事件交给父控件进行预处理，那么必然会在其onTouchEvent方法，将事件传递给父控件。需要注意的是当子控件调用startNestedScroll方法时，只是判断是否有支持嵌套滑动的父控件，并通知父控件嵌套滑动开始。这个时候并没有真正的传递相应的事件。故该方法只能在子控件的onTouchEvent方法中事件为MotionEvent.ACTION_DOWN时调用。伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> action = event.getActionMasked();</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN: &#123;</span><br><span class="line">                mLastX = x;</span><br><span class="line">                mLastY = y;</span><br><span class="line">                <span class="comment">//查找嵌套滑动的父控件，并通知父控件嵌套滑动开始。这里默认是设置的竖直方向</span></span><br><span class="line">                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>那子view仅仅通过startNestedScroll方法是如何找到父控件并通知父控件嵌套滑动开始的呢？我们来看看startNestedScroll方法的具体实现，startNestedScroll方法内部会调用NestedScrollingChildHelper的startNestedScroll方法。具体代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startNestedScroll</span><span class="params">(@ScrollAxis <span class="keyword">int</span> axes, @NestedScrollType <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (hasNestedScrollingParent(type)) &#123;</span><br><span class="line">            <span class="comment">// Already in progress</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (isNestedScrollingEnabled()) &#123;<span class="comment">//判断子控件是否支持嵌套滑动</span></span><br><span class="line">            <span class="comment">//获取当前的view的父控件</span></span><br><span class="line">            ViewParent p = mView.getParent();</span><br><span class="line">            View child = mView;</span><br><span class="line">            <span class="keyword">while</span> (p != <span class="keyword">null</span>) &#123;</span><br><span class="line">                 <span class="comment">//判断当前父控件是否支持嵌套滑动</span></span><br><span class="line">                <span class="keyword">if</span> (ViewParentCompat.onStartNestedScroll(p, child, mView, axes, type)) &#123;</span><br><span class="line">                    setNestedScrollingParentForType(type, p);</span><br><span class="line">                    ViewParentCompat.onNestedScrollAccepted(p, child, mView, axes, type);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (p <span class="keyword">instanceof</span> View) &#123;</span><br><span class="line">                    child = (View) p;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//继续向上寻找</span></span><br><span class="line">                p = p.getParent();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>从代码中我们可以看出，当子控件支持嵌套滑动时，子控件会获取当前父控件，并调用<code>ViewParentCompat.onStartNestedScroll</code>方法。我们继续查看该方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">onStartNestedScroll</span><span class="params">(ViewParent parent, View child, View target,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> nestedScrollAxes, <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> NestedScrollingParent2) &#123;<span class="comment">//判断父控件是否实现NestedScrollingParent2</span></span><br><span class="line">            <span class="comment">// First try the NestedScrollingParent2 API</span></span><br><span class="line">            <span class="keyword">return</span> ((NestedScrollingParent2) parent).onStartNestedScroll(child, target,</span><br><span class="line">                    nestedScrollAxes, type);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == ViewCompat.TYPE_TOUCH) &#123;<span class="comment">//如果父控件实现NestedScrollingParent</span></span><br><span class="line">            <span class="comment">// Else if the type is the default (touch), try the NestedScrollingParent API</span></span><br><span class="line">            <span class="keyword">return</span> IMPL.onStartNestedScroll(parent, child, target, nestedScrollAxes);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>观察代码，我们可以发现，当父控件实现NestedScrollingParent接口后，会走IMPL.onStartNestedScroll方法，我们继续跟下去：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartNestedScroll</span><span class="params">(ViewParent parent, View child, View target,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">int</span> nestedScrollAxes)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> NestedScrollingParent) &#123;</span><br><span class="line">                <span class="keyword">return</span> ((NestedScrollingParent) parent).onStartNestedScroll(child, target,</span><br><span class="line">                        nestedScrollAxes);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>最后会调用ViewParetCompat中的onStartNestedScroll方法，该方法最终会调用父控件的onStartNestedScroll方法。绕了一大圈，也就调用了父控件的onStartNestedScroll来判断是否支持嵌套滑动。</p>
+<p>那现在我们再回到子控件的startNestedScroll方法中。我们可以得知，如果当前父控件不支持嵌套滑动，那么会一直向上寻找，直到找到为止。如果仍然没有找到，那么接下来的子父控件的嵌套滑动方法都不会调用。如果子控件找到了支持嵌套滑动的父控件，那么接下来会调用父控件的onNestedScrollAccepted方法，表示父控件接受嵌套滑动。</p>
+<h5 id="子控件dispatchNestedPreScroll方法调用时机"><a href="#子控件dispatchNestedPreScroll方法调用时机" class="headerlink" title="子控件dispatchNestedPreScroll方法调用时机"></a>子控件dispatchNestedPreScroll方法调用时机</h5><p>当父控件接受嵌套滑动后，那么子控件需要将手势滑动传递给父控件，因为这里已经产生了滑动，故会在onTouchEvent中筛选MotionEvent.ACTION_MOVE中的事件，然后调用dispatchNestedPreScroll方法这些将滑动事件传递给父控件。伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span>[] mScrollConsumed = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];<span class="comment">//记录父控件消耗的距离</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> action = event.getActionMasked();</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE: &#123;</span><br><span class="line">                <span class="keyword">int</span> dy = mLastY - y;</span><br><span class="line">                <span class="keyword">int</span> dx = mLastX - x;</span><br><span class="line">                <span class="comment">//将事件传递给父控件，并记录父控件消耗的距离。</span></span><br><span class="line">                <span class="keyword">if</span> (dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset)) &#123;</span><br><span class="line">                    dx -= mScrollConsumed[<span class="number">0</span>];</span><br><span class="line">                    dy -= mScrollConsumed[<span class="number">1</span>];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，dy与dx分别为子控件竖直与水平方向上的距离，<code>int[] mScrollConsumed</code>竖直用于记录父控件消耗的距离。那么当我们调用dispatchNestedPreScroll的方法，将事件传递给父控件进行消耗时，那么子控件实际能处理的距离为：</p>
+<ul>
+<li>水平方向： dx -= mScrollConsumed[0];</li>
+<li>竖直方向： dy -= mScrollConsumed[1];</li>
+</ul>
+<p>接下来，我们继续查看dispatchNestedPreScroll的方法。</p>
+<p>在dispatchNestedPreScroll方法内部会调用NestedScrollingChildHelper的dispatchNestedPreScroll方法具体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchNestedPreScroll</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy, @Nullable <span class="keyword">int</span>[] consumed,</span></span></span><br><span class="line"><span class="function"><span class="params">            @Nullable <span class="keyword">int</span>[] offsetInWindow, @NestedScrollType <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isNestedScrollingEnabled()) &#123;</span><br><span class="line">            <span class="comment">//获取当前嵌套滑动的父控件，如果为null，直接返回</span></span><br><span class="line">            <span class="keyword">final</span> ViewParent parent = getNestedScrollingParentForType(type);</span><br><span class="line">            <span class="keyword">if</span> (parent == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dx != <span class="number">0</span> || dy != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> startX = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">int</span> startY = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">if</span> (offsetInWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mView.getLocationInWindow(offsetInWindow);</span><br><span class="line">                    startX = offsetInWindow[<span class="number">0</span>];</span><br><span class="line">                    startY = offsetInWindow[<span class="number">1</span>];</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (consumed == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (mTempNestedScrollConsumed == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        mTempNestedScrollConsumed = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];</span><br><span class="line">                    &#125;</span><br><span class="line">                    consumed = mTempNestedScrollConsumed;</span><br><span class="line">                &#125;</span><br><span class="line">                consumed[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">                consumed[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">                <span class="comment">//调用父控件的onNestedPreScroll处理事件</span></span><br><span class="line">                ViewParentCompat.onNestedPreScroll(parent, mView, dx, dy, consumed, type);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (offsetInWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mView.getLocationInWindow(offsetInWindow);</span><br><span class="line">                    offsetInWindow[<span class="number">0</span>] -= startX;</span><br><span class="line">                    offsetInWindow[<span class="number">1</span>] -= startY;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> consumed[<span class="number">0</span>] != <span class="number">0</span> || consumed[<span class="number">1</span>] != <span class="number">0</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (offsetInWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">                offsetInWindow[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">                offsetInWindow[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在该方法中，会先判断获取当前嵌套滑动的父控件。如果父控件不为null且支持嵌套滑动，那么接下来会调用ViewParentCompat.onNestedPreScroll（）方法。代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedPreScroll</span><span class="params">(ViewParent parent, View target, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy,</span></span></span><br><span class="line"><span class="function"><span class="params">               <span class="keyword">int</span>[] consumed)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> NestedScrollingParent) &#123;</span><br><span class="line">               ((NestedScrollingParent) parent).onNestedPreScroll(target, dx, dy, consumed);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>观察代码最终会调用父控件的onNestedPreScroll方法。需要注意的是，父控件可能会将子控件传递的滑动事件全部消耗。那么子控件就没有继续可处理的事件了。</p>
+<blockquote>
+<p>onNestedPreScroll方法在嵌套滑动时判断父控件的滑动距离时尤为重要。</p>
+</blockquote>
+<h5 id="子控件dispatchNestedScroll方法调用时机"><a href="#子控件dispatchNestedScroll方法调用时机" class="headerlink" title="子控件dispatchNestedScroll方法调用时机"></a>子控件dispatchNestedScroll方法调用时机</h5><p>当父控件预先处理滑动事件后，也就是调用onNestedPreScroll方法并把消耗的距离传递给子控件后，子控件会获取剩下的事件并消耗。如果子控件仍然没有消耗完，那么会调用dispatchNestedScroll将剩下的事件传递给父控件。如果父控件不处理。那么又会传递给子控件进行处理。伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span>[] mScrollConsumed = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];<span class="comment">//记录父控件消耗的距离</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> action = event.getActionMasked();</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE: &#123;</span><br><span class="line">                <span class="keyword">int</span> dy = mLastY - y;</span><br><span class="line">                <span class="keyword">int</span> dx = mLastX - x;</span><br><span class="line">                <span class="comment">//将事件传递给父控件，并记录父控件消耗的距离。</span></span><br><span class="line">                <span class="keyword">if</span> (dispatchNestedPreScroll(dx, dy, mScrollConsumed, mScrollOffset)) &#123;</span><br><span class="line">                    dx -= mScrollConsumed[<span class="number">0</span>];</span><br><span class="line">                    dy -= mScrollConsumed[<span class="number">1</span>];</span><br><span class="line">                    scrollNested(dx,dy);<span class="comment">//处理嵌套滑动</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//处理嵌套滑动</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scrollNested</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> unConsumedX = <span class="number">0</span>, unConsumedY = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> consumedX = <span class="number">0</span>, consumedY = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//子控件消耗多少事件，由自己决定</span></span><br><span class="line">        <span class="keyword">if</span> (x != <span class="number">0</span>) &#123;</span><br><span class="line">            consumedX = childConsumeX(x);</span><br><span class="line">            unConsumedX = x - consumedX;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (y != <span class="number">0</span>) &#123;</span><br><span class="line">            consumedY = childConsumeY(y);</span><br><span class="line">            unConsumedY = y - consumedY;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//子控件处理事件</span></span><br><span class="line">        childScroll(consumedX, consumedY);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//子控件处理后，又将剩下的事件传递给父控件</span></span><br><span class="line">        <span class="keyword">if</span> (dispatchNestedScroll(consumedX, consumedY, unConsumedX, unConsumedY, mScrollOffset)) &#123;</span><br><span class="line">            <span class="comment">//传给父控件处理后，剩下的逻辑自己实现</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//传递给父控件，父控件不处理，那么子控件就继续处理。</span></span><br><span class="line">        childScroll(unConsumedX, unConsumedY);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 子控件滑动逻辑</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">childScroll</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//子控件怎么滑动，自己实现</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 子控件水平方向消耗多少距离</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">childConsumeX</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//具体逻辑由自己实现</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 子控件竖直方向消耗距离</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">childConsumeY</span><span class="params">(<span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//具体逻辑由自己实现</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，因为子控件消耗多少距离，是由子控件进行决定的，所以将这些方法抽象了出来了。在子控件的dispatchNestedScroll方法内部会调用NestedScrollingChildHelper的dispatchNestedScroll方法，具体代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">dispatchNestedScroll</span><span class="params">(<span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, @Nullable <span class="keyword">int</span>[] offsetInWindow,</span></span></span><br><span class="line"><span class="function"><span class="params">            @NestedScrollType <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isNestedScrollingEnabled()) &#123;</span><br><span class="line">            <span class="keyword">final</span> ViewParent parent = getNestedScrollingParentForType(type);</span><br><span class="line">            <span class="keyword">if</span> (parent == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (dxConsumed != <span class="number">0</span> || dyConsumed != <span class="number">0</span> || dxUnconsumed != <span class="number">0</span> || dyUnconsumed != <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> startX = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">int</span> startY = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">if</span> (offsetInWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mView.getLocationInWindow(offsetInWindow);</span><br><span class="line">                    startX = offsetInWindow[<span class="number">0</span>];</span><br><span class="line">                    startY = offsetInWindow[<span class="number">1</span>];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//调用父控件的onNestedScroll方法。</span></span><br><span class="line">                ViewParentCompat.onNestedScroll(parent, mView, dxConsumed,</span><br><span class="line">                        dyConsumed, dxUnconsumed, dyUnconsumed, type);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (offsetInWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mView.getLocationInWindow(offsetInWindow);</span><br><span class="line">                    offsetInWindow[<span class="number">0</span>] -= startX;</span><br><span class="line">                    offsetInWindow[<span class="number">1</span>] -= startY;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (offsetInWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// No motion, no dispatch. Keep offsetInWindow up to date.</span></span><br><span class="line">                offsetInWindow[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">                offsetInWindow[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>该方法内部会调用ViewParentCompat.onNestedScroll方法。继续跟踪最终会调用ViewParentCompat中非静态的的onNestedScroll方法，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(ViewParent parent, View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> NestedScrollingParent) &#123;</span><br><span class="line">                ((NestedScrollingParent) parent).onNestedScroll(target, dxConsumed, dyConsumed,</span><br><span class="line">                        dxUnconsumed, dyUnconsumed);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>该方法中，最终会调用父控件的onNestedScroll方法来处理子控件剩余的距离。</p>
+<h5 id="子控件stopNestedScroll方法调用时机"><a href="#子控件stopNestedScroll方法调用时机" class="headerlink" title="子控件stopNestedScroll方法调用时机"></a>子控件stopNestedScroll方法调用时机</h5><p>当整个事件序列结束的时候(当手指抬起或取消滑动的时候)，需要通知父控件嵌套滑动已经结束。故我们需要在OnTouchEvent中筛选MotionEvent.ACTION_UP、MotionEvent.ACTION_CANCEL中的事件，并通过stopNestedScroll（）方法通知父控件。伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> action = event.getActionMasked();</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_UP: &#123;   <span class="comment">//当手指抬起的时，结束事件传递</span></span><br><span class="line">                stopNestedScroll();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_CANCEL: &#123;   <span class="comment">//当手指抬起的时，结束事件传递</span></span><br><span class="line">                stopNestedScroll();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在stopNestedScroll（）方法中，最终会调用父控件的onStopNestedScroll（）方法，这里就不做更多的分析了。</p>
+<h5 id="子控件fling分发时机"><a href="#子控件fling分发时机" class="headerlink" title="子控件fling分发时机"></a>子控件fling分发时机</h5><p>现在就剩下最后一个嵌套滑动的方法了！！！对！就是fling。在了解子控件对fling的处理过程之前，我们先要知道fling代表什么样的效果。在Android系统下，手指在屏幕上滑动然后松手，控件中的内容会顺着惯性继续往手指滑动的方向继续滚动直到停止，这个过程叫做fling。也就是我们需要在onTouchEvent方法中筛选MotionEvent.ACTION_UP的事件并获取需要的滑动速度。伪代码如下：</p>
+<blockquote>
+<p>fling的中文意思为抛、扔、掷。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">         <span class="comment">//添加速度检测器，用于处理fling</span></span><br><span class="line">        <span class="keyword">if</span> (mVelocityTracker == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mVelocityTracker = VelocityTracker.obtain();</span><br><span class="line">        &#125;</span><br><span class="line">        mVelocityTracker.addMovement(event);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> action = event.getActionMasked();</span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_UP: &#123;</span><br><span class="line">                mVelocityTracker.computeCurrentVelocity(<span class="number">1000</span>, mMaxFlingVelocity);</span><br><span class="line">                <span class="keyword">int</span> xvel = (<span class="keyword">int</span>) mVelocityTracker.getXVelocity();</span><br><span class="line">                <span class="keyword">int</span> yvel = (<span class="keyword">int</span>) mVelocityTracker.getYVelocity();  </span><br><span class="line">             <span class="keyword">if</span> (!dispatchNestedPreFling(velocityX, velocityY)) &#123;</span><br><span class="line">                <span class="keyword">boolean</span> consumed = canScroll();</span><br><span class="line">                <span class="comment">//将fling效果传递给父控件</span></span><br><span class="line">                dispatchNestedFling(velocityX, velocityY, consumed);</span><br><span class="line">                 <span class="comment">//然后子控件再处理fling</span></span><br><span class="line">                childFling();<span class="comment">//子控件自己实现怎么处理fling</span></span><br><span class="line">                stopNestedScroll();<span class="comment">//子控件通知父控件滚动结束</span></span><br><span class="line">              &#125;</span><br><span class="line">              stopNestedScroll();<span class="comment">//通知父控件结束滑动</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里就不在对fling效果是怎么分发到父控件进行解释啦~~。一定要结合<a href="https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/nested/normal_form/NestedScrollingChildView.java" target="_blank" rel="noopener">NestedScrollingChildView</a>类进行理解。那么假设大家都看了源码，那么我们可以得到如下几点：</p>
+<ul>
+<li>子控件dispatchNestedPreFling最终会调用父控件的onNestedPreFling方法。</li>
+<li>子控件的dispatchNestedFling最终会调用onNestedFling方法。</li>
+<li>如果父控件的拦截fling(也就是onNestedPreFling方法返回为<code>true</code>)。那么子控件是没有机会处理fling的。</li>
+<li>如果父控件<code>不</code>拦截fling(也就是onNestedPreFling方法返回为<code>false</code>)，则父控件会调用onNestedFling方法与子控件同时处理fling。</li>
+<li>当父控件与子控件同时处理fling时，子控件会立即调用stopNestedScroll方法通知父控件嵌套滑动结束。</li>
+</ul>
+<h3 id="NestedScrollingChild2与NestedScrollingParent2简介"><a href="#NestedScrollingChild2与NestedScrollingParent2简介" class="headerlink" title="NestedScrollingChild2与NestedScrollingParent2简介"></a>NestedScrollingChild2与NestedScrollingParent2简介</h3><p>最后一个知识点了，大家加油啊!!!!!!</p>
+<p>在本文章前半部，我们都是围绕NestedScrollingChild与NestedScrollingParent进行讲解。并没有提及NestedScrollingChild2与NestedScrollingParent2接口。那这两个接口是处理什么的呢？这又要回到上文我们提到的NestedScrollingChild处理fling时的流程了，在谷歌之前的NestedScrollingParent与NestedScrollingChild的API设计中。并没有考虑如下问题：</p>
+<ul>
+<li>父控件根本不可能知道子控件是否fling结束。子控件只是在<code>ACTION_UP</code>中调用了stopNestedScroll方法。虽然通知了父控件结束嵌套滑动，但是子控件仍然可能处于fling中。</li>
+<li>子控件没有办法将部分fling传递给父控件。父控件必须处理整个fling。</li>
+</ul>
+<p>而使用<code>NestedScrollingChild2与NestedScrollingParent2</code>这两个接口，子控件就能将fling传递给父控件，并且父控件处理了部分fling后，又可以将剩余的fling再传递给子控件。当子控件停止fling时，通知父控件fling结束了。这和我们之前分析的嵌套滑动是不是很像呢？直接讲知识点，大家不是很好理解，看下面这个例子：</p>
+<img src="/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/NestedScrollingParent.gif">
+<blockquote>
+<p>上述效果实现，请参看<a href="https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedScrollingParentLayout.java" target="_blank" rel="noopener">NestedScrollingParentLayout.java</a></p>
+</blockquote>
+<p>在上面例子中是实现了NestedScrollingChild(NestedScrollView或RecyclerView等)与NestedScrollingParent接口的嵌套滑动，我们可以明显的看出，当我们手指快速向下滑动并抬起的时，子控件将fling分发给父控件，因为处理的距离不同，这个时候父控件已经处理滑动并fling结束，而内部的子控件(RecyclerView或NestedScrollView还在滚动，这种给我们的感觉就非常不连贯，好像每个控件在独自滑动。</p>
+<p>在同样的滑动条件下，实现了NestedScrollingChild2(NestedScrollView或RecyclerView等)与NestedScrollingParent2接口的嵌套滑动.看下面的例子：</p>
+<img src="/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/NestedScrollingParent2.gif">
+<blockquote>
+<p>上述效果实现，请参看<a href="https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/view/NestedScrollingParent2Layout.java" target="_blank" rel="noopener">NestedScrollingParent2Layout.java</a></p>
+</blockquote>
+<p>观察上图，我们能发现父控件与子控件(RecyclerView或NestedScrollView)的滑动更为顺畅与合理。那接下来我们看看谷歌对其的设计。</p>
+<p>NestedScrollingChild2与NestedScrollingParent2分别继承了NestedScrollingChild与NestedScrollingParent，在继承的接口部分方法上增加了type参数。其中type的取值为<code>TYPE_TOUCH(0)</code>、<code>TYPE_NON_TOUCH(1)</code>。用于区分手势滑动与fling。具体差异如下图所示：</p>
+<p>(% asset_image 接口差异.png %)</p>
+<blockquote>
+<p>图片较大，可能阅读不清晰，建议放大观看。</p>
+</blockquote>
+<p>谷歌在fling的处理上也与之前的<code>NestedScrollingChild与NestedScrollingParent</code>有所差异，在onTouchEvent方法中的逻辑进行了修改，伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> action = event.getActionMasked();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> y = (<span class="keyword">int</span>) event.getY();</span><br><span class="line">    <span class="keyword">int</span> x = (<span class="keyword">int</span>) event.getX();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加速度检测器，用于处理fling效果</span></span><br><span class="line">    <span class="keyword">if</span> (mVelocityTracker == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mVelocityTracker = VelocityTracker.obtain();</span><br><span class="line">    &#125;</span><br><span class="line">    mVelocityTracker.addMovement(event);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">        <span class="keyword">case</span> MotionEvent.ACTION_UP: &#123;<span class="comment">//当手指抬起的时，结束嵌套滑动传递,并判断是否产生了fling效果</span></span><br><span class="line">            mVelocityTracker.computeCurrentVelocity(<span class="number">1000</span>, mMaxFlingVelocity);</span><br><span class="line">            <span class="keyword">int</span> xvel = (<span class="keyword">int</span>) mVelocityTracker.getXVelocity();</span><br><span class="line">            <span class="keyword">int</span> yvel = (<span class="keyword">int</span>) mVelocityTracker.getYVelocity();</span><br><span class="line">            fling(xvel, yvel);<span class="comment">//具体处理fling的方法</span></span><br><span class="line">            mVelocityTracker.clear();</span><br><span class="line">            stopNestedScroll(ViewCompat.TYPE_TOUCH));<span class="comment">//注意这里stop的是带了参数的</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.onTouchEvent(event);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当子控件手指抬起的时候，我们发现是调用stopNestedScroll(<code>ViewCompat.TYPE_TOUCH</code>)的方式来通知父控件当前<code>手势滑动</code>已经结束，继续查看fling方法。伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">fling</span><span class="params">(<span class="keyword">int</span> velocityX, <span class="keyword">int</span> velocityY)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//判断速度是否足够大。如果够大才执行fling</span></span><br><span class="line">        <span class="keyword">if</span> (Math.abs(velocityX) &lt; mMinFlingVelocity) &#123;</span><br><span class="line">            velocityX = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (Math.abs(velocityY) &lt; mMinFlingVelocity) &#123;</span><br><span class="line">            velocityY = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (velocityX == <span class="number">0</span> &amp;&amp; velocityY == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (dispatchNestedPreFling(velocityX, velocityY)) &#123;</span><br><span class="line">            <span class="keyword">boolean</span> canScroll = canScroll();</span><br><span class="line">            <span class="comment">//将fling效果传递给父控件</span></span><br><span class="line">            dispatchNestedFling(velocityX, velocityY, canScroll);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//子控件在处理fling效果</span></span><br><span class="line">            <span class="keyword">if</span> (canScroll) &#123;</span><br><span class="line">                <span class="comment">//通知父控件开始fling事件，</span></span><br><span class="line">                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_NON_TOUCH);</span><br><span class="line">                velocityX = Math.max(-mMaxFlingVelocity, Math.min(velocityX, mMaxFlingVelocity));</span><br><span class="line">                velocityY = Math.max(-mMaxFlingVelocity, Math.min(velocityY, mMaxFlingVelocity));</span><br><span class="line">                doFling(velocityX, velocityY);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>从代码中，我们可以看见，在新接口的处理逻辑中，还是会调用dispatchNestedPreFling与dispatchNestedFling方法。也就是之前的处理fling方式是没有被替代的，但是这并不说明没有变化。我们发现子控件调用了startNestedScroll方法，并设置了当前类型为TYPE_NON_TOUCH（fling),那么也就是说，在实现了<code>NestedScrollingParent2</code>的父控件中，我们可以在onStartNestedScroll方法中知道当前的滑动类型到底是fling，还是手势滑动。我们继续查看doFling方法。伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实际的fling处理效果</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doFling</span><span class="params">(<span class="keyword">int</span> velocityX, <span class="keyword">int</span> velocityY)</span> </span>&#123;</span><br><span class="line">    mScroller.fling(<span class="number">0</span>, <span class="number">0</span>, velocityX, velocityY, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);</span><br><span class="line">    postInvalidate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doFling方法其实很简单，就是调用OverScroller的fing方法，并调用postInvalidate方法(<code>为了帮助大家理解，这里并没有采用  postOnAnimation()的方式</code>)。其中OverScroller的fing方法主要是根据当前传入的速度，计算出在匀减速情况下,实际运动的距离。这里也就解释了为什么，在只有速度的情况下，子控件可以将fling传递给父控件，因为速度最后变成了实际的运动距离。</p>
+<blockquote>
+<p>这里就不对Scroller的fling方法中如何将速度转换成距离的算法进行讲解了。不熟悉的小伙伴可以自行谷歌或百度。</p>
+</blockquote>
+<p>熟悉Scroller的小伙伴一定知道，为了获取到fling所产生的距离，我们需要调用postInvalidate()方法或Invalidate()方法。同时在子控件的computeScroll()方法中获取实际的运动距离。那么也就说最终的子控件的fing的分发实际是在computeScroll()方法中。继续查看该方法的伪代码：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">computeScroll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (mScroller.computeScrollOffset()) &#123;</span><br><span class="line">          <span class="keyword">int</span> x = mScroller.getCurrX();</span><br><span class="line">          <span class="keyword">int</span> y = mScroller.getCurrY();</span><br><span class="line">          <span class="keyword">int</span> dx = x - mLastFlingX;</span><br><span class="line">          <span class="keyword">int</span> dy = y - mLastFlingY;</span><br><span class="line"></span><br><span class="line">          mLastFlingX = x;</span><br><span class="line">          mLastFlingY = y;</span><br><span class="line">          <span class="comment">//在子控件处理fling之前，先判断父控件是否消耗</span></span><br><span class="line">          <span class="keyword">if</span> (dispatchNestedPreScroll(dx, dy, mScrollConsumed, <span class="keyword">null</span>, TYPE_NON_TOUCH)) &#123;</span><br><span class="line">              <span class="comment">//计算父控件消耗后，剩下的距离</span></span><br><span class="line">              dx -= mScrollConsumed[<span class="number">0</span>];</span><br><span class="line">              dy -= mScrollConsumed[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">              <span class="comment">//因为之前默认向父控件传递的竖直方向，所以这里子控件也消耗剩下的竖直方向</span></span><br><span class="line">              <span class="keyword">int</span> hResult = <span class="number">0</span>;</span><br><span class="line">              <span class="keyword">int</span> vResult = <span class="number">0</span>;</span><br><span class="line">              <span class="keyword">int</span> leaveDx = <span class="number">0</span>;<span class="comment">//子控件水平fling 消耗的距离</span></span><br><span class="line">              <span class="keyword">int</span> leaveDy = <span class="number">0</span>;<span class="comment">//父控件竖直fling 消耗的距离</span></span><br><span class="line"></span><br><span class="line">              <span class="keyword">if</span> (dx != <span class="number">0</span>) &#123;</span><br><span class="line">                  leaveDx = childFlingX(dx);</span><br><span class="line">                  hResult = dx - leaveDx;<span class="comment">//得到子控件消耗后剩下的水平距离</span></span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">if</span> (dy != <span class="number">0</span>) &#123;</span><br><span class="line">                  leaveDy = childFlingY(dy);<span class="comment">//得到子控件消耗后剩下的竖直距离</span></span><br><span class="line">                  vResult = dy - leaveDy;</span><br><span class="line">              &#125;</span><br><span class="line"></span><br><span class="line">              dispatchNestedScroll(leaveDx, leaveDy, hResult, vResult, <span class="keyword">null</span>, TYPE_NON_TOUCH);</span><br><span class="line"></span><br><span class="line">          &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="comment">//当fling 结束时，通知父控件</span></span><br><span class="line">          stopNestedScroll(TYPE_NON_TOUCH);</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>观察代码，我们可以发现，子控件中分发fling的方式在与之前分发手势滚动的逻辑非常一致。</p>
+<ul>
+<li>产生fing时，调用带<code>type(TYPE_NON_TOUCH)</code>参数的dispatchNestedPreScroll方法，判断父控件是否处理fling事件。</li>
+<li>如果父控件处理，那么父控件消耗后，子控件再消耗剩余的距离</li>
+<li>子控件消耗后，如果还有剩余的距离，则调用带<code>type(TYPE_NON_TOUCH)</code>参数的dispatchNestedScroll方法，将剩下的距离传递给父控件。</li>
+<li>当子控件fling结束时，则调用stopNestedScroll(TYPE_NON_TOUCH)方法，通知父控件fling已经结束。</li>
+</ul>
+<p>那么也就是说，NestedScrollingChild2与NestedScrollingParent2接口，只是在原有的方法中增加了<code>TYPE_NON_TOUCH</code>参数来让父控件区分到底是手势滑动还是fling。不得不佩服谷歌大佬的设计。不仅兼容还解决了实际的问题。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过上文的分析，我们能得到如下结论：</p>
+<ul>
+<li>NestedScrolling(嵌套滑动)机制是建立在原有的事件机制之上，要实现嵌套滑动，父控件是不能拦截事件。</li>
+<li>NestedScrolling(嵌套滑动)机制中接口要成对使用。如NestedScrollingChild2与NestedScrollingParent2成对。NestedScrollingChild与NestedScrollingParent成对。</li>
+<li>当我们需要子控件分发fling给父控件时，我们需要使用NestedScrollingChild2与NestedScrollingParent2。并在相应的方法中通过type（<code>TYPE_TOUCH(0)</code>、<code>TYPE_NON_TOUCH(1)</code>),来判断是手势滑动还是fling。</li>
+</ul>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>到现在整个NestedScrolling(嵌套滑动)机制就讲解完毕了，在接下来的文章中，会讲解相应嵌套滑动例子、CoordinatorLayout与Behavior、自定义Behavior等相关知识点，如果大家有兴趣的话，可以持续关注~。谢谢大家花时间阅读文章啦。Thanks</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/嵌套滑动/" rel="tag"># 嵌套滑动</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/23/在安卓的道路上铿锵前行/" rel="next" title="在安卓的道路上铿锵前行">
+                <i class="fa fa-chevron-left"></i> 在安卓的道路上铿锵前行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">37</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传统事件机制处理嵌套滑动的局限性"><span class="nav-number">2.</span> <span class="nav-text">传统事件机制处理嵌套滑动的局限性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NestedScrolling机制简介"><span class="nav-number">3.</span> <span class="nav-text">NestedScrolling机制简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NestedScrollingParent与NestedScrollingChild接口介绍"><span class="nav-number">4.</span> <span class="nav-text">NestedScrollingParent与NestedScrollingChild接口介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NestedScrollingParent"><span class="nav-number">4.1.</span> <span class="nav-text">NestedScrollingParent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NestedScrollingChild接口介绍"><span class="nav-number">4.2.</span> <span class="nav-text">NestedScrollingChild接口介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#谷歌嵌套滑动的方法调用设计"><span class="nav-number">5.</span> <span class="nav-text">谷歌嵌套滑动的方法调用设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#子控件方法调用时机"><span class="nav-number">5.1.</span> <span class="nav-text">子控件方法调用时机</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#子控件startNestedScroll方法调用时机"><span class="nav-number">5.1.1.</span> <span class="nav-text">子控件startNestedScroll方法调用时机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#子控件dispatchNestedPreScroll方法调用时机"><span class="nav-number">5.1.2.</span> <span class="nav-text">子控件dispatchNestedPreScroll方法调用时机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#子控件dispatchNestedScroll方法调用时机"><span class="nav-number">5.1.3.</span> <span class="nav-text">子控件dispatchNestedScroll方法调用时机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#子控件stopNestedScroll方法调用时机"><span class="nav-number">5.1.4.</span> <span class="nav-text">子控件stopNestedScroll方法调用时机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#子控件fling分发时机"><span class="nav-number">5.1.5.</span> <span class="nav-text">子控件fling分发时机</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NestedScrollingChild2与NestedScrollingParent2简介"><span class="nav-number">6.</span> <span class="nav-text">NestedScrollingChild2与NestedScrollingParent2简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">8.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
