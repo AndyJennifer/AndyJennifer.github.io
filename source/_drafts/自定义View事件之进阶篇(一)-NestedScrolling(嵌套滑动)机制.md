@@ -1,5 +1,5 @@
 ---
-title: 自定义View事件篇进阶篇(一)-NestedScrolling(嵌套滑动)机制
+title: 自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制
 tags:
   - 嵌套滑动
 categories:

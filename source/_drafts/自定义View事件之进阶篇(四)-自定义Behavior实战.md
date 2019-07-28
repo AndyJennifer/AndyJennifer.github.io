@@ -1,5 +1,5 @@
 ---
-title: 自定义View事件篇进阶篇(四)-自定义Behavior实战
+title: 自定义View事件之进阶篇(四)-自定义Behavior实战
 tags:
   - 嵌套滑动
 categories:
@@ -8,7 +8,7 @@ categories:
 
 ### 前言
 
-在上篇文章{% post_link 自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior %}中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个例子，来巩固我们之前学习的知识点。
+在上篇文章{% post_link 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior %}中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个例子，来巩固我们之前学习的知识点。
 
 > 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
@@ -16,7 +16,7 @@ categories:
 
 我们先看一下，我们需要实现的效果吧，如下图所示：
 
-![例子展示](自定义View事件篇进阶篇(四)-自定义Behavior实战/例子展示.gif)
+![例子展示](自定义View事件之进阶篇(四)-自定义Behavior实战/例子展示.gif)
 
 从效果上来看，这种效果类似于CoordinatorLayout与AppBarLayout之间的配合效果，但是我们并没有使用AppBarLayout。整个效果涉及到的控件就只有CoordinatorLayout、TextView、及RecyclerView及自定义的Behavior。我们先来分析一下整个例子的设计思路。
 
@@ -26,7 +26,7 @@ categories:
 
 从例子中我们可以看出，在移动前后，RecyclerView始终是在TextView的下方。也就是如下图这种关系：
 
-![布局关系](自定义View事件篇进阶篇(四)-自定义Behavior实战/布局关系.jpg)
+![布局关系](自定义View事件之进阶篇(四)-自定义Behavior实战/布局关系.jpg)
 
 那么也就是说，我们需要Behavior在`onLayoutChild`方法中来处理RecyclerView与TextView的位置关系。
 
@@ -36,9 +36,9 @@ categories:
 
 那么一提到重新设置位置，那么我们是否需要重新设定`RecyclerView的高度`呢？，答案当然是的！！
 
-从效果上来看，当TextView滑动至隐藏后，RecyclerView在后续的内容滑动中，始终都是填充整个屏幕的。说到这里，不知道大家是否还记得在上篇文章{% post_link 自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior %}中我们曾提到过，当我们使用Behavior时，如果控件的位置发生了改变，且控件的高度为`match_parent`时，我们需要在CoordinatorLayout测量该控件的高度之前，让控件自主的去测量高度，也就是重写Behavior的`onMeasureChild`方法。来保证控件填充整个屏幕。如果不重写的话。会出现下图所示的空白局域：
+从效果上来看，当TextView滑动至隐藏后，RecyclerView在后续的内容滑动中，始终都是填充整个屏幕的。说到这里，不知道大家是否还记得在上篇文章{% post_link 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior %}中我们曾提到过，当我们使用Behavior时，如果控件的位置发生了改变，且控件的高度为`match_parent`时，我们需要在CoordinatorLayout测量该控件的高度之前，让控件自主的去测量高度，也就是重写Behavior的`onMeasureChild`方法。来保证控件填充整个屏幕。如果不重写的话。会出现下图所示的空白局域：
 
-![空白区域](自定义View事件篇进阶篇(四)-自定义Behavior实战/空白区域.jpg)
+![空白区域](自定义View事件之进阶篇(四)-自定义Behavior实战/空白区域.jpg)
 
 #### 嵌套滑动的分析
 
@@ -152,11 +152,11 @@ public class HeaderScrollingViewBehavior extends CoordinatorLayout.Behavior<View
 
 在讲解嵌套滑动效果之前，我们需要回顾一下Behavior实现嵌套滑动的原理与过程，如下图所示：
 
-![Behavior整体流程](自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg)
+![Behavior整体流程](自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg)
 
 回顾之间讲解的知识，如果我们的控件要通过Behavior实现嵌套滑动的话，那我们需要重写Behavior的相关方法。根据本文例子中展示的效果，我们需要自定义Behavior，并重写其`onStartNestedScroll`与`onNestedPreScroll`和`onNestedPreScroll`三个方法。
 
->文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件篇进阶篇(一)-NestedScrolling(嵌套滑动)机制 %}文章下的方法介绍。
+>文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制 %}文章下的方法介绍。
 
 ```java
 public class NestedHeaderBehavior extends CoordinatorLayout.Behavior<View> {

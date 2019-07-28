@@ -120,12 +120,12 @@ https://github.com/GcsSloop/AndroidNote
   
 ##### 嵌套滑动机制
 
-- 自定义View事件篇进阶篇(一)-NestedScrolling（嵌套滑动）机制
-- 自定义View事件篇进阶篇(二)-自定义NestedScrolling实战
-- 自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior
-- 自定义View事件篇进阶篇(四)-自定义Behavior实战
-- 自定义View事件篇进阶篇(五)-CoordinatorLayout与AppBarLayout
-- 自定义View事件篇进阶篇(六)-CoordinatorLayout与AppBarLayout及CollapsingTollbarLayout
+- 自定义View事件之进阶篇(一)-NestedScrolling（嵌套滑动）机制
+- 自定义View事件之进阶篇(二)-自定义NestedScrolling实战
+- 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior
+- 自定义View事件之进阶篇(四)-自定义Behavior实战
+- 自定义View事件之进阶篇(五)-CoordinatorLayout与AppBarLayout
+- 自定义View事件之进阶篇(六)-CoordinatorLayout与AppBarLayout及CollapsingTollbarLayout
 
 #### 动画篇
 

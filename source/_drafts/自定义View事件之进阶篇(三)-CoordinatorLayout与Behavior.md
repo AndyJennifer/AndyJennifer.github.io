@@ -34,7 +34,7 @@ categories:
 
 {% asset_img Behavior方法设置.jpg%}
 
->在下面的文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件篇进阶篇(一)-NestedScrolling(嵌套滑动)机制 %}文章下的方法介绍。
+>在下面的文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制 %}文章下的方法介绍。
 
 那现在我们就一起来看看，谷歌是怎么围绕Behavior对上述四个功能进行设计的把。
 
