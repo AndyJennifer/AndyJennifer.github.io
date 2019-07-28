@@ -156,7 +156,7 @@ public class HeaderScrollingViewBehavior extends CoordinatorLayout.Behavior<View
 
 回顾之间讲解的知识，如果我们的控件要通过Behavior实现嵌套滑动的话，那我们需要重写Behavior的相关方法。根据本文例子中展示的效果，我们需要自定义Behavior，并重写其`onStartNestedScroll`与`onNestedPreScroll`和`onNestedPreScroll`三个方法。
 
->文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制 %}文章下的方法介绍。
+>文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇-嵌套滑动机制 %}文章下的方法介绍。
 
 ```java
 public class NestedHeaderBehavior extends CoordinatorLayout.Behavior<View> {

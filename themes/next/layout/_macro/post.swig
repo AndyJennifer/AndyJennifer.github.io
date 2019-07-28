@@ -212,6 +212,7 @@
             {% if theme.post_meta.item_text %} {{ __('post.views') + __('symbol.colon') }} {% endif %}
             <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
             </span>
+
           {% endif %}
 
           {% if config.symbols_count_time.symbols or config.symbols_count_time.time %}
