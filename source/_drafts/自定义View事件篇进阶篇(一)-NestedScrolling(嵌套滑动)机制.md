@@ -6,11 +6,13 @@ categories:
   - View事件篇
 ---
 
+>最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~
+
 ### 前言
 
 在Lollipop(Android 5.0)时，谷歌推出了NestedScrolling机制，也就是嵌套滑动。本文将带领大家一起去了解谷歌对该机制的设计。通过阅读该文，你能了解如下知识点：
 
-- 传动事件分发机制中嵌套滑动的实现与局限性。
+- 传统事件分发机制中嵌套滑动的实现与局限性。
 - 谷歌NestedScrolling机制的原理实现。
 - NestedScrollingChild与NestedScrollingParent接口的调用关系。
 - NestedScrollingChild2与NestedScrollingParent2接口出现的意义。
@@ -44,13 +46,13 @@ categories:
 父控件需要实现的接口与使用到的类：
 
 - NestedScrollingParent（接口）
-- NestedScrollingParent2（接口并继承NestedScrollingParent）
+- NestedScrollingParent2（也是接口并继承NestedScrollingParent）
 - NestedScrollingParentHelper（类）
 
 子控件需要实现的接口与使用到的类：
 
 - NestedScrollingChild（接口）
-- NestedScrollingChild2（接口并继承NestedScrollingChild）
+- NestedScrollingChild2（也是接口并继承NestedScrollingChild）
 - NestedScrollingChildHelper（类）
 
 需要注意的是，如果你的Android平台在5.0以上，那么你可以直接使用系统ViewGoup与View自带的方法。但是为了向下兼容，建议还是使用support v4包提供的相应接口来实现嵌套滑动。下文也会着重讲解这些接口的的使用方式与方法说明。
@@ -415,7 +417,7 @@ public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed,
 
 观察代码最终会调用父控件的onNestedPreScroll方法。需要注意的是，父控件可能会将子控件传递的滑动事件全部消耗。那么子控件就没有继续可处理的事件了。
 
->onNestedPreScroll方法在嵌套滑动时，判断父控件的滑动距离时尤为重要。
+>onNestedPreScroll方法在嵌套滑动时判断父控件的滑动距离时尤为重要。
 
 ##### 子控件dispatchNestedScroll方法调用时机
 
@@ -790,4 +792,4 @@ doFling方法其实很简单，就是调用OverScroller的fing方法，并调用
 
 ### 最后
 
-到现在整个NestedScrolling(嵌套滑动)机制就讲解完毕了，在接下来的文章中，会讲解相应嵌套滑动例子、CoordinatorLayout原理、CoordinatorLayout与Behavior的使用、CoordinatorLayout与AppBarLayout的关系等等相关知识点，如果大家有兴趣的话，可以持续关注~。谢谢大家花时间阅读文章啦。Thanks
+到现在整个NestedScrolling(嵌套滑动)机制就讲解完毕了，在接下来的文章中，会讲解相应嵌套滑动例子、CoordinatorLayout与Behavior、自定义Behavior等相关知识点，如果大家有兴趣的话，可以持续关注~。谢谢大家花时间阅读文章啦。Thanks
