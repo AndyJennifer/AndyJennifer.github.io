@@ -1,5 +1,5 @@
 ---
-title: 自定义View事件篇进阶篇(十)-CoordinatorLayout与AppBarLayout的关系
+title: 自定义View事件篇进阶篇(五)-CoordinatorLayout与AppBarLayout
 tags:
   - 嵌套滑动
 categories:

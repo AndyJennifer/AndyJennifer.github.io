@@ -1,5 +1,5 @@
 ---
-title: 自定义View事件篇进阶篇(九)-CoordinatorLayout与AppBarLayout、CollapsingTollbarLayout的关系
+title: 自定义View事件篇进阶篇(六)-CoordinatorLayout与AppBarLayout及CollapsingTollbarLayout
 tags:
   - null
 categories:
