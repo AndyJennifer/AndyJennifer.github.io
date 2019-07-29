@@ -466,11 +466,11 @@ public class AppBarLayout extends LinearLayout {}
 
 ### Behavior实现嵌套滑动的原理与过程
 
-在上文CoordinatorLayout简介中，我们简单介绍了CoordinatorLayout嵌套滑动事件的传递过程与Behavior嵌套滑动的相关方法。从CoordinatorLayout到Behavior的整个流程相对来说较为复杂，整体流程如下所示：
+在上文CoordinatorLayout简介中，我们简单介绍了CoordinatorLayout嵌套滑动事件的传递过程与Behavior嵌套滑动的相关方法,现在我们就来了解嵌套滑动从CoordinatorLayout到Behavior的整个传递流程。如下所示：
 
 {% asset_img 嵌套滑动流程图.jpg %}
 
-现在我们就抽丝剥茧，详细了解其内部实现机制与整体过程。
+单从上图，来理解整个传递过程比较困难。我们需要抽丝剥茧，逐个击破。下面我们就一步步来分析吧。
 
 #### CoordainatorLayout的事件传递过程
 
