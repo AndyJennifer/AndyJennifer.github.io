@@ -4,6 +4,7 @@ tags:
   - 嵌套滑动
 categories:
   - View事件篇
+date: 2019-07-29 23:05:09
 ---
 
 ### 前言
@@ -19,7 +20,7 @@ categories:
 - Behavior自定义布局的时机与过程
 - Behavior自定义测量的时机与过程
 
-> 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
+>该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
 ### CoordainatorLayout简介
 
@@ -56,7 +57,7 @@ CoordinatorLayout实现了NestedScrollingParent2接口。那么当事件（scrol
 
 {% asset_img 嵌套滑动整体流程.jpg%}
 
-观察谷歌的设计，我们可以发现，相对于NestedScrolling机制（参与角色只有子控件和父控件），CoordainatorLayout中的交互角色更为丰富，在CoordainatorLayout下的**子控件可以与多个兄弟控件进行交互。**
+观察谷歌的设计，我们可以发现，相对于NestedScrolling机制（参与角色只有子控件和父控件），CoordainatorLayout中的交互角色更为丰富，在CoordainatorLayout下的**子控件可以与多个兄弟控件进行交互**。
 
 #### 子控件的测量、布局、事件的设计
 
@@ -258,7 +259,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 ```
 
-熟悉ViewTreeObserver的小伙伴一定清楚，该类主要是监测整个View树的变化（状态变化，或者内部的View可见性变化等），我们继续跟踪OnPreDrawListener，查看CoordainatorLayou在绘制前做了什么。
+熟悉ViewTreeObserver的小伙伴一定清楚，该类主要是监测整个View树的变化（这里的变化指View树的状态变化，或者内部的View可见性变化等），我们继续跟踪OnPreDrawListener，查看CoordainatorLayou在绘制前做了什么。
 
 ```java
   class OnPreDrawListener implements ViewTreeObserver.OnPreDrawListener {
@@ -368,7 +369,9 @@ prepareChildren方法中，会遍历内部所有的子控件，并将子控件�
 
 #### Behavior的实例化
 
-现在我们来讲解下一个知识点，在上述文章中，我们只描述了CoordainatorLayout中子控件的依赖交互原理，讲解了Behavior依赖相关方法的调用时机，我们并没有讲解Behavior是如果同xml配置，生成实例Behavior对象的。现在我们来看看Behavior是何时被实例化的。
+现在我们来讲解下一个知识点，在上述文章中，我们描述了CoordainatorLayout中子控件的依赖交互原理，以及Behavior依赖相关方法的调用时机，我们并没有讲解Behavior是何时被实例化的。下面我们就来看看Behavior是如何被实例化的。
+
+查看oordainatorLayout源码，我们发现在CoordainatorLayout中自定义了布局参数`LayoutParams`。并且在LayoutParms类中声明了`Behavior`成员变量。如下所示：
 
 ```java
  public static class LayoutParams extends MarginLayoutParams {
@@ -376,7 +379,7 @@ prepareChildren方法中，会遍历内部所有的子控件，并将子控件�
  }
 ```
 
-在CoordainatorLayout中自定义了布局参数`LayoutParams`，并在LayoutParms声明了`Behavior`，同时重写了`generateLayoutParams`方法。
+CoordainatorLayout还重写了`generateLayoutParams`方法。
 
 ```java
    @Override
@@ -385,7 +388,7 @@ prepareChildren方法中，会遍历内部所有的子控件，并将子控件�
     }
 ```
 
-熟悉自定义View的小伙伴一定熟悉`generateLayoutParams`方法，当我们自定义父控件时，如果我们的子控件需要一些特殊的布局参数，我们一般会自定义`LayoutParams`。比如Relativelayout中声明的LayoutParms中包含`alight_top`,`to_left_of`一样。好了回过头来，我们继续查看LayoutParams的构造函数。代码如下所示：
+熟悉自定义View的小伙伴一定熟悉`generateLayoutParams`方法。当我们自定义ViewGroup时，如果希望我们的子控件需要一些特殊的布局参数或一些特殊的属性时，我们一般会自定义`LayoutParams`。比如Relativelayout中LayoutParms中包含`LEFT_OF（对应xml布局中的toLeftOf)`,`RIGHT_OF(对应xml布局中的toRightOf）`属性。当程序解析xml的时，会根据子控件声明的属性，生成对应父控件下的`LayoutParam`,通过该`LayoutParam`，我们就能获取我们想要的参数啦。而子控件Layoutparam的生成，必然会走到父控件的`LayoutParams的构造函数`。查看CoordainatorLayout下LayoutParams的构造函数：
 
 ```java
 LayoutParams(Context context, AttributeSet attrs) {
@@ -409,7 +412,7 @@ LayoutParams(Context context, AttributeSet attrs) {
         }
 ```
 
-当子控件的布局参数实例化的时候，会在布局文件中判断是否声明了`layout_behavior`，如果声明了就调用`parseBehavior`方法来实例化Behavior对象。具体代码如下所示：
+观察代码，我们可以发现，子控件的布局参数实例化时，会通过`AttributeSet（xml中声明的标签)`来判断是否声明了`layout_behavior`，如果声明了，就调用`parseBehavior`方法来实例化Behavior对象。具体代码如下所示：
 
 ```java
   static Behavior parseBehavior(Context context, AttributeSet attrs, String name) {
@@ -779,7 +782,7 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 
 ### Behavior的布局
 
-还有最后两个知识点了，大家加油啊~~~
+{% note info %} 还有最后两个知识点了，大家加油啊~~~ {% endnote %}
 
 我们都知道CoordinatorLayout中被谷歌称为超级FrameLayout，其中的原因不仅因为其布局方式与测量方式与FrameLayout非常相似以外，最主要的原因是CoordinatorLayout可以将滑动事件、布局、测量交给子控件中的Behavior。现在我们就来看看CoordinatorLayout下的布局实现。查看其`onLayout`方法。
 
