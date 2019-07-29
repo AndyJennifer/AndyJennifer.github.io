@@ -8,7 +8,7 @@ categories:
 
 ### 前言
 
-在上篇文章中，我们分析了谷歌对NestedScrolling机制的设计，了解的不同接口的使用场景。现在就让我们一起结合一个实际的使用例子，来巩固之前学习的知识点吧。
+在上篇文章中{% post_link 自定义View事件之进阶篇-嵌套滑动机制 %} ，我们分析了谷歌对NestedScrolling机制的设计，了解的不同接口的使用场景。现在就让我们一起结合一个实际的使用例子，来巩固之前学习的知识点吧。
 
 ### 效果展示
 
@@ -87,7 +87,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 在上述代码中，我们需要注意以下几点：
 
-- StickyNavLayout实现类默认方向为竖直方向。
+- StickyNavLayout实现类默认布局为竖直方向。
 - 为了让父控件处理竖直方向上的事件，我们需要在`onStartNestedScroll`方法判断`axes & ViewCompat.SCROLL_AXIS_VERTICAL`。
 - 为了让子控件也处理fling，我们需要在`onNestedPreFling`方法中返回`false`。因为在嵌套滑动机制中，如果该方法返回true,那么子控件就没有机会处理fling了。
 - 为了兼容低版本并获得正确的嵌套滑动状态，我们需要在onNestedScrollAccepted、onStopNestedScroll、onStopNestedScroll、中调用NestedScrollingParentHelper的相应方法。
@@ -100,8 +100,8 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
 继续观察Demo实现效果，我们可以发现得到如下几点：
 
-- 当产生`向上`的手势滑动与fling)时，如果展示图片没被父控件遮挡，那么父控件先拦截事件并滑动。当图片完全被遮挡时，子控件再接着处理。
-- 当产生`向下`的手势滑动与fling)时，如果展示图片没完全显示，那么父控件先拦截事件并滑动。当图片完全显示时，子控件再接着处理。
+- 当产生`向上`的手势滑动与fling时，如果展示图片没被父控件遮挡，那么父控件先拦截事件并滑动。当图片完全被遮挡时，子控件再接着处理。
+- 当产生`向下`的手势滑动与fling时，如果展示图片没完全显示，那么父控件先拦截事件并滑动。当图片完全显示时，子控件再接着处理。
 
 那么展示图片遮挡的效果是如何实现的呢？其实很简单，我们只需要在我们的父控件中添加一个与展示图片相同高度的透明的View就行了。那么当父控件在滚动的时候，就可以产生一种遮盖的效果啦。具体设计如下图所示：
 
