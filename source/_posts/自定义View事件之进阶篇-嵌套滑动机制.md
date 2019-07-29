@@ -232,7 +232,7 @@ date: 2019-07-29 00:13:51
 
 再结合之前我们对NestedScrollingParent与NestedScrollingChild中的方法。我们可以得到相应方法之间的调用关系。具体如下图所示：
 
-{% asset_img 方法对应关系.jpg  %}
+{% asset_img 方法对应关系.png %}
 
 #### 子控件方法调用时机
 
@@ -641,7 +641,7 @@ public boolean onTouchEvent(MotionEvent event) {
 
 NestedScrollingChild2与NestedScrollingParent2分别继承了NestedScrollingChild与NestedScrollingParent，在继承的接口部分方法上增加了type参数。其中type的取值为`TYPE_TOUCH(0)`、`TYPE_NON_TOUCH(1)`。用于区分手势滑动与fling。具体差异如下图所示：
 
-(% asset_img 接口差异.png %)
+{% asset_img 接口差异.png %}
 
 >图片较大，可能阅读不清晰，建议放大观看。
 
