@@ -107,7 +107,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/例子分析.gif">
 <meta property="og:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/NestedScrollingParent.gif">
 <meta property="og:image" content="http://yoursite.com/2019/07/29/自定义View事件之进阶篇-嵌套滑动机制/NestedScrollingParent2.gif">
-<meta property="og:updated_time" content="2019-07-28T16:13:51.300Z">
+<meta property="og:updated_time" content="2019-07-29T01:58:44.783Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制">
 <meta name="twitter:description" content="最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~  前言在Lollipop(Android 5.0)时，谷歌推出了NestedScrol">
@@ -400,9 +400,13 @@
                 
               
 
-              <time title="创建时间：2019-07-29 00:13:51" itemprop="dateCreated datePublished" datetime="2019-07-29T00:13:51+08:00">2019-07-29</time>
+              <time title="创建时间：2019-07-29 00:13:51 / 修改时间：09:58:44" itemprop="dateCreated datePublished" datetime="2019-07-29T00:13:51+08:00">2019-07-29</time>
             
 
+            
+              
+
+              
             
           </span>
 
@@ -583,7 +587,7 @@
 </blockquote>
 <p>观察上图，我们能发现父控件与子控件(RecyclerView或NestedScrollView)的滑动更为顺畅与合理。那接下来我们看看谷歌对其的设计。</p>
 <p>NestedScrollingChild2与NestedScrollingParent2分别继承了NestedScrollingChild与NestedScrollingParent，在继承的接口部分方法上增加了type参数。其中type的取值为<code>TYPE_TOUCH(0)</code>、<code>TYPE_NON_TOUCH(1)</code>。用于区分手势滑动与fling。具体差异如下图所示：</p>
-<p>(% asset_image 接口差异.png %)</p>
+<p>(% asset_img 接口差异.png %)</p>
 <blockquote>
 <p>图片较大，可能阅读不清晰，建议放大观看。</p>
 </blockquote>
