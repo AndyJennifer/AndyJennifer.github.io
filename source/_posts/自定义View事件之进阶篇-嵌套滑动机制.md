@@ -7,7 +7,6 @@ categories:
 date: 2019-07-29 00:13:51
 ---
 
-
 >最近一段时间，一直都在忙于找工作。虽然花费了三个月的时间，但是结果并不是很美满。想去大厂、想去好公司、想遇见更厉害的人的愿望还是没有实现。或许是自己不够强大，或许自己不够努力，或许需要一定运气。生活总是需要经历一些波折。没有谁总是能一帆风顺。接下来一段时间内，会继续更新文章。希望大家能继续关注。Thanks~
 
 ### 前言
@@ -642,7 +641,7 @@ public boolean onTouchEvent(MotionEvent event) {
 
 NestedScrollingChild2与NestedScrollingParent2分别继承了NestedScrollingChild与NestedScrollingParent，在继承的接口部分方法上增加了type参数。其中type的取值为`TYPE_TOUCH(0)`、`TYPE_NON_TOUCH(1)`。用于区分手势滑动与fling。具体差异如下图所示：
 
-(% asset_image 接口差异.png %)
+(% asset_img 接口差异.png %)
 
 >图片较大，可能阅读不清晰，建议放大观看。
 
