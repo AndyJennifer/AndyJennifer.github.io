@@ -35,7 +35,7 @@ date: 2019-07-29 23:05:09
 
 {% asset_img Behavior方法设置.jpg%}
 
->在下面的文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇(一)-NestedScrolling(嵌套滑动)机制 %}文章下的方法介绍。
+>在下面的文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇-嵌套滑动机制%}文章下的方法介绍。
 
 那现在我们就一起来看看，谷歌是怎么围绕Behavior对上述四个功能进行设计的把。
 
@@ -155,7 +155,7 @@ DependedView逻辑非常简单，就是重写了onTouchEvent，监听滑动，�
 
 BrotherChameleonBehavior（变色小弟）代码如下所示：
 
->在CoordainatorLayout中要实现子控件的依赖交互，我们需要继承CoordinatorLayout.Behavior。并实现layoutDependsOn、onDependentViewChanged、onDependentViewRemoved方法，因为我们Demo中不设计关于依赖控件的删除，故没有重写onDependentViewRemoved方法。
+>在CoordainatorLayout中要实现子控件的依赖交互，我们需要继承CoordinatorLayout.Behavior。实现layoutDependsOn、onDependentViewChanged、onDependentViewRemoved这三个方法，因为我们例子中不设计关于依赖控件的删除，故没有重写onDependentViewRemoved方法。
 
 ```java
 public class BrotherChameleonBehavior extends CoordinatorLayout.Behavior<View> {
@@ -318,7 +318,11 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 ```
 
-观察代码，我们发现程序中使用了一个名为`mDependencySortedChildren`的集合，通过遍历该集合，我们可以获取集合中控件的`LayoutParam`，得到LayoutParam后，我们可以继续获取相应的`Behavior`。并调用其`layoutDependsOn`方法找到所依赖的控件，如果找到了当前控件所依赖的另一控件，那么就调用Behavior中的`onDependentViewChanged`方法。到这里，我相信大家应该明白多个控件依赖交互的原理。现在还剩下mDependencySortedChildren集合了。我们看看这个集合中是存储了什么东西。
+观察代码，我们发现程序中使用了一个名为`mDependencySortedChildren`的集合，通过遍历该集合，我们可以获取集合中控件的`LayoutParam`，得到LayoutParam后，我们可以继续获取相应的`Behavior`。并调用其`layoutDependsOn`方法找到所依赖的控件，如果找到了当前控件所依赖的另一控件，那么就调用Behavior中的`onDependentViewChanged`方法。
+
+看到这里，多个控件依赖交互的原理已经非常清楚了，在CoordainatorLayout下，控件A发生位置、大小改变时，会导致CoordainatorLayout重绘。而CoordainatorLayout又设置了绘制前的监听。在该监听中，会遍历`mDependencySortedChildren`集合，找到依赖A控件的其他控件。并通知其他控件A控件发生了改变。当其他控件收到该通知后。就可以做自己想做的效果啦。
+
+关于`mDependencySortedChildren`中存储的到底是什么数据还没有介绍，现在我们就来看看这个集合中是存储了什么东西。查看源码，我们发现`mDependencySortedChildren`中的元素是在onMeasure方法中的`prepareChildren()`中进行添加的，
 
 ```java
  @Override
@@ -328,7 +332,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 ```
 
-`mDependencySortedChildren`中元素是在onMeasure方法中的`prepareChildren()`中进行添加的，我们继续查看该方法。方法如下所示：
+我们继续跟踪prepareChildren()方法。代码如下所示：
 
 ```java
   private void prepareChildren() {
@@ -351,7 +355,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
                 final View other = getChildAt(j);
                 if (lp.dependsOn(this, view, other)) {
                     if (!mChildDag.contains(other)) {
-                        //添加到图中
+                        //将节点添加到图中
                         mChildDag.addNode(other);
                     }
                     // 添加边（依赖的view)
@@ -365,7 +369,7 @@ public class BrotherFollowBehavior extends CoordinatorLayout.Behavior<View> {
     }
 ```
 
-prepareChildren方法中，会遍历内部所有的子控件，并将子控件添加到`mChildDag`集合中，大家不用去关系`mChildDag`的数据结构是什么，大家只要知道该数据类型是一种叫图的数据结构就行了。在方法最后，又会将`mChildDag`中的数据，全部添加到mDependencySortedChildren中去。
+在prepareChildren方法中，会遍历内部所有的子控件，并将子控件添加到`mChildDag`集合中，`mChildDag`的数据结构一种叫图的数据结构。通过这种数据结构，我们可以快速的找到具有依赖关系控件。当将子控件的依赖关系处理完毕后。方法最后会将`mChildDag`集合中全部的数据添加到mDependencySortedChildren集合中去，这样我们的`mDependencySortedChildren`就有相应数据啦。
 
 #### Behavior的实例化
 
@@ -555,7 +559,9 @@ public boolean onInterceptTouchEvent(MotionEvent ev) {
 
 >这里我们先不考虑Behavior拦截事件，一般情况下，Behavior的`onInterceptTouchEvent`方法基本都是返回false。特殊情况下Behavior事件拦截处理，大家可以在理解本文章所有的知识点后，结合官方提供的`BottomSheetBehavior`、`SwipeDismissBehavior`等进行深入的研究，这里因为篇幅的限制就不再深入的探讨了。
 
-那么假设现在所有的子控件中的Behavior.onInterceptTouchEvent返回为`false`,那么CoordinatorLayout就不会拦截事件，根据事件传递机制，事件就传递到了子控件中去了。如果我们的子控件实现是了NestedScrollingChild接口（如RecyclerView或NestedScrollView),并且在onTouchEvent方法调用了相关嵌套滑动API,那么再根据嵌套滑动机制，会调用实现了NestedScrollingParent2接口的父控件的相应方法。又因为CoordinatorLayout实现了NestedScrollingParent2接口。那么就又回到了我们最开始的介绍的嵌套滑动机制了。这里的理解非常重要！！！！！非常重要！！！！非常重要！！！如果没有理解，建议多读几遍。
+那么假设现在所有的子控件中的Behavior.onInterceptTouchEvent返回为`false`，那么CoordinatorLayout就不会拦截事件，根据事件传递机制，事件就传递到了子控件中去了。如果我们的子控件实现是了NestedScrollingChild接口（如RecyclerView或NestedScrollView),并且在onTouchEvent方法调用了相关嵌套滑动API,那么再根据嵌套滑动机制，会调用实现了NestedScrollingParent2接口的父控件的相应方法。又因为CoordinatorLayout实现了NestedScrollingParent2接口。那么就又回到了我们最开始的介绍的嵌套滑动机制了。
+
+>这里的理解非常重要！！！！！非常重要！！！！非常重要！！！如果没有理解，建议多读几遍。
 
 既然最终会调用CoordinatorLayout的嵌套滑动方法。那我们来介绍CoordinatorLayout下比较有代表性的嵌套滑动方法，那么先来看onStartNestedScroll方法。具体代码如下：
 
