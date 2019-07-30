@@ -8,62 +8,62 @@ categories:
 
 ### 前言
 
-在上篇文章{% post_link 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior %}中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个例子，来巩固我们之前学习的知识点。
+在上篇文章{% post_link 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior %}中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个Demo，来巩固我们之前学习的知识点。
 
 > 该博客中涉及到的示例，在[NestedScrollingDemo](https://github.com/AndyJennifer/NestedScrollingDemo)项目中都有实现，大家可以按需自取。
 
 ### 效果展示
 
-我们先看一下，我们需要实现的效果吧，如下图所示：
+先看一下我们需要实现的效果吧，如下图所示：
 
-![例子展示](自定义View事件之进阶篇(四)-自定义Behavior实战/例子展示.gif)
+![例子展示](自定义View事件之进阶篇-自定义Behavior实战/例子展示.gif)
 
-从效果上来看，这种效果类似于CoordinatorLayout与AppBarLayout之间的配合效果，但是我们并没有使用AppBarLayout。整个效果涉及到的控件就只有CoordinatorLayout、TextView、及RecyclerView及自定义的Behavior。我们先来分析一下整个例子的设计思路。
+**友情提示**：Demo中涉及到的控件为CoordinatorLayout、TextView、RecyclerView。文章都会围绕这三个控件进行讲解。
 
-### 实现分析
+从Demo效果来看，这是非常简单的嵌套滑动。如果采用我们之前所学的`NestedScrollingParent2`与`NestedScrollingChild2`实现接口的方式。我们能非常迅速的解决问题。但是如果采用自定义Behavior的话，那么就稍微有点难度了。不过不用担心，只要一步一步慢慢分析，就总能解决问题的。
 
-#### 布局与测量的分析
+### RecyclerView布局与测量的分析
 
-从例子中我们可以看出，在移动前后，RecyclerView始终是在TextView的下方。也就是如下图这种关系：
+在Demo中，RecyclerView与TextView开始的布局关系如下图所示：
 
-![布局关系](自定义View事件之进阶篇(四)-自定义Behavior实战/布局关系.jpg)
+{% asset_img 例子展示.gif}
 
-那么也就是说，我们需要Behavior在`onLayoutChild`方法中来处理RecyclerView与TextView的位置关系。
+根据在文章{% post_link 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior %}中我们所学的知识点，我们知道CoordinatorLayout对子控件的布局是类似于FrameLayout的，所以为了保证RecyclerView在TextView的下方显示，我们需要创建属于RecyclerView的Behavior，并在该Behavior的`onLayoutChild`方法中处理RecyclerView与TextView的位置关系。
 
-但是除了处理RecyclerView的位置关系以外，从例子效果中，我们还可以看出，RecyclerView与TextView之间有着一个联动的关系（这里指的是RecyclerView与TextView之间的位置关系，而不是RecyclerView中的内容)。当TextView逐渐上移的时候，下方的RecyclerView也随着往上移动。也就是我们需要处理根据TextView的位置关系来重新设定RecyclerView在屏幕中的位置。那么我们可以确定的是例子中的RecyclerView是依赖TextView的！！！
+除了解决RecyclerView的位置关系以外，在该Demo中，我们还可以看出，RecyclerView与TextView之间有着一个联动的关系（这里指的是RecyclerView与TextView之间的位置关系，而不是RecyclerView中的内容)。随着TextView逐渐上移的时候，下方的RecyclerView也跟着往上移动。那么我们可以确定的是RecyclerView必然是依赖TextView的。也就是说我们需要重写Behavior的`layoutDependsOn`与`onDependentViewChanged`方法。
 
->当然控件的位置改变，我们可以使用View.setTransationY或View.offsetTopAndBottom或其他改变位置的方式。本文例子中的代码采用offsetTopAndBottom的方式来处理上下的移动。
+>确定一个控件（childView1)依赖另外一个控件(childView2)的时候，是通过`layoutDependsOn(CoordinatorLayout parent, V child, View dependency)`这个方法。其中child是依赖对象(childView1)，而dependency是被依赖对象(childView2)，该方法的返回值是判断是否依赖对应view。如果返回true。那么表示依赖。反之不依赖。一般情况下，在我们自定义Behavior时，我们需要重写该方法。当`layoutDependsOn`方法返回true时，后面的`onDependentViewChanged`与`onDependentViewRemoved`方法才会调用。
 
-那么一提到重新设置位置，那么我们是否需要重新设定`RecyclerView的高度`呢？，答案当然是的！！
+除了考虑以上因数以外，我们还需要考虑RecyclerView的高度。观察Demo，我们可以看出，RecylerView在移动前后，始终都是填充整个屏幕的。为了保证RecylerView在移动过程中，屏幕中不会出现空白（如下图所示）。我们也需要在CoordinatorLayout测量该控件的高度之前，让控件自主的去测量高度。也就是重写RecylerView对应Behavior中的`onMeasureChild`方法。
 
-从效果上来看，当TextView滑动至隐藏后，RecyclerView在后续的内容滑动中，始终都是填充整个屏幕的。说到这里，不知道大家是否还记得在上篇文章{% post_link 自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior %}中我们曾提到过，当我们使用Behavior时，如果控件的位置发生了改变，且控件的高度为`match_parent`时，我们需要在CoordinatorLayout测量该控件的高度之前，让控件自主的去测量高度，也就是重写Behavior的`onMeasureChild`方法。来保证控件填充整个屏幕。如果不重写的话。会出现下图所示的空白局域：
+{% asset_img 空白区域.jpg %}
 
-![空白区域](自定义View事件之进阶篇(四)-自定义Behavior实战/空白区域.jpg)
+#### RecyclerView的Behavior代码实现
 
-#### 嵌套滑动的分析
-
-在分析了布局与测量后，我们继续分析嵌套滑动效果，整个嵌套滑动效果并不复杂，分为向上、向下两个效果。
-
-- 向上滑动：
-当TextView仍在屏幕中显示时，那么RecyclerView就与TextView一起向上滑动。当TextView滑动至屏幕外时，RecyclerView才能处理内部内容的滚动。
-- 向下滑动：
-当TextView已经被划出屏幕且RecylerView中的内容不能继续向下滑动时，那么就将TextView滑动至显示。否则RecyclerView单独处理内部内容的滚动。
-
-从前期的分析来看，我们需要创建两个Behavior,一个Behavior用于处理TextView嵌套滑动。另一个Behavior来处理RecyclerView的位置关系。那下面就让我们一起来实现这两个Behavior吧。
-
-### 布局代码实现
+分析了RecyclerView的Behavior需要重写的内容后，我们来看看具体的Behavior实现类`HeaderScrollingViewBehavior`。代码如下所示：
 
 ```java
 public class HeaderScrollingViewBehavior extends CoordinatorLayout.Behavior<View> {
 
-    public HeaderScrollingViewBehavior() {
-    }
+    public HeaderScrollingViewBehavior() {}
 
     public HeaderScrollingViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
+    /**
+     * 依赖TextView
+     */
+    @Override
+    public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
+        return dependency instanceof TextView;
+    }
 }
 ```
+
+>注意：在xml引用自定义Behavior时，一定要重新构造函数。不然会提示知道不到相应的Behavior。
+
+为了帮助大家理解，我将RecyclerView的Behavior拆成了几个部分，首先我们查看`layoutDependsOn`方法。非常简单，就是判断依赖的对象是否是TextView。我们继续查看该类中的`onMeasureChild`方法。代码如下所示：
 
 ```java
 @Override
@@ -118,45 +118,60 @@ public class HeaderScrollingViewBehavior extends CoordinatorLayout.Behavior<View
     }
 ```
 
+>重新设置控件的位置，我们可以使用View.setTransationY或View.offsetTopAndBottom或其他改变位置的方式。本文例子中的代码采用offsetTopAndBottom的方式来处理上下的移动。
+
 ```java
-   /**
-     * 从依赖集合中获取第一个
-     */
-    View findFirstDependency(List<View> views) {
-        if (views != null && !views.isEmpty()) {
-            return views.get(0);
+      @Override
+    public boolean onLayoutChild(CoordinatorLayout parent, View child, int layoutDirection) {
+        final List<View> dependencies = parent.getDependencies(child);
+        final View header = findFirstDependency(dependencies);
+
+        if (header != null) {
+            final CoordinatorLayout.LayoutParams lp =
+                    (CoordinatorLayout.LayoutParams) child.getLayoutParams();
+            final Rect available = mTempRect1;
+
+            //设置当前的宽高 为当前header的下方
+            available.set(parent.getPaddingLeft() + lp.leftMargin,
+                    header.getBottom() + lp.topMargin,
+                    parent.getWidth() - parent.getPaddingRight() - lp.rightMargin,
+                    parent.getHeight() + header.getBottom()
+                            - parent.getPaddingBottom() - lp.bottomMargin);
+
+            //根据gravity重新计算坐标
+            final Rect out = mTempRect2;
+            GravityCompat.apply(resolveGravity(lp.gravity), child.getMeasuredWidth(),
+                    child.getMeasuredHeight(), available, out, layoutDirection);
+
+            //拿到坐标后重新布局
+            child.layout(out.left, out.top, out.right, out.bottom);
+
+        } else {
+            //如果没有依赖，则调用父控件来处理布局
+            parent.onLayoutChild(child, layoutDirection);
         }
-        return null;
-    }
-
-    /**
-     * 矫正当前Gravity
-     */
-    private static int resolveGravity(int gravity) {
-        return gravity == Gravity.NO_GRAVITY ? GravityCompat.START | Gravity.TOP : gravity;
-    }
-
-
-    /**
-     * 获取当前View的滑动范围，一般情况下，为view的高度
-     *
-     * @param v
-     * @return
-     */
-    int getScrollRange(View v) {
-        return v.getMeasuredHeight();
+        return true;
     }
 ```
 
-### 滑动效果实现
+### TextView嵌套滑动的分析
+
+在分析了布局与测量后，我们继续分析嵌套滑动效果，整个嵌套滑动效果并不复杂，分为向上、向下两个效果。
+
+- 向上滑动：
+只有当TextView滑动至屏幕外时，RecyclerView才能处理内部内容的滚动。
+- 向下滑动：
+当TextView已经被划出屏幕且RecylerView中的内容不能继续向下滑动时，那么就将TextView滑动至显示。否则RecyclerView单独处理内部内容的滚动
+
+#### TextView的Behavior代码实现
 
 在讲解嵌套滑动效果之前，我们需要回顾一下Behavior实现嵌套滑动的原理与过程，如下图所示：
 
 ![Behavior整体流程](自定义View事件之进阶篇(三)-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg)
 
-回顾之间讲解的知识，如果我们的控件要通过Behavior实现嵌套滑动的话，那我们需要重写Behavior的相关方法。根据本文例子中展示的效果，我们需要自定义Behavior，并重写其`onStartNestedScroll`与`onNestedPreScroll`和`onNestedPreScroll`三个方法。
-
 >文章中不会介绍Behavior嵌套滑动相关方法的作用，如果需要了解这些方法的作用，建议参看{% post_link 自定义View事件之进阶篇-嵌套滑动机制 %}文章下的方法介绍。
+
+回顾之前讲解的知识，如果我们的控件想要实现嵌套滑动，我们需要重写Behavior的相关方法。根据本文例子中展示的效果，我们需要自定义Behavior，并重写其`onStartNestedScroll`与`onNestedPreScroll`和`onNestedScroll`三个方法。
 
 ```java
 public class NestedHeaderBehavior extends CoordinatorLayout.Behavior<View> {
@@ -224,6 +239,26 @@ public class NestedHeaderBehavior extends CoordinatorLayout.Behavior<View> {
 
     }
 
+```
+
+```java
+    @Override
+    public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        if (dyUnconsumed < 0) {//表示已经向下滑动到头。
+            int currentTop = child.getTop();
+            int newTop = currentTop - dyUnconsumed;
+            if (newTop <= 0) {
+                Log.i(TAG, "onNestedScroll: " + "dyUnconsumed--> " + dyUnconsumed + " currentTop--->" + currentTop + " newTop--->" + newTop);
+                ViewCompat.offsetTopAndBottom(child, -dyUnconsumed);
+                mOffset = -dyUnconsumed;
+            } else {//如果当前的值大于最大的偏移量，那么就直接滚动到-currentTop就行了
+                ViewCompat.offsetTopAndBottom(child, -currentTop);
+                mOffset = -currentTop;
+            }
+            coordinatorLayout.dispatchDependentViewsChanged(child);
+        }
+
+    }
 ```
 
 ### 最后
