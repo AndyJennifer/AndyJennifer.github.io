@@ -194,7 +194,7 @@ public class HeaderScrollingViewBehavior extends CoordinatorLayout.Behavior<View
 
 在讲解TextView的Behavior的代码实现之前，我们需要回顾一下在CooordinatoLayout下嵌套方法的传递过程，如下图所示：
 
-![传递流程](自定义View事件之进阶篇-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg)
+{% asset_img 嵌套滑动整体流程.jpg %}
 
 通过回顾流程，在结合本文例子中展示的效果，我们需要重写Behavior中的`onStartNestedScroll`与`onNestedPreScroll`和`onNestedScroll`三个方法。来看TextView的`NestedHeaderBehavior`实现。代码如下所示：
 
