@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在上篇文章中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个Demo，来巩固我们之前学习的知识点。  该博客中涉及到的示例，在NestedScrollingDemo项目中都有实现，大家可以按需自取。  效果展示先看一下我们需要实现的效果吧，如下图所示：   友情提示：Demo中涉及到的控件为Coordina">
+<meta name="keywords" content="嵌套滑动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义View事件之进阶篇(四)-自定义Behavior实战">
+<meta property="og:url" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在上篇文章中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个Demo，来巩固我们之前学习的知识点。  该博客中涉及到的示例，在NestedScrollingDemo项目中都有实现，大家可以按需自取。  效果展示先看一下我们需要实现的效果吧，如下图所示：   友情提示：Demo中涉及到的控件为Coordina">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/例子展示.gif">
+<meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/布局关系.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/空白区域.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/自定义View事件之进阶篇-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg">
+<meta property="og:updated_time" content="2019-07-31T15:38:27.126Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义View事件之进阶篇(四)-自定义Behavior实战">
+<meta name="twitter:description" content="前言在上篇文章中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个Demo，来巩固我们之前学习的知识点。  该博客中涉及到的示例，在NestedScrollingDemo项目中都有实现，大家可以按需自取。  效果展示先看一下我们需要实现的效果吧，如下图所示：   友情提示：Demo中涉及到的控件为Coordina">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/例子展示.gif">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>自定义View事件之进阶篇(四)-自定义Behavior实战 | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自定义View事件之进阶篇(四)-自定义Behavior实战
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-31 23:32:15 / 修改时间：23:38:27" itemprop="dateCreated datePublished" datetime="2019-07-31T23:32:15+08:00">2019-07-31</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/View事件篇/" itemprop="url" rel="index"><span itemprop="name">View事件篇</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">13k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">24 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个Demo，来巩固我们之前学习的知识点。</p>
+<blockquote>
+<p>该博客中涉及到的示例，在<a href="https://github.com/AndyJennifer/NestedScrollingDemo" target="_blank" rel="noopener">NestedScrollingDemo</a>项目中都有实现，大家可以按需自取。</p>
+</blockquote>
+<h3 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h3><p>先看一下我们需要实现的效果吧，如下图所示：</p>
+<img src="/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/例子展示.gif">
+<blockquote>
+<p><strong>友情提示</strong>：Demo中涉及到的控件为CoordinatorLayout、TextView、RecyclerView。文章都会围绕这三个控件进行讲解。</p>
+</blockquote>
+<p>从Demo效果来看，这是非常简单的嵌套滑动。如果采用我们之前所学的<code>NestedScrollingParent2</code>与<code>NestedScrollingChild2</code>实现接口的方式。我们能非常迅速的解决问题。但是如果采用自定义Behavior的话，那么就稍微有点难度了。不过不用担心，只要一步一步慢慢分析，就总能解决问题的。</p>
+<h3 id="RecyclerView布局与测量的分析"><a href="#RecyclerView布局与测量的分析" class="headerlink" title="RecyclerView布局与测量的分析"></a>RecyclerView布局与测量的分析</h3><p>在Demo中，RecyclerView与TextView开始的布局关系如下图所示：</p>
+<img src="/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/布局关系.jpg">
+<p>根据在文章<a href="/2019/07/29/自定义View事件之进阶篇-CoordinatorLayout与Behavior/" title="自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior">自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior</a>中我们所学的知识点，我们知道CoordinatorLayout对子控件的布局是类似于FrameLayout的，所以为了保证RecyclerView在TextView的下方显示，我们需要创建属于RecyclerView的Behavior，并在该Behavior的<code>onLayoutChild</code>方法中处理RecyclerView与TextView的位置关系。</p>
+<p>除了解决RecyclerView的位置关系以外，在该Demo中，我们还可以看出，RecyclerView与TextView之间有着一个联动的关系（这里指的是RecyclerView与TextView之间的位置关系，而不是RecyclerView中的内容)。随着TextView逐渐上移的时候，下方的RecyclerView也跟着往上移动。那么我们可以确定的是RecyclerView必然是依赖TextView的。也就是说我们需要重写Behavior的<code>layoutDependsOn</code>与<code>onDependentViewChanged</code>方法。</p>
+<blockquote>
+<p>确定一个控件（childView1)依赖另外一个控件(childView2)的时候，是通过<code>layoutDependsOn(CoordinatorLayout parent, V child, View dependency)</code>这个方法。其中child是依赖对象(childView1)，而dependency是被依赖对象(childView2)，该方法的返回值是判断是否依赖对应view。如果返回true。那么表示依赖。反之不依赖。一般情况下，在我们自定义Behavior时，我们需要重写该方法。当<code>layoutDependsOn</code>方法返回true时，后面的<code>onDependentViewChanged</code>与<code>onDependentViewRemoved</code>方法才会调用。</p>
+</blockquote>
+<p>除了考虑以上因数以外，我们还需要考虑RecyclerView的高度。观察Demo，我们可以看出，RecylerView在移动前后，始终都是填充整个屏幕的。为了保证RecylerView在移动过程中，屏幕中不会出现空白（如下图所示）。我们也需要在CoordinatorLayout测量该控件的高度之前，让控件自主的去测量高度。也就是重写RecylerView对应Behavior中的<code>onMeasureChild</code>方法。</p>
+<img src="/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/空白区域.jpg">
+<h4 id="RecyclerView的Behavior代码实现"><a href="#RecyclerView的Behavior代码实现" class="headerlink" title="RecyclerView的Behavior代码实现"></a>RecyclerView的Behavior代码实现</h4><p>分析了RecyclerView的Behavior需要重写的内容后，我们来看看具体的Behavior实现类<code>HeaderScrollingViewBehavior</code>。为了帮助大家理解，我将RecyclerView的Behavior拆成了几个部分，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeaderScrollingViewBehavior</span> <span class="keyword">extends</span> <span class="title">CoordinatorLayout</span>.<span class="title">Behavior</span>&lt;<span class="title">View</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HeaderScrollingViewBehavior</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HeaderScrollingViewBehavior</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 依赖TextView</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">layoutDependsOn</span><span class="params">(CoordinatorLayout parent, View child, View dependency)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dependency <span class="keyword">instanceof</span> TextView;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略部分代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：在xml引用自定义Behavior时，一定要声明构造函数。不然在程序的编译过程中，会提示知道不到相应的Behavior。</p>
+</blockquote>
+<p><code>layoutDependsOn</code>方法的逻辑非常简单。就是判断依赖的对象是否是TextView。我们继续查看该类中的<code>onMeasureChild</code>方法。代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onMeasureChild</span><span class="params">(CoordinatorLayout parent, View child, <span class="keyword">int</span> parentWidthMeasureSpec, <span class="keyword">int</span> widthUsed, <span class="keyword">int</span> parentHeightMeasureSpec, <span class="keyword">int</span> heightUsed)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取当前滚动控件的测量模式</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> childLpHeight = child.getLayoutParams().height;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//只有当前滚动控件为match_parent/wrap_content时才重新测量其高度，因为固定高度不会出现底部空白的情况</span></span><br><span class="line">        <span class="keyword">if</span> (childLpHeight == ViewGroup.LayoutParams.MATCH_PARENT</span><br><span class="line">                || childLpHeight == ViewGroup.LayoutParams.WRAP_CONTENT) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//获取当前child依赖的对象集合</span></span><br><span class="line">            <span class="keyword">final</span> List&lt;View&gt; dependencies = parent.getDependencies(child);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> View header = findFirstDependency(dependencies);</span><br><span class="line">            <span class="keyword">if</span> (header != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (ViewCompat.getFitsSystemWindows(header)</span><br><span class="line">                        &amp;&amp; !ViewCompat.getFitsSystemWindows(child)) &#123;</span><br><span class="line">                    <span class="comment">// If the header is fitting system windows then we need to also,</span></span><br><span class="line">                    <span class="comment">// otherwise we'll get CoL's compatible measuring</span></span><br><span class="line">                    ViewCompat.setFitsSystemWindows(child, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (ViewCompat.getFitsSystemWindows(child)) &#123;</span><br><span class="line">                        <span class="comment">// If the set succeeded, trigger a new layout and return true</span></span><br><span class="line">                        child.requestLayout();</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//获取当前父控件中可用的距离，</span></span><br><span class="line">                <span class="keyword">int</span> availableHeight = View.MeasureSpec.getSize(parentHeightMeasureSpec);</span><br><span class="line">                <span class="keyword">if</span> (availableHeight == <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// If the measure spec doesn't specify a size, use the current height</span></span><br><span class="line">                    availableHeight = parent.getHeight();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//计算当前滚动控件的高度。</span></span><br><span class="line">                <span class="keyword">final</span> <span class="keyword">int</span> height = availableHeight - header.getMeasuredHeight() + getScrollRange(header);</span><br><span class="line">                <span class="keyword">final</span> <span class="keyword">int</span> heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height,</span><br><span class="line">                        childLpHeight == ViewGroup.LayoutParams.MATCH_PARENT</span><br><span class="line">                                ? View.MeasureSpec.EXACTLY</span><br><span class="line">                                : View.MeasureSpec.AT_MOST);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//测量当前滚动的View的正确高度</span></span><br><span class="line">                parent.onMeasureChild(child, parentWidthMeasureSpec,</span><br><span class="line">                        widthUsed, heightMeasureSpec, heightUsed);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>测量逻辑的基本步骤：</p>
+<ol>
+<li>获取当前控件的测量模式，判断是否采用的<code>match_parent</code>或者<code>wrap_content</code>。（对于精准模式，我们不用考虑，控件是否填充屏幕）</li>
+<li>当满足条件1，获取当前RecyclerView所依赖的header(TextView），根据当前TextView的高度，计算出控件A的实际高度(RecyclerView的父控件可用的高度<code>-</code>TextView的高度<code>+</code>TextView的滚动范围)</li>
+</ol>
+<p>在<code>onMeasureChild</code>方法中，我省略了部分方法的介绍，如<code>findFirstDependency</code>、<code>getScrollRange</code>方法。这些方法在<a href="https://github.com/AndyJennifer/NestedScrollingDemo" target="_blank" rel="noopener">NestedScrollingDemo</a>项目中都有实现。大家可以按需自取。</p>
+<p>我们继续查看<code>HeaderScrollingViewBehavior</code>类中的<code>onLayoutChild</code>方法，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onLayoutChild</span><span class="params">(CoordinatorLayout parent, View child, <span class="keyword">int</span> layoutDirection)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;View&gt; dependencies = parent.getDependencies(child);</span><br><span class="line">    <span class="keyword">final</span> View header = findFirstDependency(dependencies);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (header != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">final</span> CoordinatorLayout.LayoutParams lp =</span><br><span class="line">                (CoordinatorLayout.LayoutParams) child.getLayoutParams();</span><br><span class="line">        <span class="keyword">final</span> Rect available = mTempRect1;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//得到依赖控件下方的坐标。</span></span><br><span class="line">        available.set(parent.getPaddingLeft() + lp.leftMargin,</span><br><span class="line">                header.getBottom() + lp.topMargin,</span><br><span class="line">                parent.getWidth() - parent.getPaddingRight() - lp.rightMargin,</span><br><span class="line">                parent.getHeight() + header.getBottom()</span><br><span class="line">                        - parent.getPaddingBottom() - lp.bottomMargin);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//拿到上面计算的坐标后，根据当前控件在父控件中设置的gravity,重新计算并得到控件在父控件中的坐标</span></span><br><span class="line">        <span class="keyword">final</span> Rect out = mTempRect2;</span><br><span class="line">        GravityCompat.apply(resolveGravity(lp.gravity), child.getMeasuredWidth(),</span><br><span class="line">                child.getMeasuredHeight(), available, out, layoutDirection);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//拿到坐标后重新布局</span></span><br><span class="line">        child.layout(out.left, out.top, out.right, out.bottom);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//如果没有依赖，则调用父控件来处理布局</span></span><br><span class="line">        parent.onLayoutChild(child, layoutDirection);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>onLayoutChild</code>方法逻辑也不算复杂，根据当前所依赖的header(TextView)的位置，将RecyclerView设置在TextView下方。我们继续查看RecyclerView与TextView的联动处理。也就是<code>onDependentViewChanged</code>方法。代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onDependentViewChanged</span><span class="params">(CoordinatorLayout parent, View child, View dependency)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> CoordinatorLayout.Behavior behavior =</span><br><span class="line">            ((CoordinatorLayout.LayoutParams) dependency.getLayoutParams()).getBehavior();</span><br><span class="line">    <span class="keyword">if</span> (behavior <span class="keyword">instanceof</span> NestedHeaderBehavior) &#123;</span><br><span class="line">        ViewCompat.offsetTopAndBottom(child, dependency.getBottom() - child.getTop() + ((NestedHeaderBehavior) behavior).getOffset());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//如果当前的控件的位置发生了改变，该返回值一定要返回为true</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在该方法中，我们需要通过TextView的Behavior(<code>NestedHeaderBehavior</code>)，并获得TextView的实际偏移量（上述代码中的<code>getOffset()</code>)。通过该偏移量我们可以重新设置RecyclerView的位置。当然，改变控件位置的方式有很多种，我们可以使用<code>setTransationY</code>或<code>View.offsetTopAndBottom</code>及其他方式，大家可以采用自己喜欢的方式。因为涉及到TextView中Behavior的偏移量。那下面我们就来看看TextView对应Behavior的分析与实现吧。</p>
+<h3 id="TextView嵌套滑动的分析"><a href="#TextView嵌套滑动的分析" class="headerlink" title="TextView嵌套滑动的分析"></a>TextView嵌套滑动的分析</h3><p>在整个Demo中，TextView的嵌套滑动效果并不复杂。这里我们就从向上与向下两个方向来介绍。</p>
+<ul>
+<li>向上滑动：<br>只有当TextView滑动至屏幕外时，RecyclerView才能处理内部内容的滚动。</li>
+<li>向下滑动：<br>当TextView已经被划出屏幕且RecylerView中的内容不能继续向下滑动时，那么就将TextView滑动至显示。否则RecyclerView单独处理内部内容的滚动。</li>
+</ul>
+<h4 id="TextView的Behavior代码实现"><a href="#TextView的Behavior代码实现" class="headerlink" title="TextView的Behavior代码实现"></a>TextView的Behavior代码实现</h4><p>在讲解TextView的Behavior的代码实现之前，我们需要回顾一下在CooordinatoLayout下嵌套方法的传递过程，如下图所示：</p>
+<p><img src="自定义View事件之进阶篇-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg" alt="传递流程"></p>
+<p>通过回顾流程，在结合本文例子中展示的效果，我们需要重写Behavior中的<code>onStartNestedScroll</code>与<code>onNestedPreScroll</code>和<code>onNestedScroll</code>三个方法。来看TextView的<code>NestedHeaderBehavior</code>实现。代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NestedHeaderBehavior</span> <span class="keyword">extends</span> <span class="title">CoordinatorLayout</span>.<span class="title">Behavior</span>&lt;<span class="title">View</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> WeakReference&lt;View&gt; mNestedScrollingChildRef;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mOffset;<span class="comment">//记录当前布局的偏移量</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NestedHeaderBehavior</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onLayoutChild</span><span class="params">(CoordinatorLayout parent, View child, <span class="keyword">int</span> layoutDirection)</span> </span>&#123;</span><br><span class="line">        mNestedScrollingChildRef = <span class="keyword">new</span> WeakReference&lt;&gt;(findScrollingChild(parent));</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onLayoutChild(parent, child, layoutDirection);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略部分代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>TextView中NestedHeaderBehavior类的声明与RecyclerView中的Behavior基本一样。因为我们需要将偏移量传递给RecyclerView，所以在<code>NestedHeaderBehavior</code>的onLayoutChild方法中，我们去创建了关于RecyclerView的弱引用，并设置了<code>mOffset</code>变量来记录TextViwe每次滑动的偏移量。如何获取RecyclerView，可以查看项目中源码的实现。接下来，我们继续查看相关嵌套方法实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartNestedScroll</span><span class="params">(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View directTargetChild, @NonNull View target, <span class="keyword">int</span> axes, <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//只要竖直方向上就拦截</span></span><br><span class="line">    <span class="keyword">return</span> (axes &amp; ViewCompat.SCROLL_AXIS_VERTICAL) != <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>onStartNestedScroll</code>方法中，我们设置了当前控件，只能拦截竖直方向上的嵌套滑动事件。继续查看<code>onNestedPreScroll</code>方法。代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedPreScroll</span><span class="params">(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy, @NonNull <span class="keyword">int</span>[] consumed, <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">    View scrollingChild = mNestedScrollingChildRef.get();</span><br><span class="line">    <span class="keyword">if</span> (target != scrollingChild) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> currentTop = child.getTop();</span><br><span class="line">    <span class="keyword">int</span> newTop = currentTop - dy;</span><br><span class="line">    <span class="keyword">if</span> (dy &gt; <span class="number">0</span>) &#123;<span class="comment">//向上滑动</span></span><br><span class="line">        <span class="comment">//处理在范围内的滚动与fling</span></span><br><span class="line">        <span class="keyword">if</span> (newTop &gt;= -child.getHeight()) &#123;</span><br><span class="line">            Log.i(TAG, <span class="string">"onNestedPreScroll:向上移动"</span> + <span class="string">"currentTop---&gt;"</span> + currentTop + <span class="string">" newTop---&gt;"</span> + newTop);</span><br><span class="line">            consumed[<span class="number">1</span>] = dy;</span><br><span class="line">            mOffset = -dy;</span><br><span class="line">            ViewCompat.offsetTopAndBottom(child, -dy);</span><br><span class="line">            coordinatorLayout.dispatchDependentViewsChanged(child);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">//当超过后，单独处理</span></span><br><span class="line">            consumed[<span class="number">1</span>] = child.getHeight() + currentTop;</span><br><span class="line">            mOffset = -consumed[<span class="number">1</span>];</span><br><span class="line">            ViewCompat.offsetTopAndBottom(child, -consumed[<span class="number">1</span>]);</span><br><span class="line">            coordinatorLayout.dispatchDependentViewsChanged(child);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (dy &lt; <span class="number">0</span>) &#123;<span class="comment">//向下滑动</span></span><br><span class="line">        <span class="keyword">if</span> (newTop &lt;= <span class="number">0</span> &amp;&amp; !target.canScrollVertically(-<span class="number">1</span>)) &#123;</span><br><span class="line">            Log.i(TAG, <span class="string">"onNestedPreScroll:向下移动"</span> + <span class="string">"currentTop---&gt;"</span> + currentTop + <span class="string">" newTop---&gt;"</span> + newTop);</span><br><span class="line">            consumed[<span class="number">1</span>] = dy;</span><br><span class="line">            mOffset = -dy;</span><br><span class="line">            ViewCompat.offsetTopAndBottom(child, -dy);</span><br><span class="line">            coordinatorLayout.dispatchDependentViewsChanged(child);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>onNestedPreScroll</code>方法中的逻辑较为复杂。不急我们慢慢分析：</p>
+<ul>
+<li>首先我们得到当前TextView的Top高度（<code>currentTop</code>）。然后根据当前偏移距离<code>dy</code>，计算出TextView新的Top高度(<code>newTop</code>)。</li>
+<li>如果<code>dy&gt;0</code>,也就是向上滑动。我们判断偏移后的Top(<code>newTop</code>)高度是否大于<code>负</code>的TextView的测量的高度。</li>
+</ul>
+<blockquote>
+<p>因为是向上滑动，当TextView移出屏幕后，通过调用getTop方法获取的高度肯定为负数。这里判断是否大于等于<code>-child.getHeight</code>，表示的是当前TextView没有超过它的滚动范围（-child.getHeight到0)。</p>
+</blockquote>
+<ol>
+<li>如果<code>newTop &gt;= -child.getHeight()</code>，则TextView消耗掉<code>dy</code>，通过<code>ViewCompat.offsetTopAndBottom(child, -dy)</code>来移动当前TextView，接着记录TextView位置的偏移量（<code>mOffest</code>），最后通过调用CoordinatorLayout下的<code>dispatchDependentViewsChanged</code>方法，通知控件RecyclerView所依赖的TextView发生了改变。那么RecyclerView收到通知后，就可以拿着这个偏移量和TextView一起联动了。</li>
+<li>如果<code>newTop&lt; - child.getHeight()</code>，表示在当前偏移距离<code>dy</code>下，如果TextView会超过它的滚动范围。那么我们就不能使用当前<code>dy</code>来移动TextView。我们只能滚动剩下的范围，也就是child.getHeight() + currentTop（这里使用<code>+（加号）</code>，是因为滚动范围为-child.getHeight到0）。</li>
+</ol>
+<ul>
+<li>如果<code>dy&lt;0</code>，表示向下滑动，只有在target(RecyclerView)不能向下滑动且TextView已经部分移出屏幕时，我们的TextView才能向下滑动。这里的处理方式基本和上滑一样，这里就不再进行介绍了。我们继续查看最后的方法<code>onNestedScroll</code>方法。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, <span class="keyword">int</span> type)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (dyUnconsumed &lt; <span class="number">0</span>) &#123;<span class="comment">//表示已经向下滑动到头。</span></span><br><span class="line">        <span class="keyword">int</span> currentTop = child.getTop();</span><br><span class="line">        <span class="keyword">int</span> newTop = currentTop - dyUnconsumed;</span><br><span class="line">        <span class="keyword">if</span> (newTop &lt;= <span class="number">0</span>) &#123;<span class="comment">//如果当前的值在滚动范围之内。</span></span><br><span class="line">            Log.i(TAG, <span class="string">"onNestedScroll: "</span> + <span class="string">"dyUnconsumed--&gt; "</span> + dyUnconsumed + <span class="string">" currentTop---&gt;"</span> + currentTop + <span class="string">" newTop---&gt;"</span> + newTop);</span><br><span class="line">            ViewCompat.offsetTopAndBottom(child, -dyUnconsumed);</span><br><span class="line">            mOffset = -dyUnconsumed;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;<span class="comment">//如果当前的值大于最大的滚动范围（0)，那么就直接滚动到-currentTop就行了</span></span><br><span class="line">            ViewCompat.offsetTopAndBottom(child, -currentTop);</span><br><span class="line">            mOffset = -currentTop;</span><br><span class="line">        &#125;</span><br><span class="line">        coordinatorLayout.dispatchDependentViewsChanged(child);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>onNestedScroll</code>方法中，我们需要处理RecyclerView向下方向上未消耗的距离(<code>dyUnconsumed</code>)。同样根据当前偏移记录计算出TextVie新的Top高度，计算出是否超出其滚功范围范围。如果没有超过，则TextView向下偏移距离为<code>-dyUnconsumed</code>,同时记录偏移量(<code>mOffset=-dyUnconsumed</code>),最后通知RecyclerView，TextView的位置发生了改变。反之，当前TextView的top的值是多少，那么TextView就向下偏移多少。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>在该文章中，我着重讲解了相应Behavior中比较重要的一些方法。一些不是那么重要的辅助方法，我并没有做过多的介绍。建议大家配合<a href="https://github.com/AndyJennifer/NestedScrollingDemo" target="_blank" rel="noopener">NestedScrollingDemo</a>项目中的源码理解该篇文章，我相信肯定是事半功倍的。</p>
+<h3 id="最最后"><a href="#最最后" class="headerlink" title="最最后"></a>最最后</h3><p>关于嵌套滑动、CoordinatorLayout、Behavior的知识点基本介绍完毕了。我相信大家以后再遇见一些嵌套滑动的问题。都能够轻松的解决了。可能很多小伙伴会好奇，为什么没有接着讲AppBarLayout与CollapsingTollbarLayout的原理及使用。其实原因非常简单，因为上述的两个控件的实现原理，其实是依托于CoordinatorLayout与自定义Behavior罢了。授人以鱼,不如授人以渔。AppBarLayout与CollapsingTollbarLayout的使用及原理。就算给大家留的课后思考题吧。谢谢大家对这系列的关注。Thanks。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/嵌套滑动/" rel="tag"># 嵌套滑动</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/29/自定义View事件之进阶篇-CoordinatorLayout与Behavior/" rel="next" title="自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior">
+                <i class="fa fa-chevron-left"></i> 自定义View事件篇进阶篇(三)-CoordinatorLayout与Behavior
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">40</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果展示"><span class="nav-number">2.</span> <span class="nav-text">效果展示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RecyclerView布局与测量的分析"><span class="nav-number">3.</span> <span class="nav-text">RecyclerView布局与测量的分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RecyclerView的Behavior代码实现"><span class="nav-number">3.1.</span> <span class="nav-text">RecyclerView的Behavior代码实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TextView嵌套滑动的分析"><span class="nav-number">4.</span> <span class="nav-text">TextView嵌套滑动的分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TextView的Behavior代码实现"><span class="nav-number">4.1.</span> <span class="nav-text">TextView的Behavior代码实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最最后"><span class="nav-number">6.</span> <span class="nav-text">最最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">432k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">13:06</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
