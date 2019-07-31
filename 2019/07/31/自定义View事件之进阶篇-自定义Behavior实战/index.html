@@ -107,8 +107,8 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/例子展示.gif">
 <meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/布局关系.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/空白区域.jpg">
-<meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/自定义View事件之进阶篇-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg">
-<meta property="og:updated_time" content="2019-07-31T15:46:00.004Z">
+<meta property="og:image" content="http://yoursite.com/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/嵌套滑动整体流程.jpg">
+<meta property="og:updated_time" content="2019-07-31T15:52:21.113Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义View事件之进阶篇(四)-自定义Behavior实战">
 <meta name="twitter:description" content="前言在上篇文章中，我们介绍了CoordainatorLayout下的Behavior机制，为了帮助大家更好的理解并运用Behavior，现在我们通过一个Demo，来巩固我们之前学习的知识点。  该博客中涉及到的示例，在NestedScrollingDemo项目中都有实现，大家可以按需自取。  效果展示先看一下我们需要实现的效果吧，如下图所示：   友情提示：Demo中涉及到的控件为Coordina">
@@ -401,7 +401,7 @@
                 
               
 
-              <time title="创建时间：2019-07-31 23:32:15 / 修改时间：23:46:00" itemprop="dateCreated datePublished" datetime="2019-07-31T23:32:15+08:00">2019-07-31</time>
+              <time title="创建时间：2019-07-31 23:32:15 / 修改时间：23:52:21" itemprop="dateCreated datePublished" datetime="2019-07-31T23:32:15+08:00">2019-07-31</time>
             
 
             
@@ -540,7 +540,7 @@
 <li>向下滑动：<br>当TextView已经被划出屏幕且RecylerView中的内容不能继续向下滑动时，那么就将TextView滑动至显示。否则RecyclerView单独处理内部内容的滚动。</li>
 </ul>
 <h4 id="TextView的Behavior代码实现"><a href="#TextView的Behavior代码实现" class="headerlink" title="TextView的Behavior代码实现"></a>TextView的Behavior代码实现</h4><p>在讲解TextView的Behavior的代码实现之前，我们需要回顾一下在CooordinatoLayout下嵌套方法的传递过程，如下图所示：</p>
-<p><img src="自定义View事件之进阶篇-CoordinatorLayout与Behavior/嵌套滑动整体流程.jpg" alt="传递流程"></p>
+<img src="/2019/07/31/自定义View事件之进阶篇-自定义Behavior实战/嵌套滑动整体流程.jpg">
 <p>通过回顾流程，在结合本文例子中展示的效果，我们需要重写Behavior中的<code>onStartNestedScroll</code>与<code>onNestedPreScroll</code>和<code>onNestedScroll</code>三个方法。来看TextView的<code>NestedHeaderBehavior</code>实现。代码如下所示：</p>
 <blockquote>
 <p>查看该Behavior完整代码，请点击—&gt;<a href="https://github.com/AndyJennifer/NestedScrollingDemo/blob/master/app/src/main/java/com/jennifer/andy/nestedscrollingdemo/ui/cdl/behavior/NestedHeaderBehavior.java" target="_blank" rel="noopener">NestedHeaderBehavior</a></p>
