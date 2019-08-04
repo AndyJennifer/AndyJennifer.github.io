@@ -32,6 +32,7 @@ volatile写代码，synchronized画图
 3.讲讲两个的区别
 
 ### 等待/通知的经典范式
+在多数情况下，主线程生成并起动了子线程，如果子线程里要进行大量的耗时的运算，主线程往往将于子线程之前结束，但是如果主线程处理完其他的事务后，需要用到子线程的处理结果，也就是主线程需要等待子线程执行完成之后再结束，这个时候就要用到join()方法了。
 
 #### 等待方伪代码
 
@@ -58,7 +59,82 @@ synchronized(对象){
 ### Thread.join的使用
 
 ``` java
-例子
+class AThread extends Thread {
+
+    public AThread() {
+        super("[AThread]");
+    }
+
+    @Override
+    public void run() {
+        String threadName = Thread.currentThread().getName();
+        System.out.println(threadName + "-->start");
+        try {
+            for (int i = 0; i < 5; i++) {
+                System.out.println(threadName + "loop at" + i);
+                TimeUnit.SECONDS.sleep(1);
+            }
+            System.out.println(threadName + "--->end");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class BThread extends Thread {
+
+    private AThread mAThread;
+
+    public BThread(AThread aThread) {
+        super("[BThread]");
+        this.mAThread = aThread;
+    }
+
+    @Override
+    public void run() {
+        String threadName = Thread.currentThread().getName();
+        System.out.println(threadName + "-->start");
+        try {
+            mAThread.join();
+            System.out.println(threadName + "--->end");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class ThreadJoinDemo {
+
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println(Thread.currentThread().getName() + "-->start");
+        AThread aThread = new AThread();
+        BThread bThread = new BThread(aThread);
+        try {
+            aThread.start();
+            TimeUnit.SECONDS.sleep(1);
+            bThread.start();
+            aThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName() + "--->end");
+    }
+}
+```
+
+输出结果
+```xml
+main-->start
+[AThread]-->start
+[AThread]loop at0
+[AThread]loop at1
+[BThread]-->start
+[AThread]loop at2
+[AThread]loop at3
+[AThread]loop at4
+[AThread]--->end
+main--->end
+[BThread]--->end
 ```
 
 源码解析：
