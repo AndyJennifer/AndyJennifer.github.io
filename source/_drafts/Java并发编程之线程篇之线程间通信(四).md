@@ -23,7 +23,10 @@ categories:
 
 讲讲volatile 原子类，synchonized（讲讲监视器）
 
-volatile写代码，synchronized画图
+volatile写代码，synchronized监视器画图
+
+### 线程的状态
+
 
 ### 等待/通知机制
 
@@ -32,7 +35,7 @@ volatile写代码，synchronized画图
 3.讲讲两个的区别
 
 ### 等待/通知的经典范式
-在多数情况下，主线程生成并起动了子线程，如果子线程里要进行大量的耗时的运算，主线程往往将于子线程之前结束，但是如果主线程处理完其他的事务后，需要用到子线程的处理结果，也就是主线程需要等待子线程执行完成之后再结束，这个时候就要用到join()方法了。
+
 
 #### 等待方伪代码
 
@@ -57,6 +60,8 @@ synchronized(对象){
 ### 等待/通知超时的范式
 
 ### Thread.join的使用
+
+当线程A调用线程B对象（bThread)的join方法，其含义是当前线程A等待线程B终止后，才从线程A中bThread.join()代码的调用处返回。线程除了join方法以外还提供了join(long millis)和void join(long millis, int nanos)这两个具备超时特性的方法。这两个方法的意义是如果在给定的时间内线程B没有终止。那么线程A将会从该方法中返回。下面我们来看一下join方法的使用例子，如下所示：
 
 ``` java
 class AThread extends Thread {
@@ -95,7 +100,7 @@ class BThread extends Thread {
         String threadName = Thread.currentThread().getName();
         System.out.println(threadName + "-->start");
         try {
-            mAThread.join();
+            mAThread.join();//阻塞B线程，需要等待A线程执行完毕后，才能继续执行
             System.out.println(threadName + "--->end");
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -113,7 +118,7 @@ class ThreadJoinDemo {
             aThread.start();
             TimeUnit.SECONDS.sleep(1);
             bThread.start();
-            aThread.join();
+            aThread.join();//主线程等待A线程执行完毕后，才继续执行
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -122,27 +127,36 @@ class ThreadJoinDemo {
 }
 ```
 
-输出结果
+在上述例子中，我们主要实现以下两个效果：
+
+- 主线程等待A线程执行完毕后，才继续执行
+- 线程等待A线程执行完毕后，才继续执行。
+
+我们查看输出结果：
+
 ```xml
-main-->start
-[AThread]-->start
-[AThread]loop at0
+main-->start //main线程启动
+[AThread]-->start //A线程启动
+[AThread]loop at0 //A线程开始执行循环
 [AThread]loop at1
-[BThread]-->start
-[AThread]loop at2
+[BThread]-->start //B线程开始启动，因为在B线程中调用了aThread.join（）那么B线程会等待A线程执行完毕后，才开始执行
+[AThread]loop at2 //A线程继续执行
 [AThread]loop at3
 [AThread]loop at4
-[AThread]--->end
-main--->end
-[BThread]--->end
+[AThread]--->end //A线程执行完毕后，
+[BThread]--->end //A线程执行完毕后，唤醒B线程继续执行
+main--->end //主线程执行完毕
 ```
 
-源码解析：
+整个程序是按照我们之前的逻辑在运行，下面我们来查看线程中join方法的实现原理，具体代码如下所示：
+
+>join()方法内部会调用join(final long millis)方法。
 
 ```java
+    //同步方法默认的锁为调用该方法的对象，也就是xxThread.join（）的xxThread
     public final synchronized void join(final long millis)
     throws InterruptedException {
-        if (millis > 0) {
+        if (millis > 0) {//如果等待时间大于0
             if (isAlive()) {
                 final long startTime = System.nanoTime();
                 long delay = millis;
@@ -151,9 +165,9 @@ main--->end
                 } while (isAlive() && (delay = millis -
                         TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime)) > 0);
             }
-        } else if (millis == 0) {
+        } else if (millis == 0) {//如果等待时间为0，
             while (isAlive()) {
-                wait(0);
+                wait(0);//当前线程存活，那么会阻塞当前线程(当前线程指运行xxThread.join的线程，而不是xxThread)
             }
         } else {
             throw new IllegalArgumentException("timeout value is negative");
@@ -161,13 +175,54 @@ main--->end
     }
 ```
 
+我们简单的分析一下代码，当B线程调用A线程的`join()`方法时，当前锁对象为A线程。在join()方法内部会调用`wait(0)`方法来阻塞B线程。只有当A线程执行完毕后，也就是A线程终止后。才会唤醒B线程。
+
+>线程执行完毕（线程终止）时，会调用线程自身的notifyAll()方法，会通知所有等待在该线程对象的线程。
+
 ### ThreadLocal
 
-在上述文章中，我们都是讲解的多个线程之前的通信，那么在同一线程中，在某个时刻我们想获取线程中设置的变量，我们可以通过ThreadLocal,在之前的文章中 {% post_link Android-Handler机制之ThreadLocal %}，我们介绍过ThreadLocal的使用，
+在上述文章中，我们都是讲解的多个线程之前的通信，那么在同一线程中，在某个时刻我们想获取线程中设置的变量，我们可以通过ThreadLocal，在之前的文章中 {% post_link Android-Handler机制之ThreadLocal %}，我们介绍过ThreadLocal的使用。下面我们通过一个例子来了解ThreadLocal的使用。具体例子如下：
 
-``` java
-例子
+```java
+class ThreadLocalTest {
+    private static ThreadLocal<String> mThreadLocal = new ThreadLocal<>();
+
+    public static void main(String[] args) {
+        mThreadLocal.set("线程main");
+        new Thread(new A()).start();
+        new Thread(new B()).start();
+        System.out.println(mThreadLocal.get());
+    }
+
+    static class A implements Runnable {
+
+        @Override
+        public void run() {
+            mThreadLocal.set("线程A");
+            System.out.println(mThreadLocal.get());
+        }
+    }
+
+    static class B implements Runnable {
+
+        @Override
+        public void run() {
+            mThreadLocal.set("线程B");
+            System.out.println(mThreadLocal.get());
+        }
+    }
+}
 ```
+
+输出结果：
+
+```java
+main
+线程A
+线程B
+```
+
+这里就不再介绍ThreadLocal的原理了，有兴趣的小伙伴可以查看{% post_link Android-Handler机制之ThreadLocal %}文章进行理解。
 
 ### 最后
 
