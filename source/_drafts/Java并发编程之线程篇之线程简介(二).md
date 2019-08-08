@@ -1,5 +1,5 @@
 ---
-title: 'Java并发编程之线程篇之线程简介(二) '
+title:  Java并发编程之线程篇之线程简介(二) 
 tags:
 - 线程
 categories:
