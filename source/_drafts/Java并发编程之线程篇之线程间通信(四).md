@@ -36,17 +36,177 @@ categories:
 
 在上述表格中，线程的5种状态对应着Java的不同方法，具体如下图所示：
 
-{% asset_image 线程状态.jpg %}
+{% asset_img 线程状态.jpg %}
 
 >需要注意的是，在上图中`标红`的两个状态，是操作系统中线程对应的状态，Java将这两种状态合并为**可运行状态(RUNNABLE)**。在操作系统中**就绪状态(READY)**表示线程已经准备完毕，等待CPU分配时间片。**运行中状态(RUNNING)**表示当线程分到时间片，线程开始正式执行。
 
-### volatile与synchronized
+### volatile的使用
 
-讲讲volatile 原子类，synchonized（讲讲监视器）
+在Java内存模型中，我们曾提到过，为了提示程序的运行速度，Java将内存分为了工作内存（线程独占，不与其他线程共享）与主内存。当多个线程同时访问同一个对象或者变量的时候，由于每个线程都需要将该对象或变量拷贝到自己的工作内存中。有因为线程的工作内存是私有且不与其他线程共享的。那么当一线程修改变量的值后，会导致对其他线程不可见。Java内存模型如下图所示：
 
-volatile写代码，synchronized监视器画图
+{% asset_img Java内存模型.png %}
 
-### 等待/通知机制
+为了保证数据的可见性。Java提供了Volatile关键字。volatile关键字修饰变量，就是告知线程对该变量的访问必须重主内存中获取。而对它的改变必须同步刷新到主内存中。这样就能保证线程对变量访问的可见性。关于volatile的使用，参看如下例子：
+
+```java
+class VolatileDemo {
+
+    int a = 1;
+    int b = 2;
+
+    public void change() {
+        a = 3;
+        b = 4;
+    }
+
+    public void print(String threadName) {
+        System.out.println(threadName + "--->" + "a = " + a + ";b = " + b);
+    }
+
+    public static void main(String[] args) {
+        final VolatileDemo volatileDemo = new VolatileDemo();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                volatileDemo.change();
+            }
+        }).start();
+
+        for (int i = 0; i < 100; i++) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    volatileDemo.print(Thread.currentThread().getName());
+                }
+            }).start();
+        }
+
+    }
+}
+
+```
+
+程序输出结果：
+
+```java
+Thread-1--->a = 1;b = 2 //错误
+Thread-3--->a = 1;b = 2 //错误
+Thread-2--->a = 1;b = 2 //错误
+Thread-5--->a = 3;b = 4
+Thread-4--->a = 3;b = 4
+Thread-6--->a = 3;b = 4
+Thread-7--->a = 3;b = 4
+Thread-8--->a = 3;b = 4
+....省略其他
+```
+
+在上述代码中，如果我们不采用`volatile`关键字修饰a,b变量，那么会导致其他线程仍然获取的是自己本身工作内存中的a、b变量的值。为了保证访问公共变量对其他线程的可见性，我们需要将变量通过`volatile`来修饰。修改我们的代码：
+
+```java
+volatile  int a = 1;
+volatile  int b = 2;
+```
+
+采用volatile修饰，输出结果如下
+
+```java
+Thread-2--->a = 3;b = 4
+Thread-1--->a = 3;b = 4
+Thread-6--->a = 3;b = 4
+Thread-3--->a = 3;b = 4
+Thread-4--->a = 3;b = 4
+Thread-9--->a = 3;b = 4
+Thread-10--->a = 3;b = 4
+....省略其他
+```
+
+关于volatile的更多介绍，大家可以查看{% post_link Java并发编程之Volatile(二) %}文章。
+
+### synchronized的使用
+
+除了使用volatile实现线程的通信之外，我们还可以使用`synchronized`及`Object`中的配套方法`wait()/notify()、wait()/notifyAll`来实现线程的通信，在了解具体的实现之前，我们先来了解`synchronized`关键字在Java中的作用。
+
+>关于synchronized的更多介绍，可以查看{% post_link Java并发编程之Synchronized(三) %}文章。
+
+关键字synchronized可以修饰方法或者代码块，使用synchronized可以确保多个线程在同一时刻，只能有一个线程处于方法或者同步块中，它保证了线程对变量访问的可见性和排他性。如下代码所示：
+
+```java
+public class SyncCodeBlock {
+   public int i;
+   public void syncTask(){
+       //同步代码库
+       synchronized (this){
+           i++;
+       }
+   }
+}
+```
+
+然后我们通过javap指令反编译得到字节码。来继续分析synchronized关键字的实现细节，如下所示：
+
+```java
+ //===========主要看看syncTask方法实现================
+  public void syncTask();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=3, locals=3, args_size=1
+         0: aload_0
+         1: dup
+         2: astore_1
+         3: monitorenter  //注意此处，进入同步方法，表示获取到锁
+         4: aload_0
+         5: dup
+         6: getfield      #2             // Field i:I
+         9: iconst_1
+        10: iadd
+        11: putfield      #2            // Field i:I
+        14: aload_1
+        15: monitorexit   //注意此处，退出同步方法，释放锁
+        16: goto          24
+        19: astore_2
+        20: aload_1
+        21: monitorexit //注意此处，退出同步方法
+        22: aload_2
+        23: athrow
+        24: return
+      Exception table:
+      //省略其他字节码.......
+}
+```
+
+在上述字节码信息中，对于同步块的实现使用了`monitorenter`和`monitorexit`两个指令，其本质原理是对某个对象的监视器(monitor)的获取。而这个获取过程是排他的,也就是同一时刻只能有一个线程，获取到有synchronized所保护对象的监视器。在Java中，任何一个对象都有自己的监视器（monitor)，当这个对象有同步块或者这个对象的同步方法调用的时候，执行方法的线程必须先获取到该对象的监视器才能进入同步块，或者同步方法，而没有获取到监视器(monitor)的线程会阻塞在同步块或者同步方法的入口，进入BLOCKED状态。如下图所示：
+
+{% asset_img synchronized中监视器获取关系.jpg %}
+
+从上图中，我们可以得出，任意线程在对synchronized关键字修饰的Object进行访问的时候，首先要获得Object的监视器，如果获取失败，线程进入同步队列，且线程状态变为`BLOCKED`。当访问Object的前驱线程（moniterenter成功的线程）释放了Object的监视器（monitorexit)。则唤醒阻塞在同步队列中的线程，使其尝试对监视器的获取。
+
+其中，我们在Java中可以使用synchronized关键字进行修饰的地方为以下三个地方：
+
+- synchronized修饰普通的实例方法，对于普通的同步方法，锁是当前实例对象
+- synchronized修饰静态方法，对于静态同步方法，锁式当前类的Class对象
+- synchronized修饰代码块，对于同步方法块，锁是synchronized配置的对象
+
+#### synchronized下的等待/通知机制实现
+
+在上文中，我们提到如果使用synchronized来实现线程间的通信，我们需要结合Object中的配套方法`wait()/notify()、wait()/notifyAll`。我们先来看看一看Obejet中这系列方法的说明：
+
+|   方法名称     | 描述             |
+|:------------- |:---------------:|
+| wait()     | 调用该方法的线程进入`WAITING`状态，只有等待另外线程的通知或被中断才会返回，需要注意，线程调用wait()方法前，需要获得对象的监视器。当调用wait()方法后，会释放对象的监视器            |
+| wait(long)     | 调用该方法的线程进入`TIMED_WAITING`状态，这里的参数时间是毫秒，等待对应毫秒事件，如果没有收到其他线程通知，则超时返回|
+|wait(long,int)  |基本作用同wiat(long)，第二个参数代表为纳秒，也就是等待时间为毫秒+纳秒。|
+|notify()        |通知一个在对象监视器上等待的线程，使其从wait()方法返回，而返回的前提是该线程获取到了对象的监视器。
 
 1.讲讲synchonized wait notify 配合使用
 
