@@ -193,9 +193,9 @@ public class SyncCodeBlock {
 
 其中，我们在Java中可以使用synchronized关键字进行修饰的地方为以下三个地方：
 
-- synchronized修饰普通的实例方法，对于普通的同步方法，锁是当前实例对象
-- synchronized修饰静态方法，对于静态同步方法，锁式当前类的Class对象
-- synchronized修饰代码块，对于同步方法块，锁是synchronized配置的对象
+- synchronized修饰普通的实例方法，对于普通的同步方法，监视器对象所属为当前实例对象
+- synchronized修饰静态方法，对于静态同步方法，监视器所属对象为当前类的Class对象
+- synchronized修饰代码块，对于同步方法块，监视器所属对象为synchronized配置的对象
 
 #### synchronized下的等待/通知机制实现
 
@@ -205,13 +205,160 @@ public class SyncCodeBlock {
 |:------------- |:---------------:|
 | wait()     | 调用该方法的线程进入`WAITING`状态，只有等待另外线程的通知或被中断才会返回，需要注意，线程调用wait()方法前，需要获得对象的监视器。当调用wait()方法后，会释放对象的监视器            |
 | wait(long)     | 调用该方法的线程进入`TIMED_WAITING`状态，这里的参数时间是毫秒，等待对应毫秒事件，如果没有收到其他线程通知，则超时返回|
-|wait(long,int)  |基本作用同wiat(long)，第二个参数代表为纳秒，也就是等待时间为毫秒+纳秒。|
+|wait(long,int)  | 调用该方法的线程进入`TIMED_WAITING`状态，基本作用同wiat(long)，第二个参数代表为纳秒，也就是等待时间为毫秒+纳秒。|
 |notify()        |通知一个在对象监视器上等待的线程，使其从wait()方法返回，而返回的前提是该线程获取到了对象的监视器。
+|notifyAll()     |通知所有在监视器上等待的线程，具体唤醒那个线程由CPU决定|
 
-1.讲讲synchonized wait notify 配合使用
+使用Object的wait()/notify()、wait()/notifyall()，其实是我们经常使用的`等待/通知机制`，所谓的等待/通知机制是指一个线程A调用了对象O的wait()方法进入等待状态，而另一个线程B调用了对象O的notify或者notifyAll方法。线程A收到通知后从对象O的wait()方法返回，进而执行后续的操作。
+下面，我们来通过一个例子来了解使用synchronized完成线程的通信，具体例子如下所示:
 
-2.讲讲lock condition的配合使用
-3.讲讲两个的区别
+```java
+class SynchronizedDemo {
+
+    static boolean flag = true;
+    static Object lock = new Object();
+
+    public static void main(String[] args) throws InterruptedException {
+        new Thread(new WaitRunnable(), "WaitThread").start();
+        TimeUnit.SECONDS.sleep(1);//这里睡眠，是保证Wait线程先执行
+        new Thread(new NotifyRunnable(), "NotifyThread").start();
+    }
+
+    static class WaitRunnable implements Runnable {
+        @Override
+        public void run() {
+            synchronized (lock) {
+                while (flag) {//注意,通过while循环来判断条件
+                    String name = Thread.currentThread().getName();
+                    try {
+                        System.out.println(name + "--->wait in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(name + "--->wake up in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                }
+
+            }
+        }
+    }
+
+    static class NotifyRunnable implements Runnable {
+        @Override
+        public void run() {
+            String name = Thread.currentThread().getName();
+
+            synchronized (lock) {
+                System.out.println(name + "--->notify all in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                lock.notifyAll();
+                flag = false;
+            }
+
+            /**
+             * 这里再次加锁，是为了验证当调用对象的notifyAll方法时，
+             * 如果线程不执行monitorexit(也就是释放锁),那么是不会唤醒其他线程的
+             */
+            synchronized (lock) {
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                    System.out.println(name + "--->hold lock again in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+}
+```
+
+输出结果如下:
+
+```java
+WaitThread--->wait in 23:10:11
+NotifyThread--->notify all in 23:10:12
+NotifyThread--->hold lock again in 23:10:14
+WaitThread--->wake up in 23:10:14
+```
+
+- 使用wait()、notify()和notifyAll时需要先对调用对象加锁。
+- 调用wait()方法后，线程状态由RUNNING变为WAITING，并将该线程加入等待队列。
+- notify()或notifyAll()方法调用后，等待线程依旧不会从wait()返回，需要调用notify()或notfifyAll()的线程释放锁（也就是执行monitorexit指令）后，等待线程才会有机会从wait()返回。
+- 从wait()方法返回的前提是获得了调用对象的锁。
+
+这里还有个额外的知识点，就是同步队列与等待队列
+  
+### Lock下的等待/通知机制实现
+
+除了使用synchronized完成线程的通信之外，我们还可以使用courrent包下的Lock接口，这里以`ReentrantLock`为例。具体例子如下所示：
+
+
+```java
+class LockDemo {
+
+    static boolean flag = true;
+    static Lock lock = new ReentrantLock();
+    static Condition codition = lock.newCondition();
+
+
+    public static void main(String[] args) throws InterruptedException {
+        new Thread(new WaitRunnable(), "WaitThread").start();
+        TimeUnit.SECONDS.sleep(1);//这里睡眠，是保证Wait线程先执行
+        new Thread(new NotifyRunnable(), "NotifyThread").start();
+    }
+
+    static class WaitRunnable implements Runnable {
+        @Override
+        public void run() {
+            lock.lock();
+            try {
+                while (flag) {
+                    String name = Thread.currentThread().getName();
+                    System.out.println(name + "--->wait in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                    codition.await();
+                    System.out.println(name + "--->wake up in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+
+        }
+    }
+
+    static class NotifyRunnable implements Runnable {
+        @Override
+        public void run() {
+            lock.lock();
+            try {
+                String name = Thread.currentThread().getName();
+                System.out.println(name + "--->notify all in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                flag = false;
+                codition.signalAll();
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+}
+
+```
+
+输出结果:
+
+```java
+WaitThread--->wait in 23:39:34
+NotifyThread--->notify all in 23:39:35
+WaitThread--->wake up in 23:39:35
+```
+
+Lock接口实现的锁机制与使用传统的synchronized的区别
+
+1. 尝试非阻塞地获取锁：当线程尝试获取锁，如果这一时刻锁没有被其他线程获取到，则成功获取并持有锁。
+2. 能被中断的获取锁：与synchronized不同，获取到锁的线程能够响应中断，当获取到锁的线程被中断时，中断异常会被抛出，同时锁也会被释放。
+3. 超时获取锁：在指定的截止时间之前获取锁，如果截止时间到了任然无法获取到锁，则返回。
+
 
 ### 等待/通知的经典范式
 
