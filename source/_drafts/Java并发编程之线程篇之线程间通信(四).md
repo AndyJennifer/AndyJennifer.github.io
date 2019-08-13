@@ -42,7 +42,7 @@ categories:
 
 ### volatile的使用
 
-在Java内存模型中，我们曾提到过，为了提示程序的运行速度，Java将内存分为了工作内存（线程独占，不与其他线程共享）与主内存。当多个线程同时访问同一个对象或者变量的时候，由于每个线程都需要将该对象或变量拷贝到自己的工作内存中。有因为线程的工作内存是私有且不与其他线程共享的。那么当一线程修改变量的值后，会导致对其他线程不可见。Java内存模型如下图所示：
+在Java内存模型中，我们曾提到过，为了提示程序的运行速度，Java将内存分为了工作内存（线程独占，不与其他线程共享）与主内存。当多个线程同时访问同一个对象或者变量的时候，由于每个线程都需要将该对象或变量拷贝到自己的工作内存中。又因为线程的工作内存是私有且不与其他线程共享的。那么当一线程修改变量的值后，会导致对其他线程不可见。Java内存模型如下图所示：
 
 {% asset_img Java内存模型.png %}
 
@@ -189,13 +189,11 @@ public class SyncCodeBlock {
 
 {% asset_img synchronized中监视器获取关系.jpg %}
 
-从上图中，我们可以得出，任意线程在对synchronized关键字修饰的Object进行访问的时候，首先要获得Object的监视器，如果获取失败，线程进入同步队列，且线程状态变为`BLOCKED`。当访问Object的前驱线程（moniterenter成功的线程）释放了Object的监视器（monitorexit)。则唤醒阻塞在同步队列中的线程，使其尝试对监视器的获取。
+从上图中，我们可以得出，任意线程在对synchronized关键字修饰的Object进行访问的时候，首先要获得Object的监视器（monitor），如果获取失败，线程进入同步队列，且线程状态变为`BLOCKED`。当访问Object的前驱线程（moniterenter成功的线程）释放了Object的监视器（monitorexit)。则唤醒阻塞在同步队列中的线程，使其尝试对监视器的获取。其中对监视器的获取与释放，我们一般称之为获取锁与释放锁。在下文中我们都用获取锁与释放锁来表示这两个过程。
 
-其中，我们在Java中可以使用synchronized关键字进行修饰的地方为以下三个地方：
+关于synchronized下同步队列的知识点补充：
 
-- synchronized修饰普通的实例方法，对于普通的同步方法，监视器对象所属为当前实例对象
-- synchronized修饰静态方法，对于静态同步方法，监视器所属对象为当前类的Class对象
-- synchronized修饰代码块，对于同步方法块，监视器所属对象为synchronized配置的对象
+synchronized在JVM中实现的锁机制是基于`同步队列`与`等待队列`的，这与`courrent`包下的`Lock`接口下的锁机制的实现方式十分类似。需要注意的是，在synchronized中wait()后的线程会进入一个FIFO的队列(同步队列)中，notify()/notifyAll()是一个有序的出队列的过程。
 
 #### synchronized下的等待/通知机制实现
 
@@ -281,17 +279,15 @@ NotifyThread--->hold lock again in 23:10:14
 WaitThread--->wake up in 23:10:14
 ```
 
-- 使用wait()、notify()和notifyAll时需要先对调用对象加锁。
+- 使用wait()、notify()和notifyAll时需要先获取对象的监视器（执行monitorenter指令成功）
 - 调用wait()方法后，线程状态由RUNNING变为WAITING，并将该线程加入等待队列。
-- notify()或notifyAll()方法调用后，等待线程依旧不会从wait()返回，需要调用notify()或notfifyAll()的线程释放锁（也就是执行monitorexit指令）后，等待线程才会有机会从wait()返回。
-- 从wait()方法返回的前提是获得了调用对象的锁。
+- notify()或notifyAll()方法调用后，等待线程依旧不会从wait()返回，需要调用notify()或notfifyAll()的线程释放对象的监视器（也就是执行monitorexit指令）后，等待线程才会有机会从wait()返回。
+- notify()方法将等待队列中的一个等待线程从等待队列移到同步队列中，而notifyAll()方法则是将等待队列中所有的线程全部移动到同步队列，被移动的线程状态由WAITING变为BLOCKED。
+- 从wait()方法返回的前提是获得了调用对象的监视器(执行monitorenter指令成功）。
 
-这里还有个额外的知识点，就是同步队列与等待队列
-  
 ### Lock下的等待/通知机制实现
 
-除了使用synchronized完成线程的通信之外，我们还可以使用courrent包下的Lock接口，这里以`ReentrantLock`为例。具体例子如下所示：
-
+除了使用synchronized完成线程的通信之外，我们还可以使用`courrent`包下的`Lock`接口，这里以`ReentrantLock`为例。具体例子如下所示：
 
 ```java
 class LockDemo {
@@ -353,11 +349,19 @@ NotifyThread--->notify all in 23:39:35
 WaitThread--->wake up in 23:39:35
 ```
 
-Lock接口实现的锁机制与使用传统的synchronized的区别
+使用Lock接口实现的锁机制与使用传统的synchronized的区别如下所示：
 
 1. 尝试非阻塞地获取锁：当线程尝试获取锁，如果这一时刻锁没有被其他线程获取到，则成功获取并持有锁。
 2. 能被中断的获取锁：与synchronized不同，获取到锁的线程能够响应中断，当获取到锁的线程被中断时，中断异常会被抛出，同时锁也会被释放。
 3. 超时获取锁：在指定的截止时间之前获取锁，如果截止时间到了任然无法获取到锁，则返回。
+
+关于Lock更多细节的内容，大家可以查看以下几篇文章，这里就不再进行分析了。
+
+- {% post_link Java并发编程之锁机制之Lock接口(七) %}
+- {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
+- {% post_link Java并发编程之锁机制之LockSupport工具(九) %}
+- {% post_link Java并发编程之锁机制之Condition接口(十) %}
+- {% post_link Java并发编程之锁机制之(ReentrantLock)重入锁(十一) %}
 
 
 ### 等待/通知的经典范式
