@@ -238,7 +238,7 @@ getRootMeasureSpec的测量方法
     }
 ```
 
-PhoneWindow中的实现
+Dialog中setContentView会调用PhoneWindow中的实现
 
 ```java
     @Override
@@ -255,7 +255,7 @@ PhoneWindow中的实现
         // decor, when theme attributes and the like are crystalized. Do not check the feature
         // before this happens.
         if (mContentParent == null) {//第一次创建的时候,DecorView是为空的
-            installDecor();
+            installDecor();//构造window
         } else if (!hasFeature(FEATURE_CONTENT_TRANSITIONS)) {
             mContentParent.removeAllViews();
         }
@@ -266,6 +266,7 @@ PhoneWindow中的实现
             transitionTo(newScene);
         } else {
             mContentParent.addView(view, params);
+            //这里的params，为match_parent。根据测量规则，那我们传入的ContentView的布局模式为wrap_content。
         }
         mContentParent.requestApplyInsets();
         final Callback cb = getCallback();
@@ -277,7 +278,7 @@ PhoneWindow中的实现
 
 ```
 
-虽然这里传入的是`new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT))`,但是在installDecor方法中，又被强制设为WRAP_CONTENT。
+因为这里的params`new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT))`,但是在installDecor方法中，window的布局模式又被强制设为WRAP_CONTENT。所以我们设置的CotentView布局模式为wrap_cotent,所以会导致我们的设置的布局失效的问题。
 
 ### 最后
 
