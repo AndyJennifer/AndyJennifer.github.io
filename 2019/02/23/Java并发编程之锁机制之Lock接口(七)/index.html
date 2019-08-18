@@ -107,7 +107,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/小盒子.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock_method.png">
 <meta property="og:image" content="http://yoursite.com/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock.png">
-<meta property="og:updated_time" content="2019-07-27T09:38:16.308Z">
+<meta property="og:updated_time" content="2019-08-18T07:10:54.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程之锁机制之Lock接口(七)">
 <meta name="twitter:description" content="前言在上篇文章Java并发编程之锁机制之引导篇(六)中，我们大致了解了Lock接口（以及相关实现类）在并发编程重要作用。接下来我们就来具体了解Lock接口中声明的方法以及使用优势。 Lock简介Lock 接口实现类提供了比使用 synchronized 方法和语句可获得的更广泛的锁定操作。此实现允许更灵活的结构，可以具有差别很大的属性，可以支持多个相关的 Condition (Condition">
@@ -417,7 +417,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-27 17:38:16" itemprop="dateModified" datetime="2019-07-27T17:38:16+08:00">2019-07-27</time>
+                <time title="修改时间：2019-08-18 15:10:54" itemprop="dateModified" datetime="2019-08-18T15:10:54+08:00">2019-08-18</time>
               
             
           </span>
@@ -518,7 +518,7 @@
 </ol>
 <h3 id="Lock简单使用与注意事项"><a href="#Lock简单使用与注意事项" class="headerlink" title="Lock简单使用与注意事项"></a>Lock简单使用与注意事项</h3><p>其中Lock的使用方式也很简单，具体代码如下所示：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Lock lock = ....;具体实现类</span><br><span class="line">lock.lock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">lock.unlock();<span class="comment">//建议在finally中释放锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当锁定和解锁发生在不同的范围时，一定要注意确保在持有锁时执行的所有代码都受到try-finally或try-catch的保护，以确保在必要时释放锁。<code>不要将获取锁的过程写在try块中</code>，因为如果在获取锁（自定义锁的实现）时发生了异常，异常抛出的同时，也会导致锁无故释放（因为一旦发生异常，就会走finally语句，如果这个异常（可能是用户自定义异常，用户可以自己处理）需要线程1来处理，但是接着执行了lock.unlock()语句导致了锁的释放。那么其他线程就可以操作共享资源。有可能破坏程序的执行结果）。</p>
+<p>当锁定和解锁发生在不同的范围时，一定要注意确保在持有锁时执行的所有代码都受到<code>try-finally</code>或<code>try-catch</code>的保护，以确保在必要时释放锁。<code>不要将获取锁的过程写在try块中</code>，因为如果在获取锁（自定义锁的实现）时发生了异常，异常抛出的同时，也会导致锁无故释放（因为一旦发生异常，就会走finally语句，如果这个异常（可能是用户自定义异常，用户可以自己处理）需要线程1来处理，但是接着执行了lock.unlock()语句,导致了锁的释放。那么其他线程就可以操作共享资源。有可能破坏程序的执行结果）。</p>
 <h3 id="Lock相关实现类实现锁机制"><a href="#Lock相关实现类实现锁机制" class="headerlink" title="Lock相关实现类实现锁机制"></a>Lock相关实现类实现锁机制</h3><p>为了使用Lock接口实现相关锁功能时，会涉及以下类和接口，这里还是把上篇文章提到的UML图展示出来：</p>
 <img src="/2019/02/23/Java并发编程之锁机制之Lock接口(七)/lock.png" title="lock">
 <p>上图中，</p>
