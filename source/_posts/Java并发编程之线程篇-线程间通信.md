@@ -1,10 +1,12 @@
 ---
 title: Java并发编程之线程篇之线程间通信(四)
 tags:
-- 线程
+  - 线程
 categories:
-- 线程相关
+  - 线程相关
+date: 2019-08-18 20:33:08
 ---
+
 
 ### 前言
 
@@ -430,7 +432,7 @@ synchronized(对象){
 
 ### Thread.join的使用
 
-除了使用上面我们介绍的金典范式以外，我们还可以使用Thread.join()方法。join方法的使用含义如下：
+除了使用上面我们介绍的经典范式以外，我们还可以使用Thread.join()方法。join方法的使用含义如下：
 
 当线程A调用线程B对象（bThread)的join方法，其含义是当前线程A等待线程B终止后，才从线程A中bThread.join()代码的调用处返回。线程除了join方法以外还提供了join(long millis)和void join(long millis, int nanos)这两个具备超时特性的方法。这两个方法的意义是如果在给定的时间内线程B没有终止。那么线程A将会从该方法中返回。下面我们来看一下join方法的使用例子，如下所示：
 
