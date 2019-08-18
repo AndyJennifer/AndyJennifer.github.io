@@ -23,7 +23,7 @@ Java虚拟机定义了若干种程序运行期间会使用到的运行时数据�
 
 具体如下图所示：
 
-![运行时数据区](https://user-gold-cdn.xitu.io/2019/6/3/16b1db25575818cd?w=592&h=445&f=png&s=51144)
+{% asset_img 运行时数据区.png 运行时数据区 %}
 
 ### 程序计数器、pc寄存器（pc program register)
 
