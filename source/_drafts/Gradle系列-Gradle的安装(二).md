@@ -6,7 +6,7 @@ tags:
 - Gradle
 ---
 
-![gradle.png](https://upload-images.jianshu.io/upload_images/2824145-6fb4a4059228244a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img gradle.png gradle %}
 
 >一直在忙公司的项目，要不就是写另一个系列的博客，一直抽不出时间来写Gradle系列文章。好了，我知道都是借口，不管怎么样，Gradle系列要开始更新啦。你准备好没有呢。
 
@@ -34,7 +34,7 @@ Gradle带有自己的`Groovy`库，因此不需要安装Groovy，任何现有的
 #### 第一步、下载最新版本的Gradle
 
 我们可以通过官网[https://gradle.org/releases/](https://gradle.org/releases/)去下载我们想要下载的Gradle版本。
-![官方下载界面.png](https://upload-images.jianshu.io/upload_images/2824145-c310a533372dfc36.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 官方下载界面.png 官方下载界面 %}
 
 点击进入官方下载页，我们可以看到一些Gradle版本的信息与下载地址，其中下载分为了两个版本：
 

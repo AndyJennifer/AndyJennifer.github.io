@@ -9,7 +9,7 @@ categories:
 ### 前言
 
 
-![Activity创建过程.png](https://upload-images.jianshu.io/upload_images/2824145-3e1b19601f0ef983.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Activity创建过程.png Activity创建过程 %}
 
 ### 涉及的主要模块：
 
@@ -35,7 +35,7 @@ ActivityStack，在Android中,每一个ActivityRecord都会有一个Activity与�
 ActivityStackSupervisor主要负责管理ActivityStack，内部管理了mHomeStack、mFocusedStack和mLastFocusedStack三个Activity栈。其中，mHomeStack管理的是Launcher相关的Activity栈；mFocusedStack管理的是当前显示在前台Activity的Activity栈；mLastFocusedStack管理的是上一次显示在前台Activity的Activity栈
 
 
-![ActivityStackSuperVisor.png](https://upload-images.jianshu.io/upload_images/2824145-cc69aeb804fc29ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ActivityStackSuperVisor.png ActivityStackSuperVisor %}
 
 
 #### ActivityThread

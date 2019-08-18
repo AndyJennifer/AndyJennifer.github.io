@@ -46,7 +46,7 @@ categories:
 
 {% asset_img Java内存模型.png %}
 
-为了保证数据的可见性。Java提供了Volatile关键字。volatile关键字修饰变量，就是告知线程对该变量的访问必须重主内存中获取。而对它的改变必须同步刷新到主内存中。这样就能保证线程对变量访问的可见性。关于volatile的使用，参看如下例子：
+为了保证数据的可见性。Java提供了`volatile`关键字。volatile关键字修饰变量，就是告知线程对该变量的访问必须重主内存中获取。而对它的改变必须同步刷新到主内存中。这样就能保证线程对变量访问的可见性。关于volatile的使用，参看如下例子：
 
 ```java
 class VolatileDemo {
@@ -130,7 +130,7 @@ Thread-10--->a = 3;b = 4
 ....省略其他
 ```
 
-关于volatile的更多介绍，大家可以查看{% post_link Java并发编程之Volatile(二) %}文章。
+需要注意的是volatile只对单次的变量的操作具对其他线程有可见性，对应类似于`a++`，这种操作线读取a变量的值，进行运算后再重新对变量赋值的操作，仍然会出现线程安全的问题。对关于volatile的更多介绍，大家可以查看{% post_link Java并发编程之Volatile(二) %}文章。
 
 ### synchronized的使用
 
@@ -279,6 +279,8 @@ NotifyThread--->hold lock again in 23:10:14
 WaitThread--->wake up in 23:10:14
 ```
 
+从上文中，我们可以得出以下结论：
+
 - 使用wait()、notify()和notifyAll时需要先获取对象的监视器（执行monitorenter指令成功）
 - 调用wait()方法后，线程状态由RUNNING变为WAITING，并将该线程加入等待队列。
 - notify()或notifyAll()方法调用后，等待线程依旧不会从wait()返回，需要调用notify()或notfifyAll()的线程释放对象的监视器（也就是执行monitorexit指令）后，等待线程才会有机会从wait()返回。
@@ -349,13 +351,7 @@ NotifyThread--->notify all in 23:39:35
 WaitThread--->wake up in 23:39:35
 ```
 
-使用Lock接口实现的锁机制与使用传统的synchronized的区别如下所示：
-
-1. 尝试非阻塞地获取锁：当线程尝试获取锁，如果这一时刻锁没有被其他线程获取到，则成功获取并持有锁。
-2. 能被中断的获取锁：与synchronized不同，获取到锁的线程能够响应中断，当获取到锁的线程被中断时，中断异常会被抛出，同时锁也会被释放。
-3. 超时获取锁：在指定的截止时间之前获取锁，如果截止时间到了任然无法获取到锁，则返回。
-
-关于Lock更多细节的内容，大家可以查看以下几篇文章，这里就不再进行分析了。
+关于Lock使用及原理，大家可以查看以下几篇文章，这里就不再进行分析了。
 
 - {% post_link Java并发编程之锁机制之Lock接口(七) %}
 - {% post_link Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)(八) %}
@@ -365,8 +361,19 @@ WaitThread--->wake up in 23:39:35
 
 ### 等待/通知的经典范式
 
+从上方的例子中，我们可以总结并得到非常经典的等待/通知方式，该范式分别针对等待方法（消费者)和通知方(生产者)。
 
-#### 等待方伪代码
+#### 等待方
+
+等待方遵循如下原则：
+
+1. 获取对象的锁。
+2. 如果条件不满足，那么条件不满足，那么调用对象的wait()方法。被通知后仍然要继续检查条件。
+3. 条件满足则执行相应逻辑。
+
+对应伪代码分别如下：
+
+**使用synchronized方式：**
 
 ``` java
 synchronized(对象) {
@@ -377,7 +384,30 @@ synchronized(对象) {
 }
 ```
 
+**使用lock方式：**
+
+```java
+    lock.lock();
+    try{
+        while(条件不满足){
+            condition.wait();
+        }
+    }finally{
+        lock.unlock();
+    }
+```
+
 #### 通知方代码
+
+通知方遵循如下原则：
+
+1. 获得对象的锁
+2. 改变条件
+3. 通知所有等待在对象上的线程。
+
+对应伪代码分别如下：
+
+**使用synchronized方式：**
 
 ```java
 synchronized(对象){
@@ -386,9 +416,21 @@ synchronized(对象){
 }
 ```
 
-### 等待/通知超时的范式
+**使用lock方式：**
+
+```java
+    lock.lock();
+    try{
+        改变条件
+        condition.singleAll()；
+    }finally{
+        lock.unlock();
+    }
+```
 
 ### Thread.join的使用
+
+除了使用上面我们介绍的金典范式以外，我们还可以使用Thread.join()方法。join方法的使用含义如下：
 
 当线程A调用线程B对象（bThread)的join方法，其含义是当前线程A等待线程B终止后，才从线程A中bThread.join()代码的调用处返回。线程除了join方法以外还提供了join(long millis)和void join(long millis, int nanos)这两个具备超时特性的方法。这两个方法的意义是如果在给定的时间内线程B没有终止。那么线程A将会从该方法中返回。下面我们来看一下join方法的使用例子，如下所示：
 
@@ -429,7 +471,7 @@ class BThread extends Thread {
         String threadName = Thread.currentThread().getName();
         System.out.println(threadName + "-->start");
         try {
-            mAThread.join();//阻塞B线程，需要等待A线程执行完毕后，才能继续执行
+            mAThread.join();//使B线程等待，需要等待A线程执行完毕后，才能继续执行
             System.out.println(threadName + "--->end");
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -458,13 +500,13 @@ class ThreadJoinDemo {
 
 在上述例子中，我们主要实现以下两个效果：
 
-- 主线程等待A线程执行完毕后，才继续执行
-- 线程等待A线程执行完毕后，才继续执行。
+- `主线程(main线程）`等待`A线程`执行完毕后，才继续执行
+- `B线程`等待`A线程`执行完毕后，才继续执行。
 
 我们查看输出结果：
 
 ```xml
-main-->start //main线程启动
+main-->start      //main线程启动
 [AThread]-->start //A线程启动
 [AThread]loop at0 //A线程开始执行循环
 [AThread]loop at1
@@ -496,7 +538,7 @@ main--->end //主线程执行完毕
             }
         } else if (millis == 0) {//如果等待时间为0，
             while (isAlive()) {
-                wait(0);//当前线程存活，那么会阻塞当前线程(当前线程指运行xxThread.join的线程，而不是xxThread)
+                wait(0);//当前线程存活，那么会使当前线程等待(当前线程指运行xxThread.join的线程，而不是xxThread)
             }
         } else {
             throw new IllegalArgumentException("timeout value is negative");
@@ -504,9 +546,9 @@ main--->end //主线程执行完毕
     }
 ```
 
-我们简单的分析一下代码，当B线程调用A线程的`join()`方法时，当前锁对象为A线程。在join()方法内部会调用`wait(0)`方法来阻塞B线程。只有当A线程执行完毕后，也就是A线程终止后。才会唤醒B线程。
+我们简单的分析一下代码，当B线程调用A线程的`join()`方法时，当前锁对象为A线程。在join()方法内部会调用`wait(0)`，该方法会使B线程等待。只有当A线程执行完毕后，也就是A线程终止后。才会唤醒B线程。
 
->线程执行完毕（线程终止）时，会调用线程自身的notifyAll()方法，会通知所有等待在该线程对象的线程。
+>线程执行完毕或线程终止时，会调用线程自身的notifyAll()方法，会通知所有等待在该线程对象的线程。
 
 ### ThreadLocal
 
@@ -555,4 +597,10 @@ main
 
 ### 最后
 
-站在巨人的肩膀上，才能看的更远~
+这里提供一个线程交替打印奇数偶数的例子，来帮助大家巩固所学的知识点。有兴趣的小伙伴，可以查看项目[PrintOddEventNumber](https://github.com/AndyJennifer/PrintOddEventNumber)。
+
+### 参考
+
+该文章参考以下图书，站在巨人的肩膀上。可以看得更远。
+
+- 《Java并发编程的艺术》
