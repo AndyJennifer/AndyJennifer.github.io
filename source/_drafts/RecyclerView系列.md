@@ -8,8 +8,6 @@ categories:
 
 ### 前言
 
-
-
 ### 大致大纲
 
 - ListView与RecyclerView篇(一)-RecyclerView的简单使用
@@ -24,6 +22,9 @@ categories:
 - ListView与RecyclerView篇(九)-RecyclerView自定义LayoutManager
 
 ### 可以参考的技术文章
+
+前面的文章可以仿写这个
+[Android自定义控件三部曲文章索引](https://blog.csdn.net/harvic880925/article/details/50995268)
 
 这篇文章能写一个大纲。
 [看完感觉我RecyclerView白学了！](https://mp.weixin.qq.com/s/Qey-3JDdKYG04mo9WeBZ2g)
