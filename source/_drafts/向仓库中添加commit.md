@@ -1,9 +1,9 @@
 ---
 title: 向仓库中添加commit
 tags:
-  - null
+  - Git
 categories:
-  - null
+  - Git相关
 ---
 
 ### 前言
