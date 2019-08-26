@@ -77,11 +77,15 @@ git config --list
 git config --global core.editor "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' -n -w"
 ```
 
+详细配置说明查看--[OS X Command Line](https://www.sublimetext.com/docs/3/osx_command_line.html)
+
 #### VSCode 配置
 
 ```bash
 git config --global core.editor "code --wait"
 ```
+
+详细配置说明查看--[VS Code as Git editor](https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor)
 
 >如果你对默认的编辑器(Vi或者Vim)感兴趣，你有可能需要这篇文章[Linux vi/vim](https://www.runoob.com/linux/linux-vim.html)
 
