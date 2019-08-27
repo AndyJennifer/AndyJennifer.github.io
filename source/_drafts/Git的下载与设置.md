@@ -92,3 +92,6 @@ git config --global core.editor "code --wait"
 ### 最后
 
 站在巨人的肩膀上，才能看的更远~
+
+* [视频推荐-->用Git进行版本控制](https://cn.udacity.com/course/version-control-with-Git--ud123)
+* [Git官方网站](https://Git-scm.com/book/zh/v2/)
