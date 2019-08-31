@@ -15,8 +15,6 @@ categories:
 - `git init`: 可以让我们在计算机上从头创建全新仓库
 - `git clone`: 可以让我们远端拷贝仓库到本地
 - `git sataus`: 可以让我们查看仓库的状态
-  
-那接下来我们就开始来了解这三个命令的作用吧。
 
 ### 创建仓库
 
@@ -28,7 +26,7 @@ categories:
 
 ![git的init命令使用.jpg](https://upload-images.jianshu.io/upload_images/2824145-bcc127717a62d01f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在上图中我的仓库的地址为`documents/GitTest/GitTestProject`，当然你也可以根据你自己喜欢的位置及项目名称常见Git仓库。
+在上图中我的仓库的地址为`documents/GitTest/GitTestProject`，当然你也可以根据你自己目录及项目名称来创建Git仓库。
 
 #### git init 命令的作用
 
