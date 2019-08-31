@@ -1,5 +1,5 @@
 ---
-title: 存储与清理
+title: Git新手教程-存储与清理(八)
 tags:
   - Git
 categories:

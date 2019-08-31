@@ -1,5 +1,5 @@
 ---
-title: Git的下载与设置
+title: Git新手教程-Git的下载与设置(二)
 tags:
   - Git
 categories:

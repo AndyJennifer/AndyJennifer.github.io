@@ -1,5 +1,5 @@
 ---
-title: 撤销更改
+title: Git新手教程-撤销更改(七)
 tags:
   - Git
 categories:

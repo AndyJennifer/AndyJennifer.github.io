@@ -1,5 +1,5 @@
 ---
-title: 查看仓库的历史记录
+title: Git新手教程-查看仓库的历史记录(四)
 tags:
   - Git
 categories:

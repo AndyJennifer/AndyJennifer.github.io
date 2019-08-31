@@ -1,5 +1,5 @@
 ---
-title: '标签,分支和合并'
+title: Git新手教程-标签、分支和合并(六)
 tags:
   - Git
 categories:

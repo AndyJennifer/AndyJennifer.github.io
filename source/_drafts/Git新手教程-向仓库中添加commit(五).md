@@ -1,5 +1,5 @@
 ---
-title: 向仓库中添加commit
+title: Git新手教程-向仓库中添加commit(五)
 tags:
   - Git
 categories:
