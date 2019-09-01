@@ -57,7 +57,7 @@ Git 会查看 Git 目录下你当前所使用仓库对应的配置文件（`.git
 
 >在克隆任何项目之前，确保当前命令行以及在正确的目录下，克隆项目会新建一个目录，并将克隆的Git仓库放入其中。在Git中是不允许创建`嵌套的Git仓库`。因此当你使用`git clone`时，确保当前命令行所在的工作目录没有位于Git仓库中。
 
-下面我们就使用`git clone`命令，来克隆我们的项目吧。克隆一个项目的具体步骤为：输入命令 git clone，然后输入你要克隆的 Git 仓库的路径。这里以我的SimpleEyes项目(一个仿开眼的kotlin项目)为例，该项目路径为：`https://github.com/AndyJennifer/SimpleEyes`。
+下面我们就使用`git clone`命令，来克隆我们的项目吧。克隆一个项目的具体步骤为：输入命令 git clone，然后输入你要克隆的 Git 仓库的路径。这里以我的[SimpleEyes项目](https://github.com/AndyJennifer/SimpleEyes)(一个仿开眼的kotlin项目)为例，该项目路径为：`https://github.com/AndyJennifer/SimpleEyes`。
 
 ```bash
 git clone https://github.com/AndyJennifer/SimpleEyes
