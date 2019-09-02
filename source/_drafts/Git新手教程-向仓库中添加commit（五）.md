@@ -8,13 +8,76 @@ categories:
 
 ### 前言
 
-在该篇文章中，我们终于要来学习如何创建自己的提交(commit),在前面的文章中，我们已经打好基础，学会使用了git init命令来创建新仓库，使用git clone命令来复制现有仓库，使用git log 命令来查看现有的提交。以及使用非常重要的git status命令来查看仓库的状态。如果大家任然对git专业术语不是很清楚，建议重新观看文章《Git和版本控制术语》，本篇文章会在这些知识的基础上添加 git add、git commit 和 git diff。
+在该篇文章中，我们终于要来学习如何创建自己的提交(`commit`),在前面的文章中，我们已经学会使用`git init`命令来创建新仓库，使用`git clone`命令来复制现有仓库，使用`git log`命令来查看现有的提交。以及使用非常重要的`git status`命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 `git add`、`git commit` 和`git diff`。 在具体讲解这三个命令之前，我们先简单的看看这三个命令的作用。
 
-git add 可以让你将文件从工作目录添加到暂存区。
-git commit 可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。
-git diff 可以显示文件两个版本之间的差异，它的输出与上篇文章中使用的 git log -p命令的输出完全一样
+- `git add`可以让你将文件从工作目录添加到暂存区。
+- `git commit`可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。
+- `git diff`可以显示文件两个版本之间的差异，它的输出与上篇文章中使用的 `git log -p`命令的输出完全一样。
 
 ### git add
+
+在使用`git add`命令之前，我们先回顾一下仓库的创建过程。我们现在自己的喜欢的目录下创建仓库，在下图中我的仓库的地址为`documents/GitTest/GitTestProject`，在接下来的文章中，都会以该仓库作为例子进行讲解。
+
+![git的init命令使用.jpg](https://upload-images.jianshu.io/upload_images/2824145-bcc127717a62d01f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+>在没有向仓库提交任何commit时，多次运行`git init`命令是没有关系的，`git init`命令只会多次重新初始化仓库
+
+#### 检查仓库状态！别忘了
+
+我们一定要在运行git相关命令后，一定要使用`git status`命令来检查当前仓库的状态。因为我们不能保证，我们是否遗忘了某些东西，如果你像我一样使用了`git status`命令，那么你能得到下列输出结果：
+
+```bash
+On branch master
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+```
+
+#### 添加文件
+
+当我们使用`git status`检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git练习.md`、`Git总目录.md`、`JVM系列之总目.md`,这个时候我们再使用`git status`来查看我们仓库的状态，我们能得到下列结果：
+
+```bash
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+  Git总目录.md
+  Git练习.md
+  JVM系列之总目录.md
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+要将文件提交到暂存区，我们需要使用`git add`命令，这里我们将`Git总目录.md`文件添加到暂存区中，使用命令
+`git add Git总目录.md`，我们再使用`git status`查看我们的仓库状态，我们能得到下列结果：
+
+```bash
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+  new file:   Git总目录.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+  Git练习.md
+  JVM系列之总目录.md
+```
+
+这个时候，我们再查看`Untracked files`下，就只有`Git练习.md`与`JVM系列之总目录.md`了，细心的小伙伴肯定看到了`(use "git rm --cached <file>..." to unstage)`也就是当你不小心运行了 git add 并提供了错误文件，它会提示你应该怎么操作。
+顺便提下，git rm --cached 与 shell 的 rm 命令不同。git rm --cached 不会破坏任何属于你的文件，它只是从暂存区删掉了文件。
+此外，帮助文本中出现了"unstage"（撤消暂存）字眼。将文件从工作目录移到暂存区叫做"staging"（暂存）。如果已移动文件，则叫做"staged"（已暂存）。从暂存区将文件移回工作目录将"unstage"（撤消暂存）。如果你阅读的文档中提示“stage the following files”，则表明你应该使用 git add 命令。
+
+#### 使用GitStatus
 
 git add 小结
 git add 命令用于将文件从工作目录移到暂存区。
@@ -35,7 +98,6 @@ git add <file1> <file2> … <fileN>
 我们使用 git add 向暂存区添加了新建的文件，同样的，我们也能使用同一命令将修改的文件暂存。
 
 现在使用 git add 命令将文件移到暂存区，并使用 git status 验证文件是否位于暂存区。
-
 
 ### git commit
 
