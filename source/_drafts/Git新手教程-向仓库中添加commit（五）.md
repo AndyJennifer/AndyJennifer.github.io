@@ -14,7 +14,7 @@ categories:
 - `git commit`可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。
 - `git diff`可以显示文件两个版本之间的差异，它的输出与上篇文章中使用的 `git log -p`命令的输出完全一样。
 
-### git add
+### git add 命令的使用
 
 在使用`git add`命令之前，我们先回顾一下仓库的创建过程。我们现在自己的喜欢的目录下创建仓库，在下图中我的仓库的地址为`documents/GitTest/GitTestProject`，在接下来的文章中，都会以该仓库作为例子进行讲解。
 
@@ -24,7 +24,7 @@ categories:
 
 #### 检查仓库状态！别忘了
 
-我们一定要在运行git相关命令后，一定要使用`git status`命令来检查当前仓库的状态。因为我们不能保证，我们是否遗忘了某些东西，如果你像我一样使用了`git status`命令，那么你能得到下列输出结果：
+我们一定要在运行git相关命令后，一定要使用`git status`命令来检查当前仓库的状态。因为我们不能保证，我们是否遗忘了某些东西。如果你像我一样使用了`git status`命令，那么你能得到下列输出结果：
 
 ```bash
 On branch master
@@ -34,9 +34,9 @@ No commits yet
 nothing to commit (create/copy files and use "git add" to track)
 ```
 
-#### 添加文件
+#### 开始添加文件
 
-当我们使用`git status`检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git练习.md`、`Git总目录.md`、`JVM系列之总目.md`,这个时候我们再使用`git status`来查看我们仓库的状态，我们能得到下列结果：
+当我们使用`git status`检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git总目录.md`、`Git练习.md`、`JVM系列之总目.md`，这个时候我们再使用`git status`来查看我们仓库的状态，我们能得到下列结果：
 
 ```bash
 On branch master
@@ -56,6 +56,8 @@ nothing added to commit but untracked files present (use "git add" to track)
 要将文件提交到暂存区，我们需要使用`git add`命令，这里我们将`Git总目录.md`文件添加到暂存区中，使用命令
 `git add Git总目录.md`，我们再使用`git status`查看我们的仓库状态，我们能得到下列结果：
 
+>还记得`暂存区`吗？暂存区是Git目录下的一个文件，存储的是即将进入下个 commit 内容的信息。可以将暂存区看做准备工作台，Git 将在此区域获取下个 commit。
+
 ```bash
 On branch master
 
@@ -73,23 +75,85 @@ Untracked files:
   JVM系列之总目录.md
 ```
 
-这个时候，我们再查看`Untracked files`下，就只有`Git练习.md`与`JVM系列之总目录.md`了，细心的小伙伴肯定看到了`(use "git rm --cached <file>..." to unstage)`也就是当你不小心运行了 git add 并提供了错误文件，它会提示你应该怎么操作。
-顺便提下，git rm --cached 与 shell 的 rm 命令不同。git rm --cached 不会破坏任何属于你的文件，它只是从暂存区删掉了文件。
-此外，帮助文本中出现了"unstage"（撤消暂存）字眼。将文件从工作目录移到暂存区叫做"staging"（暂存）。如果已移动文件，则叫做"staged"（已暂存）。从暂存区将文件移回工作目录将"unstage"（撤消暂存）。如果你阅读的文档中提示“stage the following files”，则表明你应该使用 git add 命令。
+这个时候，在命令行中的`Untracked files`下，就只有`Git练习.md`与`JVM系列之总目录.md`了，
 
-#### 使用GitStatus
+>细心的小伙伴肯定看到`(use "git rm --cached <file>..." to unstage)`，该命令可以帮助我们将你 `git add` 错误提交的文件，从暂存区中移除，此外，在命令行输出中出现了"unstage"（撤消暂存）字眼。将文件从工作目录移到暂存区叫做`"staging"`（暂存）。如果已移动文件，则叫做`"staged"`（已暂存）。从暂存区将文件移回工作目录将`"unstage"`（撤消暂存）。
 
-git add 小结
-git add 命令用于将文件从工作目录移到暂存区。
+#### 使用git add 添加剩余的文件
+
+当我们已经将 `Git总目录.md`添加到暂存区中后，我们可能还想将剩下的两个文件`Git练习.md`、`JVM系列之总目.md`也添加到暂存区中。当然我们可以一个一个的使用使用`git add`命令添加剩余的文件，我们也可以这样:
 
 ```bash
-git add <file1> <file2> … <fileN>
+git add Git练习.md JVM系列之总目.md
 ```
 
-此命令：
+>使用`git add <file1> <file2> … <fileN>`这种方式，我们可以添加多个文件，其中`<file>`代表一个或多个文件。
 
-可接受多个文件名（用空格分隔）
-此外，可以使用句点 . 来代替文件列表，告诉 git 添加当前目录至暂存区（以及所有嵌套文件
+除了使用上述方法以外，我们还可以使用一个特殊的命令行字符点`.`,点`.`代表当前目录，可以用来表示所有文件和物理（注意！注意！注意！包括所有嵌套文件和目录）。
+
+```bash
+git add Git练习.md JVM系列之总目.md
+#等于
+git add .
+```
+
+如果你使用点`.`添加了多余的文件，那么我们可以使用`git rm --cached <file1> <file2> … <fileN>`命令，将多余的文件从暂存区中移除。
+
+### git commit 命令的使用
+
+当我们将上文提到的三个文件都添加到暂存区之后，现在需要将暂存区中的内容提交到仓库中去，也就是使用`git commit`命令，当然在运行该命令之前，我们要时刻使用`git status`命令查看当前仓库的状态。使用`git stasu`查看状态：
+
+```bash
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+ new file:   Git总目录.md
+ new file:   Git练习.md
+ new file:   JVM系列之总目录.md
+```
+
+嗯，美滋滋，所有的文件都在暂存区中了，那现在开始我们的提交吧。
+
+```bash
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+# new file:   Git总目录.md
+# new file:   Git练习.md
+# new file:   JVM系列之总目录.md
+#
+```
+
+在第一行中，就是我们需要输入此次commit的信息，因为这时我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被'#'标记的行都是注释信息，都会被忽略。
+
+```bash
+[master (root-commit) 18522c6] Initial commit
+ 3 files changed, 45 insertions(+)
+ create mode 100644 Git总目录.md
+ create mode 100644 Git练习.md
+ create mode 100644 JVM系列之总目录.md
+```
+
+这个时候我们在使用`git status`查看我们的仓库状态,输出结果为：
+
+```bash
+On branch master
+nothing to commit, working tree clean
+```
+
+上述表明，所有暂存区中的文件，都提交到Git的仓库区中了。
+
+#### 使用 -m 选项绕过编辑器
 
 #### 具有多个作用的 git add
 
@@ -158,7 +222,6 @@ git diff
 - 已经修改的文件
 - 添加/删除的行所在的位置
 - 执行的实际更改
-
 
 ### 最后
 
