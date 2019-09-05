@@ -116,25 +116,21 @@ Changes to be committed:
  new file:   JVM系列之总目录.md
 ```
 
-嗯，美滋滋，所有的文件都在暂存区中了，那现在开始我们的提交吧。
+嗯，美滋滋，所有的文件都在暂存区中了，那现在开始我们的提交吧。在具体提交之前，我们需要注意，如果你在下载Git后没有设置文本编辑器，那么Git会默认会调用系统的默认编辑器，一般情况是Vi或者Vim。当然我们也可以配置我们自己喜欢的文本编辑器。这里我配置的是Sublime Text，配置命令如下所示：
+
+- >VS Code 配置-->[VS Code as Git editor](https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor)
+- >Sublime Text-->[OS X Command Line](https://www.sublimetext.com/docs/3/osx_command_line.html)
+- >如果你对默认的编辑器(Vi或者Vim)感兴趣，你有可能需要这篇文章[Linux vi/vim](https://www.runoob.com/linux/linux-vim.html)
 
 ```bash
-
-# Please enter the commit message for your changes. Lines starting
-# with '#' will be ignored, and an empty message aborts the commit.
-#
-# On branch master
-#
-# Initial commit
-#
-# Changes to be committed:
-# new file:   Git总目录.md
-# new file:   Git练习.md
-# new file:   JVM系列之总目录.md
-#
+git config --global core.editor "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' -n -w"
 ```
 
-在第一行中，就是我们需要输入此次commit的信息，因为这时我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被'#'标记的行都是注释信息，都会被忽略。
+如果你像我一样配置了Sublime Text，那么我们会得到下图：
+
+![Git_Commit文本编辑.jpg](https://upload-images.jianshu.io/upload_images/2824145-5359bd76333c2309.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在第一行中，就是我们需要输入此次commit的信息，因为这时我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。昂我们使用`git commit`命令后，我们在控制台会得到如下输出：
 
 ```bash
 [master (root-commit) 18522c6] Initial commit
@@ -151,9 +147,11 @@ On branch master
 nothing to commit, working tree clean
 ```
 
-上述表明，所有暂存区中的文件，都提交到Git的仓库区中了。
+上述表明，所有暂存区中的文件，都提交到Git的仓库区中了。现在我们就将第一个commit提交到仓库中去了。当然有可能你提交的描述信息很简短，那么你可以使用`-m`选项来跳过编辑器。如下所示：
 
-#### 使用 -m 选项绕过编辑器
+```bash
+git commit -m "initial commit"
+```
 
 #### 具有多个作用的 git add
 
@@ -182,13 +180,11 @@ $ git commit
 - 关闭编辑器以进行提交
 - 然后使用 git log 检查你刚刚提交的 commit！
 
-
 ### 良好的提交说明
 
 集合自己博客<日志提交规范>和oppo的日志提交规范来写
 
 ### Git diff
-
 
 ### 为何需要该命令
 
