@@ -36,7 +36,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 #### 开始添加文件
 
-当我们使用`git status`检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git总目录.md`、`Git练习.md`、`JVM系列之总目.md`，这个时候我们再使用`git status`来查看我们仓库的状态，我们能得到下列结果：
+当我们使用`git status`检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git总目录.md`、`Git练习.md`、`JVM系列之总目录.md`，这个时候我们再使用`git status`来查看我们仓库的状态，我们能得到下列结果：
 
 ```bash
 On branch master
@@ -81,10 +81,10 @@ Untracked files:
 
 #### 使用git add 添加剩余的文件
 
-当我们已经将 `Git总目录.md`添加到暂存区中后，我们可能还想将剩下的两个文件`Git练习.md`、`JVM系列之总目.md`也添加到暂存区中。当然我们可以一个一个的使用使用`git add`命令添加剩余的文件，我们也可以这样:
+当我们已经将 `Git总目录.md`添加到暂存区中后，我们可能还想将剩下的两个文件`Git练习.md`、`JVM系列之总目录.md`也添加到暂存区中。当然我们可以一个一个的使用使用`git add`命令添加剩余的文件，我们也可以这样:
 
 ```bash
-git add Git练习.md JVM系列之总目.md
+git add Git练习.md JVM系列之总目录.md
 ```
 
 >使用`git add <file1> <file2> … <fileN>`这种方式，我们可以添加多个文件，其中`<file>`代表一个或多个文件。
@@ -92,7 +92,7 @@ git add Git练习.md JVM系列之总目.md
 除了使用上述方法以外，我们还可以使用一个特殊的命令行字符点`.`,点`.`代表当前目录，可以用来表示所有文件和物理（注意！注意！注意！包括所有嵌套文件和目录）。
 
 ```bash
-git add Git练习.md JVM系列之总目.md
+git add Git练习.md JVM系列之总目录.md
 #等于
 git add .
 ```
@@ -128,9 +128,9 @@ git config --global core.editor "'/Applications/Sublime Text.app/Contents/Shared
 
 如果你像我一样配置了Sublime Text，那么我们会得到下图：
 
-![Git_Commit文本编辑.jpg](https://upload-images.jianshu.io/upload_images/2824145-5359bd76333c2309.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Git_Commit文本编辑.jpg](https://upload-images.jianshu.io/upload_images/2824145-9c5d27bdbd5693e3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在第一行中，就是我们需要输入此次commit的信息，因为这时我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。昂我们使用`git commit`命令后，我们在控制台会得到如下输出：
+在第一行中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。当我们使用`git commit`命令后，我们在控制台会得到如下输出：
 
 ```bash
 [master (root-commit) 18522c6] Initial commit
@@ -140,7 +140,9 @@ git config --global core.editor "'/Applications/Sublime Text.app/Contents/Shared
  create mode 100644 JVM系列之总目录.md
 ```
 
-这个时候我们在使用`git status`查看我们的仓库状态,输出结果为：
+>如果你配置了Git文本编辑器，那么会在你输入内容，退出编辑器后，会自动提交commit。
+
+这个时候我们再使用`git status`查看我们的仓库状态,输出结果为：
 
 ```bash
 On branch master
@@ -153,71 +155,87 @@ nothing to commit, working tree clean
 git commit -m "initial commit"
 ```
 
-#### 具有多个作用的 git add
+当然通过`-m`选项提交的消息只包含标题的，不会包含正文，如果你想怎么知道怎么写一个阅读性良好的commit message，那么你有可能阅读下面这两篇文章；
 
-我们修改了文件。git 看到该文件已被修改。到目前为止，一切正常。注意，要提交 commit，待提交的文件必须位于暂存区。要将文件从工作目录移到暂存区，我们应该使用哪个命令？答对了，是 git add！
+- [怎么写Git Commit Message](https://www.jianshu.com/p/0117334c75fc)
+- [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
 
-我们使用 git add 向暂存区添加了新建的文件，同样的，我们也能使用同一命令将修改的文件暂存。
+#### 进行第二次commit
 
-现在使用 git add 命令将文件移到暂存区，并使用 git status 验证文件是否位于暂存区。
-
-### git commit
-
-git commit 小结
-git commit 命令会取出暂存区的文件并保存到仓库中。
-
-$ git commit
-此命令：
-
-将打开配置中指定的代码编辑器
-（请参阅第一节课中的 git 配置流程，了解如何配置编辑器）
-
-在代码编辑器中：
-
-- 必须提供提交说明
-- 以 # 开头的行是注释，将不会被记录
-- 添加提交说明后保存文件
-- 关闭编辑器以进行提交
-- 然后使用 git log 检查你刚刚提交的 commit！
-
-### 良好的提交说明
-
-集合自己博客<日志提交规范>和oppo的日志提交规范来写
-
-### Git diff
-
-### 为何需要该命令
-
-你可能会像我一样，在晚上开始构建项目的下个功能，但是在完成之前就去睡觉了。也就是说，当我第二天开始工作的时候，有一些没有提交的更改。这很正常，因为我还没有完成新的功能，但是我不记得自上次 commit 起我到底完成了哪些代码。git status 将告诉我们哪些文件更改了，但是不会显示到底是什么样的更改。
-
-git diff 命令可以用来查找此类信息！
-git diff
-The git diff 命令可以用来查看已被加入但是尚未提交的更改。
+现在我们已经进行我们的第一次commit了，那么现在我们修改`Jxm系列之总目录.md`文件，打开该文件，将文件中的语句`- Java类加载器（双亲委派模型）`删掉，并保存。如下操作：
 
 ```bash
-git diff
+- Java内存结构及分区
+- Java对象的创建、存储及访问
+- Java判断对象是否存活
+- 垃圾回收算法（GC)
+- Jvm中的常见的垃圾回收器
+- Java类加载过程
+- Java类加载器（双亲委派模型）#---> 删除这行
 ```
 
-要查看 git diff 的实际运行效果，我们需要一些未经提交的更改！在 index.html 中，我们重新组织标题的措辞。将标题从"Expedition"改为"Adventure"。保存文件，然后在终端上运行 git diff。
-
-你应该会看到以下结果：
-
-终端显示了 git diff 命令的输出结果。
-哇，看起来是不是很熟悉啊？和运行 git log -p 的结果一样！告诉你个秘密，git log -p 其实就是在后台使用了 git diff。所以你实际上已经知道如何阅读 git diff 的输出结果！
-
-如果你不知道每个部分都是什么内容，请参阅上节课中带注解的"git log -p"输出结果。
-git diff 小结
-总结下，git diff 命令用来查看已经执行但是尚未 commit 的更改：
+接着我们使用`git status`查看当前我们的仓库状态：
 
 ```bash
-git diff
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+ modified:   Jvm系列之总目录.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-此命令会显示：
+从控制台中，我们可以看到我们的文件`Jvm系列之总目录.md`已经被标记为`modifed`了，那现在我们如何将修改的文件提交到Git的仓库区中呢？要将内容提交到Git的仓库区中去，我们需要将文件提交到暂存区中，在之前的命令中将文件提交到暂存区中，我们需要使用命令`git add`命令，当然`git add`命令不仅只针对`新建`的文件，它仍可以将`修改后`的文件提交到暂存区中。也就是我们只要使用`git add`与`git commit`命令，我们就能将修改后的文件提交到Git的仓库中去了。
 
-- 已经修改的文件
-- 添加/删除的行所在的位置
-- 执行的实际更改
+#### 简单总结
+
+在学习了`git add`与`git commit`命令后，我们简单的总结一下这两个命令。
+
+- `git add` 可以不仅可以向暂存区中添加新的文件，同样也能将修改的文件进行暂存。
+- `git commit` 会取出暂存区的文件，并保存到仓库中。该命令需要输入commit消息。
+
+### git diff
+
+还有最后一个命令`git diff`。这个命令可以帮助我们查看我们一些没有提交的更改，也就是说我们可以看到当前修改的文件与Git仓库之间的差异。还是`Jvm系列之总目录.md`文件为例，这里我们继续删除`- Java类加载过程`，如下图所示：
+
+```bash
+- Java内存结构及分区
+- Java对象的创建、存储及访问
+- Java判断对象是否存活
+- 垃圾回收算法（GC)
+- Jvm中的常见的垃圾回收器
+- Java类加载过程 #---> 删除这行
+```
+
+然后我们使用 `git diff`命令查看命令行输出:
+
+```bash
+diff --git a/Jvm系列之总目录.md b/Jvm系列之总目录.md
+index a63fca2..83d8e73 100644
+--- a/Jvm系列之总目录.md
++++ b/Jvm系列之总目录.md
+@@ -10,5 +10,4 @@ categories:
+ - Java对象的创建、存储及访问
+ - Java判断对象是否存活
+ - 垃圾回收算法（GC)
+-- Jvm中的常见的垃圾回收器
+-- Java类加载过程
+\ No newline at end of file
++- Jvm中的常见的垃圾回收器
+\ No newline at end of file
+```
+
+从命令行的输出中，我们可以具体看到修改内容的变化：
+
+![git_diff展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-77b5e40b258ef0d6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上图中，红色表示当前修改的文件删除的行。我相信大家看到这个界面一定会很熟悉，还记的我们之前介绍长裤仓库的历史提交记录中，所将的`git log -p`吗？其实`git log -p`其实就是使用了`git diff`命令。关于上图中，如果大家不理解每行所代表的意思，那么可以查看《查看仓库的历史记录(四)》中`git log -p`中的介绍。
+
+### IntelliJ IDEA or Android Sutdio 图形化界面的使用
+
+又到了我们熟悉的偷懒环节了。
 
 ### 最后
 
