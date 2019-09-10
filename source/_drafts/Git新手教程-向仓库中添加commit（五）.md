@@ -8,7 +8,7 @@ categories:
 
 ### 前言
 
-在该篇文章中，我们终于要来学习如何创建自己的提交(`commit`),在前面的文章中，我们已经学会使用`git init`命令来创建新仓库，使用`git clone`命令来复制现有仓库，使用`git log`命令来查看现有的提交。以及使用非常重要的`git status`命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 `git add`、`git commit` 和`git diff`。 在具体讲解这三个命令之前，我们先简单的看看这三个命令的作用。
+在该篇文章中，我们终于要来学习如何创建自己的提交(`commit`)，在前面的文章中，我们已经学会使用`git init`命令来创建新仓库，使用`git clone`命令来复制现有仓库，使用`git log`命令来查看现有的提交。以及使用非常重要的`git status`命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 `git add`、`git commit` 和`git diff`。 在具体讲解这三个命令之前，我们先简单的看看这三个命令的作用。
 
 - `git add`可以让你将文件从工作目录添加到暂存区。
 - `git commit`可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。
@@ -221,35 +221,37 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 #### git add
 
-如果你的项目已经与Git相关联，那么当你在IDEA中创建新的文件夹时，编译器会如下提示：
+如果你的项目已经通过Git管理，那么当你在IDEA中创建新的文件夹时，编译器会如下提示：
 
 ![ide_add操作展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-7e019825785684b6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-通过提示消息，我们其实就能看出，就是提示我们是否将当前新创建的文件添加到Git的暂存区中，如果你选择确定，那么就会将该文件添加到暂存区中。如果你不小心选择了`cancel`,不用担心，你仍然可以使用下列方式来添加文件到暂存区中。
+通过提示消息，我们其实就能看出，就是提示我们是否将当前新创建的文件添加到Git的暂存区中，如果你选择确定，那么就会将该文件添加到暂存区中。如果你不小心选择了`cancel`,不用担心，你仍然可以使用下列方式来添加文件到暂存区中。通过选择你要添加的文件，点击鼠标`右键`依次选择`Git`--->`add`。就可以将该文件添加到暂存区中。如下图所示：
 
 ![git_add_延迟展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-41af97c21f3bffc6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-通过选择文件，点击鼠标`右键`依次选择`Git`--->`add`将该文件添加到暂存区中。
-
-小提示：而是以一种非常直观的颜色来表示当前仓库中的文件状态
-
-1. 红色：表示当前文件或目录没有被跟踪。
-2. 绿色：表示当前文件或目录已经被添加到仓库中了。
-3. 蓝色：表示被添加到仓库中的文件或目录被修改或移动。
-4. 橙色：表示被忽略的文件。
-5. 白色：表示没有任何更改。
+>小提示：在ide是以一种非常直观的颜色来表示当前仓库中的文件状态:
+>
+> 1. 红色：表示当前文件或目录没有被跟踪。
+> 2. 绿色：表示当前文件或目录已经被添加到仓库中了。
+> 3. 蓝色：表示被添加到仓库中的文件或目录被修改或移动。
+> 4. 橙色：表示被忽略的文件。
+> 5. 白色：表示没有任何更改。
 
 #### git commit 使用
+
+当我们将文件添加到暂存区中后，我们可以通过ide顶部的工具栏进行commit操作，记住是顶部哟！具体如下图所示：
 
 ![git_commit_展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-38527c16caf69b3d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #### git diff 使用
 
+同样的`git diff`也在顶部，如下图所示：
+
 ![git_diff_ide.jpg](https://upload-images.jianshu.io/upload_images/2824145-32c537e0307fe506.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #### Git使用快捷键
 
-除了上述所有的操作，我们还可以使用idea提供的快捷键进行操作，使用``Alt+` ``的方式，可以得到以下界面：
+当然除了上述所有的操作，我们还可以使用ide提供的快捷键进行操作，使用``Alt+ ` ``的方式，可以得到以下界面：
 
 ![idea_快捷键汇总.jpg](https://upload-images.jianshu.io/upload_images/2824145-187de0ce3cd99fae.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
