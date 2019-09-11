@@ -217,7 +217,9 @@ void removeCallbacksAndMessages(Handler h, Object object)
 
 {% asset_img 第二次循环.png 第二次循环 %}
 
-到这里有可能有小伙伴就会想，为什么不执行一次循环就将所有的对应Handler发送的消息全部移除了呢？这里之所以要执行两次循环的原因是，你并不能保证当移除消息的时候，对应的Handler就不继续发送消息了，也就是说该Handler发送的消息仍然会被添加到MessageQueue中，`所以为了保证将整个MessageQueue中该Handler发送的消息全部被移除，在第一次循环移除之后，我们必须要再执行一次循环移除操作`。
+`所以为了保证将整个MessageQueue中该Handler发送的消息全部被移除，在第一次循环移除之后，我们必须要再执行一次循环移除操作`。
+
+>ps:非常感谢@[承香墨影](https://juejin.im/user/587377ec61ff4b005c4d4189)指出的错误的地方，之前没有考虑到同步的关系，误导了大家。内心感到无比的愧疚。
 
 #### 当Loooper取出消息时
 
