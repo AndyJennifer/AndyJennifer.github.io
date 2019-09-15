@@ -130,7 +130,7 @@ git config --global core.editor "'/Applications/Sublime Text.app/Contents/Shared
 
 ![Git_Commit文本编辑.jpg](https://upload-images.jianshu.io/upload_images/2824145-9c5d27bdbd5693e3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在第一行中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。当我们使用`git commit`命令后，我们在控制台会得到如下输出：
+在`第一行`中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。当我们使用`git commit`命令后，我们在控制台会得到如下输出：
 
 ```bash
 [master (root-commit) 18522c6] Initial commit
