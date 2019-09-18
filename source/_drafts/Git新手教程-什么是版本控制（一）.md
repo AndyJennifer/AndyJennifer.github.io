@@ -26,9 +26,9 @@ categories:
 
 现在市面上的控制系统有几十上百种，但是最为流行的版本控制系统为下面三者：
 
--[Git](https://Git-scm.com)
--[Subversion](https://subversion.apache.org)
--[Mercurial](https://www.mercurial-scm.org)
+- [Git](https://Git-scm.com)
+- [Subversion](https://subversion.apache.org)
+- [Mercurial](https://www.mercurial-scm.org)
 
 尽管有着不同的版本控制系统，但其主要类别分为两种：
 
@@ -43,7 +43,7 @@ categories:
 
 ![分布式模行.png](https://upload-images.jianshu.io/upload_images/2824145-4041db9b893cba49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在该系列文章中，我们将使用Git，它是分布式版本控制系统。你可能听说过`GitHub`,`Git`和`GitHub`是完全不同的Git是版本控制工具。而Github是托管Git项目的服务，要使用Git项目，你未必要使用GitHub。但是GitHub在后续文章中，我们也会讲到。现在就把它当做可以上传你的项目副本的另一台计算机。如果现在没有理解集中式，分布式。也完全没有关系。这里只是介绍一下他们运行的大概框架。
+在该系列文章中，我们将使用Git，它是分布式版本控制系统。你可能听说过`GitHub`,`Git`和`GitHub`是完全不同的Git是版本控制工具。而Github是托管Git项目的服务，要使用Git项目，你未必要使用GitHub。但是GitHub,在后续文章中我们也会讲到。现在就把它当做可以上传你的项目副本的另一台计算机。如果现在没有理解集中式，分布式。也完全没有关系。这里只是介绍一下他们运行的大概框架。
 
 ### Git和版本控制术语
 

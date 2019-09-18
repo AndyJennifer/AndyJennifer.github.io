@@ -61,11 +61,11 @@ git tag -a v1.0.0 -m "发布新版本v1.0.0"
 
 #### 轻量标签与附注标签的区别
 
-在讲解了轻量标签与附注标签的使用之后，我们来看一下这两个标签的实际区别，我们可以通过`git show`命令查看分支的区别，我们先查看附注标签，如下所示：
+在讲解了轻量标签与附注标签的使用之后，我们来看一下这两个标签的实际区别，我们可以通过`git show`命令查看实际的区别，我们先查看附注标签，如下所示：
 
 ![git_show_1.png](https://upload-images.jianshu.io/upload_images/2824145-c1b7bf2c9a0ec3a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-通过使用`git show v1.0.0`我们你可以看到命令行的输出中是包含如下信息的
+通过使用`git show v1.0.0`我们你可以看到命令行的输出中是包含Tag信息的：
 
 ```bash
 tag v1.0.0
@@ -104,7 +104,7 @@ git tag -a v1.0.0 abd12d0
 
 ### 分支
 
-分支是Git中比较重要的知识点。在Git中，分支的概念就像是科幻电影中的`平行世界`。在每个平行世界中所作的事对于现实世界或另一个平行世界是无感知的。
+在Git中，分支就像是科幻电影中的`平行世界`。每个平行世界都运行在独立的环境中，在正常情况下，每个平行世界中所作的事，对于现实世界或另一个平行世界是无感知的且不影响的。在某些特殊的情况下，平行世界与现实世界可能重合，那么就会产生混乱与冲突。那这个时候就需要我们来解决这些冲突与问题。
 
 ![平行世界.jpg](https://upload-images.jianshu.io/upload_images/2824145-9abd4b16881e58c0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -112,7 +112,7 @@ git tag -a v1.0.0 abd12d0
 
 #### master分支与Head指针
 
-在下图仓库中，我们创建了一些提交，并在提交`D`中创建了名为`v1.0`的标签，除了标签以外还包含一个隐藏的master分支(在我们没有创建分支的情况下，Git会为我们创建一个名为`master`的分支)
+在下图仓库中，我们创建了一些提交，并在提交`D`中创建了名为`v1.0`的标签，除了标签以外还包含一个隐藏的master分支(在我们没有创建分支的情况下，Git会为我们创建一个名为`master`的分支)。
 
 ![分支1.png](https://upload-images.jianshu.io/upload_images/2824145-4324a593bb3e2ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -144,11 +144,10 @@ git tag -a v1.0.0 abd12d0
 
 当然我们可以改变 `HEAD` 指针所指向的内容， 使用`checkout`命令，我们可以切换`HEAD`指针所指向的分支。比如我们可以通过命令`git checkout branch1`，将 `HEAD` 指针指向 `branch1` 。
 
-当我们切换分支到`branch1`后，我们后续的提交，都会添加到 `branch1` 分支上。如下图所示：
+当我们切换分支到`branch1`后，我们后续的提交，都会添加到 `branch1` 分支上。比如下图，我们又创建了一个`A提交`，那么这时`branch1`分支指针会指向该提交。
 
 ![分支6.jpg](https://upload-images.jianshu.io/upload_images/2824145-fe3aa6cc999fa477.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在上图中的A提交，仍然会被添加到`branch1`分支上。
 
 #### 分支中的提交的可见性
 
@@ -156,9 +155,7 @@ git tag -a v1.0.0 abd12d0
 
 ![分支7.jpg](https://upload-images.jianshu.io/upload_images/2824145-5f0010fe90016128.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在上图中，如果我们当前切换到了`master分支上`，那么在我们工作目录与文件系统中，`branch1`分支的A与`branch2`分支中的J，这两个提交对文件造成的更改，将不会出现在任何文件中。如果需要查看这个两个对应的文件修改，只需要切换到我们想要查找的提交所在的分支就行了。
-
-
+在上图中，如果我们当前切换到了`master分支上`，那么在我们工作目录与文件系统中，`branch1`分支的`A`与`branch2`分支中的`J`，这两个提交对文件造成的更改，将不会出现在`master分支`上的任何文件中。如果需要查看这个两个对应的文件修改，只需要切换到我们想要查找的提交所在的分支就行了。
 
 这里开始写。创建分支的命令与查看。
 
