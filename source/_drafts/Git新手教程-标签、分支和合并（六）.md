@@ -19,7 +19,7 @@ categories:
 
 我们先从最简单的标介绍开始。
 
-假设我们已经向仓库提交了A、B、C、D四个commit，其中最后的一个提交也就是`D`，标志着我们项目的1.0版本。如何在git中指出这一点呢？大家可能会觉得，我们可以在D的提交中说明这是我们的版本1.0。但是这并不是最理想的。Git像其他版本控制系统一样，提供了给提交打`Tag(标签)`的功能。也就是是说我们可以给`D`提交打上标签。如下所示：
+假设我们已经向仓库提交了A、B、C、D四个commit，其中最后的一个提交也就是`D`，标志着我们项目的1.0版本。如何在Git中指出这一点呢？大家可能会觉得，我们可以在D的提交中说明这是我们的版本1.0。但是这并不是最理想的。Git像其他版本控制系统一样，提供了给提交打`Tag(标签)`的功能。也就是是说我们可以给`D`提交打上标签。如下所示：
 
 > `Tag(标签)`一般表示比较重要的节点信息。
 
@@ -33,7 +33,7 @@ categories:
 
 #### 创建轻量标签
 
-创建轻量标签的方式非常简单使用`git tag`+标签名称。如下所示：
+创建轻量标签的方式非常简单使用`git tag`+`标签名称`。如下所示：
 
 ```bash
 git tag v1.0.0
@@ -41,13 +41,13 @@ git tag v1.0.0
 
 #### 创建附注标签
 
-创建附注标签需要在之前创建轻量标签的方式上，添加选项`-a`。如下所示：
+创建附注标签非常简单，需要在创建轻量标签的方式上，添加选项`-a`。如下所示：
 
 ```bash
 git tag -a v1.0.0
 ```
 
-通过上述方式，Git会运行你配置的文本编辑器输入信息。如下所示：
+通过上述方式，Git会运行你配置的文本编辑器输入标签信息。如下所示：
 
 ![git_tag_3.png](https://upload-images.jianshu.io/upload_images/2824145-8ea44be6c92264ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -112,17 +112,17 @@ git tag -a v1.0.0 abd12d0
 
 #### master分支与Head指针
 
-在下图仓库中，我们创建了一些提交，并在提交`D`中创建了名为`v1.0`的标签，除了标签以外还包含一个隐藏的master分支(在我们没有创建分支的情况下，Git会为我们创建一个名为`master`的分支)。
+在下图仓库中，我们创建了一些提交，并在提交`D`中创建了名为`v1.0`的标签，除了标签以外还包含一个隐藏的`master`分支。在我们没有创建分支的情况下，Git会为我们创建一个名为`master`的分支。其实`master`的本质其实是一个`指针`。
 
 ![分支1.png](https://upload-images.jianshu.io/upload_images/2824145-4324a593bb3e2ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 >master并没有什么特殊的意义，它只是第一个默认分支名。
 
-随着我们不断向仓库进行提交，这些提交都会添加到该分支上。同时分支的指针也会指向对应提交。如下所示：
+随着我们不断向仓库进行提交，这些提交都会添加到该分支上。同时`master指针`也会指向对应提交。如下所示：
 
 ![分支2.png](https://upload-images.jianshu.io/upload_images/2824145-d8d2162b0e2e757c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在上图中，`masetr` 指针随着提交，而不断移动。
+在上图中，`masetr` 指针随着提交而不断移动。图中`红线`所连接的提交都属于`master分支`上。
 
 >相对于`Tag(标签)`，分支指针不会永久的指向某次提交，而是会随着提交不断的移动。
 
@@ -138,7 +138,7 @@ git tag -a v1.0.0 abd12d0
 
 ![分支4.jpg](https://upload-images.jianshu.io/upload_images/2824145-2f6693469ebb4b42.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-因为当前 `HEAD指针` 指向 `MASTER` 分支，所以当我们再向仓库提交`I`提交时，该提交仍然会在 `MASTER` 分支上。如下所示：
+因为当前 `HEAD指针` 指向 `MASTER` 分支，所以当我们再向仓库提交一个`I`提交对象时，该提交仍然会在 `MASTER` 分支上。如下所示：
 
 ![分支5.jpg](https://upload-images.jianshu.io/upload_images/2824145-0088d194d5e6439e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -148,7 +148,6 @@ git tag -a v1.0.0 abd12d0
 
 ![分支6.jpg](https://upload-images.jianshu.io/upload_images/2824145-fe3aa6cc999fa477.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
 #### 分支中的提交的可见性
 
 需要注意的是，分支中的提交对于其他分支来说是不可见的。
@@ -157,40 +156,40 @@ git tag -a v1.0.0 abd12d0
 
 在上图中，如果我们当前切换到了`master分支上`，那么在我们工作目录与文件系统中，`branch1`分支的`A`与`branch2`分支中的`J`，这两个提交对文件造成的更改，将不会出现在`master分支`上的任何文件中。如果需要查看这个两个对应的文件修改，只需要切换到我们想要查找的提交所在的分支就行了。
 
-这里开始写。创建分支的命令与查看。
+我们基本已经熟悉了分支的相关概念与整体流程后，下面我们来学习一下
+相关命令的使用。
 
-#### 创建分支命令
+#### 创建分支
 
-要创建分支，只需使用 git branch 并提供要创建的分支对应的名称。因此，如果你想创建一个叫做"sidebar"的分支，只需运行以下命令：
-
-```bash
-git branch dev
-```
-
-#### 日志中的分支
-
-提示符中的分支信息很有用，但是最清晰的查看方式是查看 git log 的输出结果。就像我们需要使用 --decorate 选项来显示 git 标签一样，我们也需要该选项来显示分支。
+创建分支其实很简单，只需使用 `git branch` 并提供要创建的分支对应的名称。如果你想创建一个叫做`"branch1"`的分支，只需运行以下命令：
 
 ```bash
-git log --oneline --decorate
-
+git branch branch1
 ```
 
-#### git checkout 命令
+需要注意的是，如果你在某个提交上创建了一个分支，那么该提交之前的所有提交也是属于当前分支，在下图中，在`H`提交中使用了创建分支命令创建了`branch1`分支，那么在`H`提交之前的`D、E、F、G`也都属于`branch1`分支。
 
-注意，在进行 commit 时，该 commit 将添加到当前分支上。虽然我们创建了新的 sidebar 分支，但是没有向其添加新的 commit，因为我们尚未切换到该分支。如果我们现在进行 commit 的话，该 commit 将添加到 master 分支，而不是 sidebar 分支。我们已经在演示中看到这一情况，要在分支之间进行切换，我们需要使用 git 的 checkout 命令。
+![分支3.png](https://upload-images.jianshu.io/upload_images/2824145-59aac87a94310dd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+上图中`branch1`分支如蓝线所示。
+
+##### 以前的提交的 commit 添加分支
+
+当然，与创建标签一样，我们也可以向以前的提交的 commit 添加分支。在下述命令中，我们在 `SHA` 为`dfs14fo`的提交中创建了test分支。
+
+```bash
+git branch test dfs14fo
+```
+
+#### 切换分支
+
+要切换到另一个分支，我们需要使用命令`git checkout`命令，比如我们需要切换到分支`dev`上，那么我们可以使用如下命令：
 
 ```bash
 git checkout dev
 ```
 
-请务必了解该命令的工作方式。运行该命令将：
-从工作目录中删除 git 跟踪的所有文件和目录
-(git 跟踪的文件存储在仓库中，因此什么也不会丢失)
-转到仓库，并提取分支指向的 commit 所对应的所有文件和目录
-因此此命令将删除 master 分支中的 commit 引用的所有文件。它会将这些文件替换为 sidebar 分支中的 commit 引用的文件。理解这一部分十分重要，所以请务必多读几遍工作方式。
-
-有趣的是，sidebar 和 master 都指向同一 commit，因此当你在这两个分支之间切换时，看起来什么也没变。但是提示符现在会显示"sidebar"：
+通过上述操作，`HEAD`指针会指向`dev`，需要注意的是，当你切换分支时，在你的工作目录中，会删除其他分支中`commit`引用的所有文件，同时会引用`dev`分支中的 `commit`引用的文件。当然你不用担心真的删除了你另一分支上的文件，Git会将它们都存储在仓库中。当你切换回来后，又会将对应分支引用的文件显示在你的工作目录中。
 
 #### 分支删除
 
