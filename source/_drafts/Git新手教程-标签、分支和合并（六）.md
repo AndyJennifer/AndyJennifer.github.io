@@ -177,7 +177,7 @@ git branch branch1
 
 ##### 以前的提交的 commit 添加分支
 
-当然，与创建标签一样，我们也可以向以前的提交的 commit 添加分支。在下述命令中，我们在 `SHA` 为`dfs14fo`的提交中创建了test分支。
+当然，与创建标签一样，我们也可以向以前的提交的 commit 添加分支。在下述命令中，我们在 `SHA` 为`dfs14fo` 的提交中创建了test分支。
 
 ```bash
 git branch test dfs14fo
@@ -203,7 +203,7 @@ git checkout dev
 
 #### 分支删除
 
-在上文中，我们提到了，分支一般用于进行开发或对项目进行修正。当我们将分支的更改合并到`master`分支后，我们可能就不再需要该分支了。那么这个时候如果我们想删除分支，那么我们使用命令 `git branch -d` + 分支名称来删除我们想要删除的分支。这里我们以删除`dev`分支为例：
+在上文中，我们提到了，分支一般用于进行开发或对项目进行修正。当我们将分支的更改`合并(merge,在后文我们会介绍合并)`到`master`分支后，我们可能就不再需要该分支了。那么这个时候如果我们想删除分支，那么我们使用命令 `git branch -d + 分支名称`来删除我们想要删除的分支。这里我们以删除`dev`分支为例：
 
 ```bash
 git branch -d dev
@@ -214,26 +214,45 @@ git branch -d dev
 - 如果我们已经使用 `git checkout dev` 命令切换到dev分支上的话，那么我们是不能删除`dev`分支的。我们需要切换到其他分支上，才能删除该分支。
 - 如果 `dev`分支上有任何的commit，那么通过`-d`选项是不能删除该分支的，你需要使用大写的`D`选项，也就是使用 `git branch -D dev`。
 
-### 高效分支
-
-我们已经做出了所有需要做出的更改！很棒！
-
-我们已经在三个不同的分支上进行了多项更改。我们在 git log 输出结果中看不到其他分支，触发切换到某个分支。如果能在 git log 输出结果中看到所有分支，是不是很棒？
-
-你到现在为止已经知道，git log 命令非常强大，可以显示此信息。我们将使用新的 `--graph` 和 `--all` 选项
-
-```bash
-git log --oneline --decorate --graph --all
-
-```
-
-等同于
-
-```bash
-git log --oneline  --graph --all
-```
-
 ### 合并
+
+分支的主要作用就是让我们做出不影响`master`分支的更改，当我们在非`master`分支上做出更改后，如果觉得不需要该分支上的更改，则可以删掉该分支，或者你可以将给分支上的内容与其他分支进行合并。
+
+>将分支组合到一起的这种行为，我们称之为`合并(merge)`。
+
+在Git中使用 `git merge`命令来合并分支：
+
+```bash
+git merge <other-branch>
+```
+
+在Git中 `合并(merge)` 的方式有两种类型。一种是普通合并，另一种是快进合并。下面我们就来分别了解这两种合并方式。
+
+#### 普通合并
+
+假设我们的项目存在这两条分支 `master` 与 `branch1` 两条分支。
+
+![普通合并1.jpg](https://upload-images.jianshu.io/upload_images/2824145-af10415234b3c02d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+这个时候我们想将这`branch1`合并(merge)到`master`分支上，由于当前`HEAD`指向 `master` 分支，所以当两个分支合并时，将会生成一个合并提交`B`将放置在`master`分支上，并且`master指针`将会向前移动。如下所示：
+
+![普通合并2.jpg](https://upload-images.jianshu.io/upload_images/2824145-6e938d8949dd0e24.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+需要注意的是， `B提交` 会链接`branch1`中的 `4` 与 `A` 提交。同时当分支进行合并时，并不会影响到之前的分支，比如我们仍然可以切换到`branch1`分支上，并创建一个新的提交 `J` ,如下图所示：
+
+![普通合并3.jpg](https://upload-images.jianshu.io/upload_images/2824145-56f371f84ba1ee9f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 快进合并
+
+假设我们的项目存在这两条分支`master`与`branch1`支。且`branch1`分支在`master`分支前面。如下所示：
+
+![快速合并1.jpg](https://upload-images.jianshu.io/upload_images/2824145-73b8790dce00a0a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+因为`master`中是不包含 `branch1` 中的提交`(I,K,2)`。如果这个时候我们想将这些提交纳入`master`分支中，也就是需要将 `branch1` 分支 `合并(merge)` 到 `master` 分支中。当我们在`master`分支中使用命令 `git merge branch1` 时，因为 `branch1分支` 在 `master分支` 前，Git会做一个所谓的`快进合并`。如下图所示：
+
+![快速合并2.jpg](https://upload-images.jianshu.io/upload_images/2824145-2d1f6505826e3687.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上图中，`master`分支移动到了`branch1`分支指向的commit。需要注意的是，快进合并并不像普通合并那样再创建一个提交。
 
 ### 合并冲突
 
@@ -242,4 +261,3 @@ git log --oneline  --graph --all
 站在巨人的肩膀上，才能看的更远~
 
  - [Git-分支-分支简介](https://git-scm.com/book/zh/v2/Git-分支-分支简介)
-

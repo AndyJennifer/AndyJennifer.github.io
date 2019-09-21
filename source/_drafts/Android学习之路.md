@@ -180,6 +180,7 @@ https://github.com/GcsSloop/AndroidNote
 - ListView与RecyclerView篇(七)-RecyclerView滑动定位
 - ListView与RecyclerView篇(八)-RecyclerView自定义ItemDecoration
 - ListView与RecyclerView篇(九)-RecyclerView自定义LayoutManager
+- ScrollView嵌套RecyclerView（NestedScrollView)出现的问题
 
 
 ### Kotlin
