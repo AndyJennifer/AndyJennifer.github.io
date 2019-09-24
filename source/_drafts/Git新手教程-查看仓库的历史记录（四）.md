@@ -193,12 +193,12 @@ git show 543019ea
 
 通过依次点击编译器底部的`Version Control`->`Log`,我们能得到如下界面：
 
-![idea操作.png](https://upload-images.jianshu.io/upload_images/2824145-d9e460a058aa8ed7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![studioLog界面显示.jpg](https://upload-images.jianshu.io/upload_images/2824145-9e8a5d877e0713c4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 现在分别上图标注的内容进行介绍：
 
 1. 提交记录展示列表：在该区域显示了我们所有的提交内容，包含commit信息、作者、日期。
-2. 该搜索框：我们能根据关键字搜索到我们想要查询的提交信息。
+2. 搜索框：我们能根据关键字搜索到我们想要查询的提交信息。
 3. User筛选框：我们可以筛选其他作者的提交信息
 4. Date筛选框：根据日期来查询提交信息。
 5. 通过点击相关提交记录，我们能查看对应提交对文件的操作（增加，删除，更改），如果点击相关文件，可以查看当前提交内容与上个版本的区别。

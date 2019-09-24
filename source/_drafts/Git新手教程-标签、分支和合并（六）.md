@@ -144,9 +144,9 @@ git tag -a v1.0.0 abd12d0
 
 ![分支5.jpg](https://upload-images.jianshu.io/upload_images/2824145-0088d194d5e6439e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-当然我们可以改变 `HEAD` 指针所指向的内容， 使用`checkout`命令，我们可以切换`HEAD`指针所指向的分支。比如我们可以通过命令`git checkout branch1`，将 `HEAD` 指针指向 `branch1` 。
+当然我们可以改变 `HEAD` 指针所指向的内容， 使用`checkout`命令，我们可以切换 `HEAD` 指针所指向的分支。比如我们可以通过命令`git checkout branch1`，将 `HEAD` 指针指向 `branch1` 。
 
-当我们切换分支到`branch1`后，我们后续的提交，都会添加到 `branch1` 分支上。比如下图，我们又创建了一个`A提交`，那么这时`branch1`分支指针会指向该提交。
+当我们切换分支到 `branch1` 后，我们后续的提交，都会添加到 `branch1` 分支上。比如下图，我们又创建了一个 `A提交` ，那么这时 `branch1` 分支指针会指向该提交。
 
 ![分支6.jpg](https://upload-images.jianshu.io/upload_images/2824145-fe3aa6cc999fa477.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -169,15 +169,15 @@ git tag -a v1.0.0 abd12d0
 git branch branch1
 ```
 
-需要注意的是，如果你在某个提交上创建了一个分支，那么该提交之前的所有提交也是属于当前分支，在下图中，在`H`提交中使用了创建分支命令创建了`branch1`分支，那么在`H`提交之前的`D、E、F、G`也都属于`branch1`分支。
+需要注意的是，如果你在某个提交上创建了一个分支，那么该提交之前的所有提交也是属于当前分支，在下图中，在`H`提交中使用了创建分支命令创建了 `branch1` 分支，那么在 `H` 提交之前的 `D、E、F、G` 也都属于 `branch1` 分支。
 
 ![分支3.png](https://upload-images.jianshu.io/upload_images/2824145-59aac87a94310dd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-上图中`branch1`分支如蓝线所示。
+上图中 `branch1` 分支如蓝线所示。
 
 ##### 以前的提交的 commit 添加分支
 
-当然，与创建标签一样，我们也可以向以前的提交的 commit 添加分支。在下述命令中，我们在 `SHA` 为`dfs14fo` 的提交中创建了test分支。
+当然，与创建标签一样，我们也可以向以前的提交的 commit 添加分支。在下述命令中，我们在 `SHA` 为 `dfs14fo` 的提交中创建了test分支。
 
 ```bash
 git branch test dfs14fo
@@ -191,11 +191,11 @@ git branch test dfs14fo
 git checkout dev
 ```
 
-通过上述操作，`HEAD`指针会指向`dev`，需要注意的是，当你切换分支时，在你的工作目录中，会删除其他分支中`commit`引用的所有文件，同时会引用`dev`分支中的 `commit`引用的文件。当然你不用担心真的删除了你另一分支上的文件。Git会将它们都存储在仓库中。当你切换回来后，又会将对应分支引用的文件显示在你的工作目录中。
+通过上述操作，`HEAD` 指针会指向 `dev` ，需要注意的是，当你切换分支时，在你的工作目录中，会删除其他分支中 `commit` 引用的所有文件，同时会引用 `dev` 分支中的 `commit` 引用的文件。当然你不用担心真的删除了你另一分支上的文件。Git会将它们都存储在仓库中。当你切换回来后，又会将对应分支引用的文件显示在你的工作目录中。
 
 #### 分支的查看
 
-如果你需要查看当前项目的分支，可以使用`git branch`命令，通过该命令我们不仅可以知道仓库中所创建的分支，还能查看当前活跃的分支，也就是`HEAD`指针指向的分支。
+如果你需要查看当前项目的分支，可以使用`git branch`命令，通过该命令我们不仅可以知道仓库中所创建的分支，还能查看当前活跃的分支，也就是 `HEAD` 指针指向的分支。
 
 ![git_branch.png](https://upload-images.jianshu.io/upload_images/2824145-a926cef561cb5c2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -258,37 +258,84 @@ git merge <other-branch>
 
 大部分情况下，我们都能成功的合并分支，但是某些情况下,git无法自动的进行合并，当合并失败时，就称为`合并冲突`。当出现冲突时，我们需要手动的去修复文件中的冲突。看下面的例子：
 
-在例子中，我们已经创建了一个名为`GitTestProject`的仓库，在仓库中我们已经添加了一个名为`Jvm系列之总目.md`文件到仓库中：
+在例子中，我们已经创建了一个名为`GitTestProject`的仓库，在仓库中我们已经添加了一个名为`Jvm系列之总目.md`文件到仓库中，如下所示：
 
 ![合并演示1.gif](https://upload-images.jianshu.io/upload_images/2824145-9eb857724636c1dc.gif?imageMogr2/auto-orient/strip)
 
-其中`Jvm系列之总目.md`文件中的内容如下
+其中 `Jvm系列之总目.md` 文件中的内容如下
 
 ![合并演示2.png](https://upload-images.jianshu.io/upload_images/2824145-78e82cf957740957.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-这个时候我们通过`git branch dev`命令创建了dev分支，并切换到该分支中，这个时候我们修改了该文件中内容如下：
+这个时候我们通过`git branch dev`命令创建了 `dev` 分支，并切换到该分支中，这个时候我们暂原文中添加了下图中，红框中的内容。
 
-然后我们又通过`git checkout master`切换到master分支，然后修改该文件内容如下：
+>注意的是，你需要经常使用`git branch`来查看活跃分支
 
-这个时候我们想将dev分支合并到master分支中，那我们需要使用方法
-`git merge dev`,如果我们使用该命令我们可以看到如下报错：
+![合并演示3.png](https://upload-images.jianshu.io/upload_images/2824145-9921633bb4577a16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+在修改该文件并保存后，我们可以通过`git status`查看当前仓库的状态，然后我们将在`dev`分支修改的内容进行commit。内容如下所示：
 
-这个时候我们再打开该文件，我们可能看到如下内容。
+![合并演示4.png](https://upload-images.jianshu.io/upload_images/2824145-bee61934f9a6f9c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+我们在原来的文件中，添加了一句`Java class文件格式`。接下来，我们通过`git checkout master`切换到 `master` 分支，然后继续修改该文件，同样的修改的内容如红框所示：
 
-合并冲突指示符解释
+![合并演示5.png](https://upload-images.jianshu.io/upload_images/2824145-2c781c67448bd9ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-编辑器具有以下合并冲突指示符：
+同样的，在我们完成修改后，我们将在`master`分支修改的内容进行commit。内容如下所示：
+
+![合并演示6.png](https://upload-images.jianshu.io/upload_images/2824145-cb33af236bd60280.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+当提交完毕后，如果我们想将`dev`分支合并到 `master`分支中，使用
+`git merge dev`命令，我们可以看到如下报错：
+
+>当使用 `git merge` 命令时，你一定要注意当前所在的分支，你可以通过 `git branch` 或者 `git status` 来查看。
+
+![合并演示7.png](https://upload-images.jianshu.io/upload_images/2824145-00945ed0e7b36fff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上图中，Git告诉我们文件 `Jvm系列之总目录.md` 出现了冲突。这个时候我们再打开该文件，我们可能看到如下内容:
+
+![冲突文件显示.png](https://upload-images.jianshu.io/upload_images/2824145-86fcc387f7f213ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在该文件中显示了一些特殊的一些符号，其实这些符号是Git定义的`合并冲突指示符`，下面对这些指示符进行介绍：
 
 - `<<<<<<< HEAD` 此行下方的所有内容（直到下个指示符）显示了当前分支上的行
-- `||||||| merged common ancestors` 此行下方的所有内容（直到下个指示符）显示了原始行的内容
 - `=======` 表示原始行内容的结束位置，之后的所有行（直到下个指示符）是被合并的当前分支上的行的内容
-- `>>>>>>>` heading-update 是要被合并的分支（此例中是 heading-update 分支）上的行结束指示符
+- `>>>>>>> dev` 是要被合并的分支（此例中是 dev 分支）上的行结束指示符
 
-当出现该冲突时，我们需要手动的删除掉这写指示符，修改冲突的内容。
+> 注意一个文件可能在多个部分存在合并冲突，因此检查整个文件中的合并冲突指示符，搜索 <<< 能够帮助你找到所有这些指示符。
 
-当我们修改后，我们需要合并冲突，将修改的内容add到暂存区中，然后并提交，这个时候我们会产生一个新的提交，
+当出现冲突时，我们需要手动的删除掉这写指示符，在该例子中，我们想保留两个分支提交的内容，那么我们可以进行如下操作：
+
+![冲突合并.gif](https://upload-images.jianshu.io/upload_images/2824145-ab501c239d214817.gif?imageMogr2/auto-orient/strip)
+
+>注意：因为`dev`分支与`master`分支修改的是同一文件，那么结合上文我们所讲解的合并的类型，那么上例中的提交为`普通合并`，故需要一个新的提交。
+
+当然，当我们解决冲突后，我们仍然需要将修改的内容 `add` 到暂存区中，然后提交。如下所示：
+
+![合并演示9.png](https://upload-images.jianshu.io/upload_images/2824145-f07998c0a4a23e70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+当提交完毕后，我们再使用`git log`命令，我们就能看到我们的提交记录啦。
+
+![合并演示10.png](https://upload-images.jianshu.io/upload_images/2824145-cd75fcc24eac0f94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上述提交记录中，我们可以看到 `master` 分支上不仅包含了 `dev` 分支上的提交，还包括了一个合并的提交(merge branch 'dev')。
+
+### IntelliJ IDEA or Android Sutdio 图形化界面的使用
+
+最后还是回到我们熟悉的图形化界面的使用流程中。我们来看看IDEA为我们提供了哪些便利吧。
+
+#### Tag的创建
+
+通过依次点击编译器底部的`Version Control`->`Log`，选择我们想创建`Tag`的commit，然后点击鼠标右键,依次选择`New`->`Tag`,并输入你想输入的 Tag 名称就行啦，具体如下所示：
+
+![创建Tag.gif](https://upload-images.jianshu.io/upload_images/2824145-390858cefa29718c.gif?imageMogr2/auto-orient/strip)
+
+在创建`Tag`成功后，在该commit记录中会有一个灰色的标签。
+
+#### Tag的删除
+
+标签的删除也特别简单，在Git提交记录中点击包含我们所创建的标签的commit,然后点击随便右键，依次选择`标签名称`->`delete`。就可以完成标签的删除啦。具体如下所示；
+
+![删除标签.gif](https://upload-images.jianshu.io/upload_images/2824145-13e82d0dcd43e912.gif?imageMogr2/auto-orient/strip)
 
 ### 最后
 
