@@ -337,6 +337,95 @@ git merge <other-branch>
 
 ![删除标签.gif](https://upload-images.jianshu.io/upload_images/2824145-13e82d0dcd43e912.gif?imageMogr2/auto-orient/strip)
 
+#### 分支的创建
+
+在 `IntelliJ IDEA` or `Android Sutdio`中，创建分支的地方大概有三个。我先说一下他们的具体位置，与他们之间的区别。
+
+##### 第一种方式
+
+在编译器中，我们只要选择工具栏中的`VCS`->`Git`->`Branches`，就可以从创建分支啦。
+
+![创建分支方式1.png](https://upload-images.jianshu.io/upload_images/2824145-a2e046f9c3db3bfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+根据上述操作后，会弹出如下选择框，这个时候我们只要选择 `New Branch` 选项就可以创建分支了。
+
+![创建分支方式1.2.png](https://upload-images.jianshu.io/upload_images/2824145-db2acd3fe0b49de3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+下面对该选择框中的内容进行简单的介绍：
+
+- New Branch: 创建新的分支。
+- Checkout Tag or Revision...:切换到相应Tag或分支。
+- Local Branches:本地所有的分支。
+- Remote Branches:远程分支。(关于远程分支，会在后文介绍)。
+
+需要注意的是：通过该种方式创建的分支。分支指针所指向的commit，是你所在分支下`最新的commit!!!!`。
+
+##### 第二种方式
+
+第二种方式创建分支，是通过点击编译器`最右下角`的 `Git:master`（该左下角的内容可能变化，比如你切换到了dev分支上，那么这个时候显示的是 `Git:dev` 。这里以 `master` 分支为例，来创建分支。
+
+![创建分支方式2.png](https://upload-images.jianshu.io/upload_images/2824145-b4fdf90fcf91272d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+通过该种方式创建的分支。分支指针所指向的commiit，是你所在分支下`最新的commit!!!!`。
+
+##### 第三种方式
+
+通过依次点击编译器底部的`Version Control`->`Log`，然后选中我们需要创建分支的commmit,然后点击鼠标右键，选择 `New` ->`Branch`
+
+![创建分支方式3.png](https://upload-images.jianshu.io/upload_images/2824145-ed1e6b64405f8a2d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+通过上述这种方式所创建的分支，分支指针所指向的commit为你选中的commit。
+
+#### 分支的删除
+
+分支的删除也比较简单，通过依次点击编译器底部的`Version Control`->`Log`，然后找到有分支的commit，点击鼠标右键，找到你要删除的分支名称，然后选择 `delete` 就可以删除分支了。这里以删除分支 `fix-23`为例：
+
+![分支的删除.png](https://upload-images.jianshu.io/upload_images/2824145-e53f29ab141907ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 分支的合并
+
+分支的合并也同样的简单。
+
+- 要么我们只要选择工具栏中的`VCS`->`Git`->`Branches` 弹出下列选择框，
+- 要么是通过点击编译器`最右下角`的 `Git:master`（该左下角的内容可能变化，比如你切换到了 `dev` 分支上，那么这个时候显示的是 `Git:dev`）
+
+然后我们就可以选择相应的分支合并到对应分支下了，比如这里我们以`master` 分支需要合并 `dev` 分支为例：
+
+![分支的合并展示.png](https://upload-images.jianshu.io/upload_images/2824145-de84024c86d9a890.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上述图中，我们只用选择 `Merge into Current` 就可以了，需要注意的是，当我们选择合并分支时，我们需要切换到正确的的分支上。
+
+怎样切换分支？参考上图，当我们选择了 `dev` 分支后，右方有一个`Checkout` 选项，只要点击该选项，我们就能切换到对应分支啦~~~
+
+#### 解决冲突
+
+当合并分支出现冲突的时候，编译器会提示我们合并冲突，会弹出如下代码框：
+
+![冲突展示框.png](https://upload-images.jianshu.io/upload_images/2824145-1ef2eb3031d3c2c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+整个代码块分为三个部分：
+
+- 左边(Left) Your version: 代表你当前分支上的更改
+- 右边(Right) Change from branch:代表你合并的分支
+- 中间的Result代表经过处理后的内容
+
+内容区域的代码演示分为四个部分：
+
+- 红色区域：代表当前分支和合并分支都编辑过的内容，属于冲突
+- 蓝色区域：代表被单方面编辑过的内容，属于改变
+- 灰色区域：代表被删除的内容，属于改变
+- 绿色区域：代表新增的内容，属于改变
+
+对于红色的冲突区域，都需要我们人为的手动解决。
+
+对于不冲突的更改类型，我们可以使用左侧或右侧的 `>>` 按钮来应用所有不冲突的更改，如果你并不想应用这些更改你可以使用 `X` 按钮。最终你的所有的操作都会应用到中间的Result代码中。
+
+当所有的冲突都被解决，更改内容都进行相应处理后，我们可以点击`Apply`按钮来完成我们最终的合并操作。
+
+当然你也可以直接选择 Accept Left 还是Accept Right按钮，这个根据你直接的实际需求而定。
+
+>深度学习：查看 IntelliJ IDEA 中的官方介绍：[Resolve Conflicts](https://www.jetbrains.com/help/idea/2019.2/resolving-conflicts.html)
+
 ### 最后
 
 站在巨人的肩膀上，才能看的更远~
