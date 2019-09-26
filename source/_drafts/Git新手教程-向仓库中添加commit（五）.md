@@ -8,15 +8,17 @@ categories:
 
 ### 前言
 
-在该篇文章中，我们终于要来学习如何创建自己的提交(`commit`)，在前面的文章中，我们已经学会使用`git init`命令来创建新仓库，使用`git clone`命令来复制现有仓库，使用`git log`命令来查看现有的提交。以及使用非常重要的`git status`命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 `git add`、`git commit` 和`git diff`。 在具体讲解这三个命令之前，我们先简单的看看这三个命令的作用。
+在该篇文章中，我们终于要来学习如何创建自己的提交(`commit`)，在前面的文章中，我们已经学会使用 `git init` 命令来创建新仓库，使用 `git clone` 命令来复制现有仓库，使用 `git log` 命令来查看现有的提交。以及使用非常重要的 `git status` 命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 `git add` 、 `git commit` 和 `git diff` 。 在具体讲解这三个命令之前，我们先简单的看看这三个命令的作用。
 
-- `git add`可以让你将文件从工作目录添加到暂存区。
-- `git commit`可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。
-- `git diff`可以显示文件两个版本之间的差异，它的输出与上篇文章中使用的 `git log -p`命令的输出完全一样。
+- `git add` 可以让你将文件从工作目录添加到暂存区。
+- `git commit` 可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。
+- `git diff` 可以显示文件两个版本之间的差异，它的输出与上篇文章中使用的 `git log -p` 命令的输出完全一样。
 
 ### git add 命令的使用
 
-在使用`git add`命令之前，我们先回顾一下仓库的创建过程。我们现在自己的喜欢的目录下创建仓库，在下图中我的仓库的地址为`documents/GitTest/GitTestProject`，在接下来的文章中，都会以该仓库作为例子进行讲解。
+在使用 `git add` 命令之前，我们先回顾一下仓库的创建过程。我们现在自己的喜欢的目录下创建仓库，在下图中我的仓库的地址为`documents/GitTest/GitTestProject`。在接下来的文章中，都会以该仓库作为例子进行讲解。
+
+首先我们先进入该目录，并通过 `git init`创建Git仓库：
 
 ![git的init命令使用.jpg](https://upload-images.jianshu.io/upload_images/2824145-bcc127717a62d01f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -24,7 +26,7 @@ categories:
 
 #### 检查仓库状态！别忘了
 
-我们一定要在运行git相关命令后，一定要使用`git status`命令来检查当前仓库的状态。因为我们不能保证，我们是否遗忘了某些东西。如果你像我一样使用了`git status`命令，那么你能得到下列输出结果：
+我们一定要在运行Git相关命令后，一定要使用 `git status` 命令来检查当前仓库的状态。因为我们不能保证，我们是否遗忘了某些东西。如果你像我一样使用了 `git status`命令，那么你能得到下列输出结果：
 
 ```bash
 On branch master
@@ -36,7 +38,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 #### 开始添加文件
 
-当我们使用`git status`检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git总目录.md`、`Git练习.md`、`JVM系列之总目录.md`，这个时候我们再使用`git status`来查看我们仓库的状态，我们能得到下列结果：
+当我们使用 `git status` 检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，`Git总目录.md`、`Git练习.md`、`JVM系列之总目录.md`，这个时候我们再使用 `git status` 来查看我们仓库的状态，我们能得到下列结果：
 
 ```bash
 On branch master
@@ -53,8 +55,8 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-要将文件提交到暂存区，我们需要使用`git add`命令，这里我们将`Git总目录.md`文件添加到暂存区中，使用命令
-`git add Git总目录.md`，我们再使用`git status`查看我们的仓库状态，我们能得到下列结果：
+要将文件提交到暂存区，我们需要使用 `git add` 命令，这里我们将`Git总目录.md`文件添加到暂存区中，使用命令
+`git add Git总目录.md`，我们再使用 `git status` 查看我们的仓库状态，我们能得到下列结果：
 
 >还记得`暂存区`吗？暂存区是Git目录下的一个文件，存储的是即将进入下个 commit 内容的信息。可以将暂存区看做准备工作台，Git 将在此区域获取下个 commit。
 
@@ -75,13 +77,13 @@ Untracked files:
   JVM系列之总目录.md
 ```
 
-这个时候，在命令行中的`Untracked files`下，就只有`Git练习.md`与`JVM系列之总目录.md`了，
+这个时候，在命令行中的 `Untracked files` 下，就只有`Git练习.md`与`JVM系列之总目录.md`了，
 
 >细心的小伙伴肯定看到`(use "git rm --cached <file>..." to unstage)`，该命令可以帮助我们将你 `git add` 错误提交的文件，从暂存区中移除，此外，在命令行输出中出现了"unstage"（撤消暂存）字眼。将文件从工作目录移到暂存区叫做`"staging"`（暂存）。如果已移动文件，则叫做`"staged"`（已暂存）。从暂存区将文件移回工作目录将`"unstage"`（撤消暂存）。
 
 #### 使用git add 添加剩余的文件
 
-当我们已经将 `Git总目录.md`添加到暂存区中后，我们可能还想将剩下的两个文件`Git练习.md`、`JVM系列之总目录.md`也添加到暂存区中。当然我们可以一个一个的使用使用`git add`命令添加剩余的文件，我们也可以这样:
+当我们已经将 `Git总目录.md` 添加到暂存区中后，我们可能还想将剩下的两个文件`Git练习.md`、`JVM系列之总目录.md`也添加到暂存区中。当然我们可以一个一个的使用使用 `git add` 命令添加剩余的文件，我们也可以这样:
 
 ```bash
 git add Git练习.md JVM系列之总目录.md
@@ -89,7 +91,7 @@ git add Git练习.md JVM系列之总目录.md
 
 >使用`git add <file1> <file2> … <fileN>`这种方式，我们可以添加多个文件，其中`<file>`代表一个或多个文件。
 
-除了使用上述方法以外，我们还可以使用一个特殊的命令行字符点`.`,点`.`代表当前目录，可以用来表示所有文件和物理（注意！注意！注意！包括所有嵌套文件和目录）。
+除了使用上述方法以外，我们还可以使用一个特殊的命令行字符 `.（点）` ，`.（点）` 代表当前目录，可以用来表示所有文件和物理（注意！注意！注意！包括所有嵌套文件和目录）。
 
 ```bash
 git add Git练习.md JVM系列之总目录.md
@@ -97,11 +99,11 @@ git add Git练习.md JVM系列之总目录.md
 git add .
 ```
 
-如果你使用点`.`添加了多余的文件，那么我们可以使用`git rm --cached <file1> <file2> … <fileN>`命令，将多余的文件从暂存区中移除。
+如果你使用 `.（点）` 添加了多余的文件，那么我们可以使用`git rm --cached <file1> <file2> … <fileN>`命令，将多余的文件从暂存区中移除。
 
 ### git commit 命令的使用
 
-当我们将上文提到的三个文件都添加到暂存区之后，现在需要将暂存区中的内容提交到仓库中去，也就是使用`git commit`命令，当然在运行该命令之前，我们要时刻使用`git status`命令查看当前仓库的状态。使用`git stasu`查看状态：
+当我们将上文提到的三个文件都添加到暂存区之后，现在需要将暂存区中的内容提交到仓库中去，也就是使用 `git commit` 命令，当然在运行该命令之前，我们要时刻使用 `git status` 命令查看当前仓库的状态。使用 `git stasus` 查看状态：
 
 ```bash
 On branch master
@@ -116,11 +118,11 @@ Changes to be committed:
  new file:   JVM系列之总目录.md
 ```
 
-嗯，美滋滋，所有的文件都在暂存区中了，那现在开始我们的提交吧。在具体提交之前，我们需要注意，如果你在下载Git后没有设置文本编辑器，那么Git会默认会调用系统的默认编辑器，一般情况是Vi或者Vim。当然我们也可以配置我们自己喜欢的文本编辑器。这里我配置的是Sublime Text，配置命令如下所示：
+嗯，美滋滋，所有的文件都在暂存区中了，那现在开始我们的提交吧。在具体提交之前，我们需要注意，如果你在下载 Git后没有设置文本编辑器，那么 Git 会默认会调用系统的默认编辑器，一般情况是 Vi 或者 Vim 。当然我们也可以配置我们自己喜欢的文本编辑器。这里我配置的是 Sublime Text ，配置命令如下所示：
 
 - >VS Code 配置-->[VS Code as Git editor](https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor)
 - >Sublime Text-->[OS X Command Line](https://www.sublimetext.com/docs/3/osx_command_line.html)
-- >如果你对默认的编辑器(Vi或者Vim)感兴趣，你有可能需要这篇文章[Linux vi/vim](https://www.runoob.com/linux/linux-vim.html)
+- >如果你对默认的编辑器(Vi或者Vim)感兴趣，你有可能需要这篇文章 [Linux vi/vim](https://www.runoob.com/linux/linux-vim.html)
 
 ```bash
 git config --global core.editor "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' -n -w"
@@ -130,7 +132,7 @@ git config --global core.editor "'/Applications/Sublime Text.app/Contents/Shared
 
 ![Git_Commit文本编辑.jpg](https://upload-images.jianshu.io/upload_images/2824145-9c5d27bdbd5693e3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在`第一行`中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是`Initial commit`,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。当我们使用`git commit`命令后，我们在控制台会得到如下输出：
+在`第一行`中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是 `Initial commit` ,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。当我们使用 `git commit` 命令后，我们在控制台会得到如下输出：
 
 ```bash
 [master (root-commit) 18522c6] Initial commit
@@ -142,7 +144,7 @@ git config --global core.editor "'/Applications/Sublime Text.app/Contents/Shared
 
 >如果你配置了Git文本编辑器，那么会在你输入内容，退出编辑器后，会自动提交commit。
 
-这个时候我们再使用`git status`查看我们的仓库状态,输出结果为：
+这个时候我们再使用 `git status` 查看我们的仓库状态,输出结果为：
 
 ```bash
 On branch master
@@ -155,7 +157,7 @@ nothing to commit, working tree clean
 git commit -m "initial commit"
 ```
 
-当然通过`-m`选项提交的消息只包含标题的，不会包含正文，如果你想怎么知道怎么写一个阅读性良好的commit message，那么你有可能阅读下面这两篇文章；
+当然通过 `-m` 选项提交的消息只包含标题的，不会包含正文，如果你想怎么知道怎么写一个阅读性良好的commit message，那么你有可能阅读下面这两篇文章；
 
 - [怎么写Git Commit Message](https://www.jianshu.com/p/0117334c75fc)
 - [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
@@ -187,7 +189,7 @@ Changes not staged for commit:
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-从控制台中，我们可以看到我们的文件`Jvm系列之总目录.md`已经被标记为`modifed`了，那现在我们如何将修改的文件提交到Git的仓库区中呢？要将内容提交到Git的仓库区中去，我们需要将文件提交到暂存区中，在之前的命令中将文件提交到暂存区中，我们需要使用命令`git add`命令，当然`git add`命令不仅只针对`新建`的文件，它仍可以将`修改后`的文件提交到暂存区中。也就是我们只要使用`git add`与`git commit`命令，我们就能将修改后的文件提交到Git的仓库中去了。
+从控制台中，我们可以看到我们的文件`Jvm系列之总目录.md`已经被标记为`modifed`了，那现在我们如何将修改的文件提交到Git的仓库区中呢？要将内容提交到Git的仓库区中去，我们需要将文件提交到暂存区中，在之前的命令中将文件提交到暂存区中，我们需要使用命令 `git add` 命令，当然 `git add` 命令不仅只针对`新建`的文件，它仍可以将`修改后`的文件提交到暂存区中。也就是我们只要使用 `git add` 与 `git commit` 命令，我们就能将修改后的文件提交到Git的仓库中去了。
 
 #### 简单总结
 
@@ -198,7 +200,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 ### git diff
 
-还有最后一个命令`git diff`。这个命令可以帮助我们查看我们一些没有提交的更改，也就是说我们可以看到当前修改的文件与Git仓库之间的差异。还是`Jvm系列之总目录.md`文件为例，这里我们继续删除`- Java类加载过程`，如下图所示：
+还有最后一个命令 `git diff` 。这个命令可以帮助我们查看我们一些没有提交的更改，也就是说我们可以看到当前修改的文件与Git仓库之间的差异。还是`Jvm系列之总目录.md`文件为例，这里我们继续删除`- Java类加载过程`，如下图所示：
 
 ```bash
 - Java内存结构及分区
@@ -217,7 +219,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 ### IntelliJ IDEA or Android Sutdio 图形化界面的使用
 
-又到了我们熟悉的偷懒环节了。现在我们来看看一下`git add`与`git commit`与`git diff`在idea中的使用，
+又到了我们熟悉的偷懒环节了。现在我们来看看一下 `git add` 与 `git commit` 与 `git diff` 在idea中的使用，
 
 #### git add
 
@@ -245,7 +247,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 #### git diff 使用
 
-同样的`git diff`也在顶部，如下图所示：
+同样的 `git diff` 也在顶部，如下图所示：
 
 ![git_diff_ide.jpg](https://upload-images.jianshu.io/upload_images/2824145-32c537e0307fe506.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -255,9 +257,9 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 ![idea_快捷键汇总.jpg](https://upload-images.jianshu.io/upload_images/2824145-187de0ce3cd99fae.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-1. 对应我们使用的`git commit`
-2. 对应我们使用的`git diff`
-3. 对应我们使用的`git add`
+1. 对应我们使用的 `git commit`
+2. 对应我们使用的 `git diff`
+3. 对应我们使用的 `git add`
 
 ### 最后
 

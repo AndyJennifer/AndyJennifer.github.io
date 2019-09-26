@@ -26,15 +26,15 @@ categories:
 
 ### Mac/Linux下Git终端配置
 
-如果你采用命令行使用Git，那么你可以使用Git提供的自动补全脚本。配置了该脚本后，在我们在实际Git命令行操作的时候，如果忘记相关选项的名称或相关命令，可以通过双击Tab键来进行提示。配置该脚本，我们需要以下步骤：
+如果你采用命令行使用Git，那么你可以使用Git提供的`自动补全脚本`。配置了该脚本后，在我们在实际Git命令行操作的时候，如果忘记相关选项的名称或相关命令，可以通过`双击Tab`键来进行提示。配置该脚本，我们需要以下步骤：
 
-* 下载[config](https://pan.baidu.com/s/1ywZc4bU_8qkPMeoTBxbrww)
+* 首先我们需要下载该 [config](https://pan.baidu.com/s/1ywZc4bU_8qkPMeoTBxbrww)
 
  ![文件展示.png](https://upload-images.jianshu.io/upload_images/2824145-7e0d2393a1398b15.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 当你下载我分享的内容后，你会看到如上三个文件。
 
-* 接下我们需要将`terminal-config`文件夹移动到你的用户主目录下，并重新命名该文件为`.terminal-config`(前面有个点)。这里我们使用的`mv`指令
+* 接下我们需要将`terminal-config`文件夹移动到你的用户主目录下，并重新命名该文件为`.terminal-config`(前面有个点)。这里我们使用的 `mv` 指令。
 
 ![演示.gif](https://upload-images.jianshu.io/upload_images/2824145-92a4998dd9bc4355.gif?imageMogr2/auto-orient/strip)
 
@@ -63,13 +63,13 @@ git config --global merge.conflictstyle diff3
 git config --list
 ```
 
-如果用了`--global`选项，那么以后你所有的项目都默认使用这里的配置用户信息，如果要在某个特定项目中使用其他名字或者邮件，只要去掉--global选项重新配置就可以啦~。
+如果用了 `--global` 选项，那么以后你所有的项目都默认使用这里的配置用户信息，如果要在某个特定项目中使用其他名字或者邮件，只要去掉 --global 选项重新配置就可以啦~。
 
 >通过 `git config --list`我们可以查看已有的配置信息
 
 ### Git文本编辑器配置
 
-当我们在命令行使用Git需要输入额外信息的时候，Git会默认会调用系统的默认编辑器，一般情况是Vi或者Vim。当然我们也可以配置我们自己喜欢的文本编辑器。
+当我们在命令行使用Git需要输入额外信息的时候，Git会默认会调用系统的默认编辑器，一般情况是 `Vi` 或者 `Vim` 。当然我们也可以配置我们自己喜欢的文本编辑器。
 
 #### Sublime Text 配置
 

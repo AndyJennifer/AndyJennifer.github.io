@@ -18,19 +18,19 @@ categories:
 
 ### 创建仓库
 
-在对仓库进行commit或执行其他操作之前，我们需要创建一个实际存在的仓库，要使用Git新建仓库，我们需要使用`git init`命令
+在对仓库进行commit或执行其他操作之前，我们需要创建一个实际存在的仓库，要使用Git新建仓库，我们需要使用 `git init` 命令。
 
->`init`是英语单词`"intializ”`的简称。
+>`init` 是英语单词 `"intializ”` 的简称。
 
-当使用`git init`命令时，我们在命令行中会得到如下提示：
+当使用 `git init` 命令时，我们在命令行中会得到如下提示：
 
 ![git的init命令使用.jpg](https://upload-images.jianshu.io/upload_images/2824145-bcc127717a62d01f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在上图中我的仓库的地址为`documents/GitTest/GitTestProject`，当然你也可以根据你自己目录及项目名称来创建Git仓库。
+在上图中我的仓库的地址为 `documents/GitTest/GitTestProject` ，当然你也可以根据你自己目录及项目名称来创建Git仓库。
 
 #### git init 命令的作用
 
-当我们使用`git init`命令创建仓库后，我们能在当前目录下得到一个隐藏的`.git`文件夹，该文件夹下的内容记录了我们所有的commit，及其他信息。该文件下的内容如下所示：
+当我们使用 `git init` 命令创建仓库后，我们能在当前目录下得到一个隐藏的 `.git` 文件夹，该文件夹下的内容记录了我们所有的commit，及其他信息。该文件下的内容如下所示：
 
 ![Git目录结构.jpg](https://upload-images.jianshu.io/upload_images/2824145-b571e49b64d5eeb2.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -49,15 +49,18 @@ Git 会查看 Git 目录下你当前所使用仓库对应的配置文件（`.git
 - objects 目录 - 此目录将存储我们提交的所有`commit`
 - refs 目录 - 此目录存储了指向 `commit` 的指针（通常是“分支”和“标签”)
 
-关于branch(分支）、Head我们会在接下来的文章中进行介绍，其他的文件或目录我们可以不用关心，当然如果你想了解更多关的内容，可以观看官方文档的[Git 内部原理 - 底层命令和高层命令](https://git-scm.com/book/zh/v2/Git-内部原理-底层命令和高层命令)与[自定义 Git - Git 钩子](https://git-scm.com/book/zh/v2/自定义-Git-Git-钩子)
+关于branch(分支）、Head我们会在接下来的文章中进行介绍，其他的文件或目录我们可以不用关心，当然如果你想了解更多的内容，可以观看官方文档下：
+
+- [Git 内部原理 - 底层命令和高层命令](https://git-scm.com/book/zh/v2/Git-内部原理-底层命令和高层命令)
+- [自定义 Git - Git 钩子](https://git-scm.com/book/zh/v2/自定义-Git-Git-钩子)
 
 ### 克隆现有仓库
 
-当然除了使用`git init`来创建仓库以外，我们还可以通过`git clone`命令来克隆现有的项目。通过`git clone`命令我们可以完全拷贝一个项目。而被克隆的项目完全是另一个项目的副本。
+当然除了使用 `git init` 来创建仓库以外，我们还可以通过 `git clone` 命令来克隆现有的项目。通过 `git clone` 命令我们可以完全拷贝一个项目。而被克隆的项目完全是另一个项目的副本。
 
->在克隆任何项目之前，确保当前命令行以及在正确的目录下，克隆项目会新建一个目录，并将克隆的Git仓库放入其中。在Git中是不允许创建`嵌套的Git仓库`。因此当你使用`git clone`时，确保当前命令行所在的工作目录没有位于Git仓库中。
+>在克隆任何项目之前，确保当前命令行以及在正确的目录下，克隆项目会新建一个目录，并将克隆的Git仓库放入其中。在Git中是不允许创建 `嵌套的Git仓库` 。因此当你使用 `git clone` 时，确保当前命令行所在的工作目录没有位于Git仓库中。
 
-下面我们就使用`git clone`命令，来克隆我们的项目吧。克隆一个项目的具体步骤为：输入命令 git clone，然后输入你要克隆的 Git 仓库的路径。这里以我的[SimpleEyes项目](https://github.com/AndyJennifer/SimpleEyes)(一个仿开眼的kotlin项目)为例，该项目路径为：`https://github.com/AndyJennifer/SimpleEyes`。
+下面我们就使用 `git clone` 命令，来克隆我们的项目吧。克隆一个项目的具体步骤为：输入命令 git clone，然后输入你要克隆的 Git 仓库的路径。这里以我的[SimpleEyes项目](https://github.com/AndyJennifer/SimpleEyes)(一个仿开眼的kotlin项目)为例。该项目路径为：`https://github.com/AndyJennifer/SimpleEyes`。
 
 ```bash
 git clone https://github.com/AndyJennifer/SimpleEyes
@@ -83,7 +86,7 @@ git clone git@github.com:AndyJennifer/SimpleEyes.git
 
 #### 克隆项目并使用不同的名称
 
-需要注意的是通过`git clone`命令克隆项目，默认情况下，Git会把路径最后一级目录名作为新克隆项目的目录名(如果你的最后一级目录名包括`.git`，会将该后缀去掉)。如果说我们自定义项目名称呢？粗暴而又简单的方式是找到我们克隆项目的地址，手动重命名即可。但是我们不采用这种粗暴的方法。我们可以
+需要注意的是通过 `git clone` 命令克隆项目，默认情况下，Git会把路径最后一级目录名作为新克隆项目的目录名(如果你的最后一级目录名包括`.git`，会将该后缀去掉)。如果说我们自定义项目名称呢？粗暴而又简单的方式是找到我们克隆项目的地址，手动重命名即可。但是我们不采用这种粗暴的方法。我们可以
 使用如下命令：
 
 ```bash
@@ -94,7 +97,7 @@ git clone https://github.com/AndyJennifer/SimpleEyes  MyProject
 
 ### 判断仓库的状态
 
-使用`git status`命令可以显示工作目录和暂存区的状态（在上篇文章我们曾经提到过，Git的工作流程主要围绕三个部分，工作区，暂存区与仓库区。）。它可以让您看到哪些更改已经被转移，哪些没有转移，哪些文件没有被Git跟踪。进入我们创建的Git仓库，并输入`git status`时，我们能得到下图的输出结果：
+使用 `git status` 命令可以显示工作目录和暂存区的状态（在上篇文章我们曾经提到过，Git的工作流程主要围绕三个部分，工作区，暂存区与仓库区）。它可以让你看到哪些更改已经被转移，哪些没有转移，哪些文件没有被Git跟踪。进入我们创建的Git仓库，并输入 `git status` 时，我们能得到下图的输出结果：
 
 ```bash
 On branch master
@@ -110,16 +113,16 @@ nothing to commit (create/copy files and use "git add" to track)
 - No commits yet - 表示项目中没有任何提交，关于`commit`我们也会在下文进行介绍。
 - nothing to commit (create/copy files and use "git add" to track) –表示没有任何的提交信息，我们可以通过`git add`添加文件，使Git能够跟踪。
 
->注意：如果是第一次使用Git，我们一定要常常使用`git status`命令来查看仓库中文件或目录的状态。
+>注意：如果是第一次使用Git，我们一定要常常使用 `git status` 命令来查看仓库中文件或目录的状态。
 
-关于更多的`git status`的更多内容，我们可以查看一下链接：
+关于更多的 `git status` 的更多内容，我们可以查看一下链接：
 
 - [git-status](https://git-scm.com/docs/git-status)
 - [官方文档的介绍](https://git-scm.com/book/zh/v2/Git-基础-记录每次更新到仓库)
 
 ### IntelliJ IDEA or Android Sutdio 图形化界面的使用
 
-了解了这三个命令后，我们来了解一下，在 `IntelliJ IDEA`or `Android Sutdio`中Git存储与清理的图形化界面的对应流程。虽然命令行非常牛逼，但是有时候我们也想偷个懒对吧。让我们看看在`IntelliJ IDEA`or `Android Sutdio`中怎样操作吧。
+了解了这三个命令后，我们来了解一下，在 `IntelliJ IDEA`or `Android Sutdio`中Git存储与清理的图形化界面的对应流程。虽然命令行非常牛逼，但是有时候我们也想偷个懒，对吧。让我们看看在`IntelliJ IDEA`or `Android Sutdio`中怎样操作吧。
 
 #### git init 的使用
 
