@@ -127,3 +127,4 @@ e2adf8ae3e2e4ed40add75cc44cf9d0a869afeb6。
 
 - [视频推荐-->用Git进行版本控制](https://cn.udacity.com/course/version-control-with-Git--ud123)
 - [Git官方网站](https://Git-scm.com/book/zh/v2/)
+- [Learn Git](https://www.atlassian.com/git/tutorials/learn-git-with-bitbucket-cloud)

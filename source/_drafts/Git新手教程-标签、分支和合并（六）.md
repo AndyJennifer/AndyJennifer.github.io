@@ -206,6 +206,25 @@ git checkout dev
 
 ![git_branch.png](https://upload-images.jianshu.io/upload_images/2824145-a926cef561cb5c2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+##### 查看所有分支
+
+通过使用 `git branch`命令，我们只能查看当前活跃的分支，如果说我们的项目有不同的分支，我们又想查看所有分支提交内容，那么我们又该怎么办了呢？还记得我们之前提到过的 `git log`指令吗，这里我们将添加 `--graph` 与 `--all`选项。
+
+- `--graph` 选项：将条目和行添加到输出的最左侧。
+- `--all` 选项：将显示仓库中的所有的分支信息。
+
+那么我们可以使用如下命令:
+
+```bash
+git log --oneline --graph --all
+```
+
+> `--oneline` 可以省略掉 commit 中的日期、作者等信息。以最简单的形式显示commit信息。
+
+通过此命令，我们能查看仓库中的所有的分支和 commit 信息：
+
+![显示所有分支信息.png](https://upload-images.jianshu.io/upload_images/2824145-e19d7ffed53186d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 #### 分支删除
 
 在上文中，我们提到，分支一般用于进行开发或对项目进行修正。当我们将分支的更改 `合并(merge)` 到 `master` 分支后，我们可能就不再需要该分支了。那么这个时候如果我们想删除分支，那么我们使用命令 `git branch -d + 分支名称`来删除我们想要删除的分支。这里我们以删除`dev`分支为例：

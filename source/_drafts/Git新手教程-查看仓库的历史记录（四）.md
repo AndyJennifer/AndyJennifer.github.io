@@ -173,7 +173,7 @@ git log 543019ea
 
 #### 使用 git show 方式
 
-使用 `git show`+`SHA` 的方式，可以显示特定的提交信息。如
+使用 `git show + SHA` 的方式，可以显示特定的提交信息。如
 
 ```bash
 git show 543019ea
