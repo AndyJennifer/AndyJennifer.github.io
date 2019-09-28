@@ -37,11 +37,11 @@ categories:
   
 在集中式模型中，有一台功能强大的中央服务器托管项目。每个每户都必须通过这台中央服务器。
 
-![集中式模行.png](https://upload-images.jianshu.io/upload_images/2824145-ceaece926f648114.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 集中式模行.png 集中式模行 %}
 
 在分布式模型中，没有中央信息库，每个开发者的计算机都有一份完整的项目拷贝。因为每台计算机都有完成的项目拷贝，这就意味着我们可以离线工作，不受网络的限制了。
 
-![分布式模行.png](https://upload-images.jianshu.io/upload_images/2824145-4041db9b893cba49.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分布式模行.png 分布式模行 %}
 
 在该系列文章中，我们将使用Git，它是分布式版本控制系统。你可能听说过 `GitHub` , `Git` 和 `GitHub` 是完全不同的 Git 是版本控制工具。而 Github 是托管 Git 项目的服务，要使用 Git 项目，你未必要使用 GitHub 。但是 GitHub ,在后续文章中我们也会讲到。现在就把它当做可以上传你的项目副本的另一台计算机。如果现在没有理解集中式，分布式。也完全没有关系。这里只是介绍一下他们运行的大概框架。
 
@@ -103,7 +103,7 @@ e2adf8ae3e2e4ed40add75cc44cf9d0a869afeb6。
 
 #### 向仓库中添加文件
 
-![Git工作流程.jpg](https://upload-images.jianshu.io/upload_images/2824145-b80ef2ebe0992a44.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Git工作流程.jpg Git工作流程 %}
 
 在Git中如果你创建了一个空仓库，Git能够分辨从未见过的文件，如上图中的红色的`A`文件，如果我们需要通过Git来跟踪我们的文件，我们需要将文件添加到仓库中，但是我们不能直接将这些文件直接移动到仓库区中。上述A文件必须先移动到暂存区，我们可以使用 `git add` 指令将`A`文件更改移动到暂存区(暂存区可以存放所有`即将`提交的文件)。当文件提交到暂存区中后，我们可以使用`git cmomit`指令将`A`文件移动到仓库区去。
 
@@ -111,7 +111,7 @@ e2adf8ae3e2e4ed40add75cc44cf9d0a869afeb6。
 
 #### 修改仓库中的文件
 
-![修改流程.jpg](https://upload-images.jianshu.io/upload_images/2824145-d664b7224598b433.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 修改流程.jpg 修改流程 %}
 
 同样的修改仓库中的文件，也需要先将修改的文件先添加到暂存区中，然后从暂存区提交到仓库。
 
@@ -119,7 +119,7 @@ e2adf8ae3e2e4ed40add75cc44cf9d0a869afeb6。
 
 如果说我们想查看我们的提交信息怎么办呢？针对每个提交，Git都会为其创建一个 `ID（SHA)` ,每个提交的ID，也就是SHA的前七个字符如下图所示：
 
-![提交记录.jpg](https://upload-images.jianshu.io/upload_images/2824145-6f3eab46fb5e2edf.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 提交记录.jpg 提交记录 %}
 
 ### 最后
 
