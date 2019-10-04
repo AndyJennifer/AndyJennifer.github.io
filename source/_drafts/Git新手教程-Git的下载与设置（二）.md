@@ -38,9 +38,11 @@ categories:
 
 ![演示.gif](https://upload-images.jianshu.io/upload_images/2824145-92a4998dd9bc4355.gif?imageMogr2/auto-orient/strip)
 
-* 将bash_profile文件移动到你的主目录下，并命名为.bash_profile（前面有个点)
+* 将 `bash_profile` 文件移动到你的主目录下，并命名为 `.bash_profile`（前面有个点)
 
-> 如果在你的主目录下已经存在`.bash_profile`文件，那么你只需要将下载好的`brash_profile`文件中的内容复制到现有的`.brash_profile`文件中。注意如果你是Ubuntu用户，你需要把设置信息复制到`.bashrc`文件中。
+> 如果在你的主目录下已经存在`.bash_profile`文件，那么你只需要将下载好的`brash_profile`文件中的内容复制到现有的`.bash_profile`文件中。注意如果你是Ubuntu用户，你需要把设置信息复制到`.bashrc`文件中。
+
+在下面的的演示中，因为我已经存在 `.bash_profile` 文件，所以我们直接通过命令 `open .bash_profile` 来打开文件，并将内容复制进去。
 
 ![profile演示.gif](https://upload-images.jianshu.io/upload_images/2824145-35d0b0caa46e0015.gif?imageMogr2/auto-orient/strip)
 

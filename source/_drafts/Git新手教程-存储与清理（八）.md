@@ -8,9 +8,9 @@ categories:
 
 ### 前言
 
-在实际开发中，常常会遇到这样的情况，我们正在`dev`上开发一个功能，这个时候突然接到上级命令，需要修改一个紧急`bug-5501`，当然我们马上想到的就是创建一个`branch bug-5501`的分支来修复它，但是这个时候我们在`dev`上的功能已经写了一半了，如果我们直接创建分支，并`chekcout branch bug-5501`的话，我们在dev上的修改的内容，也会显示在我们`branch bug-5501`上，这样就会让我们感觉到非常混乱。我们也不能提交我们未完成的功能到`dev`上，那这个时候怎么办呢？
+在实际开发中，常常会遇到这样的情况，我们正在 `dev` 上开发一个功能，这个时候突然接到上级命令，需要修改一个紧急 `bug-5501` ，当然我们马上想到的就是创建一个 `branch bug-5501` 的分支来修复它，但是这个时候我们在 `dev` 上的功能已经写了一半了，如果我们直接创建分支，并 `chekcout branch bug-5501` 的话，我们在 `dev` 上的修改的内容，也会显示在我们 `branch bug-5501` 上，这样就会让我们感觉到非常混乱。我们也不能提交我们未完成的功能到 `dev` 上，那这个时候怎么办呢？
 
-在Git中，为我们提供了`git stash`命令，专门负责处理这种情况。让我们一起来了解该命令吧。
+在Git中，为我们提供了 `git stash` 命令，专门负责处理这种情况。让我们一起来了解该命令吧。
 
 ### git stash 指令介绍
 
@@ -32,11 +32,11 @@ Changes not staged for commit:
 
 ```
 
-如果直接在当前`dev`分支上直接直接执行命令`git branch bug-5501`，那么我们我们修改的内容也也会在`bug-5501`分支上，如下所示：
+如果直接在当前 `dev` 分支上直接直接执行命令 `git branch bug-5501` ，那么我们我们修改的内容也也会在 `bug-5501` 分支上，如下所示：
 
 ![bug-5501.jpg](https://upload-images.jianshu.io/upload_images/2824145-658ed66a1a1ee6bf.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-那现在我们想要创建一个新的分支`branch bug-5501`，但是不想包括我们之前修改的`Person.java`中的内容，那么我们可以使用`git stash`或 `git stash save`指令。
+那现在我们想要创建一个新的分支 `branch bug-5501` ，但是不想包括我们之前修改的 `Person.java` 中的内容，那么我们可以使用 `git stash` 或 `git stash save` 指令。
 
 ```bash
 xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash
@@ -46,7 +46,7 @@ On branch master
 Your branch is up to date with 'origin/master'.
 ```
 
-这个时候再使用 `git status`,查看我们的仓库状态：
+这个时候再使用 `git status` ，查看我们的仓库状态：
 
 ```bash
 On branch master
@@ -58,14 +58,19 @@ nothing to commit, working directory clean
 
 ![git-stash流程.jpg](https://upload-images.jianshu.io/upload_images/2824145-41c9e373f524c40b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-那现在我们就可以开心的在我们的`bug-5501`分支开发啦。
+在上图中，从上往下分别为两个步骤：
+
+- 步骤1：在 `dev` 分支上，我们调用 `git stash` or `git stash save message` 命令。
+- 步骤2：当执行了步骤1后，我们在接着创建分支 `bug-5501`，并切换到该分支下。
+
+通过上述两个步骤后，那现在我们就可以开心的在我们的`bug-5501`分支开发啦。
 
 #### git stash 与 git stash save 的区别
 
-- `git stash` 会将当前的存储内容，自动添加一条描述信息，且描述信息为`当前分支`上最后一次comiit的message
-- `git stash` save message 需要你指定 stash 的描述信息。
+- `git stash` 会将当前的存储内容，自动添加一条描述信息，且描述信息为`当前分支`上最后一次 commit 的 message 。
+- `git stash save` 需要你指定 stash 的描述信息，比如这样： `git stash save "创建了一条记录"` 。
 
-需要注意的是，每次调用`git stash` or `git stash save`的记录都是以栈的形式存储的。查看stash记录我们可以通过 `git stash list`指令来查看：
+需要注意的是，每次调用 `git stash` or `git stash save` 的记录都是以`栈`的形式存储的。查看 stash 记录我们可以通过 `git stash list` 指令来查看：
 
 ```bash
 xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list
@@ -73,23 +78,11 @@ stash@{0}: on master: 添加了Woman类
 stash@{1}: on master: 添加了Person类
 ```
 
-在上述记录中，最后提交的stash记录始终在`栈顶`也就是`stash@{0}`。
+在上述记录中，最后提交的 stash 记录始终在`栈顶`也就是`stash@{0}`，该栈的角标是从`零`开始`逐级递增`，并且栈顶的角标`始终为零`。
 
-#### 删除stash记录
+#### 删除 stash 记录
 
-删除特定的stash记录，我们可以通过`git stash list`指令找到我们想要删除的记录，然后调用 `git stash drop`指令就行了，如我们想删除`stash@{0}`这条记录：
-
-```bash
-xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list
-stash@{0}: WIP on master: 3d1d704 添加了person类
-xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash drop stash@{0}
-```
-
-当然，如果你想删除所有的stash记录，我们也可以通过`git stash clear`指令。
-
-#### 恢复stash所存储的内容
-
-如果这个时候我们修改了`bug-5501`，现在我们想切换回我们之前的`dev`分支，并恢复之前我们调用`git stash` or `git stash save`所存储的内容，那现在我们该怎么操作呢？我们可以先通过`git stash list`找到我们想要恢复的stash记录，然后通过使用`git stash apply`指令来恢复我们想要的内容。这里我们以记录`stash{0}`为例：
+删除特定的 stash 记录，我们可以通过 `git stash list` 指令找到我们想要删除的记录，然后调用 `git stash drop` 指令就行了，如我们想删除 `stash@{0}` 这条记录：
 
 ```bash
 xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list
@@ -97,39 +90,55 @@ stash@{0}: WIP on master: 3d1d704 添加了person类
 xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash drop stash@{0}
 ```
 
->当你调用`git stash apply`并不指定具体的stash记录时，默认会恢复栈顶的stash记录。
+当然，如果你想删除所有的stash记录，我们也可以通过 `git stash clear` 指令。
+
+#### 恢复 stash 所存储的内容
+
+如果这个时候我们修改了 `bug-5501` ，现在我们想切换回我们之前的 `dev` 分支，并恢复之前我们调用 `git stash`  or `git stash save` 所存储的内容，那现在我们该怎么操作呢？我们可以先通过 `git stash list` 找到我们想要恢复的stash记录，然后通过使用 `git stash apply` 指令来恢复我们想要的内容。这里我们以记录 `stash@{0}` 为例：
+
+```bash
+xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list
+stash@{0}: WIP on master: 3d1d704 添加了person类
+xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@{0}
+```
 
 具体场景如下所示：
 
 ![git-stash-apply.jpg](https://upload-images.jianshu.io/upload_images/2824145-d42d67c76aad790d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+>注意：当你调用 `git stash apply` 并不指定具体的stash记录时，默认会恢复栈顶的stash记录。也就是等同于 `git stash apply stash@{0}` 。
+
 #### git stash save --keep-index
 
-在上中我们已经讲解了如何使用stash并恢复等一系列操作，现在我们来讲解在命令`git stash save`中的选填参数,`--keep-index`，默认情况下使用`git stash save`命令是不带这个参数的，下面我们就看看这个参数的具体使用意义。
+在上中我们已经讲解了如何使用stash并恢复等一系列操作，现在我们来讲解在命令 `git stash save` 中的选填参数, `--keep-index`，默认情况下使用 `git stash save` 命令是不带这个选项的，下面我们就看看这个参数的具体使用意义。
 
-### 不添加 --keep-index
+##### 不添加 --keep-index
 
 ![不添加keep-index.jpg](https://upload-images.jianshu.io/upload_images/2824145-90de43db52b04abe.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-解释一下上图的流程，上图中我们在dev中开发新功能,修改（modify)Person类，并新建(add)Woman.java这个文件。这个时候上级命令我们改bug-5501，这个时候，如果我们调用 `git save stash message`指令，这个时候`dev`分支上就只会有没有修改的Person类。Person类的修改与Woman.java两个更改都放入`stash记录栈中`。这个时候我们新建`bug-5501`分支，去改我们的bug啦，如果我们修改bug完毕后，我们check out到`dev`分支上来,并想恢复之前我们存储的内容，那么我们调用`git stash apply`时，之前我们修改的person类与新建的Woman.java文件就又会回到我们的`dev`分支上。
+解释一下上图的流程：
 
-### 添加 --keep-index
+- 上图中我们在dev中开发新功能,`修改（modify)` Person类，并`新建(add)` Woman.java 这个文件（该文件已经被添加到暂存区了）。
+- 这个时候上级命令我们改 bug-5501 ，这个时候，如果我们调用 `git save stash` 命令，这个时候 `dev` 分支上就只会有没有修改的Person类。Person 类的修改与 Woman.java 两个更改都放入`stash记录栈中`。
+- 这个时候我们新建 `bug-5501` 分支，去改我们的bug，当我们修改bug完毕后，我们check out 到 `dev` 分支上来,并想恢复之前我们存储的内容，那么我们调用 `git stash apply` 时，之前我们修改的person 类与新建的 Woman.java 文件就又会回到我们的 `dev` 分支上。
+
+##### 添加 --keep-index
 
 如果我们使用`git stash meessage --keep-index`，我们看看又是什么效果呢？，具体如下图所示：
 
 ![添加keep-index.jpg](https://upload-images.jianshu.io/upload_images/2824145-c658fb297f5c1375.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-观察上图，我们会发现，使用了`--keep-index`参数后，在stasht记录栈中是不会存储`git add`命令已暂存的东西，也就是我们的Woman.java文件。
+观察上图，我们会发现，使用了`--keep-index`参数后，在stash记录栈中是不会存储 `git add` 命令已暂存的东西，也就是不会存储 Woman.java 文件。
 
->需要注意的是，当我们使用`--keep-index`参数时,因为不会stasht记录栈中是不会存储`git add`命令已暂存的东西，故如果我们创建新分支时，我们之前`git add`的文件也会在新分支中。是否添加该参数，由大家需要而定。
+>需要注意的是，当我们使用`--keep-index`参数时,因为不会stasht记录栈中是不会存储 `git add` 命令已暂存的东西，故如果我们创建新分支时，我们之前`git add`的文件也会在新分支中。是否添加该参数，由大家需要而定。
 
 ### IntelliJ IDEA or Android Sutdio 图形化界面使用stash
 
-了解了Git的存储与清理的相关命令后，我们来了解一下，在 `IntelliJ IDEA`or `Android Sutdio`中Git存储与清理的图形化界面的对应流程。虽然命令行非常牛逼，但是有时候我们也想偷个懒对吧。让我们看看在`IntelliJ IDEA`or `Android Sutdio`中怎样操作吧。
+了解了Git的存储与清理的相关命令后，我们来了解一下，在 `IntelliJ IDEA`or `Android Sutdio`中Git存储与清理的图形化界面的对应流程。虽然命令行非常牛逼，但是有时候我们也想偷个懒对吧。
 
-#### 创建stash流程
+#### 创建 stash 流程
 
-首先我们来看一下创建一个stash在`IntelliJ IDEA`中的流程，首先点击鼠标右键。依次选择下图中红色箭头所指内容。
+首先我们来看一下创建一个 stash 在 `IntelliJ IDEA` 中的流程，首先点击鼠标右键。依次选择下图中红色箭头所指内容。
 
 ![stash创建流程.png](https://upload-images.jianshu.io/upload_images/2824145-5a50136d4c67c614.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -139,13 +148,13 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash drop stash@{0}
 
 上图中：
 
-1. Keep index:就是创建stash时，是否添加--keep-index参数。选中添加，反之不添加。
-2. Message:我们创建的stash的描述。
-3. Creat Stash:就是创建stash
+1. Keep index：就是创建 stash 时，是否添加 `--keep-index` 参数。选中添加，反之不添加。
+2. Message：我们创建的stash的描述。
+3. Creat Stash：创建stash
   
-如果你已经熟悉了Git的创建stash的指令，我相信这里对你没有什么难度啦。
+如果你已经熟悉了Git的创建 stash 的指令，我相信这里对你没有什么难度啦。
 
-#### 清理stash流程
+#### 清理 stash 流程
 
 还是点击鼠标右键，依次选择下图中红色箭头所指内容。
 
@@ -155,31 +164,25 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash drop stash@{0}
 
 ![unstash模块介绍.jpg](https://upload-images.jianshu.io/upload_images/2824145-f191956b3e41dd9a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-1. Stashes:显示了我们所有创建的stash
-2. View:查看stash所存储的内容
-3. Drop:删除栈中对应的stash
-4. Clear:清除栈中所有的stash
-5. Pop stash:应用储藏然后立即从栈上扔掉它。
-6. As new Branch:将当前stash所存储的内容作为一个分支并checkout。也就是如果你在master创建一个stash，并设置了As new branch的 为LoginBranch，那么你会马上切换到LoginBranch分支中。
-7. Apply Stash: 应用你选中的stash，但是不会删除stahsh。
+1. Stashes：显示了我们所有创建的 stash
+2. View：查看 stash 所存储的内容
+3. Drop：删除栈中对应的 stash
+4. Clear：清除栈中所有的 stash
+5. Pop stash：应用选中的 stash，然后立即从栈上删除它。
+6. As new Branch：将当前 stash 所存储的内容作为一个分支并checkout。也就是如果你在 master 创建一个stash，并设置了As new branch的 为 LoginBranch，那么你会马上切换到 LoginBranch 分支中。
+7. Apply Stash：应用你选中的stash，但是不会删除stash。
 
 ### 总结
 
-git stash save "save message"  : 执行存储时，添加备注，方便查找，只有git stash 也要可以的，但查找时不方便识别。
+下面简单的总结一下:
 
-（2）git stash list  ：查看stash了哪些存储
-
-（3）git stash show ：显示做了哪些改动，默认show第一个存储,如果要显示其他存贮，后面加stash@{$num}，比如第二个 git stash show stash@{1}
-
-（4）git stash show -p : 显示第一个存储的改动，如果想显示其他存存储，命令：git stash show  stash@{$num}  -p ，比如第二个：git stash show  stash@{1}  -p
-
-（5）git stash apply :应用某个存储,但不会把存储从存储列表中删除，默认使用第一个存储,即stash@{0}，如果要使用其他个，git stash apply stash@{$num} ， 比如第二个：git stash apply stash@{1}
-
-（6）git stash pop ：命令恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，并将对应修改应用到当前的工作目录下,默认为第一个stash,即stash@{0}，如果要应用并删除其他stash，命令：git stash pop stash@{$num} ，比如应用并删除第二个：git stash pop stash@{1}
-
-（7）git stash drop stash@{$num} ：丢弃stash@{$num}存储，从列表中删除这个存储
-
-（8）git stash clear ：删除所有缓存的stash
+- `git stash` 会将当前的存储内容，自动添加一条描述信息，且描述信息为`当前分支`上最后一次 commit 的 message 。
+- `git stash save message` 需要你指定 stash 的描述信息。
+- `git stash list`  ：查看所有的 stash 记录。
+- `git stash apply` :应用某个 stash ，但不会把存储从存储列表中删除，默认使用栈顶的 stash 即 `stash@{0}` ，如果要使用其他 stash 需要调用 `git stash apply stash@{$num}` ， 比如第二个：`git stash apply stash@{1}`。
+- `git stash pop` ：将 stash 栈中的对应 stash 记录删除，并将对应修改应用到当前的工作目录下,默认为第一个 stash 即 `stash@{0}` ，如果要应用并删除其他stash，命令：`git stash pop stash@{$num}`，比如应用并删除第二个：`git stash pop stash@{1}`。
+- `git stash drop stash@{$num}` ：删除对应 stash 栈中的 stash 记录。比如删除第二个： `git stash drop stash@{1}`
+- `git stash clear` ：删除所有 stash 。
 
 ### 参考
 

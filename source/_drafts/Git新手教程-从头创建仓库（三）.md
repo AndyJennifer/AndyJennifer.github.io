@@ -134,7 +134,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 #### git clone的使用
 
-`git clone`在编译器中，有两种操作流程如下图所示：
+`git clone` 在IDEA中，有两种操作流程如下图所示：
 
 **第一种：**
 ![git-clone方式第一种.png](https://upload-images.jianshu.io/upload_images/2824145-0409b26a83927660.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -142,7 +142,7 @@ nothing to commit (create/copy files and use "git add" to track)
 **第二种：**
 ![git-clonet方式第二种.png](https://upload-images.jianshu.io/upload_images/2824145-5f3d48f8a3ee16d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-以上两种方式都可以clone项目，只是叫法不同而已。当然这两个操作点击之后会走到如下流程：
+以上两种方式都可以 clone 项目，只是叫法不同而已。当然这两个操作点击之后会走到如下流程：
 
 ![clone界面展示.png](https://upload-images.jianshu.io/upload_images/2824145-4c650f7f92291f34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -150,7 +150,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 #### git status
 
-在编译器中没有可视化的操作界面来完全显示`git status`命令所执行的结果，而是以一种非常直观的颜色来表示当前仓库中的文件状态。比如
+在编译器中没有可视化的操作界面来完全显示 `git status` 命令所执行的结果，而是以一种非常直观的颜色来表示当前仓库中的文件状态。比如
 
 - 红色：表示当前文件或目录没有被跟踪或与其他文件冲突。
 - 绿色：表示当前文件或目录已经被添加到仓库中了。

@@ -10,14 +10,14 @@ categories:
 
 在前面的文章中，我们学习了如何创建仓库。现在我们将学习如何查看仓库的历史记录，之所以没有先讲解如何向仓库如何提交commit，是因为我觉得，只有先了解历史记录中包含哪些信息后，我们才能更好的创建良好的提交。有了良好的提交，才会有助于以后我们对项目的整体回顾。在本文章中，我们将介绍 `git log` 和 `git show` 两个指令，这里先简单介绍一下这两个命令的功能。
 
-- git log: 查看现有的提交信息
-- git show:可以显示给定提交的信息。
+- git log：查看现有的提交信息
+- git show：可以显示给定提交的信息。
 
 #### git log 命令
 
-当然使用`git log`命令，我们首先需要一个现有的Git仓库，这里还是以我自己的项目[SimpleEyes项目](https://github.com/AndyJennifer/SimpleEyes)为例。
+当然使用 `git log` 命令，我们首先需要一个现有的Git仓库，这里还是以我自己的项目[SimpleEyes项目](https://github.com/AndyJennifer/SimpleEyes)为例。
 
-还记得我们之前的介绍的`git clone`命令吗？，我们先clone该项目吧.
+还记得我们之前的介绍的 `git clone` 命令吗？，我们先 clone 该项目吧.
 
 ```bash
 git clone https://github.com/AndyJennifer/SimpleEyes
@@ -29,7 +29,7 @@ git clone https://github.com/AndyJennifer/SimpleEyes
 
 #### 历史记录分析
 
-默认情况下，使用 `git log` 命令会显示仓库中每个commit的详细提交信息。结合上图，我们来分析下每行所代表的具体内容。这里以第一个历史提交记录为例：
+默认情况下，使用 `git log` 命令会显示仓库中每个 commit 的详细提交信息。结合上图，我们来分析下每行所代表的具体内容。这里以第一个历史提交记录为例：
 
 - commit头信息
 
@@ -55,7 +55,7 @@ Author: AndyJennifer <1225868370@qq.com>
 Date:   Thu Aug 29 23:43:07 2019 +0800
 ```
 
-日期，很简单，就是现实当前commit的时间，一般情况下，我们是不会关心它的。
+日期，很简单，就是现实当前 commit 的时间，一般情况下，我们是不会关心它的。
 
 - commit消息
 

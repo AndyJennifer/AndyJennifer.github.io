@@ -245,7 +245,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 ![git_commit_展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-38527c16caf69b3d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-注意：如果你是修改已经跟踪过的文件，那么我们不需要将修改的文件通过 `git add` 命令将其添加到暂存区中，当我们直接使用 IDE 中的 commit 按钮时，默认是执行 `git add` 与 `git commit` 这两个命令的。
+注意：如果你是修改已经跟踪过的文件，那么我们不需要将修改的文件通过 `git add` 命令将其添加到暂存区中，注意！！！！当我们直接使用 IDE 中的 commit 按钮时，默认是执行 `git add` 与 `git commit` 这两个命令的。
 
 #### git diff 使用
 
