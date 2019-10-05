@@ -124,9 +124,20 @@ nothing to commit (create/copy files and use "git add" to track)
 
 了解了这三个命令后，我们来了解一下，在 `IntelliJ IDEA`or `Android Sutdio`中Git存储与清理的图形化界面的对应流程。虽然命令行非常牛逼，但是有时候我们也想偷个懒，对吧。让我们看看在`IntelliJ IDEA`or `Android Sutdio`中怎样操作吧。
 
+#### 配置 Git 环境
+
+在实际创建创建仓库之前，我们需要在我们的 IDEA 中配置 Git ，我们需要 IDEA 中依次点击 `Preferences` -> `Version Control` -> `Git` ，然后在 `Path To Git executable` 上输入安装 Git 的位置，点击右侧的 `Test` 按钮，如果成功弹出 `Git executed successfully` 弹框，说明配置成功，如下所示：
+
+![idea_配置_git.png](https://upload-images.jianshu.io/upload_images/2824145-3cd6a3bfc2e66cb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+>如果你不知道 Git 的安装位置。
+
+- Mac 操作系统：终端中输入 `which git`
+- Windows 操作系统：命令行中输入 `where git`
+
 #### git init 的使用
 
-在编译器中，我们只要选择工具栏中的`VCS`->`import into Version Control`->`Creat Git Repository`就可以从创建我自己的仓库啦。
+在编译器中，我们只要选择工具栏中的`VCS` -> `import into Version Control` -> `Creat Git Repository` 就可以从创建我自己的仓库啦。
 
 ![git-init展示.png](https://upload-images.jianshu.io/upload_images/2824145-d917d6661e2515fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

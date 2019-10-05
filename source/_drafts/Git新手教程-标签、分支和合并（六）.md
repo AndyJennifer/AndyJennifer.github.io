@@ -349,7 +349,7 @@ git merge <other-branch>
 
 #### Tag的创建
 
-通过依次点击编译器底部的`Version Control`->`Log`，选择我们想创建`Tag`的commit，然后点击鼠标右键,依次选择`New`->`Tag`,并输入你想输入的 Tag 名称就行啦，具体如下所示：
+通过依次点击编译器底部的 `Version Control` -> `Log` ，选择我们想创建 `Tag` 的 commit ，然后点击鼠标右键,依次选择 `New` -> `Tag` ,并输入你想输入的 Tag 名称就行啦，具体如下所示：
 
 ![创建Tag.gif](https://upload-images.jianshu.io/upload_images/2824145-390858cefa29718c.gif?imageMogr2/auto-orient/strip)
 
@@ -421,7 +421,7 @@ git merge <other-branch>
 
 ##### 分支的切换
 
-怎样切换分支？参考上图，当我们选择了 `dev` 分支后，右方有一个`Checkout` 选项，只要点击该选项，我们就能切换到对应分支啦~~~
+怎样切换分支？参考上图，当我们选择了 `dev` 分支后，右方有一个 `Checkout` 选项，只要点击该选项，我们就能切换到对应分支啦~~~
 
 #### 解决冲突
 

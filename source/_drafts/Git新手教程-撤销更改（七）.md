@@ -161,7 +161,7 @@ git reset <reference-to-commit>
 
 这个时候我们如果使用 `git reset --mixed HEAD~1` 那么会将 `master` 与 `HEAD` 将会指向前一个提交 `G`。同时 `G` 提交会移动到工作目录中。如下图所示：
 
->注意，`git reset --mixed HEAD~1`等同于 `git reset --mixed HEAD^` ，也等同于`git reset HEAD~1` (git reset 命令默认选项为 --mixed)。
+>注意，`git reset --mixed HEAD~1` 等同于 `git reset --mixed HEAD^` ，也等同于 `git reset HEAD~1` (git reset 命令默认选项为 --mixed)。
 
 ![rest_mixed演示.jpg](https://upload-images.jianshu.io/upload_images/2824145-046cfe19a3409594.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
