@@ -16,7 +16,7 @@ categories:
 
 ### 远程仓库
 
-当使用 Git 来管理我们的项目时，这对本地项目来说非常方便，但是如果需要与他人共享这些本地仓库，我们需要其他工具，比如 `GitLab` 、`GitHub`、等其他用于托管版本控制仓库的服务，来创建远程仓库。那什么是远程仓库呢？
+当使用 Git 来管理我们的项目时，这对本地项目来说非常方便，但是如果需要与他人共享这些本地仓库，我们就需要依托其他工具，比如 `GitLab` 、`GitHub`、等其他用于托管版本控制仓库的服务，来创建远程仓库。那什么是远程仓库呢？
 
 >Git 是用于管理仓库的工具，主要在命令行上使用，`Git lab` or `GitHub` 是托管服务，我们通常会在浏览器中与其进行交互。
 
@@ -52,15 +52,15 @@ categories:
 
 ![GitHub_创建仓库3.png](https://upload-images.jianshu.io/upload_images/2824145-d2b3698232dafcaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在在 GitHub 中也提供了两种 URL 方式，第一种`HTTPS` 方式，第二种 `SSH` 方式。这里我们采用 HTTPS 的方式。同时 GitHub 中有三种方式来处理远程仓库与本地仓库的关联：
+在 GitHub 中也提供了两种 URL 方式，第一种`HTTPS` 方式，第二种 `SSH` 方式。这里我们采用 HTTPS 的方式。同时 GitHub 中有三种方式来处理远程仓库与本地仓库的关联：
 
-- 第一种，在本地创建新的仓库并与远程仓库关联。
-- 第二种，将已有的本地仓库中的内容推送到现在的 GitHub 新建的远程仓库中。
+>关于 GitHub 提供的 SSH 方式，可以参看 [GitHub-SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
+
+- 第一种，在本地创建`新`的仓库并与远程仓库关联。
+- 第二种，将`已有`的本地仓库中的内容推送到现在的 GitHub 新建的远程仓库中。
 - 第三种，从已有的仓库中导入代码，使用这种模式需要我们提供相应的URL。
 
 在上图 GitHub 中已经提供了关联远程仓库的相关指令，大家可以根据实际的需求来选择不同的方式来关联远程仓库。
-
->关于 GitHub 提供的 SSH 方式，可以参看 [GitHub-SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
 
 #### 本地仓库如何与远程仓库关联
 
@@ -113,7 +113,7 @@ https://github.com/GoogleChrome/lighthouse.git
 
 ### 将更改推送到远程仓库
 
-如果我们本地仓库已有如下提交，我们需要将本地仓库中的内容推送到刚才在 GitHub 中创建的远程仓库，我们需要使用命令 `git push` ，使用该命令会将本地仓库中所有的提交都推送到远程仓库汇中，如下所示：
+如果我们本地仓库已有如下提交，我们需要将本地仓库中的内容推送到刚才在 GitHub 中创建的远程仓库，我们需要使用命令 `git push` ，使用该命令会将本地仓库中所有的提交都推送到远程仓库中，如下所示：
 
 ![推送到远程仓库.jpg](https://upload-images.jianshu.io/upload_images/2824145-acf5ce7482b9ce4a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -135,18 +135,21 @@ git push origin master
 
 ![推送到远程仓库2.png](https://upload-images.jianshu.io/upload_images/2824145-4db361343eecbbb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
 有几点需要注意：
 
 - 你可能需要输入用户名和密码，这取决于你如何配置 GitHub 的以及使用的远程 URL 。
 - 如果你使用的是 HTTP 版本（而不是 ssh 版本）的远程仓库，就需要提供用户名和密码。
-  - 如果你配置 GitHub 使用 SSH 协议，并提供过 SSH 密匙，就不需要执行上一步。如果你对使用 SSH 连接 GitHub 感兴趣，请参阅使用 SSH 连接 GitHub 文档。
+  - 如果你配置 GitHub 使用 SSH 协议，并提供过 SSH 密匙，就不需要执行上一步。如果你对使用 SSH 连接 GitHub 感兴趣，请参阅使用 SSH 连接 GitHub 文档([GitHub-SSH](https://help.github.com/articles/connecting-to-github-with-ssh/))。
   - 如果你要输入用户名和密码，用户名会在输入后显示出来，但密码不会显示。只需继续输入密码，完成后按 Enter 键即可。
 - 如果你的密码出错，不用担心，它会让你重新输入
 - Git 会压缩文件使之变小，然后将其推送至远程仓库
 - 这里创建了一个新分支，在页面底部可看到[new branch]，后面是 master -> master
 
+当我们将本地仓库中的内容推送到 GitHub 中的远程仓库后，我们查看 GitHub 中我们之前创建的项目：
+
 ![推送到远程仓库3.png](https://upload-images.jianshu.io/upload_images/2824145-84c2962847110504.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在 GitHub 中显示了仓库中有三个提交以及一个分支和一个贡献者。
 
 在推送到远程仓库之后，我们来查看我们的本地仓库发生了什么变化吧~ 使用如下命令：
 
@@ -154,15 +157,62 @@ git push origin master
 git log --oneline
 ```
 
->因为本地仓库没有其他分支，所以我这时直接使用 `git log --oneline` ，如果你的项目有其他分支，那么可以使用 `git log --oneline --graph --all`。
+>因为本地仓库没有其他分支，所以我这里直接使用 `git log --oneline` ，如果你的项目有其他分支，那么可以使用 `git log --oneline --graph --all`。
 
 在我们的本地仓库中使用了如下命令后，我们能得到下图：
 
 ![推送到远程仓库4.png](https://upload-images.jianshu.io/upload_images/2824145-8818705c89b2f33d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-在上述红框中，`origin/master` 该标记告诉我们，当前本地仓库关联了一个远程仓库，该仓库的别名为 `origin`，同时该仓库有一个 `master` 分支。并且远程仓库的 `master` 分支指向 commit `f4d7e04`,也就是说远程仓库拥有并包含所有 `f4d7e04` 下的 commit 。
+在上述红框中，`origin/master` 其实是一个跟踪分支（跟踪分支是与远程分支有直接关系的本地分支），该分支告诉我们，当前本地仓库关联了一个远程仓库，该远程仓库的别名为 `origin`，同时该远程仓库有一个 `master` 分支。并且该仓库的 `master` 分支指向 commit `f4d7e04` ，也就是说远程仓库拥有并包含所有 `f4d7e04` 下的 commit 。
 
 ### 从远程仓库中拉取修改
+
+我们已经学会了如何将本地仓库中的 commit 推送到远程仓库，现在我们试想另一种情况，远程仓库中存在一些 commit ，但是我们的本地仓库中没有这些 commit ，这种情况出现的原因有多个，比如我们是团队协作开发一个项目，有一名同事将更新推送到了远程仓库，或者你在不同的电脑上开展同一个项目，比如你在公司的电脑上向远程仓库推送了更新，但是你的个人电脑中的本地仓库没有这些更新。
+
+#### git pull
+
+如何将远程仓库中的更新拉取到本地仓库呢？我们看下面的这个例子：
+
+![从远程仓库中拉取修改1.jpg](https://upload-images.jianshu.io/upload_images/2824145-3edccd80e572a382.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在我们的本地仓库中有五个提交，但是远程仓库中有六个提交，本地的 `master` 指向提交 `H` ，而远程仓库中的 `master` 指向 `H` 之后的提交 `J`, 由于两个仓库处于不同步的状态，我们需要将远程仓库中的更改同步到本地仓库中。这个时候我们可以使用 `git pull + 远程仓库别名 + 拉取分支`，在本示例中我们可以使用如下命令：
+
+```bash
+git pull origin master
+```
+
+![从远程仓库中拉取修改2.jpg](https://upload-images.jianshu.io/upload_images/2824145-0a0427ffa735a2ee.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+使用该命令后，会将远程仓库中的更改拉取到本地仓库（将本地的 master 指向远程仓库提交的 commit)，并与本地仓库进行`合并`，并更新。
+
+>上图中的 `origin/master` 是一个跟踪分支，跟踪名为 `origin` 仓库中的 `master` 分支。
+
+#### 实际操作例子
+
+我们已经知道 `git pull` 命令的使用方式，现在结合我们之前的项目我们来实战一下，找到我们之前在 GitHub 中创建的项目，点击 `Add a README`，我们创建一个 `README.md` 文件，如下所示：
+
+![从远程仓库拉取修改3.png](https://upload-images.jianshu.io/upload_images/2824145-995f3fde020829d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+选择会跳转到一个新的编辑界面，这里我们不对该文件进行编辑，我们直接填写如下界面：
+
+![从远程仓库拉取修改4.png](https://upload-images.jianshu.io/upload_images/2824145-da930d0bccf39088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上图中，我们可以选择填写相关信息。这里我就不填写了，直接点击`Commit new file`。当点击后，我们再查看项目，我们会发现多了一个 `README.md`文件与一个 `commit` 如下所示：
+
+![从远程仓库拉取修改5.png](https://upload-images.jianshu.io/upload_images/2824145-dc1ea710aca34945.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+因为我们之前本地仓库中只有 `3` 个提交，这个时候与远程仓库不同步，那么现在我们可以使用命令：
+
+```bash
+git pull origin master
+```
+
+使用该命令后，我们能得到下图：
+
+![从远程仓库拉取修改6.png](https://upload-images.jianshu.io/upload_images/2824145-eea485413d5c0587.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+通过上述操作，就能将远程仓库中的内容拉取到本地仓库了。但是我们需要注意，使用 `git pull` 命令会`自动`
+将本地分支与跟踪分支进行`合并`，如果你不需要，可以使用另一个命令 `git fetch`。
 
 ### Pull 与 Fetch
 
