@@ -258,7 +258,7 @@ git merge <other-branch>
 
 ![普通合并1.jpg](https://upload-images.jianshu.io/upload_images/2824145-af10415234b3c02d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-这个时候我们想将 `branch1` 合并到 `master` 分支上，由于当前`HEAD`指向 `master` 分支，所以当两个分支合并时，将会生成一个合并提交`B`将放置在`master`分支上，并且`master指针`将会向前移动。如下所示：
+这个时候我们想将 `branch1` 合并到 `master` 分支上，由于当前`HEAD`指向 `master` 分支，所以当两个分支合并时，将会生成一个合并提交 `B` 将放置在 `master` 分支上，并且 `master指针` 将会向前移动。如下所示：
 
 ![普通合并2.jpg](https://upload-images.jianshu.io/upload_images/2824145-6e938d8949dd0e24.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

@@ -165,6 +165,8 @@ git log --oneline
 
 在上述红框中，`origin/master` 其实是一个跟踪分支（跟踪分支是与远程分支有直接关系的本地分支），该分支告诉我们，当前本地仓库关联了一个远程仓库，该远程仓库的别名为 `origin`，同时该远程仓库有一个 `master` 分支。并且该仓库的 `master` 分支指向 commit `f4d7e04` ，也就是说远程仓库拥有并包含所有 `f4d7e04` 下的 commit 。
 
+>需要注意的一点是，这个 `origin/master` 跟踪分支并不能实时表现被跟踪分支在远程仓库上的位置。如果我们之外的其他人对远程仓库做了更改，我们本地仓库中的 `origin/master` 跟踪分支不会移动。我们必须告诉它检查更新，它才会移动。
+
 ### 从远程仓库中拉取修改
 
 我们已经学会了如何将本地仓库中的 commit 推送到远程仓库，现在我们试想另一种情况，远程仓库中存在一些 commit ，但是我们的本地仓库中没有这些 commit ，这种情况出现的原因有多个，比如我们是团队协作开发一个项目，有一名同事将更新推送到了远程仓库，或者你在不同的电脑上开展同一个项目，比如你在公司的电脑上向远程仓库推送了更新，但是你的个人电脑中的本地仓库没有这些更新。
@@ -183,9 +185,7 @@ git pull origin master
 
 ![从远程仓库中拉取修改2.jpg](https://upload-images.jianshu.io/upload_images/2824145-0a0427ffa735a2ee.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-使用该命令后，会将远程仓库中的更改拉取到本地仓库（将本地的 master 指向远程仓库提交的 commit)，并与本地仓库进行`合并`，并更新。
-
->上图中的 `origin/master` 是一个跟踪分支，跟踪名为 `origin` 仓库中的 `master` 分支。
+使用该命令后，会将远程仓库中的更改拉取到本地仓库，并与本地仓库进行`合并(merge)`，并更新。
 
 #### 实际操作例子
 
@@ -211,11 +211,56 @@ git pull origin master
 
 ![从远程仓库拉取修改6.png](https://upload-images.jianshu.io/upload_images/2824145-eea485413d5c0587.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-通过上述操作，就能将远程仓库中的内容拉取到本地仓库了。但是我们需要注意，使用 `git pull` 命令会`自动`
-将本地分支与跟踪分支进行`合并`，如果你不需要，可以使用另一个命令 `git fetch`。
+通过上述操作，就能将远程仓库中的内容拉取到本地仓库了。但是我们需要注意，使用 `git pull` 命令会`自动`将本地分支与跟踪分支进行`合并(merge)`，如果你不需要，可以使用另一个命令 `git fetch`。
 
-### Pull 与 Fetch
+### git fetch
 
+`git fetch` 主要用于从远程仓库中拉取 commit ， 但是`不会`在拉取到 commit 后自动的将本地分支与远程的分支进行合并（merge)。什么意思呢？先不急，我们先看 `git fetch` 命令的使用方式， `git fetch` 与 `git pull` 使用方式基本相同，也是 `远程仓库别名 + 拉取分支`，如下所示：
+
+```bash
+git fetch origin master
+```
+
+了解了该命令的使用方式后，我们来看看使用 `git fetch` 与 `git pull` 命令的区别:
+
+>在下图中，我们本地仓库只有 `D、E、F、G、H` 五个提交，而远程仓库拥有本地仓库中没有的提交 `J` 。
+
+![从远程仓库中拉取修改7.jpg](https://upload-images.jianshu.io/upload_images/2824145-6cfcd4848cd922e0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+根据上图，大家应该会发现几点
+
+- `git fetch` 与 `git pull` 命令都会将远程分支上的 commit 拉取到本地仓库。
+- `git fetch` 与 `git pull` 命令都会将本地跟踪分支（上图中 `origin/master`)将会移动到最新的 commit 。
+- `git fetch` 不会将本地分支（上图中 `master`)指向拉取的最新 commit（上图中 `J` commit) 。
+
+也就是说使用 `git fetch` 命令并没有使本地分支进行移动，如果我们希望本地 `master` 具有 `origin/master` 分支上的 commit。则我们需要合并(merge)，假如我们已经在本地仓库的 `master`分支上，我们需要使用命令，
+
+```bash
+git merge origin/master
+```
+
+简单的来讲，`git fetch` 相当于 `git pull` 的一半的操作，剩下的一半是合并(merge)。
+
+#### git fetch 主要使用场景
+
+`git fetch` 的主要使用场景是当你的远程仓库与本地仓库都有对方没有的 commit 时。请看如下场景：
+
+![从远程仓库中拉取修改8.jpg](https://upload-images.jianshu.io/upload_images/2824145-0c04f73d27f8099d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在上图中，本地仓库与远程仓库在 `H` 提交之前状态一直是同步的，但是后续的过程中，本地仓库增加了一个提交 `8`，远程仓库也增加了一个提交 `J` ，如果这个时候，你想从远程仓库中拉取更改到本地，你可能会想使用命令 `git pull origin master` ，但是你会发现并没有任何作用，在如上情况下，我们需要使用 `git fetch origin master` ，使用该命令后，会使跟踪分支（origin/master) 指向最新的 commit ，如下所示：
+
+![从远程仓库中拉取修改9.jpg](https://upload-images.jianshu.io/upload_images/2824145-ffb46a7108e7a938.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+如果我们想将跟踪分支（origin/master) 的 commit 应用到本地 `master` 分支上 ，我们需要在 `master` 分支上使用命令 `git merge origin/master` ， 那接下来我们能得到下图：
+
+![从远程仓库中拉取修改10.jpg](https://upload-images.jianshu.io/upload_images/2824145-e095389ed957257b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+因为合并(merge)后会产生一个合并提交 `4`，又因为远程仓库中中并没有本地仓库中的 `8`，所以如果我们需要远程仓库也拥有这些提交，那么我们可以使用命令 `git push origin master`，使用该命令后，我们能得到下图：
+
+![从远程仓库中拉取修改11.jpg](https://upload-images.jianshu.io/upload_images/2824145-90987540e096afd9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 讲讲 shareproject
+整体浏览一些，看有没有讲错的地方   pull push fetch 等操作
 ### 最后
 
 站在巨人的肩膀上，才能看的更远~
