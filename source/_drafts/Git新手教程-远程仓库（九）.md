@@ -10,9 +10,10 @@ categories:
 
 在前面的文章中，我们一直介绍的在本地Git的仓库相关知识点。而在实际的项目开发中，大多数情况下，我们往往需要和他人进行合作。因此学习如何与他人协作开发项目使我们必须要学习与掌握的知识点。在接下的的文章中，我们将讲解什么是远程仓库，以及如何运用远程仓库。在本文中将介绍如下命令：
 
-- git remote：管理远程仓库
-- git push ：将修改推送到远程仓库上
-- git pull ：将从远程仓库上获取更新
+- git remote：管理远程仓库。
+- git push ：将修改推送到远程仓库上。
+- git pull ：将从远程仓库上获取更新，并合并。
+- git fetch ：将从远程仓库上获取更新
 
 ### 远程仓库
 
@@ -27,6 +28,10 @@ categories:
 ![远程仓库1.jpg](https://upload-images.jianshu.io/upload_images/2824145-d8a2a4fc6492ad5d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 >需要注意的是，我们并不限于使用一个远程仓库，我们可以根据我们自己的需求创建多个远程仓库。
+
+当我们创建远程仓库后，我们就可以和他人进行协同开发了，比如你可以将本地仓库的更改推送到远程仓库，然后其他同事可以从远程仓库中拉取更改到他们的本地仓库中。如下所示：
+
+![远程仓库2.jpg](https://upload-images.jianshu.io/upload_images/2824145-09c30c2f3de25d92.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 添加远程仓库
 
@@ -259,8 +264,40 @@ git merge origin/master
 
 ![从远程仓库中拉取修改11.jpg](https://upload-images.jianshu.io/upload_images/2824145-90987540e096afd9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-#### 讲讲 shareproject
-整体浏览一些，看有没有讲错的地方   pull push fetch 等操作
+在上图中，使用 `git push origin master`命令后，远程仓库会拉取本地仓库的更改，同时会将本地的 `跟踪分支（origin/master）`指向本地最新的提交 `4` 。
+
+### IntelliJ IDEA or Android Sutdio 图形化界面的使用
+
+在上述文章中，我们讲解了相关指令，现在我们来看看相关指令在 IDEA 中的使用。
+
+#### 创建 GitHub 远程仓库
+
+创建远程仓库有多种方式，这里我们还是以在 GitHub 中创建远程仓库为例， 要想在 IDEA 中创建 GitHub 中的远程仓库，我们需要在配置界面（在 Mac 中为 Preferences，Windows 为 Settings )中找到 `Version Control` -> `GitHub`选项 ，然后添加自己的 GitHub账号，如下所示：
+
+![idea_1.png](https://upload-images.jianshu.io/upload_images/2824145-fc55198c22f105c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在添加完毕账号后，找到工具栏中的 `VCS` -> `Import into Version Control` -> `Share project on Github`。 如下所示：
+
+![idea_2.png](https://upload-images.jianshu.io/upload_images/2824145-a03ad38d661de9fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+选择后会让我们填写，远程仓库的名称，及远程仓库的别名，及对远程仓库的描述信息等，如下图所示：
+
+![idea_3.png](https://upload-images.jianshu.io/upload_images/2824145-5f774242464c107b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+填写相关信息后，我们就可以点击 `Share` 按钮 创建远程仓库啦。
+
+#### pull push  fetch
+
+当我们创建远程仓库后，我们可以通过点击鼠标`右键`，依次选择 `Git` -> `Repositiry`，然后选择使用 `git pull` 、`git push` 还是 `git fetch` 。 如下所示：
+
+![idea_4.png](https://upload-images.jianshu.io/upload_images/2824145-cc0b63cf64e23eb0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+>上图中红色方框所包括的`蓝色左下箭头`为 `git pull`，也就是从远程仓库拉取更新。
+
+当然如果你要使用 `git push` 命令，也可以直接使用快捷键 ``Alt+ ` （Windows)`` 或 ``option + ` (Mac)`` 的方式。如下所示：
+
+![idea_5.png](https://upload-images.jianshu.io/upload_images/2824145-a9f83544803d6ca9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 ### 最后
 
 站在巨人的肩膀上，才能看的更远~

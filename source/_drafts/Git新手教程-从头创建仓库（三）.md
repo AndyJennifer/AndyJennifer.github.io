@@ -130,7 +130,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 ![idea_配置_git.png](https://upload-images.jianshu.io/upload_images/2824145-3cd6a3bfc2e66cb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
->如果你不知道 Git 的安装位置。
+如果你不知道 Git 的安装位置。
 
 - Mac 操作系统：终端中输入 `which git`
 - Windows 操作系统：命令行中输入 `where git`

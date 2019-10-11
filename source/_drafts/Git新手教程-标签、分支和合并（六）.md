@@ -413,7 +413,7 @@ git merge <other-branch>
 - 要么我们只要选择工具栏中的`VCS`->`Git`->`Branches` 弹出下列选择框，
 - 要么是通过点击编译器`最右下角`的 `Git:master`（该左下角的内容可能变化，比如你切换到了 `dev` 分支上，那么这个时候显示的是 `Git:dev`）
 
-然后我们就可以选择相应的分支合并到对应分支下了，比如这里我们以`master` 分支需要合并 `dev` 分支为例：
+然后我们就可以选择相应的分支合并到对应分支下了，比如这里我们以 `master` 分支需要合并 `dev` 分支为例：
 
 ![分支的合并展示.png](https://upload-images.jianshu.io/upload_images/2824145-de84024c86d9a890.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 

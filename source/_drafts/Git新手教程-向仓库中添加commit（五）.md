@@ -83,7 +83,7 @@ Untracked files:
 
 #### 使用git add 添加剩余的文件
 
-当我们已经将 `Git总目录.md` 添加到暂存区中后，我们可能还想将剩下的两个文件`Git练习.md`、`JVM系列之总目录.md`也添加到暂存区中。当然我们可以一个一个的使用使用 `git add` 命令添加剩余的文件，我们也可以这样:
+当我们已经将 `Git总目录.md` 添加到暂存区中后，我们可能还想将剩下的两个文件 `Git练习.md` 、 `JVM系列之总目录.md` 也添加到暂存区中。当然我们可以一个一个的使用使用 `git add` 命令添加剩余的文件，我们也可以这样:
 
 ```bash
 git add Git练习.md JVM系列之总目录.md
@@ -193,7 +193,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 #### 简单总结
 
-在学习了`git add`与`git commit`命令后，我们简单的总结一下这两个命令。
+在学习了`git add` 与 `git commit` 命令后，我们简单的总结一下这两个命令。
 
 - `git add` 可以不仅可以向暂存区中添加新的文件，同样也能将修改的文件进行暂存。
 - `git commit` 会取出暂存区的文件，并保存到仓库中。该命令需要输入commit消息。
@@ -255,7 +255,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 #### Git使用快捷键
 
-当然除了上述所有的操作，我们还可以使用ide提供的快捷键进行操作，使用``Alt+ ` ``的方式，可以得到以下界面：
+当然除了上述所有的操作，我们还可以使用ide提供的快捷键进行操作，使用 ``Alt+ ` （Windows)`` 或 ``option + ` (Mac)`` 的方式，可以得到以下界面：
 
 ![idea_快捷键汇总.jpg](https://upload-images.jianshu.io/upload_images/2824145-187de0ce3cd99fae.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
