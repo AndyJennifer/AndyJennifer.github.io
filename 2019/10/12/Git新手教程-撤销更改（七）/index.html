@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在前面的文章中，我们学习了标签、分支、和合并。现在我们将学习Git中另外的三个命令git commit --amend , git revert , git reset。下面简单的介绍中几个命令的功能：  git commit --amend ：可以修改最后一次提交中的内容，加东西，加文件。修改 commit 信息。 git revert ：可以撤销对应的 commit ，并产生一个新的 co">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git新手教程-撤销更改(七)">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在前面的文章中，我们学习了标签、分支、和合并。现在我们将学习Git中另外的三个命令git commit --amend , git revert , git reset。下面简单的介绍中几个命令的功能：  git commit --amend ：可以修改最后一次提交中的内容，加东西，加文件。修改 commit 信息。 git revert ：可以撤销对应的 commit ，并产生一个新的 co">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改5.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改6.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/显示所有分支信息.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/rest_mixed演示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/mixed_展示.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/mixed_2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/reset_soft演示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/soft展示.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/reset_hard演示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/hard展示.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/ide_amend.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/ide_revert.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/ide_reset_1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/ide_reset_2.png">
+<meta property="og:updated_time" content="2019-10-11T16:15:40.191Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git新手教程-撤销更改(七)">
+<meta name="twitter:description" content="前言在前面的文章中，我们学习了标签、分支、和合并。现在我们将学习Git中另外的三个命令git commit --amend , git revert , git reset。下面简单的介绍中几个命令的功能：  git commit --amend ：可以修改最后一次提交中的内容，加东西，加文件。修改 commit 信息。 git revert ：可以撤销对应的 commit ，并产生一个新的 co">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/撤销更改1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git新手教程-撤销更改(七) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-撤销更改（七）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git新手教程-撤销更改(七)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-12 00:15:40" itemprop="dateCreated datePublished" datetime="2019-10-12T00:15:40+08:00">2019-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Git相关/" itemprop="url" rel="index"><span itemprop="name">Git相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">4.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">9 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在前面的文章中，我们学习了标签、分支、和合并。现在我们将学习Git中另外的三个命令<code>git commit --amend</code> , <code>git revert</code> , <code>git reset</code>。下面简单的介绍中几个命令的功能：</p>
+<ul>
+<li><code>git commit --amend</code> ：可以修改最后一次提交中的内容，加东西，加文件。修改 commit 信息。</li>
+<li><code>git revert</code> ：可以撤销对应的 commit ，并产生一个新的 commit 。</li>
+<li><code>git reset</code> ：可以清除最近的 commit 。并不能任意删除，需要按照顺序。</li>
+</ul>
+<h3 id="git-commit-–amend"><a href="#git-commit-–amend" class="headerlink" title="git commit –amend"></a>git commit –amend</h3><p>在平时的项目开发中，有时候我们可能提交完相应文件后，才发现漏掉了几个文件没有添加，或者我们 commit 消息并没有书写完整或有错别字。那这个时候我们该整么办呢？或许我们会执行一个新的提交来添加我们遗漏的内容，但是这样一点都不优雅！！在Git中为我们提供了带有 <code>--amend</code> 选项的提交来修改我们<code>最近</code>的提交:</p>
+<blockquote>
+<p>amend 中文意思是修改、改善、改进。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend</span><br></pre></td></tr></table></figure>
+<p>这里大家可能还是不是很明白，我们看下面这个简单的例子：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/撤销更改1.png" title="撤销更改1">
+<p>在上述例仓库中我们创建了一个 commit ，该 commit 消息并没有书写完整。这个时候我们想修改它，那么我们就可以使用命令 <code>git commit --amend</code> ，当输入该命令后，我们能得到如下弹窗：</p>
+<blockquote>
+<p>你也可以使用 <code>git commit --amend -m + 提交信息</code> 跳过编辑器，直接修改 commit 信息。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/撤销更改2.png" title="撤销更改2">
+<p>这个时候，我们就可以完善该 commit 信息，然后保存并离开。这里我改成了 <code>删除了多余的语句</code> ，这时我们再使用 <code>git log</code> 命令，我们会发现我们的 commit 消息已经被更改了。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/撤销更改3.png" title="撤销更改3">
+<p>当然在上述例子中，我们只是简单的修改了 commit 信息，并没有修改或添加一些新的文件，如果你修改或添加了新的文件，并想将这些修改的文件添加到最近的 commit 中去的话，那么你可能要经历以下步骤：</p>
+<ul>
+<li>编辑文件</li>
+<li>保存文件</li>
+<li>暂存文件 (git add)</li>
+<li>运行 git commit –amend</li>
+</ul>
+<p>在实际的项目中，如果你想修改最近的 commit ，那么你需要使用 <code>git commit --amend</code> 来更新最近的 commit ，而不是创建新的 commit 。</p>
+<h3 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h3><p>在上述例子中，我们知道了如何修改最近的 commit ，但是如果我们想还原这个 commit 。那这个时候，我们又该怎么办呢？我们可以使用 <code>git revert</code> 命令来告诉 Git 还原之前创建的commit，该命令使用的方式如下：</p>
+<blockquote>
+<p>当你告诉 Git 还原（revert） 具体的 commit 时，git 会执行和 commit 中的更改完全相反的更改。假设 commit A 添加了一个字符，如果 Git 还原 commit A，那么 Git 将创建一个 <code>新的 commit</code> ，并删掉该字符。如果删掉了一个字符，那么还原该 commit 将把该内容添加回来！</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git revert &lt;SHA-of-commit-to-revert&gt;</span><br></pre></td></tr></table></figure>
+<p>还是以上述例子来进行讲解，比如我们想还原下图中红色框中的 commit ：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/撤销更改3.png" title="撤销更改3">
+<p>我们可以使用 <code>git revert b71b40</code> ，需要注意的是使用该命令，默认会创建一个新的提交。如下图所示：</p>
+<blockquote>
+<p>这里 <code>b71b40</code> 是对应 commit 的 SHA 的前七个字符，当然你也可以使用完整的 SHA 。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/撤销更改5.png" title="撤销更改5">
+<p>一般情况下，我们可以使用Git系统默认的 revert 信息。当我们保存并退出后，再使用 <code>git log</code> 命令查看我们的日志提交记录，我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/撤销更改6.png" title="撤销更改6">
+<h3 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h3><h4 id="git-reset-简介"><a href="#git-reset-简介" class="headerlink" title="git reset 简介"></a>git reset 简介</h4><p>在上述例子中，我们学会了如何还原一个提交，但是如果我们本是这个提交就是错误的，我们并不想要这个提交，也不想仓库记录中包含 <code>revert</code> 的提交记录。这个时候我们又该怎么办呢？我们可以使用 <code>git reset</code> 命令来告诉 Git 重置 commit 。</p>
+<p>重置（reset） 似乎和 还原（revert） 相似，但它们实际上差别很大。还原会创建一个新的 commit，并还原或撤消之前的 commit。但是重置会清除 commit！</p>
+<blockquote>
+<p><code>git reset</code> 命令是少数几个可以从仓库中清除 commit 的命令，如果某个 commit 不再存在与仓库中，它所包含的内容也会消失。不过不用担心，Git 会在完全清除任何内容之前，持续跟踪提交记录大约30天，我们可以通过 <code>git reflog</code> 来查看仓库中所有的改变。关于 <code>git reflog</code> 你可以查看下方内容：</p>
+</blockquote>
+<ul>
+<li><a href="https://git-scm.com/docs/git-reflog" target="_blank" rel="noopener">git reflog</a></li>
+<li><a href="https://www.atlassian.com/git/tutorials/rewriting-history" target="_blank" rel="noopener">Rewriting history</a></li>
+</ul>
+<h4 id="git-reset-命令的使用"><a href="#git-reset-命令的使用" class="headerlink" title="git reset 命令的使用"></a>git reset 命令的使用</h4><p><code>git reset</code> 命令相比其他 Git 命令功能要多一点，可以用来：</p>
+<ul>
+<li>将 HEAD 和当前分支指针移到目标 commit。</li>
+<li>清除 commit 。</li>
+<li>将 commit 的更改移动到暂存区中。</li>
+<li>取消暂存 commit 的更改。</li>
+</ul>
+<p><code>git reset</code> 并不直接使用 commit 的 SHA ，而是使用特殊的 <code>&quot;祖先引用&quot;</code> 来告诉 Git 将 <code>HEAD</code> 指针移动到哪个commit。我们来看看这些特殊的符号。</p>
+<ul>
+<li><code>^</code> ： 表示父 commit</li>
+<li><code>~</code> ： 表示第一个父 commit</li>
+</ul>
+<p>我们可以通过以下方式引用之前的 commit：</p>
+<ul>
+<li>当前 commit 的父 commit</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HEAD^</span><br><span class="line">HEAD~</span><br><span class="line">HEAD~1</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当前 commit 的祖父 commit</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HEAD^^</span><br><span class="line">HEAD~2</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当前 commit 的曾祖父 commit</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HEAD^^^</span><br><span class="line">HEAD~3</span><br></pre></td></tr></table></figure>
+<p><code>^</code> 和 <code>~</code> 的区别主要体现在通过合并而创建的 commit 中。合并 commit 具有两个父级。对于合并 commit，<code>^</code> 引用用来表示第一个父 commit，而 <code>^2</code> 表示第二个父 commit。第一个父 commit 是当你运行 git merge 时所处的分支，而第二个父 commit 是被合并的分支。</p>
+<p>我们看下面的例子，来一起来理解：</p>
+<blockquote>
+<p>可以使用 <code>git log --oneline  --graph --all</code> 来查看所有的分支信息。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/显示所有分支信息.png" title="显示所有分支信息">
+<p>因为 <code>HEAD</code> 指向 <code>b71b405</code> commmit。</p>
+<ul>
+<li>那么 <code>f8d5383</code> commit 我们可以这样表示：<ul>
+<li>HEAD^</li>
+<li>HEAD~1</li>
+</ul>
+</li>
+<li>那么 <code>9fdb3f6</code> commit 我们可以这样表示：<ul>
+<li>HEAD^^2（ <code>^2</code> 表示合并分支上的父提交）</li>
+</ul>
+</li>
+<li>那么 <code>48099db</code> commit 我们可以这样表示：<ul>
+<li>HEAD^^</li>
+<li>HEAD~2</li>
+</ul>
+</li>
+</ul>
+<p>了解了祖先引用，现在我们来了解 <code>git reset</code> 命令的使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset &lt;reference-to-commit&gt;</span><br></pre></td></tr></table></figure>
+<p>一般情况下，使用该命令，我们会添加如下选项：</p>
+<ul>
+<li><code>--mixed</code> (默认不指定任何选项)移动到工作目录，不会暂存我们的文件，工作内容与原来相同，但是SHA不同，因为时间戳不同。</li>
+<li><code>--soft</code> 移动到暂存区，这些改动仍然存在，而且已经暂存好了。</li>
+<li><code>--hard</code> 会删除对应所有的提交的内容。</li>
+</ul>
+<p>直接理解这些选项比较困难，下面我们将结合图片与实际例子来进行讲解。</p>
+<h5 id="–mixed-例子"><a href="#–mixed-例子" class="headerlink" title="–mixed 例子"></a>–mixed 例子</h5><p>在下图中，假如我们的仓库中已经有了如下提交 <code>D、E、F、G、H</code>，其中 <code>master</code> 指向最近的提交 <code>H</code>，<code>HEAD</code> 指向 <code>master</code>。</p>
+<p>这个时候我们如果使用 <code>git reset --mixed HEAD~1</code> 那么会将 <code>master</code> 与 <code>HEAD</code> 将会指向前一个提交 <code>G</code>。同时 <code>G</code> 提交会移动到工作目录中。如下图所示：</p>
+<blockquote>
+<p>注意，<code>git reset --mixed HEAD~1</code> 等同于 <code>git reset --mixed HEAD^</code> ，也等同于 <code>git reset HEAD~1</code> (git reset 命令默认选项为 –mixed)。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/rest_mixed演示.jpg" title="rest_mixed演示">
+<p>当 <code>H</code> 提交修改的文件被移动到到工作目录后，文件的状态都为 <code>modifed</code>，也就是我们需要重新添加到暂存区，然后进行 commit 。我们继续看下面的例子：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/mixed_展示.png" title="mixed_展示">
+<p>在上述仓库中有3个提交，其中 <code>HEAD</code> 指向 <code>bb780f9</code> 上的 <code>master</code> , 这个时候如果我们运行 <code>git reset HEAD~</code> 命令，会将 commit <code>bb780f9</code> 中的文件移动到工作目录中，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/mixed_2.png" title="mixed_2">
+<p>调用 <code>git status</code> 来查看我们的仓库状态，我们会发现使用 <code>--mixed</code> 选项，是不会暂存我们的更改的，也就是不会将相应提交的文件放入暂存区中。</p>
+<h5 id="–soft-例子"><a href="#–soft-例子" class="headerlink" title="–soft 例子"></a>–soft 例子</h5><p>当使用 <code>--soft</code> 选项时，不仅会移动 <code>master</code> 与 <code>HEAD</code> 指针，还会将相应修改添加到暂存区中，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/reset_soft演示.jpg" title="reset_soft演示">
+<p>我们继续查看下面的例子：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/soft展示.png" title="soft展示">
+<h5 id="–hard-例子"><a href="#–hard-例子" class="headerlink" title="–hard 例子"></a>–hard 例子</h5><p>最后我们再来看看 <code>--hard</code> 选项：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/reset_hard演示.jpg" title="reset_hard演示">
+<p>使用 <code>--hard</code> 将清除对应 commit 所作的更改，继续查看下面的👇的例子：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/hard展示.png" title="hard展示">
+<p>当使用了 <code>--hard</code> 选项后，发现仓库中对应的提交消失了。</p>
+<h5 id="取消暂存区中的内容"><a href="#取消暂存区中的内容" class="headerlink" title="取消暂存区中的内容"></a>取消暂存区中的内容</h5><p>当我们直接使用 <code>git reset</code> 或 <code>git reset HEAD</code>时，表示清除暂存区中的 commit 。下面我们来看这个例子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">edit</span><br><span class="line">git add A.java B.java   (1）</span><br><span class="line">git reset               (2)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>我们添加了两个Java文件到暂存区中。</li>
+<li>但是在后续中，我们发现我们还需要对这两个文件进行修改，那么我们可以使用 <code>git reset</code> 命令将这另个文件从暂存区中移除。当然我们也可以使用 <code>git reset HEAD</code> 命令，这两个命令是等价的。</li>
+</ol>
+<p>那么如果我们只想将 <code>B.java</code> 文件从暂存区中移除，那我们又该怎么办呢？我们可以使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD B.java</span><br></pre></td></tr></table></figure>
+<p>当然在Git中支持多个文件的取消暂存，具体命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD &lt;file&gt;...</span><br></pre></td></tr></table></figure>
+<p>在上述命令中 <code>&lt;file&gt;...</code> 代表一个或多个文件。</p>
+<h3 id="IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><a href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用" class="headerlink" title="IntelliJ IDEA or Android Sutdio 图形化界面的使用"></a>IntelliJ IDEA or Android Sutdio 图形化界面的使用</h3><p>最后还是回到我们熟悉的图形化界面的使用流程中。我们来看看IDEA为我们提供了哪些便利吧。</p>
+<h4 id="使用-git-commit-–amend"><a href="#使用-git-commit-–amend" class="headerlink" title="使用 git commit –amend"></a>使用 git commit –amend</h4><p>在创建相应 <code>commmit</code> 时，我们可以勾选下图中的<br><code>Amend commit</code> 选项。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/ide_amend.png" title="ide_amend">
+<p>上述操作与使用 <code>git commit --amend</code> 命令的效果一样。</p>
+<h4 id="使用-git-revert"><a href="#使用-git-revert" class="headerlink" title="使用 git revert"></a>使用 git revert</h4><p>通过依次点击编译器底部的<code>Version Control</code>-&gt;<code>Log</code>，然后选择想要 revert 的 commit ，点击鼠标<code>右键</code>，选择 <code>Revert Commit</code> 就可以啦~</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/ide_revert.png" title="ide_revert">
+<h4 id="使用-git-reset"><a href="#使用-git-reset" class="headerlink" title="使用 git reset"></a>使用 git reset</h4><p>通过依次点击编译器底部的<code>Version Control</code>-&gt;<code>Log</code>，然后选择想要 reset 的 commit ，点击鼠标<code>右键</code>，选择 <code>Reset Current Branch to Here..</code> 就完成第一步啦~</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/ide_reset_1.png" title="ide_reset_1">
+<p>当然在第二步中，我们需要选择 <code>git reset</code> 中的选项，在 IDEA 中提供了四种选项 <code>Soft、Mixed、Hard、Keep</code> ，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-撤销更改（七）/ide_reset_2.png" title="ide_reset_2">
+<p>在上图中，我们不熟悉的只有 <code>--keep</code> 选项，因为该选项在平时中的项目并不常用，所以这里就不做更多介绍了，有兴趣的小伙伴，可以查看官方文档中 <a href="https://git-scm.com/docs/git-reset" target="_blank" rel="noopener">git reset</a> 中对其的介绍。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>站在巨人的肩膀上，才能看的更远~</p>
+<ul>
+<li><a href="https://git-scm.com/docs/git-reset" target="_blank" rel="noopener">git reset</a></li>
+<li><a href="https://classroom.udacity.com/courses/ud123/lessons/f02167ad-3ba7-40e0-a157-e5320a5b0dc8/concepts/50740c4a-054c-46da-910a-8d1344b18d33" target="_blank" rel="noopener">撤销更改</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-标签、分支和合并（六）/" rel="next" title="Git新手教程-标签、分支和合并(六)">
+                <i class="fa fa-chevron-left"></i> Git新手教程-标签、分支和合并(六)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-存储与清理（八）/" rel="prev" title="Git新手教程-存储与清理(八)">
+                Git新手教程-存储与清理(八) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-commit-–amend"><span class="nav-number">2.</span> <span class="nav-text">git commit –amend</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-revert"><span class="nav-number">3.</span> <span class="nav-text">git revert</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-reset"><span class="nav-number">4.</span> <span class="nav-text">git reset</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-reset-简介"><span class="nav-number">4.1.</span> <span class="nav-text">git reset 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-reset-命令的使用"><span class="nav-number">4.2.</span> <span class="nav-text">git reset 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#–mixed-例子"><span class="nav-number">4.2.1.</span> <span class="nav-text">–mixed 例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#–soft-例子"><span class="nav-number">4.2.2.</span> <span class="nav-text">–soft 例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#–hard-例子"><span class="nav-number">4.2.3.</span> <span class="nav-text">–hard 例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#取消暂存区中的内容"><span class="nav-number">4.2.4.</span> <span class="nav-text">取消暂存区中的内容</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><span class="nav-number">5.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-git-commit-–amend"><span class="nav-number">5.1.</span> <span class="nav-text">使用 git commit –amend</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-git-revert"><span class="nav-number">5.2.</span> <span class="nav-text">使用 git revert</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-git-reset"><span class="nav-number">5.3.</span> <span class="nav-text">使用 git reset</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">510k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15:28</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

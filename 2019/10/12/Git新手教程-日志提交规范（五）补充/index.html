@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言如果大家学习了之前的文章《Git新手教程-向仓库中添加commit(五)》，我相信大家肯定还会为如何提交一个比较规范的 commit 信息而烦恼，虽然我们在上面的文章中介绍了两篇相关的文章：  怎么写 Git Commit Message Commit message 和 Change log 编写指南  我相信大家肯定还是会疑惑，这里就以我之前理解的 commit 规范为列子。希望起到一个抛">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git新手教程-日志提交规范（五）补充">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-日志提交规范（五）补充/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言如果大家学习了之前的文章《Git新手教程-向仓库中添加commit(五)》，我相信大家肯定还会为如何提交一个比较规范的 commit 信息而烦恼，虽然我们在上面的文章中介绍了两篇相关的文章：  怎么写 Git Commit Message Commit message 和 Change log 编写指南  我相信大家肯定还是会疑惑，这里就以我之前理解的 commit 规范为列子。希望起到一个抛">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-11T16:15:14.205Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git新手教程-日志提交规范（五）补充">
+<meta name="twitter:description" content="前言如果大家学习了之前的文章《Git新手教程-向仓库中添加commit(五)》，我相信大家肯定还会为如何提交一个比较规范的 commit 信息而烦恼，虽然我们在上面的文章中介绍了两篇相关的文章：  怎么写 Git Commit Message Commit message 和 Change log 编写指南  我相信大家肯定还是会疑惑，这里就以我之前理解的 commit 规范为列子。希望起到一个抛">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-日志提交规范（五）补充/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git新手教程-日志提交规范（五）补充 | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-日志提交规范（五）补充/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git新手教程-日志提交规范（五）补充
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-12 00:15:14" itemprop="dateCreated datePublished" datetime="2019-10-12T00:15:14+08:00">2019-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Git相关/" itemprop="url" rel="index"><span itemprop="name">Git相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">2.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">5 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>如果大家学习了之前的文章《Git新手教程-向仓库中添加commit(五)》，我相信大家肯定还会为如何提交一个比较规范的 commit 信息而烦恼，虽然我们在上面的文章中介绍了两篇相关的文章：</p>
+<ul>
+<li><a href="https://www.jianshu.com/p/0117334c75fc" target="_blank" rel="noopener">怎么写 Git Commit Message</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html" target="_blank" rel="noopener">Commit message 和 Change log 编写指南</a></li>
+</ul>
+<p>我相信大家肯定还是会疑惑，这里就以我之前理解的 commit 规范为列子。希望起到一个抛砖引玉的作用。毕竟 commit 信息只是人为规范，不同公司，不同项目，不同人有着自己的见解。因为作者本身是一名爱岗敬业的 Android 程序员，可能提交日志相对于倾向于移动端，所以如果大家有更好的提交日志分享。这里非常欢迎在评论中看到你的回答~</p>
+<h3 id="关于我的日志提交规范"><a href="#关于我的日志提交规范" class="headerlink" title="关于我的日志提交规范"></a>关于我的日志提交规范</h3><p>整个信息结构由两个不同的部分构成，这些部分由空行分割：标题、可选的消息体。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">标题</span><br><span class="line"></span><br><span class="line">消息体</span><br></pre></td></tr></table></figure>
+<p>具体的结构如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">类型:【项目组名称/简称】【Bug ID】【有无风险】【有无依赖】【需求/Bug描述】</span><br><span class="line"></span><br><span class="line">   - 分析:</span><br><span class="line">   - 风险:</span><br><span class="line">   - 解决方案:</span><br><span class="line">   - 测试建议:</span><br><span class="line">   - 适用范围:</span><br><span class="line">   - 测试机型:</span><br><span class="line">   - 自测结果:</span><br></pre></td></tr></table></figure>
+<h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>标题一般情况下，都不超过<code>50</code>个字符，末尾不加句号。如果50个字符还不能很清楚的描述你这次的 commit 。那么你可以在消息体中具体描述。接下来我们就分别介绍标题中涉及到的选项。</p>
+<h4 id="类型（必填）"><a href="#类型（必填）" class="headerlink" title="类型（必填）"></a>类型（必填）</h4><p>类型位于在标题内，有以下几种可能：</p>
+<ul>
+<li><strong>feat</strong>：新功能</li>
+<li><strong>fix</strong>：错误修复</li>
+<li><strong>docs</strong>：文档修改</li>
+<li><strong>style</strong>：格式、分号缺失等，代码无变动</li>
+<li><strong>refactor</strong>：生产代码重构</li>
+<li><strong>test</strong>：测试添加、测试重构等，生产代码无变动</li>
+<li><strong>chore</strong>：构建任务更新、程序包管理器配置等，生产代码无变动。</li>
+</ul>
+<p>添加类型主要的目的，不仅是为了帮助自己或其他人理解对应 commit 主要干了什么，还可以筛选同类型的提交。比如我们可以筛选出所有的<code>feat(新功能）</code> ，那么在发布新版本的时候，我们能更好的书写版本发布日志。</p>
+<h4 id="项目组名称-简称（非必填）"><a href="#项目组名称-简称（非必填）" class="headerlink" title="项目组名称/简称（非必填）"></a>项目组名称/简称（非必填）</h4><p>填写项目组名称或者简称，但是一般建议简称。这样我们就能迅速找到该项目组提交的代码。代码如果出现了问题，我们也能快速定位到哪个组该背锅，你说是不？</p>
+<h4 id="Bug-Id（必填）"><a href="#Bug-Id（必填）" class="headerlink" title="Bug Id（必填）"></a>Bug Id（必填）</h4><p><code>Bug Id</code> 需要对应你自己的公司项目的管理工具，如 <code>JIRA</code>、<code>Icafe</code>、<code>Teambition</code> 等，这里将 Bug Id 放在标题内，也是考虑到起到一个快速定位的作用，放在标题处显眼！！！</p>
+<h4 id="有无风险-非必填"><a href="#有无风险-非必填" class="headerlink" title="有无风险(非必填)"></a>有无风险(非必填)</h4><p>在实际的项目开发中，往往会涉及到系统版本兼容问题、数据库迁移问题、特定版本API使用问题、项目新老版本适配问题等其他风险。在项目开发中，我们需要将这些风险明确指出。 如果你这次提交内容中包含一些风险因数，那么这里我们就可以添加<code>【有风险】</code>，具体什么风险，我们可以在消息体中的风险模块中具体描述。</p>
+<h4 id="有无依赖-非必填"><a href="#有无依赖-非必填" class="headerlink" title="有无依赖(非必填)"></a>有无依赖(非必填)</h4><p>这里有无依赖是指的是否依赖其他模块，如果公司的项目很大，一般都会涉及到多模块，不同模块之间肯定会有依赖关系。这里举一个简单的例子，假如我们开发的是一个商场项目，现在我们是<code>基础业务组</code>，现在有一个需求<code>#331</code>，需要让我们实现点击某个商品，完成购物，那么我们肯定会涉及到用户支付，而支付又是<code>支付组</code>在负责。那么在进行 commit 提交时，我们就可以添加<code>【依赖支付模块】</code>，这样做不仅可以让我们的测试工程师清晰的知道需求所包含的模块。也能在功能出现问题的时候，能够找准方向，对症下药。</p>
+<h4 id="需求-Bug描述（必填）"><a href="#需求-Bug描述（必填）" class="headerlink" title="需求/Bug描述（必填）"></a>需求/Bug描述（必填）</h4><p>在标题处，通过对需求与Bug的简短的描述，也能快速的让其他人知道我们这个提交到底是做什么的。一般情况下，简短扼要的描述就行了，如果你觉得简短的语句并不能很好的概述所需要解决的问题，那么你可以在消息体中在进行详细的描述。</p>
+<h3 id="消息体（选填）"><a href="#消息体（选填）" class="headerlink" title="消息体（选填）"></a>消息体（选填）</h3><p>消息体，可以看做对标题的细致描述。并不是所有的提交信息都复杂到需要消息主体，因此这是选填内容，仅在提交信息需要一定的解释和语境时使用。消息体主要用于解释与完善提交任务的内容和原因。接下来我们就来分别讲解消息体中包含的其他选项。</p>
+<h4 id="分析（选填）"><a href="#分析（选填）" class="headerlink" title="分析（选填）"></a>分析（选填）</h4><p>分析模块：主要对<code>需求的场景分析</code>与<code>Bug出现的原因</code>进行介绍。这里分析的作用非常重要。不仅能验证开发人员对功能或 Bug 的理解程度，还能减少公司新来的小伙伴阅读代码，了解业务的时间。</p>
+<h4 id="风险（选填）"><a href="#风险（选填）" class="headerlink" title="风险（选填）"></a>风险（选填）</h4><p>风险模块：是对标题中的<code>【有风险】</code>进行详细的阐述。具体怎么描述，根据自己的实际项目而定。</p>
+<h4 id="解决方案-（选填）"><a href="#解决方案-（选填）" class="headerlink" title="解决方案 （选填）"></a>解决方案 （选填）</h4><p>解决方案模块：该模块主要针对于<code>性能优化</code>，<code>Bug修复</code>。主要用于解释所解决的问题的方式方法。</p>
+<h4 id="测试建议-（选填）"><a href="#测试建议-（选填）" class="headerlink" title="测试建议 （选填）"></a>测试建议 （选填）</h4><p>测试建议模块：该模块主要针对于<code>新功能开发</code>，<code>Bug修复</code>。在该模块中，我们可以详细说明，有哪些界面，哪些功能需要测试。这对于采用自动化打包工具（比如 <code>Jenkins</code>）的 团队特别有用，因为我们的测试小伙伴可以在使用自动化打包工具打包时，就能看见你提交的 commit ，那么根据你提供的测试建议，他们也能知道到测试过程中需要着重测试的地方以及需要注意的地方。</p>
+<h4 id="适用范围-（选填）"><a href="#适用范围-（选填）" class="headerlink" title="适用范围 （选填）"></a>适用范围 （选填）</h4><p>适用范围模块：该模块主要包含的内容 取决于 commit 的内容是针对某一系统版本，针对于特定设备，还是包含所有。这里可以根据自身的提交来填写。</p>
+<h4 id="测试机型-选填"><a href="#测试机型-选填" class="headerlink" title="测试机型(选填)"></a>测试机型(选填)</h4><blockquote>
+<p>因为作者我是一名 Android 程序员，所以这里单独抽出了测试机型，也是合情合理的。</p>
+</blockquote>
+<p>测试机型模块：该模块主要包含内容为你当前项目所运行的设备机型。当然因为 Android 的碎片化，在实际的项目开发中，我们可能会考虑不同厂商下的不同手机型号下的不同系统版本适配的问题。所以这里的机型，并不是唯一值，还是要根据自身的提交来填写。</p>
+<p>（PS:Android 程序员就是这么辛苦，为什么工资没有 IOS 的高，不开心。）</p>
+<h4 id="自测结果"><a href="#自测结果" class="headerlink" title="自测结果"></a>自测结果</h4><p>自测结果模块：完成新功能或修改 Bug 后，填写自测结果。不仅是对我们自己工作成果的验收，还能减少因为代码的问题而增加的返工次数，虽然我们不能保证自己测试后，就没有任何的问题了，但是至少我们的态度是端正的对吧~</p>
+<h3 id="其他注意事项"><a href="#其他注意事项" class="headerlink" title="其他注意事项"></a>其他注意事项</h3><p>在进行 commit 时，我们仍然需要注意以下事项：</p>
+<ul>
+<li>我们需要保证对项目的 commit 是针对新增某一个功能或修复某一个Bug 所作的提交。而不是该提交中包含对其他功能模块的修改。</li>
+<li>我们尽量创建短小而明确的 commit ，什么是短小而明确的 commit 呢？其实很简单，我们的 commit 所涉及的文件最好不要超过10多个文件或数百行的代码更改。我们的 commit 要有针对性。</li>
+</ul>
+<h3 id="题外话"><a href="#题外话" class="headerlink" title="题外话"></a>题外话</h3><p>虽然了解一个项目的最好的方式就是 <code>read the fucking  source code</code>，但是如果项目本身有着良好的 commit ，总会给我们带来事半功倍的效果对吧。从一些小事严格要求自己，我相信以后总会为我们带来一些特别的惊喜~~</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-向仓库中添加commit（五）/" rel="next" title="Git新手教程-向仓库中添加commit(五)">
+                <i class="fa fa-chevron-left"></i> Git新手教程-向仓库中添加commit(五)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-标签、分支和合并（六）/" rel="prev" title="Git新手教程-标签、分支和合并(六)">
+                Git新手教程-标签、分支和合并(六) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于我的日志提交规范"><span class="nav-number">2.</span> <span class="nav-text">关于我的日志提交规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标题"><span class="nav-number">3.</span> <span class="nav-text">标题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类型（必填）"><span class="nav-number">3.1.</span> <span class="nav-text">类型（必填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#项目组名称-简称（非必填）"><span class="nav-number">3.2.</span> <span class="nav-text">项目组名称/简称（非必填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bug-Id（必填）"><span class="nav-number">3.3.</span> <span class="nav-text">Bug Id（必填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有无风险-非必填"><span class="nav-number">3.4.</span> <span class="nav-text">有无风险(非必填)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有无依赖-非必填"><span class="nav-number">3.5.</span> <span class="nav-text">有无依赖(非必填)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需求-Bug描述（必填）"><span class="nav-number">3.6.</span> <span class="nav-text">需求/Bug描述（必填）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息体（选填）"><span class="nav-number">4.</span> <span class="nav-text">消息体（选填）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分析（选填）"><span class="nav-number">4.1.</span> <span class="nav-text">分析（选填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#风险（选填）"><span class="nav-number">4.2.</span> <span class="nav-text">风险（选填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决方案-（选填）"><span class="nav-number">4.3.</span> <span class="nav-text">解决方案 （选填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试建议-（选填）"><span class="nav-number">4.4.</span> <span class="nav-text">测试建议 （选填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#适用范围-（选填）"><span class="nav-number">4.5.</span> <span class="nav-text">适用范围 （选填）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试机型-选填"><span class="nav-number">4.6.</span> <span class="nav-text">测试机型(选填)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自测结果"><span class="nav-number">4.7.</span> <span class="nav-text">自测结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他注意事项"><span class="nav-number">5.</span> <span class="nav-text">其他注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#题外话"><span class="nav-number">6.</span> <span class="nav-text">题外话</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">510k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15:28</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

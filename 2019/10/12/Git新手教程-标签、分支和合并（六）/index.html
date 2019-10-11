@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在之前的文章中，我们已经对仓库和提交已经有一定的了解了，在该篇文章中，我们将学习git tag、git branch、 git checkout 和 git merge。下面简单的介绍一下几个命令的功能:  使用 git tag 你可以为特定提交添加标签。标签是提交的额外标记，可以指示有用的信息。 使用 git branch 你可以创建分支。用于并行开发项目的不同功能。而不会对哪些提交属于那个">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git新手教程-标签、分支和合并(六)">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在之前的文章中，我们已经对仓库和提交已经有一定的了解了，在该篇文章中，我们将学习git tag、git branch、 git checkout 和 git merge。下面简单的介绍一下几个命令的功能:  使用 git tag 你可以为特定提交添加标签。标签是提交的额外标记，可以指示有用的信息。 使用 git branch 你可以创建分支。用于并行开发项目的不同功能。而不会对哪些提交属于那个">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/Tag展示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/Tag展示2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/git_tag_3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/git_show_1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/git_show_2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/平行世界.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支4.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支5.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支6.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支7.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/git_branch.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/显示所有分支信息.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/普通合并1.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/普通合并2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/普通合并3.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/快速合并1.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/快速合并2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示1.gif">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示4.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示5.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示6.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示7.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/冲突文件显示.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/冲突合并.gif">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示9.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示10.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/创建Tag.gif">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/删除标签.gif">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式1.2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支的删除.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/分支的合并展示.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/冲突展示框.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/遗忘解决的冲突.png">
+<meta property="og:updated_time" content="2019-10-11T16:15:28.103Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git新手教程-标签、分支和合并(六)">
+<meta name="twitter:description" content="前言在之前的文章中，我们已经对仓库和提交已经有一定的了解了，在该篇文章中，我们将学习git tag、git branch、 git checkout 和 git merge。下面简单的介绍一下几个命令的功能:  使用 git tag 你可以为特定提交添加标签。标签是提交的额外标记，可以指示有用的信息。 使用 git branch 你可以创建分支。用于并行开发项目的不同功能。而不会对哪些提交属于那个">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/Tag展示.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git新手教程-标签、分支和合并(六) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-标签、分支和合并（六）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git新手教程-标签、分支和合并(六)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-12 00:15:28" itemprop="dateCreated datePublished" datetime="2019-10-12T00:15:28+08:00">2019-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Git相关/" itemprop="url" rel="index"><span itemprop="name">Git相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">8.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">16 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在之前的文章中，我们已经对仓库和提交已经有一定的了解了，在该篇文章中，我们将学习<code>git tag</code>、<code>git branch</code>、 <code>git checkout</code> 和 <code>git merge</code>。下面简单的介绍一下几个命令的功能:</p>
+<ul>
+<li>使用 <code>git tag</code> 你可以为特定提交添加标签。标签是提交的额外标记，可以指示有用的信息。</li>
+<li>使用 <code>git branch</code> 你可以创建分支。用于并行开发项目的不同功能。而不会对哪些提交属于那个功能而感到困惑。</li>
+<li>使用 <code>git checkout</code> 你可以在不同的分支和标签之间进行切换。</li>
+<li>使用 <code>git merge</code> 可以将不同分支上的更改自动合并在一起</li>
+</ul>
+<h3 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h3><p>我们先从最简单的标签开始。</p>
+<p>假设我们已经向仓库提交了 A、B、C、D 四个commit，其中最后的一个提交也就是<code>D</code>，标志着我们项目的1.0版本。如何在Git中指出这一点呢？大家可能会觉得，我们可以在D的提交中说明这是我们的版本1.0。但是这并不是最理想的。Git像其他版本控制系统一样，提供了给提交打<code>Tag(标签)</code>的功能。也就是说我们可以给<code>D</code>提交打上标签。如下所示：</p>
+<blockquote>
+<p><code>Tag(标签)</code>一般表示比较重要的节点信息。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/Tag展示.jpg" title="Tag展示">
+<p>即使更多的提交被添加到仓库中（在下图中，我们假设在D提交之后又陆续的提交了E、F、G三个提交)，<code>Tag(标签)</code>仍然锁定着某个提交，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/Tag展示2.jpg" title="Tag展示2">
+<p>既然标签有着如此重要的作用，那现在我们来看看在Git中如何创建标签吧。在Git中标签有两种类型：<code>轻量标签</code>与<code>附注标签</code>。</p>
+<ul>
+<li>轻量标签在Git中，是不存储任何的信息，只是一个特定提交的引用。</li>
+<li>附注标签存储在Git数据中，且附注标签中包含了打标签者的名称、电子邮件，日期等信息，一般情况我们都会使用附注标签。</li>
+</ul>
+<h4 id="创建轻量标签"><a href="#创建轻量标签" class="headerlink" title="创建轻量标签"></a>创建轻量标签</h4><p>创建轻量标签的方式非常简单使用<code>git tag</code>+<code>标签名称</code>。如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag v1.0.0</span><br></pre></td></tr></table></figure>
+<h4 id="创建附注标签"><a href="#创建附注标签" class="headerlink" title="创建附注标签"></a>创建附注标签</h4><p>创建附注标签非常简单，需要在创建轻量标签的方式上，添加选项<code>-a</code>。如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -a v1.0.0</span><br></pre></td></tr></table></figure>
+<p>通过上述方式，Git会运行你配置的文本编辑器输入标签信息。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/git_tag_3.png" title="git_tag_3">
+<blockquote>
+<p>上图中，我配置的是Sublime Text，当然你也可以使用<code>git config --global core.editor</code>命令配置你喜欢的编辑器。</p>
+</blockquote>
+<p>除了使用上述方式创建附注标签以外，我们还可以使用 <code>-m</code> 选项来指定存储在标签中的信息，如果你添加了 <code>-m</code> 选项，那么Git就会绕过你配置的编辑器。如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -a v1.0.0 -m <span class="string">"发布新版本v1.0.0"</span></span><br></pre></td></tr></table></figure>
+<h4 id="轻量标签与附注标签的区别"><a href="#轻量标签与附注标签的区别" class="headerlink" title="轻量标签与附注标签的区别"></a>轻量标签与附注标签的区别</h4><p>在讲解了轻量标签与附注标签的使用之后，我们来看一下这两个标签的实际区别，我们可以通过<code>git show</code>命令查看实际的区别，我们先查看附注标签，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/git_show_1.png" title="git_show_1">
+<p>通过使用<code>git show v1.0.0</code>，你可以看到命令行的输出中是包含Tag信息的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tag v1.0.0</span><br><span class="line">Tagger: AndyJennifer &lt;1225868370@qq.com&gt;</span><br><span class="line">Date:   Sun Sep 15 18:20:28 2019 +0800</span><br><span class="line"></span><br><span class="line">发布新版本v1.0.0</span><br></pre></td></tr></table></figure>
+<p>而创建的轻量标签中，是不包含该信息的，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/git_show_2.png" title="git_show_2">
+<p>需要注意的是，创建的标签总是与commit进行绑定的。比如在上图中，标签是指向 <code>441796...</code> 这个提交的。</p>
+<h4 id="标签的删除"><a href="#标签的删除" class="headerlink" title="标签的删除"></a>标签的删除</h4><p>要删除掉本地的标签，我们可以使用命令 <code>git tag -d &lt;tagname&gt;</code> 。例如使用下面的命令删除标签:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git tag -d v1.0.0</span><br><span class="line">Deleted tag <span class="string">'v1.0.0'</span> (was 3132ff5)</span><br></pre></td></tr></table></figure>
+<p>其中 <code>-d</code> 选项表示<code>delete(删除)</code>。</p>
+<h4 id="向以前的提交的-commit-添加标签"><a href="#向以前的提交的-commit-添加标签" class="headerlink" title="向以前的提交的 commit 添加标签"></a>向以前的提交的 commit 添加标签</h4><p>通过运行 <code>git tag -a v1.0.0</code> ，我们可以给最近的commit添加标签，但是如果你想向仓库中很久之前的commit添加标签呢？很简单！我们可以在原来的命令基础上，直接添加对应的commit的 <code>SHA</code> 即可。</p>
+<blockquote>
+<p>使用 <code>git log</code> 命令查看历史提交记录。这里我们可以提供完整的<code>SHA</code>，或<code>SHA</code> 的 <code>前七个</code> 字符，</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git tag -a v1.0.0 abd12d0</span><br></pre></td></tr></table></figure>
+<p>在上述命令中，我们为 <code>abd12d0</code> 这个提交打上了标签。</p>
+<h3 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h3><p>在Git中，分支就像是科幻电影中的<code>平行世界</code>。每个平行世界都运行在独立的环境中，在正常情况下，每个平行世界中所作的事，对于现实世界或另一个平行世界是无感知的且不影响的。在某些特殊的情况下，平行世界与现实世界可能重合，那么就会产生混乱与冲突。那这个时候就需要我们来解决这些冲突与问题。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/平行世界.jpg" title="平行世界">
+<p>扯太远了，分支在Git中，主要用于项目的开发或者对项目进行修正。因为所有的修改都是在分支中进行，所以并不会影响到项目（项目一般在主分支上，一般是 <code>master</code> 分支）。当我们在分支中进行更改后，我们可以将分支中的内容合并到分支上，这种分支组合过程，称为<code>合并（merge)</code>。后续我们会一一讲解这些内容。</p>
+<p>那么接下来，我们来看看Git中分支的使用方式和重要的概念。</p>
+<h4 id="master-分支与-HEAD-指针"><a href="#master-分支与-HEAD-指针" class="headerlink" title="master 分支与 HEAD 指针"></a>master 分支与 HEAD 指针</h4><p>在下图仓库中，我们创建了一些提交，并在提交<code>D</code>中创建了名为 <code>v1.0</code> 的标签，除了标签以外还包含一个隐藏的 <code>master</code> 分支。在我们没有创建分支的情况下，Git会为我们创建一个名为 <code>master</code> 的分支。其实 <code>master</code> 的本质其实是一个 <code>指针</code> 。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支1.png" title="分支1">
+<blockquote>
+<p>master 并没有什么特殊的意义，它只是第一个默认分支名。</p>
+</blockquote>
+<p>随着我们不断向仓库进行提交，这些提交都会添加到该分支上。同时 <code>master指针</code> 也会指向对应提交。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支2.png" title="分支2">
+<p>在上图中，<code>masetr</code> 指针随着提交而不断移动。图中<code>红线</code>所连接的提交都属于 <code>master</code> 分支。</p>
+<blockquote>
+<p>相对于 <code>Tag(标签)</code> ，分支指针不会永久的指向某次提交，而是会随着提交不断的移动。</p>
+</blockquote>
+<h5 id="HEAD指针"><a href="#HEAD指针" class="headerlink" title="HEAD指针"></a>HEAD指针</h5><p>在某些情况下，我们可能会创建另一个分支。在下图中，我们又创建了另一分支 <code>branch1</code> 。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支3.png" title="分支3">
+<p>这个时候如果我们再进行一个提交，哪个分支会移动呢？是 <code>master</code> 还是 <code>branch1</code> 分支呢？这里就涉及到另一个知识点—-&gt; <code>HEAD</code> 指针。</p>
+<p>在Git中，<code>HEAD</code> 总是指向当前活跃的分支。在你没有切换分支的情况下，默认指向 <code>master</code> 分支。如下图所示。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支4.jpg" title="分支4">
+<p>因为当前 <code>HEAD指针</code> 指向 <code>master</code> 分支，所以当我们再向仓库提交一个<code>I</code>提交对象时，该提交仍然会在 <code>master</code> 分支上。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支5.jpg" title="分支5">
+<p>当然我们可以改变 <code>HEAD</code> 指针所指向的内容， 使用 <code>git checkout</code> 命令，我们可以切换 <code>HEAD</code> 指针所指向的分支。比如我们可以通过命令<code>git checkout branch1</code>，将 <code>HEAD</code> 指针指向 <code>branch1</code> 。</p>
+<p>当我们切换分支到 <code>branch1</code> 后，我们后续的提交，都会添加到 <code>branch1</code> 分支上。比如下图，我们又创建了一个 <code>A提交</code> ，那么这时 <code>branch1</code> 分支指针会指向该提交。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支6.jpg" title="分支6">
+<h5 id="分支中的提交的可见性"><a href="#分支中的提交的可见性" class="headerlink" title="分支中的提交的可见性"></a>分支中的提交的可见性</h5><p>需要注意的是，分支中的提交对于其他分支来说是不可见的。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支7.jpg" title="分支7">
+<p>在上图中，如果我们当前切换到了 <code>master</code> 分支，那么在我们的工作目录与文件系统中， <code>branch1</code> 分支的 <code>A</code> 与 <code>branch2</code> 分支中的 <code>J</code> ，这两个提交对文件造成的更改，将不会出现在 <code>master</code> 分支上的任何文件中。如果需要查看这个两个对应的文件修改，只需要切换到我们想要查找的提交所在的分支就行了。</p>
+<p>我们基本已经熟悉了分支的相关概念与整体流程后，下面我们来学习一下<br>相关命令的使用。</p>
+<h5 id="创建分支"><a href="#创建分支" class="headerlink" title="创建分支"></a>创建分支</h5><p>创建分支其实很简单，只需使用 <code>git branch + 分支名称</code> 。如果你想创建一个叫做 <code>&quot;branch1&quot;</code> 的分支，只需运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch branch1</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，如果你在某个提交上创建了一个分支，那么该提交之前的所有提交也是属于当前分支，在下图中，在 <code>H</code> 提交中使用了创建分支命令创建了 <code>branch1</code> 分支，那么在 <code>H</code> 提交之前的 <code>D、E、F、G</code> 也都属于 <code>branch1</code> 分支。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支3.png" title="分支3">
+<p>上图中 <code>branch1</code> 分支如蓝线所示。</p>
+<h5 id="以前的提交的-commit-添加分支"><a href="#以前的提交的-commit-添加分支" class="headerlink" title="以前的提交的 commit 添加分支"></a>以前的提交的 commit 添加分支</h5><p>当然，与创建标签一样，我们也可以向以前的提交的 commit 添加分支。在下述命令中，我们在 <code>SHA</code> 为 <code>dfs14fo</code> 的提交中创建了test分支。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch <span class="built_in">test</span> dfs14fo</span><br></pre></td></tr></table></figure>
+<h4 id="切换分支"><a href="#切换分支" class="headerlink" title="切换分支"></a>切换分支</h4><p>要切换到另一个分支，我们需要使用命令 <code>git checkout</code> 命令，比如我们需要切换到分支<code>dev</code>上，那么我们可以使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout dev</span><br></pre></td></tr></table></figure>
+<p>通过上述操作，<code>HEAD</code> 指针会指向 <code>dev</code> ，需要注意的是，当你切换分支时，在你的工作目录中，会删除其他分支中 <code>commit</code> 引用的所有文件，同时会引用 <code>dev</code> 分支中的 <code>commit</code> 引用的文件。当然你不用担心真的删除了你另一分支上的文件。Git会将它们都存储在仓库中。当你切换回来后，又会将对应分支引用的文件显示在你的工作目录中。</p>
+<h4 id="分支的查看"><a href="#分支的查看" class="headerlink" title="分支的查看"></a>分支的查看</h4><p>如果你需要查看当前项目的分支，可以使用 <code>git branch</code> 命令，通过该命令我们不仅可以知道仓库中所创建的分支，还能查看当前活跃的分支，也就是 <code>HEAD</code> 指针指向的分支。</p>
+<p>在下图中，<code>星号(*)</code> 标记的为当前活跃的分支。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/git_branch.png" title="git_branch">
+<h5 id="查看所有分支"><a href="#查看所有分支" class="headerlink" title="查看所有分支"></a>查看所有分支</h5><p>通过使用 <code>git branch</code>命令，我们只能查看当前活跃的分支，如果说我们的项目有不同的分支，我们又想查看所有分支提交内容，那么我们又该怎么办了呢？还记得我们之前提到过的 <code>git log</code>指令吗，这里我们将添加 <code>--graph</code> 与 <code>--all</code>选项。</p>
+<ul>
+<li><code>--graph</code> 选项：将条目和行添加到输出的最左侧。</li>
+<li><code>--all</code> 选项：将显示仓库中的所有的分支信息。</li>
+</ul>
+<p>那么我们可以使用如下命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --oneline --graph --all</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>--oneline</code> 可以省略掉 commit 中的日期、作者等信息。以最简单的形式显示commit信息。</p>
+</blockquote>
+<p>通过此命令，我们能查看仓库中的所有的分支和 commit 信息：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/显示所有分支信息.png" title="显示所有分支信息">
+<h4 id="分支删除"><a href="#分支删除" class="headerlink" title="分支删除"></a>分支删除</h4><p>在上文中，我们提到，分支一般用于进行开发或对项目进行修正。当我们将分支的更改 <code>合并(merge)</code> 到 <code>master</code> 分支后，我们可能就不再需要该分支了。那么这个时候如果我们想删除分支，那么我们使用命令 <code>git branch -d + 分支名称</code>来删除我们想要删除的分支。这里我们以删除<code>dev</code>分支为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -d dev</span><br></pre></td></tr></table></figure>
+<p>在删除分支的时候，我们需要注意以下两点：</p>
+<ul>
+<li>如果我们已经使用 <code>git checkout dev</code> 命令切换到<code>dev</code> 分支上的话，那么我们是不能删除 <code>dev</code> 分支的。我们需要切换到其他分支上，才能删除该分支。</li>
+<li>如果 <code>dev</code> 分支上有任何的commit，那么通过 <code>-d</code> 选项是不能删除该分支的，你需要使用大写的 <code>D</code> 选项，也就是使用 <code>git branch -D dev</code>。</li>
+</ul>
+<h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><p>分支的主要作用就是让我们做出不影响 <code>master</code> 分支的更改，当我们在非 <code>master</code> 分支上做出更改后，如果觉得不需要该分支上的更改，则可以删掉该分支，或者你可以将给分支上的内容与其他分支进行合并。</p>
+<blockquote>
+<p>将分支组合到一起的这种行为，我们称之为<code>合并(merge)</code>。</p>
+</blockquote>
+<p>在Git中使用 <code>git merge</code> 命令来合并分支：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge &lt;other-branch&gt;</span><br></pre></td></tr></table></figure>
+<p>在Git中 <code>合并(merge)</code> 的方式有两种类型。一种是普通合并，另一种是快进合并。下面我们就来分别了解这两种合并方式。</p>
+<h4 id="普通合并"><a href="#普通合并" class="headerlink" title="普通合并"></a>普通合并</h4><p>假设我们的项目存在这两条分支 <code>master</code> 与 <code>branch1</code> 两条分支。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/普通合并1.jpg" title="普通合并1">
+<p>这个时候我们想将 <code>branch1</code> 合并到 <code>master</code> 分支上，由于当前<code>HEAD</code>指向 <code>master</code> 分支，所以当两个分支合并时，将会生成一个合并提交 <code>B</code> 将放置在 <code>master</code> 分支上，并且 <code>master指针</code> 将会向前移动。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/普通合并2.jpg" title="普通合并2">
+<p>需要注意的是， <code>B提交</code> 会链接<code>branch1</code>中的 <code>4</code> 与 <code>A</code> 提交。同时当分支进行合并时，并不会影响到之前的分支，比如我们仍然可以切换到<code>branch1</code>分支上，并创建一个新的提交 <code>J</code> ,如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/普通合并3.jpg" title="普通合并3">
+<h4 id="快进合并"><a href="#快进合并" class="headerlink" title="快进合并"></a>快进合并</h4><p>假设我们的项目存在这两条分支<code>master</code>与<code>branch1</code>支。且<code>branch1</code>分支在<code>master</code>分支前面。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/快速合并1.jpg" title="快速合并1">
+<p>因为<code>master</code>中是不包含 <code>branch1</code> 中的提交<code>(I,K,2)</code>。如果这个时候我们想将这些提交纳入<code>master</code>分支中，也就是需要将 <code>branch1</code> 分支 <code>合并(merge)</code> 到 <code>master</code> 分支中。当我们在<code>master</code>分支中使用命令 <code>git merge branch1</code> 时，因为 <code>branch1分支</code> 在 <code>master分支</code> 前，Git会做一个所谓的<code>快进合并</code>。如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/快速合并2.jpg" title="快速合并2">
+<p>在上图中，<code>master</code>分支移动到了<code>branch1</code>分支指向的commit。需要注意的是，快进合并并不像普通合并那样再创建一个提交。</p>
+<h3 id="合并冲突"><a href="#合并冲突" class="headerlink" title="合并冲突"></a>合并冲突</h3><p>大部分情况下，我们都能成功的合并分支，但是某些情况下，Git无法自动的进行合并，当合并失败时，就称为<code>合并冲突</code>。当出现冲突时，我们需要手动的去修复文件中的冲突。看下面的例子：</p>
+<p>在例子中，我们已经创建了一个名为<code>GitTestProject</code>的仓库，在仓库中我们已经添加了一个名为<code>Jvm系列之总目.md</code>文件到仓库中，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示1.gif" title="合并演示1">
+<p>其中 <code>Jvm系列之总目.md</code> 文件中的内容如下</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示2.png" title="合并演示2">
+<p>这个时候我们通过 <code>git branch dev</code> 命令创建了 <code>dev</code> 分支，并切换到该分支中，这个时候我们原文中添加了下图中<code>红框</code>中的内容。</p>
+<blockquote>
+<p>注意的是，你需要经常使用<code>git branch</code>来查看活跃分支</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示3.png" title="合并演示3">
+<p>在修改该文件并保存后，我们可以通过<code>git status</code>查看当前仓库的状态，然后我们将在<code>dev</code>分支修改的内容进行commit。内容如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示4.png" title="合并演示4">
+<p>我们在原来的文件中，添加了一句<code>Java class文件格式</code>。接下来，我们通过<code>git checkout master</code>切换到 <code>master</code> 分支，然后继续修改该文件，同样的修改的内容如红框所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示5.png" title="合并演示5">
+<p>同样的，在我们完成修改后，我们将在<code>master</code>分支修改的内容进行commit。内容如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示6.png" title="合并演示6">
+<p>当提交完毕后，如果我们想将<code>dev</code>分支合并到 <code>master</code>分支中，使用<br><code>git merge dev</code>命令，我们可以看到如下报错：</p>
+<blockquote>
+<p>当使用 <code>git merge</code> 命令时，你一定要注意当前所在的分支，你可以通过 <code>git branch</code> 或者 <code>git status</code> 来查看。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示7.png" title="合并演示7">
+<p>在上图中，Git告诉我们文件 <code>Jvm系列之总目录.md</code> 出现了冲突。这个时候我们再打开该文件，我们可能看到如下内容:</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/冲突文件显示.png" title="冲突文件显示">
+<p>在该文件中显示了一些特殊的一些符号，其实这些符号是Git定义的<code>合并冲突指示符</code>，下面对这些指示符进行介绍：</p>
+<ul>
+<li><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> 此行下方的所有内容（直到下个指示符）显示了当前分支上的行</li>
+<li><code>=======</code> 表示原始行内容的结束位置，之后的所有行（直到下个指示符）是被合并的当前分支上的行的内容</li>
+<li><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; dev</code> 是要被合并的分支（此例中是 dev 分支）上的行结束指示符</li>
+</ul>
+<blockquote>
+<p>注意一个文件可能在多个部分存在合并冲突，因此检查整个文件中的合并冲突指示符，搜索 &lt;&lt;&lt; 能够帮助你找到所有这些指示符。</p>
+</blockquote>
+<p>当出现冲突时，我们需要手动的删除掉这些指示符，在该例子中，我们想保留两个分支提交的内容，那么我们可以进行如下操作：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/冲突合并.gif" title="冲突合并">
+<blockquote>
+<p>注意：因为 <code>dev</code> 分支与 <code>master</code> 分支修改的是同一文件，那么结合上文我们所讲解的合并的类型，那么上例中的提交为<code>普通合并</code>，故需要一个新的提交。</p>
+</blockquote>
+<p>当然，当我们解决冲突后，我们仍然需要将修改的内容 <code>add</code> 到暂存区中，然后提交。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示9.png" title="合并演示9">
+<p>当提交完毕后，我们再使用<code>git log</code>命令，我们就能看到我们的提交记录啦。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/合并演示10.png" title="合并演示10">
+<p>在上述提交记录中，我们可以看到 <code>master</code> 分支上不仅包含了 <code>dev</code> 分支上的提交，还包括了一个合并的提交(merge branch ‘dev’)。</p>
+<h3 id="IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><a href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用" class="headerlink" title="IntelliJ IDEA or Android Sutdio 图形化界面的使用"></a>IntelliJ IDEA or Android Sutdio 图形化界面的使用</h3><p>最后还是回到我们熟悉的图形化界面的使用流程中。我们来看看IDEA为我们提供了哪些便利吧。</p>
+<h4 id="Tag的创建"><a href="#Tag的创建" class="headerlink" title="Tag的创建"></a>Tag的创建</h4><p>通过依次点击编译器底部的 <code>Version Control</code> -&gt; <code>Log</code> ，选择我们想创建 <code>Tag</code> 的 commit ，然后点击鼠标右键,依次选择 <code>New</code> -&gt; <code>Tag</code> ,并输入你想输入的 Tag 名称就行啦，具体如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/创建Tag.gif" title="创建Tag">
+<p>在创建<code>Tag</code>成功后，在该commit记录中会有一个灰色的标签。</p>
+<h4 id="Tag的删除"><a href="#Tag的删除" class="headerlink" title="Tag的删除"></a>Tag的删除</h4><p>标签的删除也特别简单，在Git提交记录中点击包含我们所创建的标签的commit,然后点击随便右键，依次选择<code>标签名称</code>-&gt;<code>delete</code>。就可以完成标签的删除啦。具体如下所示；</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/删除标签.gif" title="删除标签">
+<h4 id="分支的创建"><a href="#分支的创建" class="headerlink" title="分支的创建"></a>分支的创建</h4><p>在 <code>IntelliJ IDEA</code> or <code>Android Sutdio</code>中，创建分支的地方大概有三个。我先说一下他们的具体位置，与他们之间的区别。</p>
+<h5 id="第一种方式"><a href="#第一种方式" class="headerlink" title="第一种方式"></a>第一种方式</h5><p>在编译器中，我们只要选择工具栏中的<code>VCS</code>-&gt;<code>Git</code>-&gt;<code>Branches</code>，就可以从创建分支啦。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式1.png" title="创建分支方式1">
+<p>根据上述操作后，会弹出如下选择框，这个时候我们只要选择 <code>New Branch</code> 选项就可以创建分支了。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式1.2.png" title="创建分支方式1">
+<p>下面对该选择框中的内容进行简单的介绍：</p>
+<ul>
+<li>New Branch: 创建新的分支。</li>
+<li>Checkout Tag or Revision…:切换到相应Tag或分支。</li>
+<li>Local Branches:本地所有的分支。</li>
+<li>Remote Branches:远程分支。(关于远程分支，会在后文介绍)。</li>
+</ul>
+<p>需要注意的是：通过该种方式创建的分支。分支指针所指向的commit，是你所在分支下<code>最新的commit!!!!</code>。</p>
+<h5 id="第二种方式"><a href="#第二种方式" class="headerlink" title="第二种方式"></a>第二种方式</h5><p>第二种方式创建分支，是通过点击编译器<code>最右下角</code>的 <code>Git:master</code>（该左下角的内容可能变化，比如你切换到了dev分支上，那么这个时候显示的是 <code>Git:dev</code> 。这里以 <code>master</code> 分支为例，来创建分支。</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式2.png" title="创建分支方式2">
+<p>通过该种方式创建的分支。分支指针所指向的commiit，是你所在分支下<code>最新的commit!!!!</code>。</p>
+<h5 id="第三种方式"><a href="#第三种方式" class="headerlink" title="第三种方式"></a>第三种方式</h5><p>通过依次点击编译器底部的<code>Version Control</code>-&gt;<code>Log</code>，然后选中我们需要创建分支的commmit,然后点击鼠标右键，选择 <code>New</code> -&gt;<code>Branch</code></p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/创建分支方式3.png" title="创建分支方式3">
+<p>通过上述这种方式所创建的分支，分支指针所指向的commit为你选中的commit。</p>
+<h4 id="分支的删除"><a href="#分支的删除" class="headerlink" title="分支的删除"></a>分支的删除</h4><p>分支的删除也比较简单，通过依次点击编译器底部的<code>Version Control</code>-&gt;<code>Log</code>，然后找到有分支的commit，点击鼠标<code>右</code>键，找到你要删除的分支名称，然后选择 <code>delete</code> 就可以删除分支了。这里以删除分支 <code>fix-23</code> 为例：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支的删除.png" title="分支的删除">
+<h4 id="分支的合并"><a href="#分支的合并" class="headerlink" title="分支的合并"></a>分支的合并</h4><p>分支的合并也同样的简单。</p>
+<ul>
+<li>要么我们只要选择工具栏中的<code>VCS</code>-&gt;<code>Git</code>-&gt;<code>Branches</code> 弹出下列选择框，</li>
+<li>要么是通过点击编译器<code>最右下角</code>的 <code>Git:master</code>（该左下角的内容可能变化，比如你切换到了 <code>dev</code> 分支上，那么这个时候显示的是 <code>Git:dev</code>）</li>
+</ul>
+<p>然后我们就可以选择相应的分支合并到对应分支下了，比如这里我们以 <code>master</code> 分支需要合并 <code>dev</code> 分支为例：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/分支的合并展示.png" title="分支的合并展示">
+<p>在上述图中，我们只用选择 <code>Merge into Current</code> 就可以了，需要注意的是，当我们选择合并分支时，我们需要切换到正确的的分支上。</p>
+<h5 id="分支的切换"><a href="#分支的切换" class="headerlink" title="分支的切换"></a>分支的切换</h5><p>怎样切换分支？参考上图，当我们选择了 <code>dev</code> 分支后，右方有一个 <code>Checkout</code> 选项，只要点击该选项，我们就能切换到对应分支啦~~~</p>
+<h4 id="解决冲突"><a href="#解决冲突" class="headerlink" title="解决冲突"></a>解决冲突</h4><p>当合并分支出现冲突的时候，编译器会提示我们合并冲突，会弹出如下代码框：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/冲突展示框.png" title="冲突展示框">
+<p>整个代码块分为三个部分：</p>
+<ul>
+<li>左边(<code>Left</code>) <code>Your version</code> : 代表你当前分支上的更改。</li>
+<li>右边(<code>Right</code>) <code>Change from branch</code> :代表你合并的分支。</li>
+<li>中间的 <code>Result</code> 代表经过处理后的内容。</li>
+</ul>
+<p>内容区域的代码颜色分为四个部分：</p>
+<ul>
+<li>红色区域：代表当前分支和合并分支都编辑过的内容，属于冲突</li>
+<li>蓝色区域：代表被单方面编辑过的内容，属于更改。</li>
+<li>灰色区域：代表被删除的内容，属于更改。</li>
+<li>绿色区域：代表新增的内容，属于更改。</li>
+</ul>
+<p>对于冲突与更改，我们都可以使用左侧或右侧的 <code>&gt;&gt;</code> 按钮来应用你想应用的更改，如果你并不想应用这些更改你可以使用 <code>X</code> 按钮。最终你的所有的操作都会应用到中间的<code>Result</code>代码中。</p>
+<p>当所有的冲突都被解决，所有更改都被应用后。我们可以点击 <code>Apply</code> 按钮来完成我们最终的合并操作。</p>
+<p>当然你也可以点击 <code>Accept Left</code> 还是 <code>Accept Right</code> 按钮来选择应用当前分支的内容还是其他分支的内容。这个根据你直接的实际需求而定。</p>
+<blockquote>
+<p>深度学习：查看 IntelliJ IDEA 中的官方介绍：<a href="https://www.jetbrains.com/help/idea/2019.2/resolving-conflicts.html" target="_blank" rel="noopener">Resolve Conflicts</a></p>
+</blockquote>
+<h4 id="小提示"><a href="#小提示" class="headerlink" title="小提示"></a>小提示</h4><p>如果说当你合并冲突的时候，不小心点击了 <code>Abort</code> 按钮，不用担心，你仍然可以点击鼠标<code>右键</code>，依次选择 <code>Git</code> -&gt;<br><code>Resolve Conflicts</code>选项来解决冲突。 如下所示：</p>
+<img src="/2019/10/12/Git新手教程-标签、分支和合并（六）/遗忘解决的冲突.png" title="遗忘解决的冲突">
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>站在巨人的肩膀上，才能看的更远~</p>
+<ul>
+<li><a href="https://git-scm.com/book/zh/v2/Git-分支-分支简介" target="_blank" rel="noopener">Git-分支-分支简介</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-日志提交规范（五）补充/" rel="next" title="Git新手教程-日志提交规范（五）补充">
+                <i class="fa fa-chevron-left"></i> Git新手教程-日志提交规范（五）补充
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-撤销更改（七）/" rel="prev" title="Git新手教程-撤销更改(七)">
+                Git新手教程-撤销更改(七) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标签"><span class="nav-number">2.</span> <span class="nav-text">标签</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建轻量标签"><span class="nav-number">2.1.</span> <span class="nav-text">创建轻量标签</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建附注标签"><span class="nav-number">2.2.</span> <span class="nav-text">创建附注标签</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#轻量标签与附注标签的区别"><span class="nav-number">2.3.</span> <span class="nav-text">轻量标签与附注标签的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#标签的删除"><span class="nav-number">2.4.</span> <span class="nav-text">标签的删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向以前的提交的-commit-添加标签"><span class="nav-number">2.5.</span> <span class="nav-text">向以前的提交的 commit 添加标签</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分支"><span class="nav-number">3.</span> <span class="nav-text">分支</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master-分支与-HEAD-指针"><span class="nav-number">3.1.</span> <span class="nav-text">master 分支与 HEAD 指针</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#HEAD指针"><span class="nav-number">3.1.1.</span> <span class="nav-text">HEAD指针</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#分支中的提交的可见性"><span class="nav-number">3.1.2.</span> <span class="nav-text">分支中的提交的可见性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建分支"><span class="nav-number">3.1.3.</span> <span class="nav-text">创建分支</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#以前的提交的-commit-添加分支"><span class="nav-number">3.1.4.</span> <span class="nav-text">以前的提交的 commit 添加分支</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#切换分支"><span class="nav-number">3.2.</span> <span class="nav-text">切换分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支的查看"><span class="nav-number">3.3.</span> <span class="nav-text">分支的查看</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#查看所有分支"><span class="nav-number">3.3.1.</span> <span class="nav-text">查看所有分支</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支删除"><span class="nav-number">3.4.</span> <span class="nav-text">分支删除</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合并"><span class="nav-number">4.</span> <span class="nav-text">合并</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#普通合并"><span class="nav-number">4.1.</span> <span class="nav-text">普通合并</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快进合并"><span class="nav-number">4.2.</span> <span class="nav-text">快进合并</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合并冲突"><span class="nav-number">5.</span> <span class="nav-text">合并冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><span class="nav-number">6.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Tag的创建"><span class="nav-number">6.1.</span> <span class="nav-text">Tag的创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tag的删除"><span class="nav-number">6.2.</span> <span class="nav-text">Tag的删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支的创建"><span class="nav-number">6.3.</span> <span class="nav-text">分支的创建</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#第一种方式"><span class="nav-number">6.3.1.</span> <span class="nav-text">第一种方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第二种方式"><span class="nav-number">6.3.2.</span> <span class="nav-text">第二种方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第三种方式"><span class="nav-number">6.3.3.</span> <span class="nav-text">第三种方式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支的删除"><span class="nav-number">6.4.</span> <span class="nav-text">分支的删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支的合并"><span class="nav-number">6.5.</span> <span class="nav-text">分支的合并</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#分支的切换"><span class="nav-number">6.5.1.</span> <span class="nav-text">分支的切换</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决冲突"><span class="nav-number">6.6.</span> <span class="nav-text">解决冲突</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小提示"><span class="nav-number">6.7.</span> <span class="nav-text">小提示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">7.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">510k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15:28</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

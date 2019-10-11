@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在前面的文章中，我们一直介绍的在本地Git的仓库相关知识点。而在实际的项目开发中，大多数情况下，我们往往需要和他人进行合作。因此学习如何与他人协作开发项目使我们必须要学习与掌握的知识点。在接下的的文章中，我们将讲解什么是远程仓库，以及如何运用远程仓库。在本文中将介绍如下命令：  git remote：管理远程仓库。 git push ：将修改推送到远程仓库上。 git pull ：将从远程仓库">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git新手教程-远程仓库(九)">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在前面的文章中，我们一直介绍的在本地Git的仓库相关知识点。而在实际的项目开发中，大多数情况下，我们往往需要和他人进行合作。因此学习如何与他人协作开发项目使我们必须要学习与掌握的知识点。在接下的的文章中，我们将讲解什么是远程仓库，以及如何运用远程仓库。在本文中将介绍如下命令：  git remote：管理远程仓库。 git push ：将修改推送到远程仓库上。 git pull ：将从远程仓库">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/远程仓库1.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/远程仓库2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/GitHub_创建仓库.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/GitHub_创建仓库2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/GitHub_创建仓库3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/git_remote.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/本地仓库commit.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库4.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改1.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改4.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改5.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改6.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改7.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改8.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改9.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改10.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改11.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/idea_1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/idea_2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/idea_3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/idea_4.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/idea_5.png">
+<meta property="og:updated_time" content="2019-10-11T16:16:10.295Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git新手教程-远程仓库(九)">
+<meta name="twitter:description" content="前言在前面的文章中，我们一直介绍的在本地Git的仓库相关知识点。而在实际的项目开发中，大多数情况下，我们往往需要和他人进行合作。因此学习如何与他人协作开发项目使我们必须要学习与掌握的知识点。在接下的的文章中，我们将讲解什么是远程仓库，以及如何运用远程仓库。在本文中将介绍如下命令：  git remote：管理远程仓库。 git push ：将修改推送到远程仓库上。 git pull ：将从远程仓库">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/远程仓库1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git新手教程-远程仓库(九) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-远程仓库（九）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git新手教程-远程仓库(九)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-12 00:16:10" itemprop="dateCreated datePublished" datetime="2019-10-12T00:16:10+08:00">2019-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Git相关/" itemprop="url" rel="index"><span itemprop="name">Git相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">13 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在前面的文章中，我们一直介绍的在本地Git的仓库相关知识点。而在实际的项目开发中，大多数情况下，我们往往需要和他人进行合作。因此学习如何与他人协作开发项目使我们必须要学习与掌握的知识点。在接下的的文章中，我们将讲解什么是远程仓库，以及如何运用远程仓库。在本文中将介绍如下命令：</p>
+<ul>
+<li>git remote：管理远程仓库。</li>
+<li>git push ：将修改推送到远程仓库上。</li>
+<li>git pull ：将从远程仓库上获取更新，并合并。</li>
+<li>git fetch ：将从远程仓库上获取更新</li>
+</ul>
+<h3 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h3><p>当使用 Git 来管理我们的项目时，这对本地项目来说非常方便，但是如果需要与他人共享这些本地仓库，我们就需要依托其他工具，比如 <code>GitLab</code> 、<code>GitHub</code>、等其他用于托管版本控制仓库的服务，来创建远程仓库。那什么是远程仓库呢？</p>
+<blockquote>
+<p>Git 是用于管理仓库的工具，主要在命令行上使用，<code>Git lab</code> or <code>GitHub</code> 是托管服务，我们通常会在浏览器中与其进行交互。</p>
+</blockquote>
+<h4 id="什么是远程仓库"><a href="#什么是远程仓库" class="headerlink" title="什么是远程仓库"></a>什么是远程仓库</h4><p>我们都知道 Git 是一个<strong>分布式</strong>版本控制系统，那么这就意味着，使用 Git 是不存在主仓库的概念的，因此每个开发者都是使用的都是仓库的一个副本，那么也就是说，远程仓库其实是我们本地仓库的<code>副本</code>，只是它们位于其他地方。比如位于 <code>GitLab</code> 或者 <code>GitHub</code> 上，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/远程仓库1.jpg" title="远程仓库1">
+<blockquote>
+<p>需要注意的是，我们并不限于使用一个远程仓库，我们可以根据我们自己的需求创建多个远程仓库。</p>
+</blockquote>
+<p>当我们创建远程仓库后，我们就可以和他人进行协同开发了，比如你可以将本地仓库的更改推送到远程仓库，然后其他同事可以从远程仓库中拉取更改到他们的本地仓库中。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/远程仓库2.jpg" title="远程仓库2">
+<h3 id="添加远程仓库"><a href="#添加远程仓库" class="headerlink" title="添加远程仓库"></a>添加远程仓库</h3><p>在上文中，我们说过远程仓库需要依托于其他工具，这里我们将我们的远程仓库放在 GitHub 上进行托管，这里再次强调一下：</p>
+<ul>
+<li>Git 是版本控制工具</li>
+<li>GitHub or GitLab 是托管 Git 项目的服务。</li>
+</ul>
+<p>那接下来，我们将在GitHub上创建一个仓库，如果你还没有账户，那么快去<a href="https://github.com" target="_blank" rel="noopener">官网</a>整一个账号吧~~~ 当我们创建好账号并登录后，将位于如下主页：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/GitHub_创建仓库.png" title="GitHub_创建仓库">
+<p>这里我们点击右侧的 <code>+</code> 符号，选择 <code>New Repostiry</code> ，那么接下来我们将跳转到创建仓库界面：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/GitHub_创建仓库2.png" title="GitHub_创建仓库2">
+<ul>
+<li><code>Repostiry name</code> ：这里需要填写仓库的名称（一般情况下，我们都是使用项目名称作为仓库的名称，不用纠结一个完美的名称，仓库的名称可以随时更改）</li>
+<li><code>Description</code> ：这里需要填写仓库的描述，该选项是选填项。</li>
+<li><code>Public/Private</code> ：这里需要填写仓库的模式 ，<code>Public</code> 表示公开，意味着任何人都可以查看该仓库中的所有代码，<code>Private</code> 表示私有，意味着只有仓库拥有者，才有权查看该仓库中的代码。在 GitHub 中允许我们创建一定数量的私有仓库。</li>
+<li><code>Initialize this repository with the README</code>：表示是否在创建仓库时创建 README 文件，如果勾选，表示创建，反之不创建。</li>
+</ul>
+<p>在创建完成仓库后，我们会得到如下界面：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/GitHub_创建仓库3.png" title="GitHub_创建仓库3">
+<p>在 GitHub 中也提供了两种 URL 方式，第一种<code>HTTPS</code> 方式，第二种 <code>SSH</code> 方式。这里我们采用 HTTPS 的方式。同时 GitHub 中有三种方式来处理远程仓库与本地仓库的关联：</p>
+<blockquote>
+<p>关于 GitHub 提供的 SSH 方式，可以参看 <a href="https://help.github.com/articles/connecting-to-github-with-ssh/" target="_blank" rel="noopener">GitHub-SSH</a></p>
+</blockquote>
+<ul>
+<li>第一种，在本地创建<code>新</code>的仓库并与远程仓库关联。</li>
+<li>第二种，将<code>已有</code>的本地仓库中的内容推送到现在的 GitHub 新建的远程仓库中。</li>
+<li>第三种，从已有的仓库中导入代码，使用这种模式需要我们提供相应的URL。</li>
+</ul>
+<p>在上图 GitHub 中已经提供了关联远程仓库的相关指令，大家可以根据实际的需求来选择不同的方式来关联远程仓库。</p>
+<h4 id="本地仓库如何与远程仓库关联"><a href="#本地仓库如何与远程仓库关联" class="headerlink" title="本地仓库如何与远程仓库关联"></a>本地仓库如何与远程仓库关联</h4><p>在上述文章中，我们只介绍了如何创建远程仓库，并没有实际将本地仓库与远程仓库进行关联。那下面我们将本地已有的仓库与远程仓库进行关联。</p>
+<p>因为我已经创建了本地仓库 <code>GitTestProject</code> ，那么根据之前 GitHub 中给我们的提示，我们需要使用命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin https://github.com/AndyJennifer/GitTestProject.git</span><br></pre></td></tr></table></figure>
+<p>使用上述命令，就可以将本地仓库与远程仓库建立连接了。对于该命令，我们几点需要注意：</p>
+<ul>
+<li>该命令格式为 <code>git remote add 远程仓库别名 远程仓库地址</code></li>
+<li><p><code>origin</code> 这个单词只是指代远程仓库，你可以当做它是远程仓库的别名，一般情况下都是使用 <code>origin</code> 来指代远程仓库，当然你可以将它修改为其他名称，比如 <code>haha</code> ，那么我们需要修改命令为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add haha https://github.com/AndyJennifer/GitTestProject.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>远程仓库的地址需要填写完整的URL。</p>
+</li>
+</ul>
+<h4 id="git-remote-命令介绍"><a href="#git-remote-命令介绍" class="headerlink" title="git remote 命令介绍"></a>git remote 命令介绍</h4><p>那么接下来，我们就去我们的本地仓库中关联这个远程仓库吧，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/git_remote.png" title="git_remote">
+<blockquote>
+<p>注意 <code>git remote add</code> 命令，需要在你本地的仓库中使用。如果你不小心关联错了远程仓库，可以使用 <code>git remote remove &lt;name&gt;</code> 命令将关联关系删除，关于更多命令的使用，可以查看官网中 <a href="https://git-scm.com/docs/git-remote" target="_blank" rel="noopener">git remote</a>中的介绍。</p>
+</blockquote>
+<p>眼尖的小伙伴肯定看见了<code>红色</code>方框中的 <code>git remote</code>命令，该命令可以查看本地仓库与远程仓库的关联关系，当本地仓库没有与任何远程仓库进行关联时，不会显示任何远程仓库别名。反之，将会显示所有关联的远程仓库别名。</p>
+<h4 id="git-remote-v-命令介绍"><a href="#git-remote-v-命令介绍" class="headerlink" title="git remote -v 命令介绍"></a>git remote -v 命令介绍</h4><p>当然如果我们想查看远程仓库中的完整路径，我们也可以使用 <code>git remote -v</code> 命令，使用该命令后，我们能得到如下输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote -v</span><br><span class="line">origin git@github.com:AndyJennifer/GitTestProject.git (fetch)</span><br><span class="line">origin git@github.com:AndyJennifer/GitTestProject.git (push)</span><br></pre></td></tr></table></figure>
+<p>上述输出表明，当我们在使用 <code>origin</code> 别名时，实际使用的路径为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/GoogleChrome/lighthouse.git</span><br></pre></td></tr></table></figure>
+<p>可能你也发现了，现在有两个远程仓库，都是 <code>&quot;origin&quot;</code> 且链接到相同的 URL。唯一的区别在结尾处： (fetch) 部分和 (push) 部分，我们将在接下来的文章中详细说明。</p>
+<h3 id="将更改推送到远程仓库"><a href="#将更改推送到远程仓库" class="headerlink" title="将更改推送到远程仓库"></a>将更改推送到远程仓库</h3><p>如果我们本地仓库已有如下提交，我们需要将本地仓库中的内容推送到刚才在 GitHub 中创建的远程仓库，我们需要使用命令 <code>git push</code> ，使用该命令会将本地仓库中所有的提交都推送到远程仓库中，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库.jpg" title="推送到远程仓库">
+<p>在推送到远程仓库之前，我们先看看一下本地仓库的提交：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/本地仓库commit.png" title="本地仓库commit">
+<p>现在开始推送吧！要将本地仓库中的 commit 推送到远程仓库，我们需要使用 <code>git push</code> 命令，当然不是简单的调用该命令就行了，我们还需要提供<code>远程仓库别名</code>，以及容纳所提交的 commit 的<code>分支名</code>。如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push &lt;remote name&gt; &lt;branch&gt;</span><br></pre></td></tr></table></figure>
+<p>这里我们的远程仓库别名为 <code>origin</code>，并且我想推送的 commit 位于 <code>master</code> 分支上。那么，我要使用以下命令将我的 commit 推送到 GitHub 上的远程仓库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库2.png" title="推送到远程仓库2">
+<p>有几点需要注意：</p>
+<ul>
+<li>你可能需要输入用户名和密码，这取决于你如何配置 GitHub 的以及使用的远程 URL 。</li>
+<li>如果你使用的是 HTTP 版本（而不是 ssh 版本）的远程仓库，就需要提供用户名和密码。<ul>
+<li>如果你配置 GitHub 使用 SSH 协议，并提供过 SSH 密匙，就不需要执行上一步。如果你对使用 SSH 连接 GitHub 感兴趣，请参阅使用 SSH 连接 GitHub 文档(<a href="https://help.github.com/articles/connecting-to-github-with-ssh/" target="_blank" rel="noopener">GitHub-SSH</a>)。</li>
+<li>如果你要输入用户名和密码，用户名会在输入后显示出来，但密码不会显示。只需继续输入密码，完成后按 Enter 键即可。</li>
+</ul>
+</li>
+<li>如果你的密码出错，不用担心，它会让你重新输入</li>
+<li>Git 会压缩文件使之变小，然后将其推送至远程仓库</li>
+<li>这里创建了一个新分支，在页面底部可看到[new branch]，后面是 master -&gt; master</li>
+</ul>
+<p>当我们将本地仓库中的内容推送到 GitHub 中的远程仓库后，我们查看 GitHub 中我们之前创建的项目：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库3.png" title="推送到远程仓库3">
+<p>在 GitHub 中显示了仓库中有三个提交以及一个分支和一个贡献者。</p>
+<p>在推送到远程仓库之后，我们来查看我们的本地仓库发生了什么变化吧~ 使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --oneline</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>因为本地仓库没有其他分支，所以我这里直接使用 <code>git log --oneline</code> ，如果你的项目有其他分支，那么可以使用 <code>git log --oneline --graph --all</code>。</p>
+</blockquote>
+<p>在我们的本地仓库中使用了如下命令后，我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/推送到远程仓库4.png" title="推送到远程仓库4">
+<p>在上述红框中，<code>origin/master</code> 其实是一个跟踪分支（跟踪分支是与远程分支有直接关系的本地分支），该分支告诉我们，当前本地仓库关联了一个远程仓库，该远程仓库的别名为 <code>origin</code>，同时该远程仓库有一个 <code>master</code> 分支。并且该仓库的 <code>master</code> 分支指向 commit <code>f4d7e04</code> ，也就是说远程仓库拥有并包含所有 <code>f4d7e04</code> 下的 commit 。</p>
+<blockquote>
+<p>需要注意的一点是，这个 <code>origin/master</code> 跟踪分支并不能实时表现被跟踪分支在远程仓库上的位置。如果我们之外的其他人对远程仓库做了更改，我们本地仓库中的 <code>origin/master</code> 跟踪分支不会移动。我们必须告诉它检查更新，它才会移动。</p>
+</blockquote>
+<h3 id="从远程仓库中拉取修改"><a href="#从远程仓库中拉取修改" class="headerlink" title="从远程仓库中拉取修改"></a>从远程仓库中拉取修改</h3><p>我们已经学会了如何将本地仓库中的 commit 推送到远程仓库，现在我们试想另一种情况，远程仓库中存在一些 commit ，但是我们的本地仓库中没有这些 commit ，这种情况出现的原因有多个，比如我们是团队协作开发一个项目，有一名同事将更新推送到了远程仓库，或者你在不同的电脑上开展同一个项目，比如你在公司的电脑上向远程仓库推送了更新，但是你的个人电脑中的本地仓库没有这些更新。</p>
+<h4 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h4><p>如何将远程仓库中的更新拉取到本地仓库呢？我们看下面的这个例子：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改1.jpg" title="从远程仓库中拉取修改1">
+<p>在我们的本地仓库中有五个提交，但是远程仓库中有六个提交，本地的 <code>master</code> 指向提交 <code>H</code> ，而远程仓库中的 <code>master</code> 指向 <code>H</code> 之后的提交 <code>J</code>, 由于两个仓库处于不同步的状态，我们需要将远程仓库中的更改同步到本地仓库中。这个时候我们可以使用 <code>git pull + 远程仓库别名 + 拉取分支</code>，在本示例中我们可以使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master</span><br></pre></td></tr></table></figure>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改2.jpg" title="从远程仓库中拉取修改2">
+<p>使用该命令后，会将远程仓库中的更改拉取到本地仓库，并与本地仓库进行<code>合并(merge)</code>，并更新。</p>
+<h4 id="实际操作例子"><a href="#实际操作例子" class="headerlink" title="实际操作例子"></a>实际操作例子</h4><p>我们已经知道 <code>git pull</code> 命令的使用方式，现在结合我们之前的项目我们来实战一下，找到我们之前在 GitHub 中创建的项目，点击 <code>Add a README</code>，我们创建一个 <code>README.md</code> 文件，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改3.png" title="从远程仓库拉取修改3">
+<p>选择会跳转到一个新的编辑界面，这里我们不对该文件进行编辑，我们直接填写如下界面：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改4.png" title="从远程仓库拉取修改4">
+<p>在上图中，我们可以选择填写相关信息。这里我就不填写了，直接点击<code>Commit new file</code>。当点击后，我们再查看项目，我们会发现多了一个 <code>README.md</code>文件与一个 <code>commit</code> 如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改5.png" title="从远程仓库拉取修改5">
+<p>因为我们之前本地仓库中只有 <code>3</code> 个提交，这个时候与远程仓库不同步，那么现在我们可以使用命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin master</span><br></pre></td></tr></table></figure>
+<p>使用该命令后，我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库拉取修改6.png" title="从远程仓库拉取修改6">
+<p>通过上述操作，就能将远程仓库中的内容拉取到本地仓库了。但是我们需要注意，使用 <code>git pull</code> 命令会<code>自动</code>将本地分支与跟踪分支进行<code>合并(merge)</code>，如果你不需要，可以使用另一个命令 <code>git fetch</code>。</p>
+<h3 id="git-fetch"><a href="#git-fetch" class="headerlink" title="git fetch"></a>git fetch</h3><p><code>git fetch</code> 主要用于从远程仓库中拉取 commit ， 但是<code>不会</code>在拉取到 commit 后自动的将本地分支与远程的分支进行合并（merge)。什么意思呢？先不急，我们先看 <code>git fetch</code> 命令的使用方式， <code>git fetch</code> 与 <code>git pull</code> 使用方式基本相同，也是 <code>远程仓库别名 + 拉取分支</code>，如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin master</span><br></pre></td></tr></table></figure>
+<p>了解了该命令的使用方式后，我们来看看使用 <code>git fetch</code> 与 <code>git pull</code> 命令的区别:</p>
+<blockquote>
+<p>在下图中，我们本地仓库只有 <code>D、E、F、G、H</code> 五个提交，而远程仓库拥有本地仓库中没有的提交 <code>J</code> 。</p>
+</blockquote>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改7.jpg" title="从远程仓库中拉取修改7">
+<p>根据上图，大家应该会发现几点</p>
+<ul>
+<li><code>git fetch</code> 与 <code>git pull</code> 命令都会将远程分支上的 commit 拉取到本地仓库。</li>
+<li><code>git fetch</code> 与 <code>git pull</code> 命令都会将本地跟踪分支（上图中 <code>origin/master</code>)将会移动到最新的 commit 。</li>
+<li><code>git fetch</code> 不会将本地分支（上图中 <code>master</code>)指向拉取的最新 commit（上图中 <code>J</code> commit) 。</li>
+</ul>
+<p>也就是说使用 <code>git fetch</code> 命令并没有使本地分支进行移动，如果我们希望本地 <code>master</code> 具有 <code>origin/master</code> 分支上的 commit。则我们需要合并(merge)，假如我们已经在本地仓库的 <code>master</code>分支上，我们需要使用命令，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge origin/master</span><br></pre></td></tr></table></figure>
+<p>简单的来讲，<code>git fetch</code> 相当于 <code>git pull</code> 的一半的操作，剩下的一半是合并(merge)。</p>
+<h4 id="git-fetch-主要使用场景"><a href="#git-fetch-主要使用场景" class="headerlink" title="git fetch 主要使用场景"></a>git fetch 主要使用场景</h4><p><code>git fetch</code> 的主要使用场景是当你的远程仓库与本地仓库都有对方没有的 commit 时。请看如下场景：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改8.jpg" title="从远程仓库中拉取修改8">
+<p>在上图中，本地仓库与远程仓库在 <code>H</code> 提交之前状态一直是同步的，但是后续的过程中，本地仓库增加了一个提交 <code>8</code>，远程仓库也增加了一个提交 <code>J</code> ，如果这个时候，你想从远程仓库中拉取更改到本地，你可能会想使用命令 <code>git pull origin master</code> ，但是你会发现并没有任何作用，在如上情况下，我们需要使用 <code>git fetch origin master</code> ，使用该命令后，会使跟踪分支（origin/master) 指向最新的 commit ，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改9.jpg" title="从远程仓库中拉取修改9">
+<p>如果我们想将跟踪分支（origin/master) 的 commit 应用到本地 <code>master</code> 分支上 ，我们需要在 <code>master</code> 分支上使用命令 <code>git merge origin/master</code> ， 那接下来我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改10.jpg" title="从远程仓库中拉取修改10">
+<p>因为合并(merge)后会产生一个合并提交 <code>4</code>，又因为远程仓库中中并没有本地仓库中的 <code>8</code>，所以如果我们需要远程仓库也拥有这些提交，那么我们可以使用命令 <code>git push origin master</code>，使用该命令后，我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/从远程仓库中拉取修改11.jpg" title="从远程仓库中拉取修改11">
+<p>在上图中，使用 <code>git push origin master</code>命令后，远程仓库会拉取本地仓库的更改，同时会将本地的 <code>跟踪分支（origin/master）</code>指向本地最新的提交 <code>4</code> 。</p>
+<h3 id="IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><a href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用" class="headerlink" title="IntelliJ IDEA or Android Sutdio 图形化界面的使用"></a>IntelliJ IDEA or Android Sutdio 图形化界面的使用</h3><p>在上述文章中，我们讲解了相关指令，现在我们来看看相关指令在 IDEA 中的使用。</p>
+<h4 id="创建-GitHub-远程仓库"><a href="#创建-GitHub-远程仓库" class="headerlink" title="创建 GitHub 远程仓库"></a>创建 GitHub 远程仓库</h4><p>创建远程仓库有多种方式，这里我们还是以在 GitHub 中创建远程仓库为例， 要想在 IDEA 中创建 GitHub 中的远程仓库，我们需要在配置界面（在 Mac 中为 Preferences，Windows 为 Settings )中找到 <code>Version Control</code> -&gt; <code>GitHub</code>选项 ，然后添加自己的 GitHub账号，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/idea_1.png" title="idea_1">
+<p>在添加完毕账号后，找到工具栏中的 <code>VCS</code> -&gt; <code>Import into Version Control</code> -&gt; <code>Share project on Github</code>。 如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/idea_2.png" title="idea_2">
+<p>选择后会让我们填写，远程仓库的名称，及远程仓库的别名，及对远程仓库的描述信息等，如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/idea_3.png" title="idea_3">
+<p>填写相关信息后，我们就可以点击 <code>Share</code> 按钮 创建远程仓库啦。</p>
+<h4 id="pull-push-fetch"><a href="#pull-push-fetch" class="headerlink" title="pull push  fetch"></a>pull push  fetch</h4><p>当我们创建远程仓库后，我们可以通过点击鼠标<code>右键</code>，依次选择 <code>Git</code> -&gt; <code>Repositiry</code>，然后选择使用 <code>git pull</code> 、<code>git push</code> 还是 <code>git fetch</code> 。 如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/idea_4.png" title="idea_4">
+<blockquote>
+<p>上图中红色方框所包括的<code>蓝色左下箭头</code>为 <code>git pull</code>，也就是从远程仓库拉取更新。</p>
+</blockquote>
+<p>当然如果你要使用 <code>git push</code> 命令，也可以直接使用快捷键 <code>Alt+ ` （Windows)</code> 或 <code>option + ` (Mac)</code> 的方式。如下所示：</p>
+<img src="/2019/10/12/Git新手教程-远程仓库（九）/idea_5.png" title="idea_5">
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-存储与清理（八）/" rel="next" title="Git新手教程-存储与清理(八)">
+                <i class="fa fa-chevron-left"></i> Git新手教程-存储与清理(八)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#远程仓库"><span class="nav-number">2.</span> <span class="nav-text">远程仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是远程仓库"><span class="nav-number">2.1.</span> <span class="nav-text">什么是远程仓库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加远程仓库"><span class="nav-number">3.</span> <span class="nav-text">添加远程仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#本地仓库如何与远程仓库关联"><span class="nav-number">3.1.</span> <span class="nav-text">本地仓库如何与远程仓库关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-remote-命令介绍"><span class="nav-number">3.2.</span> <span class="nav-text">git remote 命令介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-remote-v-命令介绍"><span class="nav-number">3.3.</span> <span class="nav-text">git remote -v 命令介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将更改推送到远程仓库"><span class="nav-number">4.</span> <span class="nav-text">将更改推送到远程仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从远程仓库中拉取修改"><span class="nav-number">5.</span> <span class="nav-text">从远程仓库中拉取修改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-pull"><span class="nav-number">5.1.</span> <span class="nav-text">git pull</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实际操作例子"><span class="nav-number">5.2.</span> <span class="nav-text">实际操作例子</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-fetch"><span class="nav-number">6.</span> <span class="nav-text">git fetch</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-fetch-主要使用场景"><span class="nav-number">6.1.</span> <span class="nav-text">git fetch 主要使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><span class="nav-number">7.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建-GitHub-远程仓库"><span class="nav-number">7.1.</span> <span class="nav-text">创建 GitHub 远程仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pull-push-fetch"><span class="nav-number">7.2.</span> <span class="nav-text">pull push  fetch</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">510k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15:28</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

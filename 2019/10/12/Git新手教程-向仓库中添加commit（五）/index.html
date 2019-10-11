@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在该篇文章中，我们终于要来学习如何创建自己的提交(commit)，在前面的文章中，我们已经学会使用 git init 命令来创建新仓库，使用 git clone 命令来复制现有仓库，使用 git log 命令来查看现有的提交。以及使用非常重要的 git status 命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 git add 、 git commit 和 git diff 。 在具">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git新手教程-向仓库中添加commit(五)">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在该篇文章中，我们终于要来学习如何创建自己的提交(commit)，在前面的文章中，我们已经学会使用 git init 命令来创建新仓库，使用 git clone 命令来复制现有仓库，使用 git log 命令来查看现有的提交。以及使用非常重要的 git status 命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 git add 、 git commit 和 git diff 。 在具">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git的init命令使用.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/Git_Commit文本编辑.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_diff展示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/ide_add操作展示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_add_延迟展示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_commit_展示.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_diff_ide.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/idea_快捷键汇总.jpg">
+<meta property="og:updated_time" content="2019-10-11T16:14:59.885Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git新手教程-向仓库中添加commit(五)">
+<meta name="twitter:description" content="前言在该篇文章中，我们终于要来学习如何创建自己的提交(commit)，在前面的文章中，我们已经学会使用 git init 命令来创建新仓库，使用 git clone 命令来复制现有仓库，使用 git log 命令来查看现有的提交。以及使用非常重要的 git status 命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 git add 、 git commit 和 git diff 。 在具">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git的init命令使用.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git新手教程-向仓库中添加commit(五) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git新手教程-向仓库中添加commit(五)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-12 00:14:59" itemprop="dateCreated datePublished" datetime="2019-10-12T00:14:59+08:00">2019-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Git相关/" itemprop="url" rel="index"><span itemprop="name">Git相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">6.2k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">11 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在该篇文章中，我们终于要来学习如何创建自己的提交(<code>commit</code>)，在前面的文章中，我们已经学会使用 <code>git init</code> 命令来创建新仓库，使用 <code>git clone</code> 命令来复制现有仓库，使用 <code>git log</code> 命令来查看现有的提交。以及使用非常重要的 <code>git status</code> 命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 <code>git add</code> 、 <code>git commit</code> 和 <code>git diff</code> 。 在具体讲解这三个命令之前，我们先简单的看看这三个命令的作用。</p>
+<ul>
+<li><code>git add</code> 可以让你将文件从工作目录添加到暂存区。</li>
+<li><code>git commit</code> 可以让你将文件从暂存区中取出。并保存在仓库区中，也就是你实际将要提交的地方。</li>
+<li><code>git diff</code> 可以显示文件两个版本之间的差异，它的输出与上篇文章中使用的 <code>git log -p</code> 命令的输出完全一样。</li>
+</ul>
+<h3 id="git-add-命令的使用"><a href="#git-add-命令的使用" class="headerlink" title="git add 命令的使用"></a>git add 命令的使用</h3><p>在使用 <code>git add</code> 命令之前，我们先回顾一下仓库的创建过程。我们现在自己的喜欢的目录下创建仓库，在下图中我的仓库的地址为<code>documents/GitTest/GitTestProject</code>。在接下来的文章中，都会以该仓库作为例子进行讲解。</p>
+<p>首先我们先进入该目录，并通过 <code>git init</code>创建Git仓库：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/git的init命令使用.jpg" title="git的init命令使用">
+<blockquote>
+<p>在没有向仓库提交任何commit时，多次运行<code>git init</code>命令是没有关系的，<code>git init</code>命令只会多次重新初始化仓库</p>
+</blockquote>
+<h4 id="检查仓库状态！别忘了"><a href="#检查仓库状态！别忘了" class="headerlink" title="检查仓库状态！别忘了"></a>检查仓库状态！别忘了</h4><p>我们一定要在运行Git相关命令后，一定要使用 <code>git status</code> 命令来检查当前仓库的状态。因为我们不能保证，我们是否遗忘了某些东西。如果你像我一样使用了 <code>git status</code>命令，那么你能得到下列输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">nothing to commit (create/copy files and use <span class="string">"git add"</span> to track)</span><br></pre></td></tr></table></figure>
+<h4 id="开始添加文件"><a href="#开始添加文件" class="headerlink" title="开始添加文件"></a>开始添加文件</h4><p>当我们使用 <code>git status</code> 检查了仓库确实没有任何文件后，那接下来我们来创建一些文件。这里我分别创建了三个文件，<code>Git总目录.md</code>、<code>Git练习.md</code>、<code>JVM系列之总目录.md</code>，这个时候我们再使用 <code>git status</code> 来查看我们仓库的状态，我们能得到下列结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Untracked files:</span><br><span class="line">  (use <span class="string">"git add &lt;file&gt;..."</span> to include <span class="keyword">in</span> what will be committed)</span><br><span class="line"></span><br><span class="line">  Git总目录.md</span><br><span class="line">  Git练习.md</span><br><span class="line">  JVM系列之总目录.md</span><br><span class="line"></span><br><span class="line">nothing added to commit but untracked files present (use <span class="string">"git add"</span> to track)</span><br></pre></td></tr></table></figure>
+<p>要将文件提交到暂存区，我们需要使用 <code>git add</code> 命令，这里我们将<code>Git总目录.md</code>文件添加到暂存区中，使用命令<br><code>git add Git总目录.md</code>，我们再使用 <code>git status</code> 查看我们的仓库状态，我们能得到下列结果：</p>
+<blockquote>
+<p>还记得<code>暂存区</code>吗？暂存区是Git目录下的一个文件，存储的是即将进入下个 commit 内容的信息。可以将暂存区看做准备工作台，Git 将在此区域获取下个 commit。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Changes to be committed:</span><br><span class="line">  (use <span class="string">"git rm --cached &lt;file&gt;..."</span> to unstage)</span><br><span class="line"></span><br><span class="line">  new file:   Git总目录.md</span><br><span class="line"></span><br><span class="line">Untracked files:</span><br><span class="line">  (use <span class="string">"git add &lt;file&gt;..."</span> to include <span class="keyword">in</span> what will be committed)</span><br><span class="line"></span><br><span class="line">  Git练习.md</span><br><span class="line">  JVM系列之总目录.md</span><br></pre></td></tr></table></figure>
+<p>这个时候，在命令行中的 <code>Untracked files</code> 下，就只有<code>Git练习.md</code>与<code>JVM系列之总目录.md</code>了，</p>
+<blockquote>
+<p>细心的小伙伴肯定看到<code>(use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)</code>，该命令可以帮助我们将你 <code>git add</code> 错误提交的文件，从暂存区中移除，此外，在命令行输出中出现了”unstage”（撤消暂存）字眼。将文件从工作目录移到暂存区叫做<code>&quot;staging&quot;</code>（暂存）。如果已移动文件，则叫做<code>&quot;staged&quot;</code>（已暂存）。从暂存区将文件移回工作目录将<code>&quot;unstage&quot;</code>（撤消暂存）。</p>
+</blockquote>
+<h4 id="使用git-add-添加剩余的文件"><a href="#使用git-add-添加剩余的文件" class="headerlink" title="使用git add 添加剩余的文件"></a>使用git add 添加剩余的文件</h4><p>当我们已经将 <code>Git总目录.md</code> 添加到暂存区中后，我们可能还想将剩下的两个文件 <code>Git练习.md</code> 、 <code>JVM系列之总目录.md</code> 也添加到暂存区中。当然我们可以一个一个的使用使用 <code>git add</code> 命令添加剩余的文件，我们也可以这样:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add Git练习.md JVM系列之总目录.md</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用<code>git add &lt;file1&gt; &lt;file2&gt; … &lt;fileN&gt;</code>这种方式，我们可以添加多个文件，其中<code>&lt;file&gt;</code>代表一个或多个文件。</p>
+</blockquote>
+<p>除了使用上述方法以外，我们还可以使用一个特殊的命令行字符 <code>.（点）</code> ，<code>.（点）</code> 代表当前目录，可以用来表示所有文件和物理（注意！注意！注意！包括所有嵌套文件和目录）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add Git练习.md JVM系列之总目录.md</span><br><span class="line"><span class="comment">#等于</span></span><br><span class="line">git add .</span><br></pre></td></tr></table></figure>
+<p>如果你使用 <code>.（点）</code> 添加了多余的文件，那么我们可以使用<code>git rm --cached &lt;file1&gt; &lt;file2&gt; … &lt;fileN&gt;</code>命令，将多余的文件从暂存区中移除。</p>
+<h3 id="git-commit-命令的使用"><a href="#git-commit-命令的使用" class="headerlink" title="git commit 命令的使用"></a>git commit 命令的使用</h3><p>当我们将上文提到的三个文件都添加到暂存区之后，现在需要将暂存区中的内容提交到仓库中去，也就是使用 <code>git commit</code> 命令，当然在运行该命令之前，我们要时刻使用 <code>git status</code> 命令查看当前仓库的状态。使用 <code>git stasus</code> 查看状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Changes to be committed:</span><br><span class="line">  (use <span class="string">"git rm --cached &lt;file&gt;..."</span> to unstage)</span><br><span class="line"></span><br><span class="line"> new file:   Git总目录.md</span><br><span class="line"> new file:   Git练习.md</span><br><span class="line"> new file:   JVM系列之总目录.md</span><br></pre></td></tr></table></figure>
+<p>嗯，美滋滋，所有的文件都在暂存区中了，那现在开始我们的提交吧。在具体提交之前，我们需要注意，如果你在下载 Git后没有设置文本编辑器，那么 Git 会默认会调用系统的默认编辑器，一般情况是 Vi 或者 Vim 。当然我们也可以配置我们自己喜欢的文本编辑器。这里我配置的是 Sublime Text ，配置命令如下所示：</p>
+<ul>
+<li><blockquote>
+<p>VS Code 配置–&gt;<a href="https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor" target="_blank" rel="noopener">VS Code as Git editor</a></p>
+</blockquote>
+</li>
+<li><blockquote>
+<p>Sublime Text–&gt;<a href="https://www.sublimetext.com/docs/3/osx_command_line.html" target="_blank" rel="noopener">OS X Command Line</a></p>
+</blockquote>
+</li>
+<li><blockquote>
+<p>如果你对默认的编辑器(Vi或者Vim)感兴趣，你有可能需要这篇文章 <a href="https://www.runoob.com/linux/linux-vim.html" target="_blank" rel="noopener">Linux vi/vim</a></p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.editor <span class="string">"'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' -n -w"</span></span><br></pre></td></tr></table></figure>
+<p>如果你像我一样配置了Sublime Text，那么我们会得到下图：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/Git_Commit文本编辑.jpg" title="Git_Commit文本编辑">
+<p>在<code>第一行</code>中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是 <code>Initial commit</code> ,当然你可以根据你的喜好填写信息。其他被<code>#</code>标记的行都是注释信息，都会被忽略。当我们使用 <code>git commit</code> 命令后，我们在控制台会得到如下输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[master (root-commit) 18522c6] Initial commit</span><br><span class="line"> 3 files changed, 45 insertions(+)</span><br><span class="line"> create mode 100644 Git总目录.md</span><br><span class="line"> create mode 100644 Git练习.md</span><br><span class="line"> create mode 100644 JVM系列之总目录.md</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果你配置了Git文本编辑器，那么会在你输入内容，退出编辑器后，会自动提交commit。</p>
+</blockquote>
+<p>这个时候我们再使用 <code>git status</code> 查看我们的仓库状态,输出结果为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line">nothing to commit, working tree clean</span><br></pre></td></tr></table></figure>
+<p>上述表明，所有暂存区中的文件，都提交到Git的仓库区中了。现在我们就将第一个commit提交到仓库中去了。当然有可能你提交的描述信息很简短，那么你可以使用<code>-m</code>选项来跳过编辑器。如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m <span class="string">"initial commit"</span></span><br></pre></td></tr></table></figure>
+<p>当然通过 <code>-m</code> 选项提交的消息只包含标题的，不会包含正文，如果你想怎么知道怎么写一个阅读性良好的commit message，那么你有可能阅读下面这两篇文章；</p>
+<ul>
+<li><a href="https://www.jianshu.com/p/0117334c75fc" target="_blank" rel="noopener">怎么写Git Commit Message</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html" target="_blank" rel="noopener">Commit message 和 Change log 编写指南</a></li>
+</ul>
+<h4 id="进行第二次commit"><a href="#进行第二次commit" class="headerlink" title="进行第二次commit"></a>进行第二次commit</h4><p>现在我们已经进行我们的第一次commit了，那么现在我们修改<code>Jxm系列之总目录.md</code>文件，打开该文件，将文件中的语句<code>- Java类加载器（双亲委派模型）</code>删掉，并保存。如下操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- Java内存结构及分区</span><br><span class="line">- Java对象的创建、存储及访问</span><br><span class="line">- Java判断对象是否存活</span><br><span class="line">- 垃圾回收算法（GC)</span><br><span class="line">- Jvm中的常见的垃圾回收器</span><br><span class="line">- Java类加载过程</span><br><span class="line">- Java类加载器（双亲委派模型）<span class="comment">#---&gt; 删除这行</span></span><br></pre></td></tr></table></figure>
+<p>接着我们使用<code>git status</code>查看当前我们的仓库状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line">Changes not staged <span class="keyword">for</span> commit:</span><br><span class="line">  (use <span class="string">"git add &lt;file&gt;..."</span> to update what will be committed)</span><br><span class="line">  (use <span class="string">"git checkout -- &lt;file&gt;..."</span> to discard changes <span class="keyword">in</span> working directory)</span><br><span class="line"></span><br><span class="line"> modified:   Jvm系列之总目录.md</span><br><span class="line"></span><br><span class="line">no changes added to commit (use <span class="string">"git add"</span> and/or <span class="string">"git commit -a"</span>)</span><br></pre></td></tr></table></figure>
+<p>从控制台中，我们可以看到我们的文件<code>Jvm系列之总目录.md</code>已经被标记为<code>modifed</code>了，那现在我们如何将修改的文件提交到Git的仓库区中呢？要将内容提交到Git的仓库区中去，我们需要将文件提交到暂存区中，在之前的命令中将文件提交到暂存区中，我们需要使用命令 <code>git add</code> 命令，当然 <code>git add</code> 命令不仅只针对<code>新建</code>的文件，它仍可以将<code>修改后</code>的文件提交到暂存区中。也就是我们只要使用 <code>git add</code> 与 <code>git commit</code> 命令，我们就能将修改后的文件提交到Git的仓库中去了。</p>
+<h4 id="简单总结"><a href="#简单总结" class="headerlink" title="简单总结"></a>简单总结</h4><p>在学习了<code>git add</code> 与 <code>git commit</code> 命令后，我们简单的总结一下这两个命令。</p>
+<ul>
+<li><code>git add</code> 可以不仅可以向暂存区中添加新的文件，同样也能将修改的文件进行暂存。</li>
+<li><code>git commit</code> 会取出暂存区的文件，并保存到仓库中。该命令需要输入commit消息。</li>
+</ul>
+<h3 id="git-diff"><a href="#git-diff" class="headerlink" title="git diff"></a>git diff</h3><p>还有最后一个命令 <code>git diff</code> 。这个命令可以帮助我们查看我们一些没有提交的更改，也就是说我们可以看到当前修改的文件与Git仓库之间的差异。还是<code>Jvm系列之总目录.md</code>文件为例，这里我们继续删除<code>- Java类加载过程</code>，如下图所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- Java内存结构及分区</span><br><span class="line">- Java对象的创建、存储及访问</span><br><span class="line">- Java判断对象是否存活</span><br><span class="line">- 垃圾回收算法（GC)</span><br><span class="line">- Jvm中的常见的垃圾回收器</span><br><span class="line">- Java类加载过程 <span class="comment">#---&gt; 删除这行</span></span><br></pre></td></tr></table></figure>
+<p>然后我们使用 <code>git diff</code>命令查看命令行输出:</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_diff展示.jpg" title="git_diff展示">
+<p>在上图中，红色表示当前修改的文件删除的行。我相信大家看到这个界面一定会很熟悉，还记的我们之前介绍长裤仓库的历史提交记录中，所将的<code>git log -p</code>吗？其实<code>git log -p</code>其实就是使用了<code>git diff</code>命令。关于上图中，如果大家不理解每行所代表的意思，那么可以查看《查看仓库的历史记录(四)》中<code>git log -p</code>中的介绍。</p>
+<h3 id="IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><a href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用" class="headerlink" title="IntelliJ IDEA or Android Sutdio 图形化界面的使用"></a>IntelliJ IDEA or Android Sutdio 图形化界面的使用</h3><p>又到了我们熟悉的偷懒环节了。现在我们来看看一下 <code>git add</code> 与 <code>git commit</code> 与 <code>git diff</code> 在idea中的使用，</p>
+<h4 id="git-add"><a href="#git-add" class="headerlink" title="git add"></a>git add</h4><p>如果你的项目已经通过Git管理，那么当你在IDEA中创建新的文件夹时，编译器会如下提示：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/ide_add操作展示.jpg" title="ide_add操作展示">
+<p>通过提示消息，我们其实就能看出，就是提示我们是否将当前新创建的文件添加到Git的暂存区中，如果你选择确定，那么就会将该文件添加到暂存区中。如果你不小心选择了<code>cancel</code>,不用担心，你仍然可以使用下列方式来添加文件到暂存区中。通过选择你要添加的文件，点击鼠标<code>右键</code>依次选择<code>Git</code>—&gt;<code>add</code>。就可以将该文件添加到暂存区中。如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_add_延迟展示.jpg" title="git_add_延迟展示">
+<blockquote>
+<p>小提示：在ide是以一种非常直观的颜色来表示当前仓库中的文件状态:</p>
+<ol>
+<li>红色：表示当前文件或目录没有被跟踪。</li>
+<li>绿色：表示当前文件或目录已经被添加到仓库中了。</li>
+<li>蓝色：表示被添加到仓库中的文件或目录被修改或移动。</li>
+<li>橙色：表示被忽略的文件。</li>
+<li>白色：表示没有任何更改。</li>
+</ol>
+</blockquote>
+<h4 id="git-commit-使用"><a href="#git-commit-使用" class="headerlink" title="git commit 使用"></a>git commit 使用</h4><p>当我们将文件添加到暂存区中后，我们可以通过ide顶部的工具栏进行commit操作，记住是顶部哟！具体如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_commit_展示.jpg" title="git_commit_展示">
+<p>注意：如果你是修改已经跟踪过的文件，那么我们不需要将修改的文件通过 <code>git add</code> 命令将其添加到暂存区中，注意！！！！当我们直接使用 IDE 中的 commit 按钮时，默认是执行 <code>git add</code> 与 <code>git commit</code> 这两个命令的。</p>
+<h4 id="git-diff-使用"><a href="#git-diff-使用" class="headerlink" title="git diff 使用"></a>git diff 使用</h4><p>同样的 <code>git diff</code> 也在顶部，如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_diff_ide.jpg" title="git_diff_ide">
+<h4 id="Git使用快捷键"><a href="#Git使用快捷键" class="headerlink" title="Git使用快捷键"></a>Git使用快捷键</h4><p>当然除了上述所有的操作，我们还可以使用ide提供的快捷键进行操作，使用 <code>Alt+ ` （Windows)</code> 或 <code>option + ` (Mac)</code> 的方式，可以得到以下界面：</p>
+<img src="/2019/10/12/Git新手教程-向仓库中添加commit（五）/idea_快捷键汇总.jpg" title="idea_快捷键汇总">
+<ol>
+<li>对应我们使用的 <code>git commit</code></li>
+<li>对应我们使用的 <code>git diff</code></li>
+<li>对应我们使用的 <code>git add</code></li>
+</ol>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>站在巨人的肩膀上，才能看的更远~</p>
+<ul>
+<li><a href="https://cn.udacity.com/course/version-control-with-Git--ud123" target="_blank" rel="noopener">视频推荐–&gt;用Git进行版本控制</a></li>
+<li><a href="https://Git-scm.com/book/zh/v2/" target="_blank" rel="noopener">Git官方网站</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-查看仓库的历史记录（四）/" rel="next" title="Git新手教程-查看仓库的历史记录（四）">
+                <i class="fa fa-chevron-left"></i> Git新手教程-查看仓库的历史记录（四）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-日志提交规范（五）补充/" rel="prev" title="Git新手教程-日志提交规范（五）补充">
+                Git新手教程-日志提交规范（五）补充 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-add-命令的使用"><span class="nav-number">2.</span> <span class="nav-text">git add 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#检查仓库状态！别忘了"><span class="nav-number">2.1.</span> <span class="nav-text">检查仓库状态！别忘了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开始添加文件"><span class="nav-number">2.2.</span> <span class="nav-text">开始添加文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用git-add-添加剩余的文件"><span class="nav-number">2.3.</span> <span class="nav-text">使用git add 添加剩余的文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-commit-命令的使用"><span class="nav-number">3.</span> <span class="nav-text">git commit 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进行第二次commit"><span class="nav-number">3.1.</span> <span class="nav-text">进行第二次commit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单总结"><span class="nav-number">3.2.</span> <span class="nav-text">简单总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-diff"><span class="nav-number">4.</span> <span class="nav-text">git diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><span class="nav-number">5.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-add"><span class="nav-number">5.1.</span> <span class="nav-text">git add</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit-使用"><span class="nav-number">5.2.</span> <span class="nav-text">git commit 使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-diff-使用"><span class="nav-number">5.3.</span> <span class="nav-text">git diff 使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Git使用快捷键"><span class="nav-number">5.4.</span> <span class="nav-text">Git使用快捷键</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">510k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15:28</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

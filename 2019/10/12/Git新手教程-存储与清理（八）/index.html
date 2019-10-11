@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在实际开发中，常常会遇到这样的情况，我们正在 dev 上开发一个功能，这个时候突然接到上级命令，需要修改一个紧急 bug-5501 ，当然我们马上想到的就是创建一个 branch bug-5501 的分支来修复它，但是这个时候我们在 dev 上的功能已经写了一半了，如果我们直接创建分支，并 chekcout branch bug-5501 的话，我们在 dev 上的修改的内容，也会显示在我们">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git新手教程-存储与清理(八)">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在实际开发中，常常会遇到这样的情况，我们正在 dev 上开发一个功能，这个时候突然接到上级命令，需要修改一个紧急 bug-5501 ，当然我们马上想到的就是创建一个 branch bug-5501 的分支来修复它，但是这个时候我们在 dev 上的功能已经写了一半了，如果我们直接创建分支，并 chekcout branch bug-5501 的话，我们在 dev 上的修改的内容，也会显示在我们">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/dev-新功能.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/bug-5501.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/git-stash流程.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/git-stash-apply.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/不添加keep-index.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/添加keep-index.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/stash创建流程.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/stash模块介绍.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/unStash浏览流程.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/unstash模块介绍.jpg">
+<meta property="og:updated_time" content="2019-10-11T16:15:53.401Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git新手教程-存储与清理(八)">
+<meta name="twitter:description" content="前言在实际开发中，常常会遇到这样的情况，我们正在 dev 上开发一个功能，这个时候突然接到上级命令，需要修改一个紧急 bug-5501 ，当然我们马上想到的就是创建一个 branch bug-5501 的分支来修复它，但是这个时候我们在 dev 上的功能已经写了一半了，如果我们直接创建分支，并 chekcout branch bug-5501 的话，我们在 dev 上的修改的内容，也会显示在我们">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/dev-新功能.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git新手教程-存储与清理(八) | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-存储与清理（八）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git新手教程-存储与清理(八)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-12 00:15:53" itemprop="dateCreated datePublished" datetime="2019-10-12T00:15:53+08:00">2019-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Git相关/" itemprop="url" rel="index"><span itemprop="name">Git相关</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">5.1k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">9 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在实际开发中，常常会遇到这样的情况，我们正在 <code>dev</code> 上开发一个功能，这个时候突然接到上级命令，需要修改一个紧急 <code>bug-5501</code> ，当然我们马上想到的就是创建一个 <code>branch bug-5501</code> 的分支来修复它，但是这个时候我们在 <code>dev</code> 上的功能已经写了一半了，如果我们直接创建分支，并 <code>chekcout branch bug-5501</code> 的话，我们在 <code>dev</code> 上的修改的内容，也会显示在我们 <code>branch bug-5501</code> 上，这样就会让我们感觉到非常混乱。我们也不能提交我们未完成的功能到 <code>dev</code> 上，那这个时候怎么办呢？</p>
+<p>在Git中，为我们提供了 <code>git stash</code> 命令，专门负责处理这种情况。让我们一起来了解该命令吧。</p>
+<h3 id="git-stash-指令介绍"><a href="#git-stash-指令介绍" class="headerlink" title="git stash 指令介绍"></a>git stash 指令介绍</h3><p>为了演示具体效果，这里以下面例子为例，我们在<code>dev</code>开发的新功能，修改了<code>Person.java</code>,具体如下所示：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/dev-新功能.jpg" title="dev-新功能">
+<p>这个时候我们运行<code>git staus</code>指令,可以看到仓库状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git status</span><br><span class="line">Your branch is up to date with <span class="string">'origin/master'</span>.</span><br><span class="line"></span><br><span class="line">Changes not staged <span class="keyword">for</span> commit:</span><br><span class="line">  (use <span class="string">"git add &lt;file&gt;..."</span> to update what will be committed)</span><br><span class="line">  (use <span class="string">"git checkout -- &lt;file&gt;..."</span> to discard changes <span class="keyword">in</span> working directory)</span><br><span class="line"></span><br><span class="line">        modified:   src/main/java/Person.java</span><br></pre></td></tr></table></figure>
+<p>如果直接在当前 <code>dev</code> 分支上直接直接执行命令 <code>git branch bug-5501</code> ，那么我们我们修改的内容也也会在 <code>bug-5501</code> 分支上，如下所示：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/bug-5501.jpg" title="bug-5501">
+<p>那现在我们想要创建一个新的分支 <code>branch bug-5501</code> ，但是不想包括我们之前修改的 <code>Person.java</code> 中的内容，那么我们可以使用 <code>git stash</code> 或 <code>git stash save</code> 指令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash</span><br><span class="line">Saved working directory and index state WIP on master: 3d1d704 添加了person类</span><br><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git status</span><br><span class="line">On branch master</span><br><span class="line">Your branch is up to date with <span class="string">'origin/master'</span>.</span><br></pre></td></tr></table></figure>
+<p>这个时候再使用 <code>git status</code> ，查看我们的仓库状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">On branch master</span><br><span class="line">Your branch is up-to-date with <span class="string">'origin/master'</span>.</span><br><span class="line">nothing to commit, working directory clean</span><br></pre></td></tr></table></figure>
+<p>我们发现，我们的仓库状态是干净的。那这个时候我们在创建，并切换到相应分支上，那这个时候其他的分支是不包含之前我们修改的内容的，也就是如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/git-stash流程.jpg" title="git-stash流程">
+<p>在上图中，从上往下分别为两个步骤：</p>
+<ul>
+<li>步骤1：在 <code>dev</code> 分支上，我们调用 <code>git stash</code> or <code>git stash save message</code> 命令。</li>
+<li>步骤2：当执行了步骤1后，我们在接着创建分支 <code>bug-5501</code>，并切换到该分支下。</li>
+</ul>
+<p>通过上述两个步骤后，那现在我们就可以开心的在我们的<code>bug-5501</code>分支开发啦。</p>
+<h4 id="git-stash-与-git-stash-save-的区别"><a href="#git-stash-与-git-stash-save-的区别" class="headerlink" title="git stash 与 git stash save 的区别"></a>git stash 与 git stash save 的区别</h4><ul>
+<li><code>git stash</code> 会将当前的存储内容，自动添加一条描述信息，且描述信息为<code>当前分支</code>上最后一次 commit 的 message 。</li>
+<li><code>git stash save</code> 需要你指定 stash 的描述信息，比如这样： <code>git stash save &quot;创建了一条记录&quot;</code> 。</li>
+</ul>
+<p>需要注意的是，每次调用 <code>git stash</code> or <code>git stash save</code> 的记录都是以<code>栈</code>的形式存储的。查看 stash 记录我们可以通过 <code>git stash list</code> 指令来查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list</span><br><span class="line">stash@&#123;0&#125;: on master: 添加了Woman类</span><br><span class="line">stash@&#123;1&#125;: on master: 添加了Person类</span><br></pre></td></tr></table></figure>
+<p>在上述记录中，最后提交的 stash 记录始终在<code>栈顶</code>也就是<code>stash@{0}</code>，该栈的角标是从<code>零</code>开始<code>逐级递增</code>，并且栈顶的角标<code>始终为零</code>。</p>
+<h4 id="删除-stash-记录"><a href="#删除-stash-记录" class="headerlink" title="删除 stash 记录"></a>删除 stash 记录</h4><p>删除特定的 stash 记录，我们可以通过 <code>git stash list</code> 指令找到我们想要删除的记录，然后调用 <code>git stash drop</code> 指令就行了，如我们想删除 <code>stash@{0}</code> 这条记录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list</span><br><span class="line">stash@&#123;0&#125;: WIP on master: 3d1d704 添加了person类</span><br><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash drop stash@&#123;0&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，如果你想删除所有的stash记录，我们也可以通过 <code>git stash clear</code> 指令。</p>
+<h4 id="恢复-stash-所存储的内容"><a href="#恢复-stash-所存储的内容" class="headerlink" title="恢复 stash 所存储的内容"></a>恢复 stash 所存储的内容</h4><p>如果这个时候我们修改了 <code>bug-5501</code> ，现在我们想切换回我们之前的 <code>dev</code> 分支，并恢复之前我们调用 <code>git stash</code>  or <code>git stash save</code> 所存储的内容，那现在我们该怎么操作呢？我们可以先通过 <code>git stash list</code> 找到我们想要恢复的stash记录，然后通过使用 <code>git stash apply</code> 指令来恢复我们想要的内容。这里我们以记录 <code>stash@{0}</code> 为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash list</span><br><span class="line">stash@&#123;0&#125;: WIP on master: 3d1d704 添加了person类</span><br><span class="line">xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@&#123;0&#125;</span><br></pre></td></tr></table></figure>
+<p>具体场景如下所示：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/git-stash-apply.jpg" title="git-stash-apply">
+<blockquote>
+<p>注意：当你调用 <code>git stash apply</code> 并不指定具体的stash记录时，默认会恢复栈顶的stash记录。也就是等同于 <code>git stash apply stash@{0}</code> 。</p>
+</blockquote>
+<h4 id="git-stash-save-–keep-index"><a href="#git-stash-save-–keep-index" class="headerlink" title="git stash save –keep-index"></a>git stash save –keep-index</h4><p>在上中我们已经讲解了如何使用stash并恢复等一系列操作，现在我们来讲解在命令 <code>git stash save</code> 中的选填参数, <code>--keep-index</code>，默认情况下使用 <code>git stash save</code> 命令是不带这个选项的，下面我们就看看这个参数的具体使用意义。</p>
+<h5 id="不添加-–keep-index"><a href="#不添加-–keep-index" class="headerlink" title="不添加 –keep-index"></a>不添加 –keep-index</h5><img src="/2019/10/12/Git新手教程-存储与清理（八）/不添加keep-index.jpg" title="不添加keep-index">
+<p>解释一下上图的流程：</p>
+<ul>
+<li>上图中我们在dev中开发新功能,<code>修改（modify)</code> Person类，并<code>新建(add)</code> Woman.java 这个文件（该文件已经被添加到暂存区了）。</li>
+<li>这个时候上级命令我们改 bug-5501 ，这个时候，如果我们调用 <code>git save stash</code> 命令，这个时候 <code>dev</code> 分支上就只会有没有修改的Person类。Person 类的修改与 Woman.java 两个更改都放入<code>stash记录栈中</code>。</li>
+<li>这个时候我们新建 <code>bug-5501</code> 分支，去改我们的bug，当我们修改bug完毕后，我们check out 到 <code>dev</code> 分支上来,并想恢复之前我们存储的内容，那么我们调用 <code>git stash apply</code> 时，之前我们修改的person 类与新建的 Woman.java 文件就又会回到我们的 <code>dev</code> 分支上。</li>
+</ul>
+<h5 id="添加-–keep-index"><a href="#添加-–keep-index" class="headerlink" title="添加 –keep-index"></a>添加 –keep-index</h5><p>如果我们使用<code>git stash meessage --keep-index</code>，我们看看又是什么效果呢？，具体如下图所示：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/添加keep-index.jpg" title="添加keep-index">
+<p>观察上图，我们会发现，使用了<code>--keep-index</code>参数后，在stash记录栈中是不会存储 <code>git add</code> 命令已暂存的东西，也就是不会存储 Woman.java 文件。</p>
+<blockquote>
+<p>需要注意的是，当我们使用<code>--keep-index</code>参数时,因为不会stasht记录栈中是不会存储 <code>git add</code> 命令已暂存的东西，故如果我们创建新分支时，我们之前<code>git add</code>的文件也会在新分支中。是否添加该参数，由大家需要而定。</p>
+</blockquote>
+<h3 id="IntelliJ-IDEA-or-Android-Sutdio-图形化界面使用stash"><a href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面使用stash" class="headerlink" title="IntelliJ IDEA or Android Sutdio 图形化界面使用stash"></a>IntelliJ IDEA or Android Sutdio 图形化界面使用stash</h3><p>了解了Git的存储与清理的相关命令后，我们来了解一下，在 <code>IntelliJ IDEA</code>or <code>Android Sutdio</code>中Git存储与清理的图形化界面的对应流程。虽然命令行非常牛逼，但是有时候我们也想偷个懒对吧。</p>
+<h4 id="创建-stash-流程"><a href="#创建-stash-流程" class="headerlink" title="创建 stash 流程"></a>创建 stash 流程</h4><p>首先我们来看一下创建一个 stash 在 <code>IntelliJ IDEA</code> 中的流程，首先点击鼠标右键。依次选择下图中红色箭头所指内容。</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/stash创建流程.png" title="stash创建流程">
+<p>按照上图的指示，依次点击，我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/stash模块介绍.jpg" title="stash模块介绍">
+<p>上图中：</p>
+<ol>
+<li>Keep index：就是创建 stash 时，是否添加 <code>--keep-index</code> 参数。选中添加，反之不添加。</li>
+<li>Message：我们创建的stash的描述。</li>
+<li>Creat Stash：创建stash</li>
+</ol>
+<p>如果你已经熟悉了Git的创建 stash 的指令，我相信这里对你没有什么难度啦。</p>
+<h4 id="清理-stash-流程"><a href="#清理-stash-流程" class="headerlink" title="清理 stash 流程"></a>清理 stash 流程</h4><p>还是点击鼠标右键，依次选择下图中红色箭头所指内容。</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/unStash浏览流程.png" title="unStash浏览流程">
+<p>按照上图的指示，依次点击，我们能得到下图：</p>
+<img src="/2019/10/12/Git新手教程-存储与清理（八）/unstash模块介绍.jpg" title="unstash模块介绍">
+<ol>
+<li>Stashes：显示了我们所有创建的 stash</li>
+<li>View：查看 stash 所存储的内容</li>
+<li>Drop：删除栈中对应的 stash</li>
+<li>Clear：清除栈中所有的 stash</li>
+<li>Pop stash：应用选中的 stash，然后立即从栈上删除它。</li>
+<li>As new Branch：将当前 stash 所存储的内容作为一个分支并checkout。也就是如果你在 master 创建一个stash，并设置了As new branch的 为 LoginBranch，那么你会马上切换到 LoginBranch 分支中。</li>
+<li>Apply Stash：应用你选中的stash，但是不会删除stash。</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>下面简单的总结一下:</p>
+<ul>
+<li><code>git stash</code> 会将当前的存储内容，自动添加一条描述信息，且描述信息为<code>当前分支</code>上最后一次 commit 的 message 。</li>
+<li><code>git stash save message</code> 需要你指定 stash 的描述信息。</li>
+<li><code>git stash list</code>  ：查看所有的 stash 记录。</li>
+<li><code>git stash apply</code> :应用某个 stash ，但不会把存储从存储列表中删除，默认使用栈顶的 stash 即 <code>stash@{0}</code> ，如果要使用其他 stash 需要调用 <code>git stash apply stash@{$num}</code> ， 比如第二个：<code>git stash apply stash@{1}</code>。</li>
+<li><code>git stash pop</code> ：将 stash 栈中的对应 stash 记录删除，并将对应修改应用到当前的工作目录下,默认为第一个 stash 即 <code>stash@{0}</code> ，如果要应用并删除其他stash，命令：<code>git stash pop stash@{$num}</code>，比如应用并删除第二个：<code>git stash pop stash@{1}</code>。</li>
+<li><code>git stash drop stash@{$num}</code> ：删除对应 stash 栈中的 stash 记录。比如删除第二个： <code>git stash drop stash@{1}</code></li>
+<li><code>git stash clear</code> ：删除所有 stash 。</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>站在巨人的肩膀上，才能看的更远~</p>
+<ul>
+<li><a href="https://git-scm.com/book/zh/v2/Git-工具-储藏与清理" target="_blank" rel="noopener">官方文档</a></li>
+<li><a href="https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136" target="_blank" rel="noopener">Bug分支</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-撤销更改（七）/" rel="next" title="Git新手教程-撤销更改(七)">
+                <i class="fa fa-chevron-left"></i> Git新手教程-撤销更改(七)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/12/Git新手教程-远程仓库（九）/" rel="prev" title="Git新手教程-远程仓库(九)">
+                Git新手教程-远程仓库(九) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-stash-指令介绍"><span class="nav-number">2.</span> <span class="nav-text">git stash 指令介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-stash-与-git-stash-save-的区别"><span class="nav-number">2.1.</span> <span class="nav-text">git stash 与 git stash save 的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除-stash-记录"><span class="nav-number">2.2.</span> <span class="nav-text">删除 stash 记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#恢复-stash-所存储的内容"><span class="nav-number">2.3.</span> <span class="nav-text">恢复 stash 所存储的内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-stash-save-–keep-index"><span class="nav-number">2.4.</span> <span class="nav-text">git stash save –keep-index</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#不添加-–keep-index"><span class="nav-number">2.4.1.</span> <span class="nav-text">不添加 –keep-index</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#添加-–keep-index"><span class="nav-number">2.4.2.</span> <span class="nav-text">添加 –keep-index</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面使用stash"><span class="nav-number">3.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面使用stash</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建-stash-流程"><span class="nav-number">3.1.</span> <span class="nav-text">创建 stash 流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#清理-stash-流程"><span class="nav-number">3.2.</span> <span class="nav-text">清理 stash 流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">510k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">15:28</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
