@@ -297,7 +297,3 @@ git merge origin/master
 当然如果你要使用 `git push` 命令，也可以直接使用快捷键 ``Alt+ ` （Windows)`` 或 ``option + ` (Mac)`` 的方式。如下所示：
 
 ![idea_5.png](https://upload-images.jianshu.io/upload_images/2824145-a9f83544803d6ca9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-### 最后
-
-站在巨人的肩膀上，才能看的更远~
