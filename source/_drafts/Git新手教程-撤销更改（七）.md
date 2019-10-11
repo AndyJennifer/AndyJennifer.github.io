@@ -26,17 +26,17 @@ git commit --amend
 
 这里大家可能还是不是很明白，我们看下面这个简单的例子：
 
-![撤销更改1.png](https://upload-images.jianshu.io/upload_images/2824145-d0b6ea830d1e9fe5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 撤销更改1.png 撤销更改1 %}
 
 在上述例仓库中我们创建了一个 commit ，该 commit 消息并没有书写完整。这个时候我们想修改它，那么我们就可以使用命令 `git commit --amend` ，当输入该命令后，我们能得到如下弹窗：
 
 > 你也可以使用 `git commit --amend -m + 提交信息` 跳过编辑器，直接修改 commit 信息。
 
-![撤销更改2.png](https://upload-images.jianshu.io/upload_images/2824145-0d525cb66eb42171.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 撤销更改2.png 撤销更改2 %}
 
 这个时候，我们就可以完善该 commit 信息，然后保存并离开。这里我改成了 `删除了多余的语句` ，这时我们再使用 `git log` 命令，我们会发现我们的 commit 消息已经被更改了。如下所示：
 
-![撤销更改3.png](https://upload-images.jianshu.io/upload_images/2824145-0de4916bf1cdc5f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 撤销更改3.png 撤销更改3 %}
 
 当然在上述例子中，我们只是简单的修改了 commit 信息，并没有修改或添加一些新的文件，如果你修改或添加了新的文件，并想将这些修改的文件添加到最近的 commit 中去的话，那么你可能要经历以下步骤：
 
@@ -59,17 +59,17 @@ git revert <SHA-of-commit-to-revert>
 
 还是以上述例子来进行讲解，比如我们想还原下图中红色框中的 commit ：
 
-![撤销更改4.png](https://upload-images.jianshu.io/upload_images/2824145-0de4916bf1cdc5f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 撤销更改3.png 撤销更改3 %}
 
 我们可以使用 `git revert b71b40` ，需要注意的是使用该命令，默认会创建一个新的提交。如下图所示：
 
 > 这里 `b71b40` 是对应 commit 的 SHA 的前七个字符，当然你也可以使用完整的 SHA 。
 
-![撤销更改5.png](https://upload-images.jianshu.io/upload_images/2824145-e10e3a4bd493b3ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 撤销更改5.png 撤销更改5 %}
 
 一般情况下，我们可以使用Git系统默认的 revert 信息。当我们保存并退出后，再使用 `git log` 命令查看我们的日志提交记录，我们能得到下图：
 
-![撤销更改6.png](https://upload-images.jianshu.io/upload_images/2824145-000528eef2e0175b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 撤销更改6.png 撤销更改6 %}
 
 ### git reset
 
@@ -128,7 +128,7 @@ HEAD~3
 
 > 可以使用 `git log --oneline  --graph --all` 来查看所有的分支信息。
 
-![显示所有分支信息.png](https://upload-images.jianshu.io/upload_images/2824145-e19d7ffed53186d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 显示所有分支信息.png 显示所有分支信息 %}
 
 因为 `HEAD` 指向 `b71b405` commmit。
 
@@ -163,15 +163,15 @@ git reset <reference-to-commit>
 
 >注意，`git reset --mixed HEAD~1` 等同于 `git reset --mixed HEAD^` ，也等同于 `git reset HEAD~1` (git reset 命令默认选项为 --mixed)。
 
-![rest_mixed演示.jpg](https://upload-images.jianshu.io/upload_images/2824145-046cfe19a3409594.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img rest_mixed演示.jpg rest_mixed演示 %}
 
 当 `H` 提交修改的文件被移动到到工作目录后，文件的状态都为 `modifed`，也就是我们需要重新添加到暂存区，然后进行 commit 。我们继续看下面的例子：
 
-![mixed_展示.png](https://upload-images.jianshu.io/upload_images/2824145-7b7bcf70c52623de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img mixed_展示.png mixed_展示 %}
 
 在上述仓库中有3个提交，其中 `HEAD` 指向 `bb780f9` 上的 `master` , 这个时候如果我们运行 `git reset HEAD~` 命令，会将 commit `bb780f9` 中的文件移动到工作目录中，如下所示：
 
-![mixed_2.png](https://upload-images.jianshu.io/upload_images/2824145-5cf834b7f76dc83d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img mixed_2.png mixed_2 %}
 
 调用 `git status` 来查看我们的仓库状态，我们会发现使用 `--mixed` 选项，是不会暂存我们的更改的，也就是不会将相应提交的文件放入暂存区中。
 
@@ -179,21 +179,21 @@ git reset <reference-to-commit>
 
 当使用 `--soft` 选项时，不仅会移动 `master` 与 `HEAD` 指针，还会将相应修改添加到暂存区中，如下所示：
 
-![reset_soft演示.jpg](https://upload-images.jianshu.io/upload_images/2824145-86bb9a9bbf9c85a8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img reset_soft演示.jpg reset_soft演示 %}
 
 我们继续查看下面的例子：
 
-![soft展示.png](https://upload-images.jianshu.io/upload_images/2824145-caef357d1f2b4198.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img soft展示.png soft展示 %}
 
 ##### --hard 例子
 
 最后我们再来看看 `--hard` 选项：
 
-![reset_hard演示.jpg](https://upload-images.jianshu.io/upload_images/2824145-903e12026efab806.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img reset_hard演示.jpg reset_hard演示 %}
 
 使用 `--hard` 将清除对应 commit 所作的更改，继续查看下面的👇的例子：
 
-![hard展示.png](https://upload-images.jianshu.io/upload_images/2824145-bc65d682b862de62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img hard展示.png hard展示 %}
 
 当使用了 `--hard` 选项后，发现仓库中对应的提交消失了。
 
@@ -233,7 +233,7 @@ git reset HEAD <file>...
 在创建相应 `commmit` 时，我们可以勾选下图中的
 `Amend commit` 选项。如下所示：
 
-![ide_amend.png](https://upload-images.jianshu.io/upload_images/2824145-6bdf8b264ab654dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ide_amend.png ide_amend %}
 
 上述操作与使用 `git commit --amend` 命令的效果一样。
 
@@ -241,17 +241,17 @@ git reset HEAD <file>...
 
 通过依次点击编译器底部的`Version Control`->`Log`，然后选择想要 revert 的 commit ，点击鼠标`右键`，选择 `Revert Commit` 就可以啦~
 
-![ide_revert.png](https://upload-images.jianshu.io/upload_images/2824145-fee04c55bcf1c6c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ide_revert.png ide_revert %}
 
 #### 使用 git reset
 
 通过依次点击编译器底部的`Version Control`->`Log`，然后选择想要 reset 的 commit ，点击鼠标`右键`，选择 `Reset Current Branch to Here..` 就完成第一步啦~
 
-![ide_reset_1.png](https://upload-images.jianshu.io/upload_images/2824145-b1a4faa24e390f4c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ide_reset_1.png ide_reset_1 %}
 
 当然在第二步中，我们需要选择 `git reset` 中的选项，在 IDEA 中提供了四种选项 `Soft、Mixed、Hard、Keep` ，如下所示：
 
-![ide_reset_2.png](https://upload-images.jianshu.io/upload_images/2824145-8d64de035894b139.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ide_reset_2.png ide_reset_2 %}
 
 在上图中，我们不熟悉的只有 `--keep` 选项，因为该选项在平时中的项目并不常用，所以这里就不做更多介绍了，有兴趣的小伙伴，可以查看官方文档中 [git reset](https://git-scm.com/docs/git-reset) 中对其的介绍。
 

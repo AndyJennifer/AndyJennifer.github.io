@@ -20,7 +20,7 @@ categories:
 
 首先我们先进入该目录，并通过 `git init`创建Git仓库：
 
-![git的init命令使用.jpg](https://upload-images.jianshu.io/upload_images/2824145-bcc127717a62d01f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git的init命令使用.jpg git的init命令使用 %}
 
 >在没有向仓库提交任何commit时，多次运行`git init`命令是没有关系的，`git init`命令只会多次重新初始化仓库
 
@@ -130,7 +130,7 @@ git config --global core.editor "'/Applications/Sublime Text.app/Contents/Shared
 
 如果你像我一样配置了Sublime Text，那么我们会得到下图：
 
-![Git_Commit文本编辑.jpg](https://upload-images.jianshu.io/upload_images/2824145-9c5d27bdbd5693e3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Git_Commit文本编辑.jpg Git_Commit文本编辑 %}
 
 在`第一行`中，就是我们需要输入此次commit的信息，因为这是我们的第一次提交，所以这里我填的是 `Initial commit` ,当然你可以根据你的喜好填写信息。其他被`#`标记的行都是注释信息，都会被忽略。当我们使用 `git commit` 命令后，我们在控制台会得到如下输出：
 
@@ -213,7 +213,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 然后我们使用 `git diff`命令查看命令行输出:
 
-![git_diff展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-77b5e40b258ef0d6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_diff展示.jpg git_diff展示 %}
 
 在上图中，红色表示当前修改的文件删除的行。我相信大家看到这个界面一定会很熟悉，还记的我们之前介绍长裤仓库的历史提交记录中，所将的`git log -p`吗？其实`git log -p`其实就是使用了`git diff`命令。关于上图中，如果大家不理解每行所代表的意思，那么可以查看《查看仓库的历史记录(四)》中`git log -p`中的介绍。
 
@@ -225,11 +225,11 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 如果你的项目已经通过Git管理，那么当你在IDEA中创建新的文件夹时，编译器会如下提示：
 
-![ide_add操作展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-7e019825785684b6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img ide_add操作展示.jpg ide_add操作展示 %}
 
 通过提示消息，我们其实就能看出，就是提示我们是否将当前新创建的文件添加到Git的暂存区中，如果你选择确定，那么就会将该文件添加到暂存区中。如果你不小心选择了`cancel`,不用担心，你仍然可以使用下列方式来添加文件到暂存区中。通过选择你要添加的文件，点击鼠标`右键`依次选择`Git`--->`add`。就可以将该文件添加到暂存区中。如下图所示：
 
-![git_add_延迟展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-41af97c21f3bffc6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_add_延迟展示.jpg git_add_延迟展示 %}
 
 >小提示：在ide是以一种非常直观的颜色来表示当前仓库中的文件状态:
 >
@@ -243,7 +243,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 当我们将文件添加到暂存区中后，我们可以通过ide顶部的工具栏进行commit操作，记住是顶部哟！具体如下图所示：
 
-![git_commit_展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-38527c16caf69b3d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_commit_展示.jpg git_commit_展示 %}
 
 注意：如果你是修改已经跟踪过的文件，那么我们不需要将修改的文件通过 `git add` 命令将其添加到暂存区中，注意！！！！当我们直接使用 IDE 中的 commit 按钮时，默认是执行 `git add` 与 `git commit` 这两个命令的。
 
@@ -251,13 +251,13 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 同样的 `git diff` 也在顶部，如下图所示：
 
-![git_diff_ide.jpg](https://upload-images.jianshu.io/upload_images/2824145-32c537e0307fe506.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_diff_ide.jpg git_diff_ide %}
 
 #### Git使用快捷键
 
 当然除了上述所有的操作，我们还可以使用ide提供的快捷键进行操作，使用 ``Alt+ ` （Windows)`` 或 ``option + ` (Mac)`` 的方式，可以得到以下界面：
 
-![idea_快捷键汇总.jpg](https://upload-images.jianshu.io/upload_images/2824145-187de0ce3cd99fae.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_快捷键汇总.jpg idea_快捷键汇总 %}
 
 1. 对应我们使用的 `git commit`
 2. 对应我们使用的 `git diff`

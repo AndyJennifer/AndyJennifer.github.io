@@ -25,7 +25,7 @@ git clone https://github.com/AndyJennifer/SimpleEyes
 
 克隆该项目后，我们通过 cd 命令进入该项目,使用 `git log` 命令，我们能得到下列输出：
 
-![git_log展示界面.png](https://upload-images.jianshu.io/upload_images/2824145-e3a2a3d755462acf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_log展示界面.png git_log展示界面 %}
 
 #### 历史记录分析
 
@@ -93,7 +93,7 @@ Date:   Thu Aug 29 23:43:07 2019 +0800
 
 使用 `git log --oneline` 我们能得到如下输出：
 
-![git-log--oneline展示.png](https://upload-images.jianshu.io/upload_images/2824145-0aa247eba7fd3e18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-log--oneline展示.png git-log--oneline展示 %}
 
 使用 `git log --oneline` 命令会：
 
@@ -111,7 +111,7 @@ Date:   Thu Aug 29 23:43:07 2019 +0800
 
 >这里为了方便讲解，我只截取了特征明显的commit
 
-![git-log--stat展示.png](https://upload-images.jianshu.io/upload_images/2824145-4d9a5f8ab98f2d85.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-log--stat展示.png git-log--stat展示 %}
 
 上图中最后一行，表明这次提交共涉及到`8`个文件的修改，`160`行的插入，`5`行的删除。其中build.gradle文件中删除了1行，UserPreferences.kt中添加或删除了2行......相信到这里大家就明白了，使用命令`git log --stat`会：
 
@@ -125,11 +125,11 @@ Date:   Thu Aug 29 23:43:07 2019 +0800
 
 例如，我们想查看下图中具体的修改：
 
-![git-log-p1.png](https://upload-images.jianshu.io/upload_images/2824145-29751b2dcb5484f6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-log-p1.png git-log-p1 %}
 
 我们使用 `git log -p` 命令，我们能够得到一下输出：
 
-![git-log-p2.jpg](https://upload-images.jianshu.io/upload_images/2824145-518a0e1d2a9a4d74.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-log-p2.jpg git-log-p2 %}
 
 在上述输出信息中，包含5个比较重要的信息：
 
@@ -195,7 +195,7 @@ git show 543019ea
 
 通过依次点击编译器底部的`Version Control`->`Log`,我们能得到如下界面：
 
-![studioLog界面显示.jpg](https://upload-images.jianshu.io/upload_images/2824145-9e8a5d877e0713c4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img studioLog界面显示.jpg studioLog界面显示 %}
 
 现在分别上图标注的内容进行介绍：
 

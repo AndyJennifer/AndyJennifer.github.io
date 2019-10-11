@@ -16,7 +16,7 @@ categories:
 
 为了演示具体效果，这里以下面例子为例，我们在`dev`开发的新功能，修改了`Person.java`,具体如下所示：
 
-![dev-新功能.jpg](https://upload-images.jianshu.io/upload_images/2824145-fcd9c2ddda0a14fc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img dev-新功能.jpg dev-新功能 %}
 
 这个时候我们运行`git staus`指令,可以看到仓库状态：
 
@@ -34,7 +34,7 @@ Changes not staged for commit:
 
 如果直接在当前 `dev` 分支上直接直接执行命令 `git branch bug-5501` ，那么我们我们修改的内容也也会在 `bug-5501` 分支上，如下所示：
 
-![bug-5501.jpg](https://upload-images.jianshu.io/upload_images/2824145-658ed66a1a1ee6bf.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img bug-5501.jpg bug-5501 %}
 
 那现在我们想要创建一个新的分支 `branch bug-5501` ，但是不想包括我们之前修改的 `Person.java` 中的内容，那么我们可以使用 `git stash` 或 `git stash save` 指令。
 
@@ -56,7 +56,7 @@ nothing to commit, working directory clean
 
 我们发现，我们的仓库状态是干净的。那这个时候我们在创建，并切换到相应分支上，那这个时候其他的分支是不包含之前我们修改的内容的，也就是如下图所示：
 
-![git-stash流程.jpg](https://upload-images.jianshu.io/upload_images/2824145-41c9e373f524c40b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-stash流程.jpg git-stash流程 %}
 
 在上图中，从上往下分别为两个步骤：
 
@@ -104,7 +104,7 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@{0}
 
 具体场景如下所示：
 
-![git-stash-apply.jpg](https://upload-images.jianshu.io/upload_images/2824145-d42d67c76aad790d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-stash-apply.jpg git-stash-apply %}
 
 >注意：当你调用 `git stash apply` 并不指定具体的stash记录时，默认会恢复栈顶的stash记录。也就是等同于 `git stash apply stash@{0}` 。
 
@@ -114,7 +114,7 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@{0}
 
 ##### 不添加 --keep-index
 
-![不添加keep-index.jpg](https://upload-images.jianshu.io/upload_images/2824145-90de43db52b04abe.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 不添加keep-index.jpg 不添加keep-index %}
 
 解释一下上图的流程：
 
@@ -126,7 +126,7 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@{0}
 
 如果我们使用`git stash meessage --keep-index`，我们看看又是什么效果呢？，具体如下图所示：
 
-![添加keep-index.jpg](https://upload-images.jianshu.io/upload_images/2824145-c658fb297f5c1375.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 添加keep-index.jpg 添加keep-index %}
 
 观察上图，我们会发现，使用了`--keep-index`参数后，在stash记录栈中是不会存储 `git add` 命令已暂存的东西，也就是不会存储 Woman.java 文件。
 
@@ -140,11 +140,11 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@{0}
 
 首先我们来看一下创建一个 stash 在 `IntelliJ IDEA` 中的流程，首先点击鼠标右键。依次选择下图中红色箭头所指内容。
 
-![stash创建流程.png](https://upload-images.jianshu.io/upload_images/2824145-5a50136d4c67c614.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img stash创建流程.png stash创建流程 %}
 
 按照上图的指示，依次点击，我们能得到下图：
 
-![stash模块介绍.jpg](https://upload-images.jianshu.io/upload_images/2824145-97d0601dc745dff5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img stash模块介绍.jpg stash模块介绍 %}
 
 上图中：
 
@@ -158,11 +158,11 @@ xuwentaodeMacBook-Pro:GitPracticetest xuwentao$ git stash apply stash@{0}
 
 还是点击鼠标右键，依次选择下图中红色箭头所指内容。
 
-![unStash浏览流程.png](https://upload-images.jianshu.io/upload_images/2824145-3134b78d10559b52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img unStash浏览流程.png unStash浏览流程 %}
 
 按照上图的指示，依次点击，我们能得到下图：
 
-![unstash模块介绍.jpg](https://upload-images.jianshu.io/upload_images/2824145-f191956b3e41dd9a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img unstash模块介绍.jpg unstash模块介绍 %}
 
 1. Stashes：显示了我们所有创建的 stash
 2. View：查看 stash 所存储的内容

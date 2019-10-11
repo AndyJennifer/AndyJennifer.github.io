@@ -25,13 +25,13 @@ categories:
 
 我们都知道 Git 是一个**分布式**版本控制系统，那么这就意味着，使用 Git 是不存在主仓库的概念的，因此每个开发者都是使用的都是仓库的一个副本，那么也就是说，远程仓库其实是我们本地仓库的`副本`，只是它们位于其他地方。比如位于 `GitLab` 或者 `GitHub` 上，如下所示：
 
-![远程仓库1.jpg](https://upload-images.jianshu.io/upload_images/2824145-d8a2a4fc6492ad5d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 远程仓库1.jpg 远程仓库1 %}
 
 >需要注意的是，我们并不限于使用一个远程仓库，我们可以根据我们自己的需求创建多个远程仓库。
 
 当我们创建远程仓库后，我们就可以和他人进行协同开发了，比如你可以将本地仓库的更改推送到远程仓库，然后其他同事可以从远程仓库中拉取更改到他们的本地仓库中。如下所示：
 
-![远程仓库2.jpg](https://upload-images.jianshu.io/upload_images/2824145-09c30c2f3de25d92.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 远程仓库2.jpg 远程仓库2 %}
 
 ### 添加远程仓库
 
@@ -42,11 +42,11 @@ categories:
 
 那接下来，我们将在GitHub上创建一个仓库，如果你还没有账户，那么快去[官网](https://github.com)整一个账号吧~~~ 当我们创建好账号并登录后，将位于如下主页：
 
-![GitHub_创建仓库.png](https://upload-images.jianshu.io/upload_images/2824145-bc7b680e920143c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img GitHub_创建仓库.png GitHub_创建仓库 %}
 
 这里我们点击右侧的 `+` 符号，选择 `New Repostiry` ，那么接下来我们将跳转到创建仓库界面：
 
-![GitHub_创建仓库2.png](https://upload-images.jianshu.io/upload_images/2824145-ab661abdaa709e73.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img GitHub_创建仓库2.png GitHub_创建仓库2 %}
 
 - `Repostiry name` ：这里需要填写仓库的名称（一般情况下，我们都是使用项目名称作为仓库的名称，不用纠结一个完美的名称，仓库的名称可以随时更改）
 - `Description` ：这里需要填写仓库的描述，该选项是选填项。
@@ -55,7 +55,7 @@ categories:
 
 在创建完成仓库后，我们会得到如下界面：
 
-![GitHub_创建仓库3.png](https://upload-images.jianshu.io/upload_images/2824145-d2b3698232dafcaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img GitHub_创建仓库3.png GitHub_创建仓库3 %}
 
 在 GitHub 中也提供了两种 URL 方式，第一种`HTTPS` 方式，第二种 `SSH` 方式。这里我们采用 HTTPS 的方式。同时 GitHub 中有三种方式来处理远程仓库与本地仓库的关联：
 
@@ -92,7 +92,7 @@ git remote add origin https://github.com/AndyJennifer/GitTestProject.git
 
 那么接下来，我们就去我们的本地仓库中关联这个远程仓库吧，如下所示：
 
-![git_remote.png](https://upload-images.jianshu.io/upload_images/2824145-c0bc371e1d12a9c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_remote.png git_remote %}
 
 >注意 `git remote add` 命令，需要在你本地的仓库中使用。如果你不小心关联错了远程仓库，可以使用 `git remote remove <name>` 命令将关联关系删除，关于更多命令的使用，可以查看官网中 [git remote](https://git-scm.com/docs/git-remote)中的介绍。
 
@@ -120,11 +120,11 @@ https://github.com/GoogleChrome/lighthouse.git
 
 如果我们本地仓库已有如下提交，我们需要将本地仓库中的内容推送到刚才在 GitHub 中创建的远程仓库，我们需要使用命令 `git push` ，使用该命令会将本地仓库中所有的提交都推送到远程仓库中，如下所示：
 
-![推送到远程仓库.jpg](https://upload-images.jianshu.io/upload_images/2824145-acf5ce7482b9ce4a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 推送到远程仓库.jpg 推送到远程仓库 %}
 
 在推送到远程仓库之前，我们先看看一下本地仓库的提交：
 
-![本地仓库commit.png](https://upload-images.jianshu.io/upload_images/2824145-428777e2c1895c5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 本地仓库commit.png 本地仓库commit %}
 
 现在开始推送吧！要将本地仓库中的 commit 推送到远程仓库，我们需要使用 `git push` 命令，当然不是简单的调用该命令就行了，我们还需要提供`远程仓库别名`，以及容纳所提交的 commit 的`分支名`。如下所示：
 
@@ -138,7 +138,7 @@ git push <remote name> <branch>
 git push origin master
 ```
 
-![推送到远程仓库2.png](https://upload-images.jianshu.io/upload_images/2824145-4db361343eecbbb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 推送到远程仓库2.png 推送到远程仓库2 %}
 
 有几点需要注意：
 
@@ -152,7 +152,7 @@ git push origin master
 
 当我们将本地仓库中的内容推送到 GitHub 中的远程仓库后，我们查看 GitHub 中我们之前创建的项目：
 
-![推送到远程仓库3.png](https://upload-images.jianshu.io/upload_images/2824145-84c2962847110504.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 推送到远程仓库3.png 推送到远程仓库3 %}
 
 在 GitHub 中显示了仓库中有三个提交以及一个分支和一个贡献者。
 
@@ -166,7 +166,7 @@ git log --oneline
 
 在我们的本地仓库中使用了如下命令后，我们能得到下图：
 
-![推送到远程仓库4.png](https://upload-images.jianshu.io/upload_images/2824145-8818705c89b2f33d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 推送到远程仓库4.png 推送到远程仓库4 %}
 
 在上述红框中，`origin/master` 其实是一个跟踪分支（跟踪分支是与远程分支有直接关系的本地分支），该分支告诉我们，当前本地仓库关联了一个远程仓库，该远程仓库的别名为 `origin`，同时该远程仓库有一个 `master` 分支。并且该仓库的 `master` 分支指向 commit `f4d7e04` ，也就是说远程仓库拥有并包含所有 `f4d7e04` 下的 commit 。
 
@@ -180,7 +180,7 @@ git log --oneline
 
 如何将远程仓库中的更新拉取到本地仓库呢？我们看下面的这个例子：
 
-![从远程仓库中拉取修改1.jpg](https://upload-images.jianshu.io/upload_images/2824145-3edccd80e572a382.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改1.jpg 从远程仓库中拉取修改1 %}
 
 在我们的本地仓库中有五个提交，但是远程仓库中有六个提交，本地的 `master` 指向提交 `H` ，而远程仓库中的 `master` 指向 `H` 之后的提交 `J`, 由于两个仓库处于不同步的状态，我们需要将远程仓库中的更改同步到本地仓库中。这个时候我们可以使用 `git pull + 远程仓库别名 + 拉取分支`，在本示例中我们可以使用如下命令：
 
@@ -188,7 +188,7 @@ git log --oneline
 git pull origin master
 ```
 
-![从远程仓库中拉取修改2.jpg](https://upload-images.jianshu.io/upload_images/2824145-0a0427ffa735a2ee.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改2.jpg 从远程仓库中拉取修改2 %}
 
 使用该命令后，会将远程仓库中的更改拉取到本地仓库，并与本地仓库进行`合并(merge)`，并更新。
 
@@ -196,15 +196,15 @@ git pull origin master
 
 我们已经知道 `git pull` 命令的使用方式，现在结合我们之前的项目我们来实战一下，找到我们之前在 GitHub 中创建的项目，点击 `Add a README`，我们创建一个 `README.md` 文件，如下所示：
 
-![从远程仓库拉取修改3.png](https://upload-images.jianshu.io/upload_images/2824145-995f3fde020829d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库拉取修改3.png 从远程仓库拉取修改3 %}
 
 选择会跳转到一个新的编辑界面，这里我们不对该文件进行编辑，我们直接填写如下界面：
 
-![从远程仓库拉取修改4.png](https://upload-images.jianshu.io/upload_images/2824145-da930d0bccf39088.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库拉取修改4.png 从远程仓库拉取修改4 %}
 
 在上图中，我们可以选择填写相关信息。这里我就不填写了，直接点击`Commit new file`。当点击后，我们再查看项目，我们会发现多了一个 `README.md`文件与一个 `commit` 如下所示：
 
-![从远程仓库拉取修改5.png](https://upload-images.jianshu.io/upload_images/2824145-dc1ea710aca34945.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库拉取修改5.png 从远程仓库拉取修改5 %}
 
 因为我们之前本地仓库中只有 `3` 个提交，这个时候与远程仓库不同步，那么现在我们可以使用命令：
 
@@ -214,7 +214,7 @@ git pull origin master
 
 使用该命令后，我们能得到下图：
 
-![从远程仓库拉取修改6.png](https://upload-images.jianshu.io/upload_images/2824145-eea485413d5c0587.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库拉取修改6.png 从远程仓库拉取修改6 %}
 
 通过上述操作，就能将远程仓库中的内容拉取到本地仓库了。但是我们需要注意，使用 `git pull` 命令会`自动`将本地分支与跟踪分支进行`合并(merge)`，如果你不需要，可以使用另一个命令 `git fetch`。
 
@@ -230,7 +230,7 @@ git fetch origin master
 
 >在下图中，我们本地仓库只有 `D、E、F、G、H` 五个提交，而远程仓库拥有本地仓库中没有的提交 `J` 。
 
-![从远程仓库中拉取修改7.jpg](https://upload-images.jianshu.io/upload_images/2824145-6cfcd4848cd922e0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改7.jpg 从远程仓库中拉取修改7 %}
 
 根据上图，大家应该会发现几点
 
@@ -250,19 +250,19 @@ git merge origin/master
 
 `git fetch` 的主要使用场景是当你的远程仓库与本地仓库都有对方没有的 commit 时。请看如下场景：
 
-![从远程仓库中拉取修改8.jpg](https://upload-images.jianshu.io/upload_images/2824145-0c04f73d27f8099d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改8.jpg 从远程仓库中拉取修改8 %}
 
 在上图中，本地仓库与远程仓库在 `H` 提交之前状态一直是同步的，但是后续的过程中，本地仓库增加了一个提交 `8`，远程仓库也增加了一个提交 `J` ，如果这个时候，你想从远程仓库中拉取更改到本地，你可能会想使用命令 `git pull origin master` ，但是你会发现并没有任何作用，在如上情况下，我们需要使用 `git fetch origin master` ，使用该命令后，会使跟踪分支（origin/master) 指向最新的 commit ，如下所示：
 
-![从远程仓库中拉取修改9.jpg](https://upload-images.jianshu.io/upload_images/2824145-ffb46a7108e7a938.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改9.jpg 从远程仓库中拉取修改9 %}
 
 如果我们想将跟踪分支（origin/master) 的 commit 应用到本地 `master` 分支上 ，我们需要在 `master` 分支上使用命令 `git merge origin/master` ， 那接下来我们能得到下图：
 
-![从远程仓库中拉取修改10.jpg](https://upload-images.jianshu.io/upload_images/2824145-e095389ed957257b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改10.jpg 从远程仓库中拉取修改10 %}
 
 因为合并(merge)后会产生一个合并提交 `4`，又因为远程仓库中中并没有本地仓库中的 `8`，所以如果我们需要远程仓库也拥有这些提交，那么我们可以使用命令 `git push origin master`，使用该命令后，我们能得到下图：
 
-![从远程仓库中拉取修改11.jpg](https://upload-images.jianshu.io/upload_images/2824145-90987540e096afd9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 从远程仓库中拉取修改11.jpg 从远程仓库中拉取修改11 %}
 
 在上图中，使用 `git push origin master`命令后，远程仓库会拉取本地仓库的更改，同时会将本地的 `跟踪分支（origin/master）`指向本地最新的提交 `4` 。
 
@@ -274,15 +274,15 @@ git merge origin/master
 
 创建远程仓库有多种方式，这里我们还是以在 GitHub 中创建远程仓库为例， 要想在 IDEA 中创建 GitHub 中的远程仓库，我们需要在配置界面（在 Mac 中为 Preferences，Windows 为 Settings )中找到 `Version Control` -> `GitHub`选项 ，然后添加自己的 GitHub账号，如下所示：
 
-![idea_1.png](https://upload-images.jianshu.io/upload_images/2824145-fc55198c22f105c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_1.png idea_1 %}
 
 在添加完毕账号后，找到工具栏中的 `VCS` -> `Import into Version Control` -> `Share project on Github`。 如下所示：
 
-![idea_2.png](https://upload-images.jianshu.io/upload_images/2824145-a03ad38d661de9fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_2.png idea_2 %}
 
 选择后会让我们填写，远程仓库的名称，及远程仓库的别名，及对远程仓库的描述信息等，如下图所示：
 
-![idea_3.png](https://upload-images.jianshu.io/upload_images/2824145-5f774242464c107b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_3.png idea_3 %}
 
 填写相关信息后，我们就可以点击 `Share` 按钮 创建远程仓库啦。
 
@@ -290,10 +290,10 @@ git merge origin/master
 
 当我们创建远程仓库后，我们可以通过点击鼠标`右键`，依次选择 `Git` -> `Repositiry`，然后选择使用 `git pull` 、`git push` 还是 `git fetch` 。 如下所示：
 
-![idea_4.png](https://upload-images.jianshu.io/upload_images/2824145-cc0b63cf64e23eb0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_4.png idea_4 %}
 
 >上图中红色方框所包括的`蓝色左下箭头`为 `git pull`，也就是从远程仓库拉取更新。
 
 当然如果你要使用 `git push` 命令，也可以直接使用快捷键 ``Alt+ ` （Windows)`` 或 ``option + ` (Mac)`` 的方式。如下所示：
 
-![idea_5.png](https://upload-images.jianshu.io/upload_images/2824145-a9f83544803d6ca9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_5.png idea_5 %}

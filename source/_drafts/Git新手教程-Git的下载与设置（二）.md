@@ -18,11 +18,11 @@ categories:
   
 * 选择你所需要的系统版本并安装
 
-![git版本选择.png](https://upload-images.jianshu.io/upload_images/2824145-b856d6b188753669.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git版本选择.png git版本选择 %}
 
 * 安装完成后，在命令行输入git命令，如果显示了相关信息，那么就安装成功了
 
-![安装成功.png](https://upload-images.jianshu.io/upload_images/2824145-b8bbf9fadc890854.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 安装成功.png 安装成功 %}
 
 ### Mac/Linux下Git终端配置
 
@@ -36,7 +36,7 @@ categories:
 
 * 接下我们需要将`terminal-config`文件夹移动到你的用户主目录下，并重新命名该文件为`.terminal-config`(前面有个点)。这里我们使用的 `mv` 指令。
 
-![演示.gif](https://upload-images.jianshu.io/upload_images/2824145-92a4998dd9bc4355.gif?imageMogr2/auto-orient/strip)
+{% asset_img 演示.gif 演示 %}
 
 * 将 `bash_profile` 文件移动到你的主目录下，并命名为 `.bash_profile`（前面有个点)
 
@@ -44,7 +44,7 @@ categories:
 
 在下面的的演示中，因为我已经存在 `.bash_profile` 文件，所以我们直接通过命令 `open .bash_profile` 来打开文件，并将内容复制进去。
 
-![profile演示.gif](https://upload-images.jianshu.io/upload_images/2824145-35d0b0caa46e0015.gif?imageMogr2/auto-orient/strip)
+{% asset_img profile演示.gif profile演示 %}
 
 ### 初始化配置
 

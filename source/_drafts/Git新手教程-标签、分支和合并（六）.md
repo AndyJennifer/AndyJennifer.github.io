@@ -23,11 +23,11 @@ categories:
 
 > `Tag(标签)`一般表示比较重要的节点信息。
 
-![Tag展示.jpg](https://upload-images.jianshu.io/upload_images/2824145-e82ce4dcad43c93a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Tag展示.jpg Tag展示 %}
 
 即使更多的提交被添加到仓库中（在下图中，我们假设在D提交之后又陆续的提交了E、F、G三个提交)，`Tag(标签)`仍然锁定着某个提交，如下所示：
 
-![Tag展示2.jpg](https://upload-images.jianshu.io/upload_images/2824145-a96ba9e37b54d5fc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Tag展示2.jpg Tag展示2 %}
 
 既然标签有着如此重要的作用，那现在我们来看看在Git中如何创建标签吧。在Git中标签有两种类型：`轻量标签`与`附注标签`。
 
@@ -52,7 +52,7 @@ git tag -a v1.0.0
 
 通过上述方式，Git会运行你配置的文本编辑器输入标签信息。如下所示：
 
-![git_tag_3.png](https://upload-images.jianshu.io/upload_images/2824145-8ea44be6c92264ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_tag_3.png git_tag_3 %}
 
 >上图中，我配置的是Sublime Text，当然你也可以使用`git config --global core.editor`命令配置你喜欢的编辑器。
 
@@ -66,7 +66,7 @@ git tag -a v1.0.0 -m "发布新版本v1.0.0"
 
 在讲解了轻量标签与附注标签的使用之后，我们来看一下这两个标签的实际区别，我们可以通过`git show`命令查看实际的区别，我们先查看附注标签，如下所示：
 
-![git_show_1.png](https://upload-images.jianshu.io/upload_images/2824145-c1b7bf2c9a0ec3a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_show_1.png git_show_1 %}
 
 通过使用`git show v1.0.0`，你可以看到命令行的输出中是包含Tag信息的：
 
@@ -80,7 +80,7 @@ Date:   Sun Sep 15 18:20:28 2019 +0800
 
 而创建的轻量标签中，是不包含该信息的，如下所示：
 
-![git_show_2.png](https://upload-images.jianshu.io/upload_images/2824145-274c2943992112fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_show_2.png git_show_2 %}
 
 需要注意的是，创建的标签总是与commit进行绑定的。比如在上图中，标签是指向 `441796...` 这个提交的。
 
@@ -111,7 +111,7 @@ git tag -a v1.0.0 abd12d0
 
 在Git中，分支就像是科幻电影中的`平行世界`。每个平行世界都运行在独立的环境中，在正常情况下，每个平行世界中所作的事，对于现实世界或另一个平行世界是无感知的且不影响的。在某些特殊的情况下，平行世界与现实世界可能重合，那么就会产生混乱与冲突。那这个时候就需要我们来解决这些冲突与问题。
 
-![平行世界.jpg](https://upload-images.jianshu.io/upload_images/2824145-9abd4b16881e58c0.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 平行世界.jpg 平行世界 %}
 
 扯太远了，分支在Git中，主要用于项目的开发或者对项目进行修正。因为所有的修改都是在分支中进行，所以并不会影响到项目（项目一般在主分支上，一般是 `master` 分支）。当我们在分支中进行更改后，我们可以将分支中的内容合并到分支上，这种分支组合过程，称为`合并（merge)`。后续我们会一一讲解这些内容。
 
@@ -121,13 +121,13 @@ git tag -a v1.0.0 abd12d0
 
 在下图仓库中，我们创建了一些提交，并在提交`D`中创建了名为 `v1.0` 的标签，除了标签以外还包含一个隐藏的 `master` 分支。在我们没有创建分支的情况下，Git会为我们创建一个名为 `master` 的分支。其实 `master` 的本质其实是一个 `指针` 。
 
-![分支1.png](https://upload-images.jianshu.io/upload_images/2824145-4324a593bb3e2ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支1.png 分支1 %}
 
 > master 并没有什么特殊的意义，它只是第一个默认分支名。
 
 随着我们不断向仓库进行提交，这些提交都会添加到该分支上。同时 `master指针` 也会指向对应提交。如下所示：
 
-![分支2.png](https://upload-images.jianshu.io/upload_images/2824145-d8d2162b0e2e757c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支2.png 分支2 %}
 
 在上图中，`masetr` 指针随着提交而不断移动。图中`红线`所连接的提交都属于 `master` 分支。
 
@@ -137,29 +137,29 @@ git tag -a v1.0.0 abd12d0
 
 在某些情况下，我们可能会创建另一个分支。在下图中，我们又创建了另一分支 `branch1` 。
 
-![分支3.png](https://upload-images.jianshu.io/upload_images/2824145-59aac87a94310dd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支3.png 分支3 %}
 
 这个时候如果我们再进行一个提交，哪个分支会移动呢？是 `master` 还是 `branch1` 分支呢？这里就涉及到另一个知识点----> `HEAD` 指针。
 
 在Git中，`HEAD` 总是指向当前活跃的分支。在你没有切换分支的情况下，默认指向 `master` 分支。如下图所示。
 
-![分支4.jpg](https://upload-images.jianshu.io/upload_images/2824145-2f6693469ebb4b42.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支4.jpg 分支4 %}
 
 因为当前 `HEAD指针` 指向 `master` 分支，所以当我们再向仓库提交一个`I`提交对象时，该提交仍然会在 `master` 分支上。如下所示：
 
-![分支5.jpg](https://upload-images.jianshu.io/upload_images/2824145-0088d194d5e6439e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支5.jpg 分支5 %}
 
 当然我们可以改变 `HEAD` 指针所指向的内容， 使用 `git checkout` 命令，我们可以切换 `HEAD` 指针所指向的分支。比如我们可以通过命令`git checkout branch1`，将 `HEAD` 指针指向 `branch1` 。
 
 当我们切换分支到 `branch1` 后，我们后续的提交，都会添加到 `branch1` 分支上。比如下图，我们又创建了一个 `A提交` ，那么这时 `branch1` 分支指针会指向该提交。
 
-![分支6.jpg](https://upload-images.jianshu.io/upload_images/2824145-fe3aa6cc999fa477.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支6.jpg 分支6 %}
 
 ##### 分支中的提交的可见性
 
 需要注意的是，分支中的提交对于其他分支来说是不可见的。
 
-![分支7.jpg](https://upload-images.jianshu.io/upload_images/2824145-5f0010fe90016128.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支7.jpg 分支7 %}
 
 在上图中，如果我们当前切换到了 `master` 分支，那么在我们的工作目录与文件系统中， `branch1` 分支的 `A` 与 `branch2` 分支中的 `J` ，这两个提交对文件造成的更改，将不会出现在 `master` 分支上的任何文件中。如果需要查看这个两个对应的文件修改，只需要切换到我们想要查找的提交所在的分支就行了。
 
@@ -176,7 +176,7 @@ git branch branch1
 
 需要注意的是，如果你在某个提交上创建了一个分支，那么该提交之前的所有提交也是属于当前分支，在下图中，在 `H` 提交中使用了创建分支命令创建了 `branch1` 分支，那么在 `H` 提交之前的 `D、E、F、G` 也都属于 `branch1` 分支。
 
-![分支3.png](https://upload-images.jianshu.io/upload_images/2824145-59aac87a94310dd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支3.png 分支3 %}
 
 上图中 `branch1` 分支如蓝线所示。
 
@@ -204,7 +204,7 @@ git checkout dev
 
 在下图中，`星号(*)` 标记的为当前活跃的分支。
 
-![git_branch.png](https://upload-images.jianshu.io/upload_images/2824145-a926cef561cb5c2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git_branch.png git_branch %}
 
 ##### 查看所有分支
 
@@ -223,7 +223,7 @@ git log --oneline --graph --all
 
 通过此命令，我们能查看仓库中的所有的分支和 commit 信息：
 
-![显示所有分支信息.png](https://upload-images.jianshu.io/upload_images/2824145-e19d7ffed53186d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 显示所有分支信息.png 显示所有分支信息 %}
 
 #### 分支删除
 
@@ -256,25 +256,25 @@ git merge <other-branch>
 
 假设我们的项目存在这两条分支 `master` 与 `branch1` 两条分支。
 
-![普通合并1.jpg](https://upload-images.jianshu.io/upload_images/2824145-af10415234b3c02d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 普通合并1.jpg 普通合并1 %}
 
 这个时候我们想将 `branch1` 合并到 `master` 分支上，由于当前`HEAD`指向 `master` 分支，所以当两个分支合并时，将会生成一个合并提交 `B` 将放置在 `master` 分支上，并且 `master指针` 将会向前移动。如下所示：
 
-![普通合并2.jpg](https://upload-images.jianshu.io/upload_images/2824145-6e938d8949dd0e24.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 普通合并2.jpg 普通合并2 %}
 
 需要注意的是， `B提交` 会链接`branch1`中的 `4` 与 `A` 提交。同时当分支进行合并时，并不会影响到之前的分支，比如我们仍然可以切换到`branch1`分支上，并创建一个新的提交 `J` ,如下图所示：
 
-![普通合并3.jpg](https://upload-images.jianshu.io/upload_images/2824145-56f371f84ba1ee9f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 普通合并3.jpg 普通合并3 %}
 
 #### 快进合并
 
 假设我们的项目存在这两条分支`master`与`branch1`支。且`branch1`分支在`master`分支前面。如下所示：
 
-![快速合并1.jpg](https://upload-images.jianshu.io/upload_images/2824145-73b8790dce00a0a9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 快速合并1.jpg 快速合并1 %}
 
 因为`master`中是不包含 `branch1` 中的提交`(I,K,2)`。如果这个时候我们想将这些提交纳入`master`分支中，也就是需要将 `branch1` 分支 `合并(merge)` 到 `master` 分支中。当我们在`master`分支中使用命令 `git merge branch1` 时，因为 `branch1分支` 在 `master分支` 前，Git会做一个所谓的`快进合并`。如下图所示：
 
-![快速合并2.jpg](https://upload-images.jianshu.io/upload_images/2824145-2d1f6505826e3687.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 快速合并2.jpg 快速合并2 %}
 
 在上图中，`master`分支移动到了`branch1`分支指向的commit。需要注意的是，快进合并并不像普通合并那样再创建一个提交。
 
@@ -284,40 +284,40 @@ git merge <other-branch>
 
 在例子中，我们已经创建了一个名为`GitTestProject`的仓库，在仓库中我们已经添加了一个名为`Jvm系列之总目.md`文件到仓库中，如下所示：
 
-![合并演示1.gif](https://upload-images.jianshu.io/upload_images/2824145-9eb857724636c1dc.gif?imageMogr2/auto-orient/strip)
+{% asset_img 合并演示1.gif 合并演示1 %}
 
 其中 `Jvm系列之总目.md` 文件中的内容如下
 
-![合并演示2.png](https://upload-images.jianshu.io/upload_images/2824145-78e82cf957740957.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示2.png 合并演示2 %}
 
 这个时候我们通过 `git branch dev` 命令创建了 `dev` 分支，并切换到该分支中，这个时候我们原文中添加了下图中`红框`中的内容。
 
 >注意的是，你需要经常使用`git branch`来查看活跃分支
 
-![合并演示3.png](https://upload-images.jianshu.io/upload_images/2824145-9921633bb4577a16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示3.png 合并演示3 %}
 
 在修改该文件并保存后，我们可以通过`git status`查看当前仓库的状态，然后我们将在`dev`分支修改的内容进行commit。内容如下所示：
 
-![合并演示4.png](https://upload-images.jianshu.io/upload_images/2824145-bee61934f9a6f9c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示4.png 合并演示4 %}
 
 我们在原来的文件中，添加了一句`Java class文件格式`。接下来，我们通过`git checkout master`切换到 `master` 分支，然后继续修改该文件，同样的修改的内容如红框所示：
 
-![合并演示5.png](https://upload-images.jianshu.io/upload_images/2824145-2c781c67448bd9ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示5.png 合并演示5 %}
 
 同样的，在我们完成修改后，我们将在`master`分支修改的内容进行commit。内容如下所示：
 
-![合并演示6.png](https://upload-images.jianshu.io/upload_images/2824145-cb33af236bd60280.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示6.png 合并演示6 %}
 
 当提交完毕后，如果我们想将`dev`分支合并到 `master`分支中，使用
 `git merge dev`命令，我们可以看到如下报错：
 
 >当使用 `git merge` 命令时，你一定要注意当前所在的分支，你可以通过 `git branch` 或者 `git status` 来查看。
 
-![合并演示7.png](https://upload-images.jianshu.io/upload_images/2824145-00945ed0e7b36fff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示7.png 合并演示7 %}
 
 在上图中，Git告诉我们文件 `Jvm系列之总目录.md` 出现了冲突。这个时候我们再打开该文件，我们可能看到如下内容:
 
-![冲突文件显示.png](https://upload-images.jianshu.io/upload_images/2824145-86fcc387f7f213ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 冲突文件显示.png 冲突文件显示 %}
 
 在该文件中显示了一些特殊的一些符号，其实这些符号是Git定义的`合并冲突指示符`，下面对这些指示符进行介绍：
 
@@ -329,17 +329,17 @@ git merge <other-branch>
 
 当出现冲突时，我们需要手动的删除掉这些指示符，在该例子中，我们想保留两个分支提交的内容，那么我们可以进行如下操作：
 
-![冲突合并.gif](https://upload-images.jianshu.io/upload_images/2824145-ab501c239d214817.gif?imageMogr2/auto-orient/strip)
+{% asset_img 冲突合并.gif 冲突合并 %}
 
 >注意：因为 `dev` 分支与 `master` 分支修改的是同一文件，那么结合上文我们所讲解的合并的类型，那么上例中的提交为`普通合并`，故需要一个新的提交。
 
 当然，当我们解决冲突后，我们仍然需要将修改的内容 `add` 到暂存区中，然后提交。如下所示：
 
-![合并演示9.png](https://upload-images.jianshu.io/upload_images/2824145-f07998c0a4a23e70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示9.png 合并演示9 %}
 
 当提交完毕后，我们再使用`git log`命令，我们就能看到我们的提交记录啦。
 
-![合并演示10.png](https://upload-images.jianshu.io/upload_images/2824145-cd75fcc24eac0f94.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 合并演示10.png 合并演示10 %}
 
 在上述提交记录中，我们可以看到 `master` 分支上不仅包含了 `dev` 分支上的提交，还包括了一个合并的提交(merge branch 'dev')。
 
@@ -351,7 +351,7 @@ git merge <other-branch>
 
 通过依次点击编译器底部的 `Version Control` -> `Log` ，选择我们想创建 `Tag` 的 commit ，然后点击鼠标右键,依次选择 `New` -> `Tag` ,并输入你想输入的 Tag 名称就行啦，具体如下所示：
 
-![创建Tag.gif](https://upload-images.jianshu.io/upload_images/2824145-390858cefa29718c.gif?imageMogr2/auto-orient/strip)
+{% asset_img 创建Tag.gif 创建Tag %}
 
 在创建`Tag`成功后，在该commit记录中会有一个灰色的标签。
 
@@ -359,7 +359,7 @@ git merge <other-branch>
 
 标签的删除也特别简单，在Git提交记录中点击包含我们所创建的标签的commit,然后点击随便右键，依次选择`标签名称`->`delete`。就可以完成标签的删除啦。具体如下所示；
 
-![删除标签.gif](https://upload-images.jianshu.io/upload_images/2824145-13e82d0dcd43e912.gif?imageMogr2/auto-orient/strip)
+{% asset_img 删除标签.gif 删除标签 %}
 
 #### 分支的创建
 
@@ -369,11 +369,11 @@ git merge <other-branch>
 
 在编译器中，我们只要选择工具栏中的`VCS`->`Git`->`Branches`，就可以从创建分支啦。
 
-![创建分支方式1.png](https://upload-images.jianshu.io/upload_images/2824145-a2e046f9c3db3bfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 创建分支方式1.png 创建分支方式1 %}
 
 根据上述操作后，会弹出如下选择框，这个时候我们只要选择 `New Branch` 选项就可以创建分支了。
 
-![创建分支方式1.2.png](https://upload-images.jianshu.io/upload_images/2824145-db2acd3fe0b49de3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 创建分支方式1.2.png 创建分支方式1 %}
 
 下面对该选择框中的内容进行简单的介绍：
 
@@ -388,7 +388,7 @@ git merge <other-branch>
 
 第二种方式创建分支，是通过点击编译器`最右下角`的 `Git:master`（该左下角的内容可能变化，比如你切换到了dev分支上，那么这个时候显示的是 `Git:dev` 。这里以 `master` 分支为例，来创建分支。
 
-![创建分支方式2.png](https://upload-images.jianshu.io/upload_images/2824145-b4fdf90fcf91272d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 创建分支方式2.png 创建分支方式2 %}
 
 通过该种方式创建的分支。分支指针所指向的commiit，是你所在分支下`最新的commit!!!!`。
 
@@ -396,7 +396,7 @@ git merge <other-branch>
 
 通过依次点击编译器底部的`Version Control`->`Log`，然后选中我们需要创建分支的commmit,然后点击鼠标右键，选择 `New` ->`Branch`
 
-![创建分支方式3.png](https://upload-images.jianshu.io/upload_images/2824145-ed1e6b64405f8a2d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 创建分支方式3.png 创建分支方式3 %}
 
 通过上述这种方式所创建的分支，分支指针所指向的commit为你选中的commit。
 
@@ -404,7 +404,7 @@ git merge <other-branch>
 
 分支的删除也比较简单，通过依次点击编译器底部的`Version Control`->`Log`，然后找到有分支的commit，点击鼠标`右`键，找到你要删除的分支名称，然后选择 `delete` 就可以删除分支了。这里以删除分支 `fix-23` 为例：
 
-![分支的删除.png](https://upload-images.jianshu.io/upload_images/2824145-e53f29ab141907ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支的删除.png 分支的删除 %}
 
 #### 分支的合并
 
@@ -415,7 +415,7 @@ git merge <other-branch>
 
 然后我们就可以选择相应的分支合并到对应分支下了，比如这里我们以 `master` 分支需要合并 `dev` 分支为例：
 
-![分支的合并展示.png](https://upload-images.jianshu.io/upload_images/2824145-de84024c86d9a890.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 分支的合并展示.png 分支的合并展示 %}
 
 在上述图中，我们只用选择 `Merge into Current` 就可以了，需要注意的是，当我们选择合并分支时，我们需要切换到正确的的分支上。
 
@@ -427,7 +427,7 @@ git merge <other-branch>
 
 当合并分支出现冲突的时候，编译器会提示我们合并冲突，会弹出如下代码框：
 
-![冲突展示框.png](https://upload-images.jianshu.io/upload_images/2824145-1ef2eb3031d3c2c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 冲突展示框.png 冲突展示框 %}
 
 整个代码块分为三个部分：
 
@@ -455,7 +455,7 @@ git merge <other-branch>
 如果说当你合并冲突的时候，不小心点击了 `Abort` 按钮，不用担心，你仍然可以点击鼠标`右键`，依次选择 `Git` ->
 `Resolve Conflicts`选项来解决冲突。 如下所示：
 
-![遗忘解决的冲突.png](https://upload-images.jianshu.io/upload_images/2824145-4f1678905a734451.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 遗忘解决的冲突.png 遗忘解决的冲突 %}
 
 ### 最后
 

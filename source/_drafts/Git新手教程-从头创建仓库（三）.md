@@ -24,7 +24,7 @@ categories:
 
 当使用 `git init` 命令时，我们在命令行中会得到如下提示：
 
-![git的init命令使用.jpg](https://upload-images.jianshu.io/upload_images/2824145-bcc127717a62d01f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git的init命令使用.jpg git的init命令使用 %}
 
 在上图中我的仓库的地址为 `documents/GitTest/GitTestProject` ，当然你也可以根据你自己目录及项目名称来创建Git仓库。
 
@@ -32,7 +32,7 @@ categories:
 
 当我们使用 `git init` 命令创建仓库后，我们能在当前目录下得到一个隐藏的 `.git` 文件夹，该文件夹下的内容记录了我们所有的commit，及其他信息。该文件下的内容如下所示：
 
-![Git目录结构.jpg](https://upload-images.jianshu.io/upload_images/2824145-b571e49b64d5eeb2.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Git目录结构.jpg Git目录结构 %}
 
 >如果你已经使用Git管理你的项目，请不要直接修改`.git`文件夹下的任何文件。该文件下的内容是Git自身进行维护的。如果更改，会导致丢失一些重要的内容。切记不要删除、编辑这些文件。
 
@@ -78,7 +78,7 @@ git clone git@github.com:AndyJennifer/SimpleEyes.git
 
 输入命令后效果如下所示：
 
-![git_clone展示.gif](https://upload-images.jianshu.io/upload_images/2824145-829f8d23ca0adcd6.gif?imageMogr2/auto-orient/strip)
+{% asset_img git_clone展示.gif git_clone展示 %}
 
 这里我们简单的介绍下 git clone 显示的输出结果。
 
@@ -128,7 +128,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 在实际创建创建仓库之前，我们需要在我们的 IDEA 中配置 Git ，我们需要 IDEA 中依次点击 `Preferences` -> `Version Control` -> `Git` ，然后在 `Path To Git executable` 上输入安装 Git 的位置，点击右侧的 `Test` 按钮，如果成功弹出 `Git executed successfully` 弹框，说明配置成功，如下所示：
 
-![idea_配置_git.png](https://upload-images.jianshu.io/upload_images/2824145-3cd6a3bfc2e66cb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img idea_配置_git.png idea_配置_git %}
 
 如果你不知道 Git 的安装位置。
 
@@ -139,7 +139,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 在编译器中，我们只要选择工具栏中的`VCS` -> `import into Version Control` -> `Creat Git Repository` 就可以从创建我自己的仓库啦。
 
-![git-init展示.png](https://upload-images.jianshu.io/upload_images/2824145-d917d6661e2515fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-init展示.png git-init展示 %}
 
 通过上述方式，最终会选择一个仓库目录地址。这里由于篇幅限制就不具体描述啦。
 
@@ -148,14 +148,14 @@ nothing to commit (create/copy files and use "git add" to track)
 `git clone` 在IDEA中，有两种操作流程如下图所示：
 
 **第一种：**
-![git-clone方式第一种.png](https://upload-images.jianshu.io/upload_images/2824145-0409b26a83927660.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-clone方式第一种.png git-clone方式第一种 %}
 
 **第二种：**
-![git-clonet方式第二种.png](https://upload-images.jianshu.io/upload_images/2824145-5f3d48f8a3ee16d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-clonet方式第二种.png git-clonet方式第二种 %}
 
 以上两种方式都可以 clone 项目，只是叫法不同而已。当然这两个操作点击之后会走到如下流程：
 
-![clone界面展示.png](https://upload-images.jianshu.io/upload_images/2824145-4c650f7f92291f34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img clone界面展示.png clone界面展示 %}
 
 就是这么简单，和我们使用命令行是一样的~
 
@@ -171,7 +171,7 @@ nothing to commit (create/copy files and use "git add" to track)
 
 当然我们可以通过编译器底部的`Version Control`中的`local Changes`查看我们当前的仓库状态。如下图所示，
 
-![git-status可视化界面展示.png](https://upload-images.jianshu.io/upload_images/2824145-351b22ae281708d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img git-status可视化界面展示.png git-status可视化界面展示 %}
 
 ### 最后
 
