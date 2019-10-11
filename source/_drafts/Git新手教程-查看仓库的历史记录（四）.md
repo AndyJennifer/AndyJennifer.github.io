@@ -17,7 +17,7 @@ categories:
 
 当然使用 `git log` 命令，我们首先需要一个现有的Git仓库，这里还是以我自己的项目[SimpleEyes项目](https://github.com/AndyJennifer/SimpleEyes)为例。
 
-还记得我们之前的介绍的 `git clone` 命令吗？，我们先 clone 该项目吧.
+还记得我们之前的介绍的 `git clone` 命令吗？我们先 clone 该项目吧.
 
 ```bash
 git clone https://github.com/AndyJennifer/SimpleEyes
