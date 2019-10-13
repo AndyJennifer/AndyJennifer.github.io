@@ -96,31 +96,30 @@
 
 
 
-  <meta name="description" content="前言在前面的文章中，我们介绍了Git的基本概念，了解的Git常用的术语。相信大家对Git已经有一个基本的了解了。工欲善其事，必先利其器。让我们去下载并配置Git吧。 Mac/Linux/Windows设置我们可以根据自己的系统，选择不同的版本。推荐上官网直接下载最新的版本。  跳转到Git相关下载界https://git-scm.com/downloads  选择你所需要的系统版本并安装">
+  <meta name="description" content="前言通过前面的文章，我相信大家已经对 Git 有所掌握了，现在还剩下最后一个知识点，就是让 Git 添加忽略某些文件。在实际的项目开发中，我们可能不想将一些文件添加到 Git 仓库中。比如，一些敏感文件、临时文件、自动生成文件、日志文件等。那应该怎么操作呢？ 实际例子假设我们想创建一个项目并使用 Git 进行管理，现在我们有三个文件 A.md、B.md、C.md，现在我们不希望将 C.md文件添加">
 <meta name="keywords" content="Git">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Git新手教程-Git的下载与设置(二)">
-<meta property="og:url" content="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/index.html">
+<meta property="og:title" content="Git新手教程-添加忽略文件（十）">
+<meta property="og:url" content="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/index.html">
 <meta property="og:site_name" content="AndyJennifer&#39;Blog">
-<meta property="og:description" content="前言在前面的文章中，我们介绍了Git的基本概念，了解的Git常用的术语。相信大家对Git已经有一个基本的了解了。工欲善其事，必先利其器。让我们去下载并配置Git吧。 Mac/Linux/Windows设置我们可以根据自己的系统，选择不同的版本。推荐上官网直接下载最新的版本。  跳转到Git相关下载界https://git-scm.com/downloads  选择你所需要的系统版本并安装">
+<meta property="og:description" content="前言通过前面的文章，我相信大家已经对 Git 有所掌握了，现在还剩下最后一个知识点，就是让 Git 添加忽略某些文件。在实际的项目开发中，我们可能不想将一些文件添加到 Git 仓库中。比如，一些敏感文件、临时文件、自动生成文件、日志文件等。那应该怎么操作呢？ 实际例子假设我们想创建一个项目并使用 Git 进行管理，现在我们有三个文件 A.md、B.md、C.md，现在我们不希望将 C.md文件添加">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/git版本选择.png">
-<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/安装成功.png">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2824145-7e0d2393a1398b15.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/演示.gif">
-<meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/profile演示.gif">
-<meta property="og:updated_time" content="2019-10-11T16:13:55.602Z">
+<meta property="og:image" content="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件1.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件2.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件3.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件4.png">
+<meta property="og:updated_time" content="2019-10-13T12:35:01.017Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Git新手教程-Git的下载与设置(二)">
-<meta name="twitter:description" content="前言在前面的文章中，我们介绍了Git的基本概念，了解的Git常用的术语。相信大家对Git已经有一个基本的了解了。工欲善其事，必先利其器。让我们去下载并配置Git吧。 Mac/Linux/Windows设置我们可以根据自己的系统，选择不同的版本。推荐上官网直接下载最新的版本。  跳转到Git相关下载界https://git-scm.com/downloads  选择你所需要的系统版本并安装">
-<meta name="twitter:image" content="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/git版本选择.png">
+<meta name="twitter:title" content="Git新手教程-添加忽略文件（十）">
+<meta name="twitter:description" content="前言通过前面的文章，我相信大家已经对 Git 有所掌握了，现在还剩下最后一个知识点，就是让 Git 添加忽略某些文件。在实际的项目开发中，我们可能不想将一些文件添加到 Git 仓库中。比如，一些敏感文件、临时文件、自动生成文件、日志文件等。那应该怎么操作呢？ 实际例子假设我们想创建一个项目并使用 Git 进行管理，现在我们有三个文件 A.md、B.md、C.md，现在我们不希望将 C.md文件添加">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件1.png">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/">
+  <link rel="canonical" href="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/">
 
 
 
@@ -130,7 +129,7 @@
   };
 </script>
 
-  <title>Git新手教程-Git的下载与设置(二) | AndyJennifer'Blog</title>
+  <title>Git新手教程-添加忽略文件（十） | AndyJennifer'Blog</title>
   
 
 
@@ -359,7 +358,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/Git新手教程-Git的下载与设置（二）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/13/Git新手教程-添加忽略文件（十）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="AndyJennifer">
@@ -376,7 +375,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Git新手教程-Git的下载与设置(二)
+          <h1 class="post-title" itemprop="name headline">Git新手教程-添加忽略文件（十）
 
               
             
@@ -402,7 +401,7 @@
                 
               
 
-              <time title="创建时间：2019-10-12 00:13:55" itemprop="dateCreated datePublished" datetime="2019-10-12T00:13:55+08:00">2019-10-12</time>
+              <time title="创建时间：2019-10-13 20:35:01" itemprop="dateCreated datePublished" datetime="2019-10-13T20:35:01+08:00">2019-10-13</time>
             
 
             
@@ -457,7 +456,7 @@
                 
                   <span class="post-meta-item-text">本文字数：</span>
                 
-                <span title="本文字数">1.6k</span>
+                <span title="本文字数">3.3k</span>
               
 
               
@@ -471,7 +470,7 @@
                 
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
-                <span title="阅读时长">3 分钟</span>
+                <span title="阅读时长">6 分钟</span>
               
             </div>
           
@@ -491,56 +490,82 @@
       
 
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在前面的文章中，我们介绍了Git的基本概念，了解的Git常用的术语。相信大家对Git已经有一个基本的了解了。工欲善其事，必先利其器。让我们去下载并配置Git吧。</p>
-<h3 id="Mac-Linux-Windows设置"><a href="#Mac-Linux-Windows设置" class="headerlink" title="Mac/Linux/Windows设置"></a>Mac/Linux/Windows设置</h3><p>我们可以根据自己的系统，选择不同的版本。推荐上官网直接下载最新的版本。</p>
-<ul>
-<li><p>跳转到Git相关下载界<a href="https://git-scm.com/downloads" target="_blank" rel="noopener">https://git-scm.com/downloads</a></p>
-</li>
-<li><p>选择你所需要的系统版本并安装</p>
-</li>
-</ul>
-<img src="/2019/10/12/Git新手教程-Git的下载与设置（二）/git版本选择.png" title="git版本选择">
-<ul>
-<li>安装完成后，在命令行输入git命令，如果显示了相关信息，那么就安装成功了</li>
-</ul>
-<img src="/2019/10/12/Git新手教程-Git的下载与设置（二）/安装成功.png" title="安装成功">
-<h3 id="Mac-Linux下Git终端配置"><a href="#Mac-Linux下Git终端配置" class="headerlink" title="Mac/Linux下Git终端配置"></a>Mac/Linux下Git终端配置</h3><p>如果你采用命令行使用Git，那么你可以使用Git提供的<code>自动补全脚本</code>。配置了该脚本后，在我们在实际Git命令行操作的时候，如果忘记相关选项的名称或相关命令，可以通过<code>双击Tab</code>键来进行提示。配置该脚本，我们需要以下步骤：</p>
-<ul>
-<li><p>首先我们需要下载该 <a href="https://pan.baidu.com/s/1ywZc4bU_8qkPMeoTBxbrww" target="_blank" rel="noopener">config</a></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/2824145-7e0d2393a1398b15.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="文件展示.png"></p>
-</li>
-</ul>
-<p>当你下载我分享的内容后，你会看到如上三个文件。</p>
-<ul>
-<li>接下我们需要将<code>terminal-config</code>文件夹移动到你的用户主目录下，并重新命名该文件为<code>.terminal-config</code>(前面有个点)。这里我们使用的 <code>mv</code> 指令。</li>
-</ul>
-<img src="/2019/10/12/Git新手教程-Git的下载与设置（二）/演示.gif" title="演示">
-<ul>
-<li>将 <code>bash_profile</code> 文件移动到你的主目录下，并命名为 <code>.bash_profile</code>（前面有个点)</li>
-</ul>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>通过前面的文章，我相信大家已经对 Git 有所掌握了，现在还剩下最后一个知识点，就是让 Git 添加忽略某些文件。在实际的项目开发中，我们可能不想将一些文件添加到 Git 仓库中。比如，一些敏感文件、临时文件、自动生成文件、日志文件等。那应该怎么操作呢？</p>
+<h3 id="实际例子"><a href="#实际例子" class="headerlink" title="实际例子"></a>实际例子</h3><p>假设我们想创建一个项目并使用 Git 进行管理，现在我们有三个文件 <code>A.md</code>、<code>B.md</code>、<code>C.md</code>，现在我们不希望将 <code>C.md</code>文件添加到仓库中。但是 Git 会看到这些文件，所以在我们运行 <code>git status</code> 命令时，它仍然会显示在文件列表中：</p>
 <blockquote>
-<p>如果在你的主目录下已经存在<code>.bash_profile</code>文件，那么你只需要将下载好的<code>brash_profile</code>文件中的内容复制到现有的<code>.bash_profile</code>文件中。注意如果你是Ubuntu用户，你需要把设置信息复制到<code>.bashrc</code>文件中。</p>
+<p>下图中的项目 <code>GitTestProject</code> 项目，已经通过 <code>git init</code> 初始化过了。</p>
 </blockquote>
-<p>在下面的的演示中，因为我已经存在 <code>.bash_profile</code> 文件，所以我们直接通过命令 <code>open .bash_profile</code> 来打开文件，并将内容复制进去。</p>
-<img src="/2019/10/12/Git新手教程-Git的下载与设置（二）/profile演示.gif" title="profile演示">
-<h3 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置你的 Git 用户名</span></span><br><span class="line">git config --global user.name <span class="string">"&lt;Your-Full-Name&gt;"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置你的 Git 邮箱</span></span><br><span class="line">git config --global user.email <span class="string">"&lt;your-email-address&gt;"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 确保 Git 输出内容带有颜色标记</span></span><br><span class="line">git config --global color.ui auto</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对比显示原始状态</span></span><br><span class="line">git config --global merge.conflictstyle diff3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过该命令显示所有配置信息</span></span><br><span class="line">git config --list</span><br></pre></td></tr></table></figure>
-<p>如果用了 <code>--global</code> 选项，那么以后你所有的项目都默认使用这里的配置用户信息，如果要在某个特定项目中使用其他名字或者邮件，只要去掉 –global 选项重新配置就可以啦~。</p>
+<img src="/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件1.png" title="忽略文件1">
+<p>那这个时候我们应该怎么办呢？如果我们想某个文件保留在项目中，又不想它受到 Git 的跟踪管理，那我们可以使用文件 <code>.gitignore</code> 文件，我们只需要创建该文件，然后并添加到我们项目的根目录中，最后把你想要忽略（让 Git 不进行跟踪）的文件名称填写到该文件中就可以了。如果我们要忽略 <code>C.md</code> 我们可以将这行添加到 <code>.gitignore</code> 文件中。</p>
 <blockquote>
-<p>通过 <code>git config --list</code>我们可以查看已有的配置信息</p>
+<p>在 Mac 系统中不能直接创建 <code>.gitignore</code> 文件，我们需要在当前项目的根目录打开控制台，并输入 <code>touch .gitignore</code> 来生成 <code>.gitignore</code> 文件。</p>
 </blockquote>
-<h3 id="Git文本编辑器配置"><a href="#Git文本编辑器配置" class="headerlink" title="Git文本编辑器配置"></a>Git文本编辑器配置</h3><p>当我们在命令行使用Git需要输入额外信息的时候，Git会默认会调用系统的默认编辑器，一般情况是 <code>Vi</code> 或者 <code>Vim</code> 。当然我们也可以配置我们自己喜欢的文本编辑器。</p>
-<h4 id="Sublime-Text-配置"><a href="#Sublime-Text-配置" class="headerlink" title="Sublime Text 配置"></a>Sublime Text 配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.editor <span class="string">"'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' -n -w"</span></span><br></pre></td></tr></table></figure>
-<p>详细配置说明查看–<a href="https://www.sublimetext.com/docs/3/osx_command_line.html" target="_blank" rel="noopener">OS X Command Line</a></p>
-<h4 id="VSCode-配置"><a href="#VSCode-配置" class="headerlink" title="VSCode 配置"></a>VSCode 配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.editor <span class="string">"code --wait"</span></span><br></pre></td></tr></table></figure>
-<p>详细配置说明查看–<a href="https://code.visualstudio.com/docs/editor/versioncontrol#_vs-code-as-git-editor" target="_blank" rel="noopener">VS Code as Git editor</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C.md</span><br></pre></td></tr></table></figure>
+<p>这时我们再使用 <code>git status</code> 来查看我们的仓库的状态：</p>
+<img src="/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件2.png" title="忽略文件2">
+<p>从上图中，我们可以发现 <code>C.md</code>文件已经不再受 Git 控制了。因为 Git 会查看 <code>.gitignore</code> 文件中的内容，并根据该文件中的内容，自动忽略你想忽略的文件。</p>
+<p>那既然 <code>C.md</code>文件已经被忽略了，那么我们就可以直接使用 <code>git add .</code> 来添加当前目录的所有文件啦。</p>
 <blockquote>
-<p>如果你对默认的编辑器(Vi或者Vim)感兴趣，你有可能需要这篇文章<a href="https://www.runoob.com/linux/linux-vim.html" target="_blank" rel="noopener">Linux vi/vim</a></p>
+<p>还记得之前章节中我们学习的 <code>git add</code>命令吗？我们可以使用一个特殊的字符来表示当前目录和所有的子目录，而不是一个个的添加文件。还记得是什么字符吗？对就是 <code>.(点）</code>。</p>
 </blockquote>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>站在巨人的肩膀上，才能看的更远~</p>
+<h3 id="忽略文件通配符"><a href="#忽略文件通配符" class="headerlink" title="忽略文件通配符"></a>忽略文件通配符</h3><p>虽然我们可以直接在 <code>.gitignore</code> 文件中直接书写我们要忽略的文件名称，但是我们也可以使用 <code>通配符</code> 来忽略一系列满足条件的文件或文件夹。</p>
+<p>通配符允许你使用特殊的字符来表示某些格式/字符。在 <code>.gitignore</code> 文件中，我们可以使用：</p>
 <ul>
-<li><a href="https://cn.udacity.com/course/version-control-with-Git--ud123" target="_blank" rel="noopener">视频推荐–&gt;用Git进行版本控制</a></li>
-<li><a href="https://Git-scm.com/book/zh/v2/" target="_blank" rel="noopener">Git官方网站</a></li>
+<li>空白行作为空格</li>
+<li><code>#</code> ： 将行标记为注释</li>
+<li><code>*</code> ： 与 0 个或多个字符匹配</li>
+<li><code>?</code> ：与 1 个字符匹配</li>
+<li><code>[abc]</code> ： - 与 a、b 或 c 匹配</li>
+<li><code>**</code> ： 与嵌套目录匹配，比如 a/**/z 与以下项匹配<ul>
+<li>a/z</li>
+<li>a/b/z</li>
+<li>a/b/c/z</li>
 </ul>
+</li>
+</ul>
+<p>下面我们来看一些简单的例子来学习一下通配符的使用，比如我们需要忽略当前项目根目下的 <code>A</code> 文件夹中的所有的 80 张 <code>PNG</code> 格式的图片，我们可以在 <code>.gitignore</code> 文件中书写：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/A/*.png</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：Git 默认会忽略文件名的大小写，我们可使用命令 <code>git config --get core.ignorecase</code> 来查看我们的设置，当然我们也可以通过命令 <code>git config core.ignorecase false</code> 将其置为 false 。</p>
+</blockquote>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><p>现在我们已经学会如何在 Git 中添加忽略文件了，但是在使用的过程中，以下几个问题我们也是会常常遇见的。</p>
+<h4 id="不能将文件添加到-git-仓库"><a href="#不能将文件添加到-git-仓库" class="headerlink" title="不能将文件添加到 git 仓库"></a>不能将文件添加到 git 仓库</h4><p>有些时候，我们想添加一个文件到仓库中，但是我们发现我们添加不了，原因是这个文件已经被添加到 <code>.gitignore</code> 文件中忽略了。比如结合上述例子，我们想添加 <code>C.md</code> 文件，会有如下提示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git add C.md</span><br><span class="line">The following paths are ignored by one of your .gitignore files:</span><br><span class="line">C.md</span><br><span class="line">Use -f <span class="keyword">if</span> you really want to add them.</span><br></pre></td></tr></table></figure>
+<p>如果我们确实需要添加该文件，那么我们可以使用 <code>-f</code> 选项来强制添加。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add -f C.md</span><br></pre></td></tr></table></figure>
+<p>通过 <code>-f</code> 选项强制添加的文件，在后续的使用中与其他正常被 Git 跟踪的文件使用效果一样。也就是说 <code>C.md</code> 文件将会受到 Git 的跟踪管理。</p>
+<p>如果你觉得 <code>gitignore</code> 中的忽略文件的书写有误，我们也可以使用 <code>git check-ignore</code> 来查看我们的忽略文件的规则：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git check-ignore -v c.md</span><br><span class="line">.gitignore:1:C.md c.md</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>关于该命令的更多介绍，可以查看官方文档<a href="https://git-scm.com/docs/git-check-ignore" target="_blank" rel="noopener">git-check-ignore</a></p>
+</blockquote>
+<h4 id="已经添加到暂存区中的文件如何忽略"><a href="#已经添加到暂存区中的文件如何忽略" class="headerlink" title="已经添加到暂存区中的文件如何忽略"></a>已经添加到暂存区中的文件如何忽略</h4><p>还是结合我们上述的例子，在项目中，我们忘记了在 <code>.gitignore</code> 文件中添加忽略文件 <code>C.md</code>，直接使用了 <code>gid add .</code> 命令，将所有的文件都添加到了<code>暂存区</code>中，如下所示：</p>
+<img src="/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件3.png" title="忽略文件3">
+<p>那么这个时候，我们可以使用 <code>git rm --cached</code> 命令，将 <code>C.md</code> 文件从暂存区中移除：</p>
+<blockquote>
+<p>关于 <code>git rm</code> 命令的使用，可以查看官方文档<a href="https://git-scm.com/docs/git-rm" target="_blank" rel="noopener">git rm</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm --cached C.md</span><br></pre></td></tr></table></figure>
+<p>这个时候，我们在使用 <code>git status</code> 命令来仓库我们的仓库的状态，我们会发现 <code>C.md</code> 文件已经从暂存区中移除了。</p>
+<img src="/2019/10/13/Git新手教程-添加忽略文件（十）/忽略文件4.png" title="忽略文件4">
+<p>那么接下来，我们就可以修改我们的 <code>.gitignore</code> 文件，将 <code>C.md</code> 添加到该忽略文件中去了。</p>
+<h4 id="已经被跟踪文件如何忽略"><a href="#已经被跟踪文件如何忽略" class="headerlink" title="已经被跟踪文件如何忽略"></a>已经被跟踪文件如何忽略</h4><p>不仅将文件添加到 Git 仓库，还推送到远程仓库了。并且其他合作的小伙伴已经从远程仓库拉取了更新。这个时候才发现某些文件需要忽略。</p>
+<p>这种情况下，如果我们再将想忽略的文件添加到 <code>.gitignore</code> 文件中，已经完全不起任何作用了。</p>
+<p>那怎么办呢？我们可以使用另外一个命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git update-index --assume-unchanged &lt;file&gt;</span><br></pre></td></tr></table></figure>
+<p>还是以上文中的 <code>C.md</code> 为例子，我们可以这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git update-index --assume-unchanged C.md</span><br></pre></td></tr></table></figure>
+<p>使用该命令后，即使我们修改了已经被跟踪的 <code>C.md</code> 文件，Git 也会默认我们没有更改该文件。什么意思呢？也就是我们本地随便修改该文件，Git 始终认为它和原来的版本一样。那么在之后的项目开发中，就不会产生包含该文件的提交了。</p>
+<p>同样，我们也可以恢复对该文件的追踪，我们可以使用命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git update-index --no-assume-unchanged &lt;file&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>关于该命令的使用，可以查看官方文档<a href="https://git-scm.com/docs/git-update-index#Documentation/git-update-index.txt---no-assume-unchanged" target="_blank" rel="noopener">–no-assume-unchanged</a></p>
+</blockquote>
+<h3 id="小小的建议"><a href="#小小的建议" class="headerlink" title="小小的建议"></a>小小的建议</h3><p>通过阅读本篇文章，相信小伙伴已经意识到了找准正确的时间，添加忽略文件是多么的重要。这里需要提醒第一次使用 Git 或其他版本管理系统的小伙伴们。在创建仓库时，<code>一定要先处理忽略文件</code>，也就是你的 <code>.gitignore</code> 文件<strong>一定要在项目初始化完成后提交！！！！</strong> 因为后期再来处理忽略文件，就非常的麻烦与复杂。</p>
+<p>所以在平时的项目中，一定要确定自己项目中哪些文件到底应该被追踪，哪些应该不被追踪。以 Android 项目为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">*.iml</span><br><span class="line">.gradle</span><br><span class="line">/local.properties</span><br><span class="line">/.idea/workspace.xml</span><br><span class="line">/.idea/libraries</span><br><span class="line">.DS_Store</span><br><span class="line">/build</span><br><span class="line">/captures</span><br><span class="line">.externalNativeBuild</span><br></pre></td></tr></table></figure>
+<p>上述忽略文件是一般 Android 项目都会设置，因为这些都是一些配置文件、中间文件、项目配置文件等。当然不同的项目所需要配置的忽略文件并不相同，大家可以结合自身的需求来配置。这里就不具体讲解其他项目的忽略文件的配置了。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>整个 Git 新手系列教程，到现在已经写完了，虽然前前后后花费了一个月的时间，但是当自己完成后，却忍不住的满足与自豪。不是自己涨了好多粉丝，而是为自己能坚持做一件事而感到高兴。给自己定一个小目标，一步一步实现的感觉真好~</p>
 
       
     </div>
@@ -577,8 +602,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/09/28/Git新手教程-什么是版本控制（一）/" rel="next" title="Git新手教程-什么是版本控制（一）">
-                <i class="fa fa-chevron-left"></i> Git新手教程-什么是版本控制（一）
+              <a href="/2019/10/12/Git新手教程-远程仓库（九）/" rel="next" title="Git新手教程-远程仓库(九)">
+                <i class="fa fa-chevron-left"></i> Git新手教程-远程仓库(九)
               </a>
             
           </div>
@@ -586,10 +611,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/10/12/Git新手教程-从头创建仓库（三）/" rel="prev" title="Git新手教程-从头创建仓库(三)">
-                Git新手教程-从头创建仓库(三) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -850,7 +871,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mac-Linux-Windows设置"><span class="nav-number">2.</span> <span class="nav-text">Mac/Linux/Windows设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mac-Linux下Git终端配置"><span class="nav-number">3.</span> <span class="nav-text">Mac/Linux下Git终端配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化配置"><span class="nav-number">4.</span> <span class="nav-text">初始化配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git文本编辑器配置"><span class="nav-number">5.</span> <span class="nav-text">Git文本编辑器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Sublime-Text-配置"><span class="nav-number">5.1.</span> <span class="nav-text">Sublime Text 配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VSCode-配置"><span class="nav-number">5.2.</span> <span class="nav-text">VSCode 配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实际例子"><span class="nav-number">2.</span> <span class="nav-text">实际例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#忽略文件通配符"><span class="nav-number">3.</span> <span class="nav-text">忽略文件通配符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见问题"><span class="nav-number">4.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#不能将文件添加到-git-仓库"><span class="nav-number">4.1.</span> <span class="nav-text">不能将文件添加到 git 仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#已经添加到暂存区中的文件如何忽略"><span class="nav-number">4.2.</span> <span class="nav-text">已经添加到暂存区中的文件如何忽略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#已经被跟踪文件如何忽略"><span class="nav-number">4.3.</span> <span class="nav-text">已经被跟踪文件如何忽略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小小的建议"><span class="nav-number">5.</span> <span class="nav-text">小小的建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
             
 
           </div>
