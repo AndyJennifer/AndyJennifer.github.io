@@ -112,7 +112,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_commit_展示.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/git_diff_ide.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/10/12/Git新手教程-向仓库中添加commit（五）/idea_快捷键汇总.jpg">
-<meta property="og:updated_time" content="2019-10-11T16:14:59.885Z">
+<meta property="og:updated_time" content="2019-10-13T07:36:15.499Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git新手教程-向仓库中添加commit(五)">
 <meta name="twitter:description" content="前言在该篇文章中，我们终于要来学习如何创建自己的提交(commit)，在前面的文章中，我们已经学会使用 git init 命令来创建新仓库，使用 git clone 命令来复制现有仓库，使用 git log 命令来查看现有的提交。以及使用非常重要的 git status 命令来查看仓库的状态。本篇文章会在这些知识的基础上添加 git add 、 git commit 和 git diff 。 在具">
@@ -409,6 +409,22 @@
             
 
             
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-10-13 15:36:15" itemprop="dateModified" datetime="2019-10-13T15:36:15+08:00">2019-10-13</time>
+              
+            
           </span>
 
           
@@ -519,7 +535,7 @@
 <blockquote>
 <p>细心的小伙伴肯定看到<code>(use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)</code>，该命令可以帮助我们将你 <code>git add</code> 错误提交的文件，从暂存区中移除，此外，在命令行输出中出现了”unstage”（撤消暂存）字眼。将文件从工作目录移到暂存区叫做<code>&quot;staging&quot;</code>（暂存）。如果已移动文件，则叫做<code>&quot;staged&quot;</code>（已暂存）。从暂存区将文件移回工作目录将<code>&quot;unstage&quot;</code>（撤消暂存）。</p>
 </blockquote>
-<h4 id="使用git-add-添加剩余的文件"><a href="#使用git-add-添加剩余的文件" class="headerlink" title="使用git add 添加剩余的文件"></a>使用git add 添加剩余的文件</h4><p>当我们已经将 <code>Git总目录.md</code> 添加到暂存区中后，我们可能还想将剩下的两个文件 <code>Git练习.md</code> 、 <code>JVM系列之总目录.md</code> 也添加到暂存区中。当然我们可以一个一个的使用使用 <code>git add</code> 命令添加剩余的文件，我们也可以这样:</p>
+<h4 id="使用-git-add-添加剩余的文件"><a href="#使用-git-add-添加剩余的文件" class="headerlink" title="使用 git add 添加剩余的文件"></a>使用 git add 添加剩余的文件</h4><p>当我们已经将 <code>Git总目录.md</code> 添加到暂存区中后，我们可能还想将剩下的两个文件 <code>Git练习.md</code> 、 <code>JVM系列之总目录.md</code> 也添加到暂存区中。当然我们可以一个一个的使用使用 <code>git add</code> 命令添加剩余的文件，我们也可以这样:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add Git练习.md JVM系列之总目录.md</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>使用<code>git add &lt;file1&gt; &lt;file2&gt; … &lt;fileN&gt;</code>这种方式，我们可以添加多个文件，其中<code>&lt;file&gt;</code>代表一个或多个文件。</p>
@@ -917,7 +933,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-add-命令的使用"><span class="nav-number">2.</span> <span class="nav-text">git add 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#检查仓库状态！别忘了"><span class="nav-number">2.1.</span> <span class="nav-text">检查仓库状态！别忘了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开始添加文件"><span class="nav-number">2.2.</span> <span class="nav-text">开始添加文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用git-add-添加剩余的文件"><span class="nav-number">2.3.</span> <span class="nav-text">使用git add 添加剩余的文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-commit-命令的使用"><span class="nav-number">3.</span> <span class="nav-text">git commit 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进行第二次commit"><span class="nav-number">3.1.</span> <span class="nav-text">进行第二次commit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单总结"><span class="nav-number">3.2.</span> <span class="nav-text">简单总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-diff"><span class="nav-number">4.</span> <span class="nav-text">git diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><span class="nav-number">5.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-add"><span class="nav-number">5.1.</span> <span class="nav-text">git add</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit-使用"><span class="nav-number">5.2.</span> <span class="nav-text">git commit 使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-diff-使用"><span class="nav-number">5.3.</span> <span class="nav-text">git diff 使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Git使用快捷键"><span class="nav-number">5.4.</span> <span class="nav-text">Git使用快捷键</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-add-命令的使用"><span class="nav-number">2.</span> <span class="nav-text">git add 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#检查仓库状态！别忘了"><span class="nav-number">2.1.</span> <span class="nav-text">检查仓库状态！别忘了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开始添加文件"><span class="nav-number">2.2.</span> <span class="nav-text">开始添加文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-git-add-添加剩余的文件"><span class="nav-number">2.3.</span> <span class="nav-text">使用 git add 添加剩余的文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-commit-命令的使用"><span class="nav-number">3.</span> <span class="nav-text">git commit 命令的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进行第二次commit"><span class="nav-number">3.1.</span> <span class="nav-text">进行第二次commit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单总结"><span class="nav-number">3.2.</span> <span class="nav-text">简单总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-diff"><span class="nav-number">4.</span> <span class="nav-text">git diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IntelliJ-IDEA-or-Android-Sutdio-图形化界面的使用"><span class="nav-number">5.</span> <span class="nav-text">IntelliJ IDEA or Android Sutdio 图形化界面的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-add"><span class="nav-number">5.1.</span> <span class="nav-text">git add</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit-使用"><span class="nav-number">5.2.</span> <span class="nav-text">git commit 使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-diff-使用"><span class="nav-number">5.3.</span> <span class="nav-text">git diff 使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Git使用快捷键"><span class="nav-number">5.4.</span> <span class="nav-text">Git使用快捷键</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">6.</span> <span class="nav-text">最后</span></a></li></ol></div>
             
 
           </div>
