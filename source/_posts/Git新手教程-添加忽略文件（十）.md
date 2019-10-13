@@ -1,10 +1,12 @@
 ---
-title: Git新手教程-添加忽略文件(十)
+title: Git新手教程-添加忽略文件（十）
 tags:
   - Git
 categories:
   - Git相关
+date: 2019-10-13 20:35:01
 ---
+
 
 ### 前言
 
