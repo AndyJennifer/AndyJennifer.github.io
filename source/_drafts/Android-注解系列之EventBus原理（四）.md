@@ -8,12 +8,7 @@ categories:
 
 ### 前言
 
-在之前的文章 [Android 注解系列之APT工具（三）](https://juejin.im/post/5bc4606c6fb9a05d2469e854) 中，我们介绍了 APT 技术，也提到了一些主流的库如 [Dagger2](https://github.com/google/dagger)、[ButterKnife](https://github.com/JakeWharton/butterknife)、[EventBus](https://github.com/greenrobot/EventBus) 都使用了该技术。在接下来的文章中我将会对 EventBus 如何使用 APT，及内部原理进行分析。通过阅读该篇文章你能够学到如下知识点：
-
-- EventBus 内部原理
-- EventBus 索引类出现的原因
-- EventBus 索引类的使用
-- EventBus 混淆注意事项
+在之前的文章 [Android 注解系列之APT工具（三）](https://juejin.im/post/5bc4606c6fb9a05d2469e854) 中，我们介绍了 APT 技术的及其使用方式，文中也提到了一些主流的库如 [Dagger2](https://github.com/google/dagger)、[ButterKnife](https://github.com/JakeWharton/butterknife)、[EventBus](https://github.com/greenrobot/EventBus) 都使用了该技术。那么在这篇文章中我将会着重带领大家来了解 EventBus 中 APT 技术的使用，在了解该知识点之前，我们需要对 EventBus 内部原理较为熟悉，如果你已经熟悉其内部机制了，可以跳过该篇文章，直接阅读《Android-注解系列之EventBus索引类（五）》
 
 > 整篇文章结合 EventBus 3.1.1 版本进行讲解。
 
@@ -36,17 +31,14 @@ EventBus 对于 Android 程序员来说应该不是很陌生，它是基于观�
 ### 订阅事件
 
 ```java
-public void register(Object subscriber) {
+  public void register(Object subscriber) {
         Class<?> subscriberClass = subscriber.getClass();
-        //获取当前订阅者中所有的事件回调方法
-        List<SubscriberMethod> subscriberMethods = this.subscriberMethodFinder.findSubscriberMethods(subscriberClass);
-        synchronized(this) {
-            Iterator var5 = subscriberMethods.iterator();
-            while(var5.hasNext()) {
-                SubscriberMethod subscriberMethod = (SubscriberMethod)var5.next();
-                this.subscribe(subscriber, subscriberMethod);
+        //获取对应类中所有的订阅方法
+        List<SubscriberMethod> subscriberMethods = subscriberMethodFinder.findSubscriberMethods(subscriberClass);
+        synchronized (this) {
+            for (SubscriberMethod subscriberMethod : subscriberMethods) {
+                subscribe(subscriber, subscriberMethod);
             }
-
         }
     }
 ```
@@ -62,14 +54,14 @@ public void register(Object subscriber) {
         } else {
             if (this.ignoreGeneratedIndex) {//如果忽略索引类，则使用反射。
                 subscriberMethods = this.findUsingReflection(subscriberClass);
-            } else {//否则使用索引类，
+            } else {//否则使用索引类
                 subscriberMethods = this.findUsingInfo(subscriberClass);
             }
             //如果订阅者订阅了，但是并没有响应事件的方法，则抛出异常
             if (subscriberMethods.isEmpty()) {
                 throw new EventBusException("Subscriber " + subscriberClass + " and its super classes have no public methods with the @Subscribe annotation");
             } else {
-                //添加到缓存中
+                //将对应类中的订阅方法，添加到缓存中，提高效率，方便下次查找
                 METHOD_CACHE.put(subscriberClass, subscriberMethods);
                 return subscriberMethods;
             }
@@ -172,7 +164,7 @@ public void register(Object subscriber) {
 
 #### 实际订阅方法subscribe
 
-当找到订阅者所有的方法集合后，会遍历调用`subscribe()方法`，那么继续往下走
+当找到订阅者所有的方法集合后，最终会在 `register` 方法内部遍历调用 `subscribe()` 方法，查看该方法
 
 ```java
 private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
@@ -197,14 +189,14 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
             }
         }
 
-     //第四步，将订阅者中订阅的事件类型，添加到typesBySubscriber中的list中
+       //第四步，将订阅者中订阅的事件类型，添加到typesBySubscriber中的list中
         List<Class<?>> subscribedEvents = (List)this.typesBySubscriber.get(subscriber);
         if (subscribedEvents == null) {
             subscribedEvents = new ArrayList();
             this.typesBySubscriber.put(subscriber, subscribedEvents);
         }
+        subscribedEvents.add(eventType);
 
-        ((List)subscribedEvents).add(eventType);
         //第五步，如果该方法有注册有粘性事件，则从stickyEvents中获取相应粘性事件，并发送
         if (subscriberMethod.sticky) {
             if (eventInheritance) {
@@ -234,7 +226,6 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
 - 根据优先级将当前新封装的Subscription添加到subscriptionsByEventType中对应的list中
 - 将订阅者中订阅的事件类型，添加到typesBySubscriber中的list中
 - 如果该方法有注册有粘性事件，则从stickyEvents中获取相应粘性事件，并发送
-
 
 这里我们提到了索引类，这里我们先不作介绍，这里大家先知道这个概念就行了，下文中我们会进行介绍。现在我们看实际的反射过程。
 
@@ -285,12 +276,13 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
 
 ```
 
-在post方法内部调用了postSingleEvent（）方法，我们继续查看该方法。
+这里涉及到了 ThreadLocal 不熟悉 ThreadLocal 的小伙伴，可以查看该篇文章：在post方法内部调用了postSingleEvent（）方法，我们继续查看该方法。
 
 ```java
   private void postSingleEvent(Object event, EventBus.PostingThreadState postingState) throws Error {
         Class<?> eventClass = event.getClass();
         boolean subscriptionFound = false;
+        //👇表示是否通知
         if (this.eventInheritance) {
             List<Class<?>> eventTypes = lookupAllEventTypes(eventClass);
             int countTypes = eventTypes.size();
@@ -347,7 +339,7 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
 
 ```
 
-通过lookupAllEventTypes获得事件的所有父类，并遍历。然后在subscriptionsByEventType中获得每个事件类的订阅者的回调方法。遍历回调方法。根据ThreadMode,通过不同的poster在对应的线程中通过反射该invoke该方法
+通过lookupAllEventTypes获得事件的所有接口，并遍历。然后在subscriptionsByEventType中获得每个事件类的订阅者的回调方法。遍历回调方法。根据ThreadMode,通过不同的poster在对应的线程中通过反射该invoke该方法
 
 ```java
     private void postSingleEvent(Object event, PostingThreadState postingState) throws Error {
@@ -378,6 +370,7 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
 ```java
     private boolean postSingleEventForEventType(Object event, PostingThreadState postingState, Class<?> eventClass) {
         CopyOnWriteArrayList<Subscription> subscriptions;
+        //从缓存中拿取之前存取的 Subscription
         synchronized (this) {
             subscriptions = subscriptionsByEventType.get(eventClass);
         }
@@ -437,6 +430,8 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
     private final AsyncPoster asyncPoster;
 ```
 
+这里根据拿取的方法开始线程执行
+
 ```java
     private void postToSubscription(Subscription subscription, Object event, boolean isMainThread) {
         switch (subscription.subscriberMethod.threadMode) {
@@ -474,6 +469,8 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
     }
 ```
 
+这里开始根据当前线程的状态，与订阅方法的状态，开始切换线程。
+
 ### EventBusAnnotationProcessor
 
 如果不使用EventBus中的索引类我们可以在gradle中添加如下依赖：
@@ -507,99 +504,5 @@ javaCompileOptions {
 ```java
  EventBus.builder().addIndex(new EventBusIndex()).installDefaultEventBus();
 ```
-
-### 混淆相关
-
-在使用EventBus的时候，如果你的项目采用了混淆，需要注意keep以下类及方法。官方中已经给了使用EventBus库中需要keep的类，具体如下所示：
-
-```java
--keepattributes *Annotation*
--keepclassmembers class * {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
-
-# Only required if you use AsyncExecutor
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
-}
-```
-
-```java
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        System.out.println("hello");
-    }
-```
-
-```java
-public class EventBusIndex implements SubscriberInfoIndex {
-    private static final Map<Class<?>, SubscriberInfo> SUBSCRIBER_INDEX;
-
-    static {
-        SUBSCRIBER_INDEX = new HashMap<Class<?>, SubscriberInfo>();
-
-        putIndex(new SimpleSubscriberInfo(Activity1.class, true, new SubscriberMethodInfo[] {
-            new SubscriberMethodInfo("onMessageEvent", MessageEvent.class, ThreadMode.MAIN),
-        }));
-
-    }
-
-    private static void putIndex(SubscriberInfo info) {
-        SUBSCRIBER_INDEX.put(info.getSubscriberClass(), info);
-    }
-
-    @Override
-    public SubscriberInfo getSubscriberInfo(Class<?> subscriberClass) {
-        SubscriberInfo info = SUBSCRIBER_INDEX.get(subscriberClass);
-        if (info != null) {
-            return info;
-        } else {
-            return null;
-        }
-    }
-}
-```
-
- 因为通过APT生成的代码记录的订阅者的回调方方法是在代码混淆之前的名称，如上述代码中的onMessageEvent()方法。当通过混淆后，该方法名称有可能发生改变了，那么它有可能叫a,叫b，叫c。那么通过
-
-```java
-public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
-
-    private final SubscriberMethodInfo[] methodInfos;
-
-    public SimpleSubscriberInfo(Class subscriberClass, boolean shouldCheckSuperclass, SubscriberMethodInfo[] methodInfos) {
-        super(subscriberClass, null, shouldCheckSuperclass);
-        this.methodInfos = methodInfos;
-    }
-
-    @Override
-    public synchronized SubscriberMethod[] getSubscriberMethods() {
-        int length = methodInfos.length;
-        SubscriberMethod[] methods = new SubscriberMethod[length];
-        for (int i = 0; i < length; i++) {
-            SubscriberMethodInfo info = methodInfos[i];
-            methods[i] = createSubscriberMethod(info.methodName, info.eventType, info.threadMode,
-                    info.priority, info.sticky);
-        }
-        return methods;
-    }
-}
-```
-
-```java
-    protected SubscriberMethod createSubscriberMethod(String methodName, Class<?> eventType, ThreadMode threadMode,
-                                                      int priority, boolean sticky) {
-        try {
-            Method method = subscriberClass.getDeclaredMethod(methodName, eventType);
-            return new SubscriberMethod(method, eventType, threadMode, priority, sticky);
-        } catch (NoSuchMethodException e) {
-            throw new EventBusException("Could not find subscriber method in " + subscriberClass +
-                    ". Maybe a missing ProGuard rule?", e);
-        }
-    }
-```
-
-因为是通过记录的实际名称来寻找相应的方法的，因为混淆过后，订阅者的方法发生了改变（onMessageEvent有可能改为a()，或b()方法。所以这个时候是找不到相关的订阅者的方法的 ，就会抛出`Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?`的异常，所以在混淆的时候我们需要保留订阅者所有包含`@Subscribe`注解的方法。
 
 ### 最后

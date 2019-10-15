@@ -8,8 +8,12 @@ categories:
 
 ### 前言
 
->对 APT 技术不熟悉的小伙伴，可以查看文章Android-注解系列之APT工具(三) 文章熟悉的话，
+- EventBus 索引类出现的原因
+- EventBus 索引类的使用
+- EventBus 混淆注意事项
 
+
+>对 APT 技术不熟悉的小伙伴，可以查看文章Android-注解系列之APT工具(三) 文章熟悉的话，
 
 ### 关键代码
 
@@ -312,6 +316,103 @@ public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
 
 -keep public enum org.greenrobot.eventbus.ThreadMode { public static *; }
 
+
+
+
+
+### 混淆相关
+
+在使用EventBus的时候，如果你的项目采用了混淆，需要注意keep以下类及方法。官方中已经给了使用EventBus库中需要keep的类，具体如下所示：
+
+```java
+-keepattributes *Annotation*
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
+}
+```
+
+```java
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        System.out.println("hello");
+    }
+```
+
+```java
+public class EventBusIndex implements SubscriberInfoIndex {
+    private static final Map<Class<?>, SubscriberInfo> SUBSCRIBER_INDEX;
+
+    static {
+        SUBSCRIBER_INDEX = new HashMap<Class<?>, SubscriberInfo>();
+
+        putIndex(new SimpleSubscriberInfo(Activity1.class, true, new SubscriberMethodInfo[] {
+            new SubscriberMethodInfo("onMessageEvent", MessageEvent.class, ThreadMode.MAIN),
+        }));
+
+    }
+
+    private static void putIndex(SubscriberInfo info) {
+        SUBSCRIBER_INDEX.put(info.getSubscriberClass(), info);
+    }
+
+    @Override
+    public SubscriberInfo getSubscriberInfo(Class<?> subscriberClass) {
+        SubscriberInfo info = SUBSCRIBER_INDEX.get(subscriberClass);
+        if (info != null) {
+            return info;
+        } else {
+            return null;
+        }
+    }
+}
+```
+
+ 因为通过APT生成的代码记录的订阅者的回调方方法是在代码混淆之前的名称，如上述代码中的onMessageEvent()方法。当通过混淆后，该方法名称有可能发生改变了，那么它有可能叫a,叫b，叫c。那么通过
+
+```java
+public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
+
+    private final SubscriberMethodInfo[] methodInfos;
+
+    public SimpleSubscriberInfo(Class subscriberClass, boolean shouldCheckSuperclass, SubscriberMethodInfo[] methodInfos) {
+        super(subscriberClass, null, shouldCheckSuperclass);
+        this.methodInfos = methodInfos;
+    }
+
+    @Override
+    public synchronized SubscriberMethod[] getSubscriberMethods() {
+        int length = methodInfos.length;
+        SubscriberMethod[] methods = new SubscriberMethod[length];
+        for (int i = 0; i < length; i++) {
+            SubscriberMethodInfo info = methodInfos[i];
+            methods[i] = createSubscriberMethod(info.methodName, info.eventType, info.threadMode,
+                    info.priority, info.sticky);
+        }
+        return methods;
+    }
+}
+```
+
+```java
+    protected SubscriberMethod createSubscriberMethod(String methodName, Class<?> eventType, ThreadMode threadMode,
+                                                      int priority, boolean sticky) {
+        try {
+            Method method = subscriberClass.getDeclaredMethod(methodName, eventType);
+            return new SubscriberMethod(method, eventType, threadMode, priority, sticky);
+        } catch (NoSuchMethodException e) {
+            throw new EventBusException("Could not find subscriber method in " + subscriberClass +
+                    ". Maybe a missing ProGuard rule?", e);
+        }
+    }
+```
+
+因为是通过记录的实际名称来寻找相应的方法的，因为混淆过后，订阅者的方法发生了改变（onMessageEvent有可能改为a()，或b()方法。所以这个时候是找不到相关的订阅者的方法的 ，就会抛出`Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?`的异常，所以在混淆的时候我们需要保留订阅者所有包含`@Subscribe`注解的方法。
 
 ### 最后
 
