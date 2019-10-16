@@ -430,7 +430,7 @@ private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
     private final AsyncPoster asyncPoster;
 ```
 
-这里根据拿取的方法开始线程执行
+这里根据拿取的方法开始线程执行，这里可以画一个表来表达
 
 ```java
     private void postToSubscription(Subscription subscription, Object event, boolean isMainThread) {
