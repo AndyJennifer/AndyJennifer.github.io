@@ -1,31 +1,44 @@
 ---
 title: Android-注解系列之EventBus索引类（五）
 tags:
-  - null
+- EventBus
 categories:
-  - null
+- 源码分析
 ---
 
 ### 前言
 
+在上篇文章 《Android 注解系列之 EventBus 原理（四）》中我们讲解了 EventBus 的内部原理，在该篇文章中我们将讲解 EventBus 中的索引类。阅读该篇文章我们能够学到如下知识点。
+
 - EventBus 索引类出现的原因
 - EventBus 索引类的使用
+- EventBus APT技术的使用
 - EventBus 混淆注意事项
+  
+>对 APT 技术不熟悉的小伙伴，可以查看文章Android-注解系列之APT工具(三)
 
+### 前景回顾
 
->对 APT 技术不熟悉的小伙伴，可以查看文章Android-注解系列之APT工具(三) 文章熟悉的话，
+在 《Android 注解系列之 EventBus 原理（四）》中，我们特别指出 EventBus3 通过 `SubscriberMethodFinder` 去获取类中包含 `@Subscribe` 注解的订阅方法中进行了特别的优化
+，使其能在 `EventBus.register()` 方法调用之前就能知道相关订阅事件的方法，这样就减少了程序在运行期间使用反射带来的时间消耗。下图中 `红色虚线框` 所示：
+
+![EventBus3优化.jpg](https://upload-images.jianshu.io/upload_images/2824145-775ec7aee8132189.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+而这里的优化，正是使用了 `APT` 技术所创建的索引类。下面我们就来看一看 EventBus 中是怎么做的。
 
 ### 关键代码
 
+在 EventBus 中获取类中包含 `@Subscribe` 注解的方法有两种方式，第一种是直接通过运行时反射获取，另一种就是通过索引类。下面我们来看看使用索引类的关键方法 `getSubscriberInfo()` ，代码如下所示：
+
 ```java
-   private SubscriberInfo getSubscriberInfo(FindState findState) {
+    private SubscriberInfo getSubscriberInfo(FindState findState) {
         if (findState.subscriberInfo != null && findState.subscriberInfo.getSuperSubscriberInfo() != null) {
             SubscriberInfo superclassInfo = findState.subscriberInfo.getSuperSubscriberInfo();
             if (findState.clazz == superclassInfo.getSubscriberClass()) {
                 return superclassInfo;
             }
         }
-        //如果索引类不为null,那么会获取索引类中的信息
+        //👇这里是EventBus中优化的关键，索引类
         if (subscriberInfoIndexes != null) {
             for (SubscriberInfoIndex index : subscriberInfoIndexes) {
                 SubscriberInfo info = index.getSubscriberInfo(findState.clazz);
@@ -36,11 +49,53 @@ categories:
         }
         return null;
     }
-
 ```
 
-其实这里EventBus 通过 APT 技术，在程序编译期间对 源文件中的注解进行了解析，这样就省去了反射时，查找对应方法所产生的耗时啦。
+从代码逻辑中我们能得出，如果 `subscriberInfoIndexes` 集合不为空的话，那么就会从 `SubscriberInfoIndex（索引类）` 中去获取 `SubscriberInfo`。
 
+>SubscriberMethod 类其实是含有 `@Subscribe` 注解的方法信息封装，包括当前方法的 Method 对象(`java.lang.reflect` 包下的对象)，是否是粘性事件，优先级等。
+
+那么这个 SubscriberInfoIndex 是如何来的呢？
+
+### EventBusAnnotationProcessor
+
+如果不使用EventBus中的索引类我们可以在gradle中添加如下依赖：
+
+```java
+compile 'org.greenrobot:eventbus:3.1.1'
+```
+
+如果我们需要索引加速的话，就需要添加如下依赖：
+
+```java
+annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.1.1'
+```
+
+同时我们我们也需要在App的build.gradle中添加如下：
+
+>[AnnotationProcessorOptions介绍](http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.AnnotationProcessorOptions.html)
+
+```java
+javaCompileOptions {
+     annotationProcessorOptions {
+          arguments = [eventBusIndex: 'com.jennifer.andy.myprotice.eventbus.EventBusIndex']
+            }
+        }
+```
+
+这里需要注意，如果应用了EventBusAnnotationProcessor却没有设置arguments的话，编译时就会报错：
+
+`No option eventBusIndex passed to annotation processor`
+
+此时需要我们先编译一次，生成索引类。编译成功之后，就会发现在\ProjectName\app\build\generated\source\apt\PakageName\下看到通过注解分析生成的索引类，这样我们便可以在初始化EventBus时应用我们生成的索引了。
+
+```java
+ EventBus.builder().addIndex(new EventBusIndex()).installDefaultEventBus();
+```
+
+#### 注解处理器源代码
+
+![EventBus注解处理器.png](https://upload-images.jianshu.io/upload_images/2824145-5c698cc9cec0701f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ```java
 @Override
@@ -212,22 +267,7 @@ categories:
     }
 ```
 
-### 混淆相关
-
-在使用EventBus的时候，如果你的项目采用了混淆，需要注意keep以下类及方法。官方中已经给了使用EventBus库中需要keep的类，具体如下所示：
-
-```java
--keepattributes *Annotation*
--keepclassmembers class * {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
-
-# Only required if you use AsyncExecutor
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
-}
-```
+### 索引类的生成
 
 ```java
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -264,50 +304,22 @@ public class EventBusIndex implements SubscriberInfoIndex {
     }
 }
 ```
+### 混淆相关
 
- 因为通过APT生成的代码记录的订阅者的回调方方法是在代码混淆之前的名称，如上述代码中的onMessageEvent()方法。当通过混淆后，该方法名称有可能发生改变了，那么它有可能叫a,叫b，叫c。那么通过
+在使用EventBus的时候，如果你的项目采用了混淆，需要注意keep以下类及方法。官方中已经给了使用EventBus库中需要keep的类，具体如下所示：
 
 ```java
-public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
+-keepattributes *Annotation*
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
 
-    private final SubscriberMethodInfo[] methodInfos;
-
-    public SimpleSubscriberInfo(Class subscriberClass, boolean shouldCheckSuperclass, SubscriberMethodInfo[] methodInfos) {
-        super(subscriberClass, null, shouldCheckSuperclass);
-        this.methodInfos = methodInfos;
-    }
-
-    @Override
-    public synchronized SubscriberMethod[] getSubscriberMethods() {
-        int length = methodInfos.length;
-        SubscriberMethod[] methods = new SubscriberMethod[length];
-        for (int i = 0; i < length; i++) {
-            SubscriberMethodInfo info = methodInfos[i];
-            methods[i] = createSubscriberMethod(info.methodName, info.eventType, info.threadMode,
-                    info.priority, info.sticky);
-        }
-        return methods;
-    }
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
 }
 ```
-
-```java
-    protected SubscriberMethod createSubscriberMethod(String methodName, Class<?> eventType, ThreadMode threadMode,
-                                                      int priority, boolean sticky) {
-        try {
-            Method method = subscriberClass.getDeclaredMethod(methodName, eventType);
-            return new SubscriberMethod(method, eventType, threadMode, priority, sticky);
-        } catch (NoSuchMethodException e) {
-            throw new EventBusException("Could not find subscriber method in " + subscriberClass +
-                    ". Maybe a missing ProGuard rule?", e);
-        }
-    }
-```
-
-因为是通过记录的实际名称来寻找相应的方法的，因为混淆过后，订阅者的方法发生了改变（onMessageEvent有可能改为a()，或b()方法。所以这个时候是找不到相关的订阅者的方法的 ，就会抛出`Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?`的异常，所以在混淆的时候我们需要保留订阅者所有包含`@Subscribe`注解的方法。
-
-
-
 
 首先，因为EventBus 3弃用了反射的方式去寻找回调方法，改用注解的方式。作者的意思是在混淆时就不用再keep住相应的类和方法。但是我们在运行时，却会报java.lang.NoSuchFieldError: No static field POSTING。网上给出的解决办法是keep住所有eventbus相关的代码：
 
@@ -318,10 +330,6 @@ public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
 
 
 
-
-
-### 混淆相关
-
 在使用EventBus的时候，如果你的项目采用了混淆，需要注意keep以下类及方法。官方中已经给了使用EventBus库中需要keep的类，具体如下所示：
 
 ```java
@@ -413,6 +421,9 @@ public class SimpleSubscriberInfo extends AbstractSubscriberInfo {
 ```
 
 因为是通过记录的实际名称来寻找相应的方法的，因为混淆过后，订阅者的方法发生了改变（onMessageEvent有可能改为a()，或b()方法。所以这个时候是找不到相关的订阅者的方法的 ，就会抛出`Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?`的异常，所以在混淆的时候我们需要保留订阅者所有包含`@Subscribe`注解的方法。
+
+
+
 
 ### 最后
 
