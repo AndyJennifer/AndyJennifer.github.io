@@ -1,5 +1,5 @@
 ---
-title: Android 注解系列之 EventBus 原理（四）
+title: Android 注解系列之 EventBus3 原理（四）
 tags:
 - EventBus
 categories:
@@ -8,14 +8,14 @@ categories:
 
 ### 前言
 
-在之前的文章 [Android 注解系列之APT工具（三）](https://juejin.im/post/5bc4606c6fb9a05d2469e854) 中，我们介绍了 APT 技术的及其使用方式，也提到了一些知名的开源框架如 [Dagger2](https://github.com/google/dagger)、[ButterKnife](https://github.com/JakeWharton/butterknife)、[EventBus](https://github.com/greenrobot/EventBus) 都使用了该技术。为了让大家更好的了解 APT 技术的使用，在接下来的文章中我将会着重带领大家来了解 EventBus 中 APT 技术的使用，在了解该知识之前，需要我们对 EventBus 内部原理较为熟悉，如果你已经熟悉其内部机制了，可以跳过该篇文章，直接阅读《Android-注解系列之EventBus索引类（五）》
+在之前的文章 [Android 注解系列之APT工具（三）](https://juejin.im/post/5bc4606c6fb9a05d2469e854) 中，我们介绍了 APT 技术的及其使用方式，也提到了一些知名的开源框架如 [Dagger2](https://github.com/google/dagger)、[ButterKnife](https://github.com/JakeWharton/butterknife)、[EventBus](https://github.com/greenrobot/EventBus) 都使用了该技术。为了让大家更好的了解 APT 技术的使用，在接下来的文章中我将会着重带领大家来了解 EventBus 中 APT 技术的使用，在了解该知识之前，需要我们对 EventBus 内部原理较为熟悉，如果你已经熟悉其内部机制了，可以跳过该篇文章，直接阅读《Android-注解系列之EventBus3“加速引擎"（五）》
 
 阅读该篇文章，我们能够学到如下知识点：
 
-- EventBus 内部原理
-- EventBus 订阅与发送消息原理
-- EventBus 线程切换的原理
-- EventBus 粘性事件的处理
+- EventBus3 内部原理
+- EventBus3 订阅与发送消息原理
+- EventBus3 线程切换的原理
+- EventBus3 粘性事件的处理
   
 > 整篇文章结合 EventBus 3.1.1 版本进行讲解。
 
@@ -58,7 +58,7 @@ EventBus 对于 Android 程序员来说应该不是很陌生，它是基于观�
 - 将所有的 `Subscription` 放在名为 `subscriptionsByEventType` 类型为 `Map<Class<?>, CopyOnWriteArrayList<Subscription>>` 数据结构（key 为事件类型的 Class 对象） 中，因为 `Subscription` 对象内部包含 `SubscriberMethod`， 那么就能知道订阅的事件类型，所以我们可以根据事件类型来区分 `Subscription` ，又因为相同事件可以被不同订阅者中的方法来订阅，所以相同类型的事件也就以对应不同的 `Subscription`。
 - 将订阅者中的所有订阅的事件都封装在名为 `typesBySubscriber` 类型为 `Map<Object, List<Class<?>>>`数据结构（key 为订阅对象，value 为该对象订阅的事件类型 Class 对象）。该集合主要用于取消订阅，在下文中我们会进行介绍。
 
-在整个注册流程中，最主要的流程就是 EventBus 通过 `SubscriberMethodFinder` 去获取类中包含 `@Subscribe` 注解的订阅方法。在 EventBus 3.0 之前该流程一直都是通过`反射`的方式去获取。在 3.0 及以后版本，EventBus 采用了 APT 技术，对 `SubscriberMethodFinder` 查找订阅方法流程进行了优化，使其能在 `EventBus.register()`方法调用之前就能知道相关订阅事件的方法，这样就减少了程序在运行期间使用反射带来的时间消耗。在下文中我们也会指出具体的优化点。
+在整个注册流程中，最主要的流程就是 EventBus 通过 `SubscriberMethodFinder` 去获取类中包含 `@Subscribe` 注解的订阅方法。在 EventBus 3.0 之前该流程一直都是通过`反射`的方式去获取。在 3.0 及以后版本，EventBus 采用了 APT 技术，对 `SubscriberMethodFinder` 查找订阅方法流程进行了优化，使其能在 `EventBus.register()` 方法调用之前就能知道相关订阅事件的方法，这样就减少了程序在运行期间使用反射遍历获取方法所带来的时间消耗。在下文中我们也会指出具体的优化点。
 
 #### 事件发送流程
 
