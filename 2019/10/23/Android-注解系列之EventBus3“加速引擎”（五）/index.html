@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bangbangtang-32*32.png?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bangbangtang-16*16.png?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言在上篇文章 Android 注解系列之 EventBus3 原理（四）中我们讲解了 EventBus3 的内部原理，在该篇文章中我们将讲解 EventBus3 中的 “加速引擎“—索引类。阅读该篇文章我们能够学到如下知识点。  EventBus3 索引类出现的原因 EventBus3 索引类的使用 EventBus3 索引类生成的过程 EventBus3 混淆注意事项   对 APT 技术不">
+<meta name="keywords" content="EventBus">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-注解系列之EventBus3”加速引擎“（五）">
+<meta property="og:url" content="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/index.html">
+<meta property="og:site_name" content="AndyJennifer&#39;Blog">
+<meta property="og:description" content="前言在上篇文章 Android 注解系列之 EventBus3 原理（四）中我们讲解了 EventBus3 的内部原理，在该篇文章中我们将讲解 EventBus3 中的 “加速引擎“—索引类。阅读该篇文章我们能够学到如下知识点。  EventBus3 索引类出现的原因 EventBus3 索引类的使用 EventBus3 索引类生成的过程 EventBus3 混淆注意事项   对 APT 技术不">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/bus.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/EventBus3优化.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/eventbus3-registration-perf-nexus9m.png">
+<meta property="og:image" content="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/EventBus注解处理器.png">
+<meta property="og:updated_time" content="2019-10-22T16:21:55.720Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android-注解系列之EventBus3”加速引擎“（五）">
+<meta name="twitter:description" content="前言在上篇文章 Android 注解系列之 EventBus3 原理（四）中我们讲解了 EventBus3 的内部原理，在该篇文章中我们将讲解 EventBus3 中的 “加速引擎“—索引类。阅读该篇文章我们能够学到如下知识点。  EventBus3 索引类出现的原因 EventBus3 索引类的使用 EventBus3 索引类生成的过程 EventBus3 混淆注意事项   对 APT 技术不">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/bus.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Android-注解系列之EventBus3”加速引擎“（五） | AndyJennifer'Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AndyJennifer'Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">What would life be if we had no courage to attempt anything?</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/AndyJennifer" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AndyJennifer">
+      <meta itemprop="description" content="AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步">
+      <meta itemprop="image" content="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AndyJennifer'Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android-注解系列之EventBus3”加速引擎“（五）
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-23 00:16:48 / 修改时间：00:21:55" itemprop="dateCreated datePublished" datetime="2019-10-23T00:16:48+08:00">2019-10-23</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/源码分析/" itemprop="url" rel="index"><span itemprop="name">源码分析</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">22k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">40 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <img src="/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/bus.jpg" title="bus">
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在上篇文章 <a href="/2019/10/23/Android-注解系列之EventBus3原理（四）/" title="Android 注解系列之 EventBus3 原理（四）">Android 注解系列之 EventBus3 原理（四）</a>中我们讲解了 EventBus3 的内部原理，在该篇文章中我们将讲解 EventBus3 中的 <code>“加速引擎“</code>—索引类。阅读该篇文章我们能够学到如下知识点。</p>
+<ul>
+<li>EventBus3 索引类出现的原因</li>
+<li>EventBus3 索引类的使用</li>
+<li>EventBus3 索引类生成的过程</li>
+<li>EventBus3 混淆注意事项</li>
+</ul>
+<blockquote>
+<p>对 APT 技术不熟悉的小伙伴，可以查看文章 <a href="/2019/02/23/Android-注解系列之APT工具(三)/" title="Android 注解系列之APT工具(三)">Android 注解系列之APT工具(三)</a></p>
+</blockquote>
+<h3 id="前景回顾"><a href="#前景回顾" class="headerlink" title="前景回顾"></a>前景回顾</h3><p>在  <a href="/2019/10/23/Android-注解系列之EventBus3原理（四）/" title="Android 注解系列之 EventBus3 原理（四）">Android 注解系列之 EventBus3 原理（四）</a>中，我们特别指出在 EventBus3 中优化了 <code>SubscriberMethodFinder</code> 获取类中包含 <code>@Subscribe</code> 注解的订阅方法的流程。使其能在 <code>EventBus.register()</code> 方法调用之前就能知道相关订阅事件的方法，这样就减少了程序在运行期间使用反射遍历获取方法所带来的时间消耗。优化点如下图中 <code>红色虚线框</code> 所示：</p>
+<img src="/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/EventBus3优化.jpg" title="EventBus3优化">
+<p>EventBus 作者 <a href="http://androiddevblog.com/eventbus-3-droidcon/" target="_blank" rel="noopener">Markus Junginger</a> 也给出了使用索引类前后 EventBus 的效率对比，如下图所示：</p>
+<img src="/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/eventbus3-registration-perf-nexus9m.png" title="eventbus3-registration-perf-nexus9m">
+<p>从上图中，我们可以使用索引类后，EventBus 的效率有着明显的提升，而效率提升的背后，正是使用了 <code>APT</code> 技术所创建的<code>索引类</code>。那么接下来我们就来看一看 EventBus3 中是如何结合 <code>APT</code> 技术来进行优化的。</p>
+<h3 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h3><p>阅读过 EventBus3 源码的小伙伴应该都知道，在 EventBus3 中获取类中包含 <code>@Subscribe</code> 注解的订阅方法有两种方式。</p>
+<ul>
+<li>第一种：是直接在程序运行时反射获取</li>
+<li>第二种：就是通过索引类。</li>
+</ul>
+<p>而使用索引类的关键代码为 <code>SubscriberMethodFinder</code> 中的<br><a href="https://github.com/greenrobot/EventBus/blob/master/EventBus/src/org/greenrobot/eventbus/SubscriberMethodFinder.java#L122" target="_blank" rel="noopener">getSubscriberInfo()</a> 方法与 <a href="https://github.com/greenrobot/EventBus/blob/master/EventBus/src/org/greenrobot/eventbus/SubscriberMethodFinder.java#L75" target="_blank" rel="noopener">findUsingInfo()</a> 方法 。<br>我们分别来看这两个方法。</p>
+<h4 id="findUsingInfo-方法"><a href="#findUsingInfo-方法" class="headerlink" title="findUsingInfo 方法"></a>findUsingInfo 方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> List&lt;SubscriberMethod&gt; <span class="title">findUsingInfo</span><span class="params">(Class&lt;?&gt; subscriberClass)</span> </span>&#123;</span><br><span class="line">    FindState findState = prepareFindState();</span><br><span class="line">    findState.initForSubscriber(subscriberClass);</span><br><span class="line">    <span class="keyword">while</span> (findState.clazz != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">//👇关键代码，从索引类中获取 SubscriberInfo</span></span><br><span class="line">        findState.subscriberInfo = getSubscriberInfo(findState);</span><br><span class="line">        <span class="comment">//方式1：如果 subscriberInfo 不为空，则从该对象中获取 SubscriberMethod 对象</span></span><br><span class="line">        <span class="keyword">if</span> (findState.subscriberInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">            SubscriberMethod[] array = findState.subscriberInfo.getSubscriberMethods();</span><br><span class="line">            <span class="keyword">for</span> (SubscriberMethod subscriberMethod : array) &#123;</span><br><span class="line">                <span class="keyword">if</span> (findState.checkAdd(subscriberMethod.method, subscriberMethod.eventType)) &#123;</span><br><span class="line">                    findState.subscriberMethods.add(subscriberMethod);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//方式2：如果 subscriberInfo 为空，那么直接通过反射获取</span></span><br><span class="line">            findUsingReflectionInSingleClass(findState);</span><br><span class="line">        &#125;</span><br><span class="line">        findState.moveToSuperclass();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> getMethodsAndRelease(findState);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们能从该方法中获得以下信息：</p>
+<ul>
+<li>EventBus3 中默认会调用 <a href="https://github.com/greenrobot/EventBus/blob/master/EventBus/src/org/greenrobot/eventbus/SubscriberMethodFinder.java#L122" target="_blank" rel="noopener">getSubscriberInfo()</a> 方法去获取 subscriberInfo 对象信息。</li>
+<li>如果 subscriberInfo 不为空，则会从该对象中获取 <code>SubscriberMethod</code> 数组。</li>
+<li>如果 subscriberInfo 为空，那么会直接通过<code>反射</code>去获取 <code>SubscriberMethod</code> 集合信息。</li>
+</ul>
+<blockquote>
+<p>SubscriberMethod 类中含有 <code>@Subscribe</code> 注解的方法信息封装（优先级，是否粘性，线程模式,订阅的事件），以及当前方法的 Method 对象(<code>java.lang.reflect</code> 包下的对象)。</p>
+</blockquote>
+<p>也就说 EventBus 是否通过反射获取信息，是由 getSubscriberInfo（）方法来决定，那么我们查看该方法。</p>
+<h4 id="getSubscriberInfo-方法"><a href="#getSubscriberInfo-方法" class="headerlink" title="getSubscriberInfo 方法"></a>getSubscriberInfo 方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> SubscriberInfo <span class="title">getSubscriberInfo</span><span class="params">(FindState findState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (findState.subscriberInfo != <span class="keyword">null</span> &amp;&amp; findState.subscriberInfo.getSuperSubscriberInfo() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        SubscriberInfo superclassInfo = findState.subscriberInfo.getSuperSubscriberInfo();</span><br><span class="line">        <span class="keyword">if</span> (findState.clazz == superclassInfo.getSubscriberClass()) &#123;</span><br><span class="line">            <span class="keyword">return</span> superclassInfo;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//👇这里是EventBus3中优化的关键，索引类</span></span><br><span class="line">    <span class="keyword">if</span> (subscriberInfoIndexes != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (SubscriberInfoIndex index : subscriberInfoIndexes) &#123;</span><br><span class="line">            SubscriberInfo info = index.getSubscriberInfo(findState.clazz);</span><br><span class="line">            <span class="keyword">if</span> (info != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> info;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码逻辑中我们能得出，如果 <code>subscriberInfoIndexes</code> 集合不为空的话，那么就会从 <code>SubscriberInfoIndex（索引类）</code> 中去获取 <code>SubscriberInfo</code> 对象信息。该方法的逻辑并不复杂，唯一的疑惑就是这个 SubscriberInfoIndex(索引类) 对象是从何而来的呢？</p>
+<p>聪明的小伙伴们已经想到了。对！！！就是通过 APT 技术自动生成的类。那么我们怎么使用 EventBus3 中的索引类？以及 EventBus3 中是如何生成的索引类的呢？ 不急不急，我们一个一个的解决问题。我们先来看看如何使用索引类。</p>
+<h3 id="EventBus中索引类的使用"><a href="#EventBus中索引类的使用" class="headerlink" title="EventBus中索引类的使用"></a>EventBus中索引类的使用</h3><p>如果需要使用 EventBus3 中的索引类，我们可以在 App 的 <code>build.gradle</code> 中添加如下配置：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        javaCompileOptions &#123;</span><br><span class="line">            annotationProcessorOptions &#123;</span><br><span class="line">                <span class="comment">// 根据项目实际情况，指定索引类的名称和包名</span></span><br><span class="line">                arguments = [ eventBusIndex : <span class="string">'com.eventbus.project.EventBusIndex'</span> ]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    implementation <span class="string">'org.greenrobot:eventbus:3.1.1'</span></span><br><span class="line">    <span class="comment">// 引入注解处理器</span></span><br><span class="line">    annotationProcessor <span class="string">'org.greenrobot:eventbus-annotation-processor:3.1.1'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果有小伙伴不熟悉 gradle 配置，可以查看 <a href="http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.AnnotationProcessorOptions.html" target="_blank" rel="noopener">AnnotationProcessorOptions</a></p>
+</blockquote>
+<p>在上述配置中，我们需要注意如下几点：</p>
+<ul>
+<li>如果你不使用索引类，那么就没有必要设置 <code>annotationProcessorOptions</code> 参数中的值。也没有必要引入 EventBus 的注解处理器。</li>
+<li>如果要使用索引类，并且也引入了 EventBus 的注解处理器（eventbus-annotation-processor），但却没有设置 arguments 的话，编译时就会报错：<code>No option eventBusIndex passed to annotation processor</code>。</li>
+<li>索引类的生成，需要我们对代码重新编译。编译成功后，其该类对应路径为<code>\ProjectName\app\build\generated\source\apt\你设置的包名</code>。</li>
+</ul>
+<p>当我们的索引类生成后，我们还需要在初始化 EventBus 时应用我们生成的索引类，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EventBus.builder().addIndex(<span class="keyword">new</span> EventBusIndex()).installDefaultEventBus();</span><br></pre></td></tr></table></figure>
+<p>之所以要配置索引类，是因为我们需要将我们生成的索引类添加到 <code>subscriberInfoIndexes</code> 集合中，这样我们才能从之前讲解的 <code>getSubscriberInfo（）</code>找到我们配置的索引类。<code>addIndex()</code> 代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> EventBusBuilder <span class="title">addIndex</span><span class="params">(SubscriberInfoIndex index)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (subscriberInfoIndexes == <span class="keyword">null</span>) &#123;</span><br><span class="line">           subscriberInfoIndexes = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//👇这里添加索引类到 subscriberInfoIndexes 集合中</span></span><br><span class="line">       subscriberInfoIndexes.add(index);</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="索引类实际使用分析"><a href="#索引类实际使用分析" class="headerlink" title="索引类实际使用分析"></a>索引类实际使用分析</h4><p>如果你已经配置好了索引类，那么我们看下面的例子，这里我配置的索引类为 <code>EventBusIndex</code> 对应包名为： <code>&#39;com.eventbus.project&#39;</code> 。我在 EventBusDemo.java 中声明了如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventBusDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Subscribe</span>(threadMode = ThreadMode.MAIN)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessageEventOne</span><span class="params">(MessageEvent event)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Subscribe</span>(threadMode = ThreadMode.MAIN)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessageEventTwo</span><span class="params">(MessageEvent event)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"world"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>自动生成的索引类，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventBusIndex</span> <span class="keyword">implements</span> <span class="title">SubscriberInfoIndex</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;Class&lt;?&gt;, SubscriberInfo&gt; SUBSCRIBER_INDEX;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        SUBSCRIBER_INDEX = <span class="keyword">new</span> HashMap&lt;Class&lt;?&gt;, SubscriberInfo&gt;();</span><br><span class="line"></span><br><span class="line">        putIndex(<span class="keyword">new</span> SimpleSubscriberInfo(EventBusDemo.class, <span class="keyword">true</span>, <span class="keyword">new</span> SubscriberMethodInfo[] &#123;</span><br><span class="line">            <span class="keyword">new</span> SubscriberMethodInfo(<span class="string">"onMessageEventOne"</span>, MessageEvent.class, ThreadMode.MAIN),</span><br><span class="line">            <span class="keyword">new</span> SubscriberMethodInfo(<span class="string">"onMessageEventTwo"</span>, MessageEvent.class, ThreadMode.MAIN),</span><br><span class="line">        &#125;));</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">putIndex</span><span class="params">(SubscriberInfo info)</span> </span>&#123;</span><br><span class="line">        SUBSCRIBER_INDEX.put(info.getSubscriberClass(), info);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SubscriberInfo <span class="title">getSubscriberInfo</span><span class="params">(Class&lt;?&gt; subscriberClass)</span> </span>&#123;</span><br><span class="line">        SubscriberInfo info = SUBSCRIBER_INDEX.get(subscriberClass);</span><br><span class="line">        <span class="keyword">if</span> (info != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> info;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在生成的索引类中我们可以看出：</p>
+<ul>
+<li>生成的索引类中，维护了一个 key 为 订阅对象 value 为 <code>SimpleSubscriberInfo</code> 的 HashMap。</li>
+<li><code>SimpleSubscriberInfo</code> 类中维护了当前订阅者的 class 对象与 <code>SubscriberMethodInfo[] 数组</code>。</li>
+<li>HashMap 中的数据添加是放到静态代码块中执行的。</li>
+</ul>
+<blockquote>
+<p>SubscriberMethodInfo 类中含有 <code>@Subscribe</code> 注解的方法信息封装（优先级，是否粘性，线程模式，订阅的事件），以及当前方法的<code>名称</code>。</p>
+</blockquote>
+<p>到现在，我们已经知道了我们索引类中的内容，那么现在在回到 <code>findUsingInfo()</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> List&lt;SubscriberMethod&gt; <span class="title">findUsingInfo</span><span class="params">(Class&lt;?&gt; subscriberClass)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    <span class="keyword">while</span> (findState.clazz != <span class="keyword">null</span>) &#123;</span><br><span class="line">        findState.subscriberInfo = getSubscriberInfo(findState);</span><br><span class="line">        <span class="keyword">if</span> (findState.subscriberInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">             <span class="comment">//👇关键代码，从索引类中获取 SubscriberMethod</span></span><br><span class="line">            SubscriberMethod[] array = findState.subscriberInfo.getSubscriberMethods();</span><br><span class="line">            <span class="keyword">for</span> (SubscriberMethod subscriberMethod : array) &#123;</span><br><span class="line">                <span class="keyword">if</span> (findState.checkAdd(subscriberMethod.method, subscriberMethod.eventType)) &#123;</span><br><span class="line">                    findState.subscriberMethods.add(subscriberMethod);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当 <code>subscriberInfo</code> 不为空时，会通过 <code>getSubscriberMethods()</code>方法，去获取索引类中 <code>SubscriberMethod[]数组</code> 信息。因为索引类使用的是 <code>SimpleSubscriberInfo</code> 类，我们查看该类中该方法的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">synchronized</span> SubscriberMethod[] getSubscriberMethods() &#123;</span><br><span class="line">     <span class="keyword">int</span> length = methodInfos.length;</span><br><span class="line">     SubscriberMethod[] methods = <span class="keyword">new</span> SubscriberMethod[length];</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">         SubscriberMethodInfo info = methodInfos[i];</span><br><span class="line">         methods[i] = createSubscriberMethod(info.methodName, info.eventType, info.threadMode,</span><br><span class="line">                 info.priority, info.sticky);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> methods;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>观察该代码，我们发现 SubscriberMethod 对象的创建是通过 <code>createSubscriberMethod</code> 方法创建的，我们继续跟踪。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> SubscriberMethod <span class="title">createSubscriberMethod</span><span class="params">(String methodName, Class&lt;?&gt; eventType, ThreadMode threadMode,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                    <span class="keyword">int</span> priority, <span class="keyword">boolean</span> sticky)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">          Method method = subscriberClass.getDeclaredMethod(methodName, eventType);</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> SubscriberMethod(method, eventType, threadMode, priority, sticky);</span><br><span class="line">      &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> EventBusException(<span class="string">"Could not find subscriber method in "</span> + subscriberClass +</span><br><span class="line">                  <span class="string">". Maybe a missing ProGuard rule?"</span>, e);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>从上述代码中，我们可以看出 <code>SubscriberMethod</code> 中的 <code>Method</code> 对象，其实是调用订阅者的 class 对象并使用 <code>getDeclaredMethod（）</code>方法找到的。</p>
+<p>现在为止我们已经基本了解，索引类之所以相比传统的通过反射遍历去获取订阅方法效率要更高。是因为在自动生成的索引类中，已经包含了相关订阅者中的订阅方法的名称及注解信息，那么当 EventBus 注册订阅者时，就可以直接通过<code>方法名称</code>拿到 Method 对象。这样就减少了通过遍历寻找方法的时间。</p>
+<h3 id="索引类的生成"><a href="#索引类的生成" class="headerlink" title="索引类的生成"></a>索引类的生成</h3><p>那现在我们继续学习 EventBus3 中是如何创建索引类的。索引类的创建是通过 <code>APT</code> 技术，如果你不了解这门技术，你可能需要查看文章 <a href="/2019/02/23/Android-注解系列之APT工具(三)/" title="Android 注解系列之APT工具(三)">Android 注解系列之APT工具(三)</a></p>
+<blockquote>
+<p><code>APT(Annotation Processing Tool)</code>是 javac 中提供的一种编译时扫描和处理注解的工具，它会对源代码文件进行检查，并找出其中的注解，然后根据用户自定义的注解处理方法进行额外的处理。APT工具不仅能解析注解，还能根据注解生成其他的源文件，最终将生成的新的源文件与原来的源文件共同编译（<code>注意：APT并不能对源文件进行修改操作，只能生成新的文件，例如在已有的类中添加方法</code>）</p>
+</blockquote>
+<p>使用APT技术需要创建自己的注解处理器，在 EventBus 中也创建了自己的注解处理器，从其源代码中我们就可以看出。</p>
+<img src="/2019/10/23/Android-注解系列之EventBus3“加速引擎”（五）/EventBus注解处理器.png" title="EventBus注解处理器">
+<p>那下面，我们就直接查看源码：</p>
+<blockquote>
+<p>以下的代码，都出至于 <a href="https://github.com/greenrobot/EventBus/blob/master/EventBusAnnotationProcessor/src/org/greenrobot/eventbus/annotationprocessor/EventBusAnnotationProcessor.java" target="_blank" rel="noopener">EventBusAnnotationProcessor</a></p>
+</blockquote>
+<p>查看 EventBusAnnotationProcessor 中的 <code>process()</code> 方法：</p>
+<blockquote>
+<p><code>process(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv)</code>：注解处理器实际处理方法，一般要求子类实现该抽象方法，你可以在在这里写你的扫描与处理注解的代码，以及生成 Java 文件。其中参数 RoundEnvironment ，可以让你查询出包含特定注解的被注解元素.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SupportedAnnotationTypes</span>(<span class="string">"org.greenrobot.eventbus.Subscribe"</span>)</span><br><span class="line"><span class="meta">@SupportedOptions</span>(value = &#123;<span class="string">"eventBusIndex"</span>, <span class="string">"verbose"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventBusAnnotationProcessor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String OPTION_EVENT_BUS_INDEX = <span class="string">"eventBusIndex"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment env)</span> </span>&#123;</span><br><span class="line">        Messager messager = processingEnv.getMessager();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//步骤1：👇获取我们配置的索引类，</span></span><br><span class="line">            String index = processingEnv.getOptions().get(OPTION_EVENT_BUS_INDEX);</span><br><span class="line">            <span class="keyword">if</span> (index == <span class="keyword">null</span>) &#123;</span><br><span class="line">                messager.printMessage(Diagnostic.Kind.ERROR, <span class="string">"No option "</span> + OPTION_EVENT_BUS_INDEX +</span><br><span class="line">                        <span class="string">" passed to annotation processor"</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//省略部分代码</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//步骤2:👇收集当前订阅者信息</span></span><br><span class="line">            collectSubscribers(annotations, env, messager);</span><br><span class="line">            <span class="comment">//步骤3：👇创建索引类文件</span></span><br><span class="line">            <span class="keyword">if</span> (!methodsByClass.isEmpty()) &#123;</span><br><span class="line">                createInfoIndexFile(index);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                messager.printMessage(Diagnostic.Kind.WARNING, <span class="string">"No @Subscribe annotations found"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            writerRoundDone = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">            <span class="comment">//省略部分代码</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该方法中主要逻辑为三个逻辑：</p>
+<ul>
+<li>步骤1：读取我们之前在 APP 中的 build.gradle 设置的索引类对应的包名与类名。</li>
+<li>步骤2：读取源文件中的包含 <code>@Subscribe</code> 注解的方法。并将订阅者与订阅方法进行记录在 <code>methodsByClass</code> Map 集合中。</li>
+<li>步骤3：根据读取的索引类设置，通过 <code>createInfoIndexFile()</code> 方法开始创建索引类文件。</li>
+</ul>
+<blockquote>
+<p>因为声明了<code>@SupportedAnnotationTypes(&quot;org.greenrobot.eventbus.Subscribe&quot;)</code>  在注解处理器上，那么 APT 只会处理包含该注解的文件。</p>
+</blockquote>
+<p>我们接下来看看步骤2中的方法 <code>collectSubscribers()</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">collectSubscribers</span><span class="params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment env, Messager messager)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (TypeElement annotation : annotations) &#123;</span><br><span class="line">        Set&lt;? extends Element&gt; elements = env.getElementsAnnotatedWith(annotation);</span><br><span class="line">        <span class="keyword">for</span> (Element element : elements) &#123;</span><br><span class="line">            <span class="keyword">if</span> (element <span class="keyword">instanceof</span> ExecutableElement) &#123;</span><br><span class="line">                ExecutableElement method = (ExecutableElement) element;</span><br><span class="line">                <span class="keyword">if</span> (checkHasNoErrors(method, messager)) &#123;</span><br><span class="line">                    <span class="comment">//获取包含`@Subscribe`类的class对象</span></span><br><span class="line">                    TypeElement classElement = (TypeElement) method.getEnclosingElement();</span><br><span class="line">                    methodsByClass.putElement(classElement, method);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                messager.printMessage(Diagnostic.Kind.ERROR, <span class="string">"@Subscribe is only valid for methods"</span>, element);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在注解处理过程中，我们需要扫描所有的Java源文件，源代码的每一个部分都是一个特定类型的<code>Element</code>，也就是说 Element 代表源文件中的元素，例如包、类、字段、方法等。</p>
+</blockquote>
+<p>在上述方法中，<code>annotations</code> 为扫描到包含 <code>@Subscribe</code> 注解 的 <code>Element</code> 集合。其中 ExecutableElement 表示类或接口的方法、构造函数或初始化器（静态或实例），因为我们可以通过 getEnclosingElement（）方法，拿到当前 <code>ExecutableElement</code> 的最近的父 Element，那么我们就能获得当前的类的 element 对象了。那么通过该方法，我们就能知道所有订阅者与其对应的订阅方法了。</p>
+<p>我们继续跟踪查看索引类文件的创建：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createInfoIndexFile</span><span class="params">(String index)</span> </span>&#123;</span><br><span class="line">    BufferedWriter writer = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        JavaFileObject sourceFile = processingEnv.getFiler().createSourceFile(index);</span><br><span class="line">        <span class="keyword">int</span> period = index.lastIndexOf(<span class="string">'.'</span>);</span><br><span class="line">        String myPackage = period &gt; <span class="number">0</span> ? index.substring(<span class="number">0</span>, period) : <span class="keyword">null</span>;</span><br><span class="line">        String clazz = index.substring(period + <span class="number">1</span>);</span><br><span class="line">        writer = <span class="keyword">new</span> BufferedWriter(sourceFile.openWriter());</span><br><span class="line">        <span class="keyword">if</span> (myPackage != <span class="keyword">null</span>) &#123;</span><br><span class="line">            writer.write(<span class="string">"package "</span> + myPackage + <span class="string">";\n\n"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        writer.write(<span class="string">"import org.greenrobot.eventbus.meta.SimpleSubscriberInfo;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"import org.greenrobot.eventbus.meta.SubscriberMethodInfo;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"import org.greenrobot.eventbus.meta.SubscriberInfo;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"import org.greenrobot.eventbus.meta.SubscriberInfoIndex;\n\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"import org.greenrobot.eventbus.ThreadMode;\n\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"import java.util.HashMap;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"import java.util.Map;\n\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"/** This class is generated by EventBus, do not edit. */\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"public class "</span> + clazz + <span class="string">" implements SubscriberInfoIndex &#123;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    private static final Map&lt;Class&lt;?&gt;, SubscriberInfo&gt; SUBSCRIBER_INDEX;\n\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    static &#123;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"        SUBSCRIBER_INDEX = new HashMap&lt;Class&lt;?&gt;, SubscriberInfo&gt;();\n\n"</span>);</span><br><span class="line">        <span class="comment">//👇这里是关键的代码</span></span><br><span class="line">        writeIndexLines(writer, myPackage);</span><br><span class="line">        writer.write(<span class="string">"    &#125;\n\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    private static void putIndex(SubscriberInfo info) &#123;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"        SUBSCRIBER_INDEX.put(info.getSubscriberClass(), info);\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    &#125;\n\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    @Override\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    public SubscriberInfo getSubscriberInfo(Class&lt;?&gt; subscriberClass) &#123;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"        SubscriberInfo info = SUBSCRIBER_INDEX.get(subscriberClass);\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"        if (info != null) &#123;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"            return info;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"        &#125; else &#123;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"            return null;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"        &#125;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"    &#125;\n"</span>);</span><br><span class="line">        writer.write(<span class="string">"&#125;\n"</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Could not write source for "</span> + index, e);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (writer != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                writer.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                <span class="comment">//Silent</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在该方法中，通过 <code>processingEnv.getFiler().createSourceFile(index)</code> 拿到我们需要创建的索引类文件对象，然后通过文件IO流向该文件中输入索引类中需要的内容。在该方法中，最为主要的就是 <code>writeIndexLines()</code> 方法了。查看该方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeIndexLines</span><span class="params">(BufferedWriter writer, String myPackage)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (TypeElement subscriberTypeElement : methodsByClass.keySet()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (classesToSkip.contains(subscriberTypeElement)) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//当前订阅对象的class对象</span></span><br><span class="line">        String subscriberClass = getClassString(subscriberTypeElement, myPackage);</span><br><span class="line">        <span class="keyword">if</span> (isVisible(myPackage, subscriberTypeElement)) &#123;</span><br><span class="line">            writeLine(writer, <span class="number">2</span>,</span><br><span class="line">                    <span class="string">"putIndex(new SimpleSubscriberInfo("</span> + subscriberClass + <span class="string">".class,"</span>,</span><br><span class="line">                    <span class="string">"true,"</span>, <span class="string">"new SubscriberMethodInfo[] &#123;"</span>);</span><br><span class="line">            List&lt;ExecutableElement&gt; methods = methodsByClass.get(subscriberTypeElement);</span><br><span class="line">            <span class="comment">//👇关键代码</span></span><br><span class="line">            writeCreateSubscriberMethods(writer, methods, <span class="string">"new SubscriberMethodInfo"</span>, myPackage);</span><br><span class="line">            writer.write(<span class="string">"        &#125;));\n\n"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            writer.write(<span class="string">"        // Subscriber not visible to index: "</span> + subscriberClass + <span class="string">"\n"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在该方法中，会从 <code>methodsByClass</code> Map 中遍历获取我们之前的订阅者，然后获取其所有的订阅方法，并书写模板方法。其中关构造 <code>SubscriberMethodInfo</code> 代码的关键方法为 <code>writeCreateSubscriberMethods()</code>，跟踪该方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeCreateSubscriberMethods</span><span class="params">(BufferedWriter writer, List&lt;ExecutableElement&gt; methods,</span></span></span><br><span class="line"><span class="function"><span class="params">                                             String callPrefix, String myPackage)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">       <span class="keyword">for</span> (ExecutableElement method : methods) &#123;</span><br><span class="line">           <span class="comment">//获取当前方法上的参数</span></span><br><span class="line">           List&lt;? extends VariableElement&gt; parameters = method.getParameters();</span><br><span class="line">           TypeMirror paramType = getParamTypeMirror(parameters.get(<span class="number">0</span>), <span class="keyword">null</span>);</span><br><span class="line">           <span class="comment">//获取第一个参数的类型</span></span><br><span class="line">           TypeElement paramElement = (TypeElement) processingEnv.getTypeUtils().asElement(paramType);</span><br><span class="line">           <span class="comment">//获取方法的名称</span></span><br><span class="line">           String methodName = method.getSimpleName().toString();</span><br><span class="line">           <span class="comment">//获取订阅的事件class类型字符串信息</span></span><br><span class="line">           String eventClass = getClassString(paramElement, myPackage) + <span class="string">".class"</span>;</span><br><span class="line">           <span class="comment">//获取方法上的注解信息</span></span><br><span class="line">           Subscribe subscribe = method.getAnnotation(Subscribe.class);</span><br><span class="line">           List&lt;String&gt; parts = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">           parts.add(callPrefix + <span class="string">"(\""</span> + methodName + <span class="string">"\","</span>);</span><br><span class="line">           String lineEnd = <span class="string">"),"</span>;</span><br><span class="line">           <span class="comment">//设置优先级，是否粘性，线程模式，订阅事件class类型</span></span><br><span class="line">           <span class="keyword">if</span> (subscribe.priority() == <span class="number">0</span> &amp;&amp; !subscribe.sticky()) &#123;</span><br><span class="line">               <span class="keyword">if</span> (subscribe.threadMode() == ThreadMode.POSTING) &#123;</span><br><span class="line">                   parts.add(eventClass + lineEnd);</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   parts.add(eventClass + <span class="string">","</span>);</span><br><span class="line">                   parts.add(<span class="string">"ThreadMode."</span> + subscribe.threadMode().name() + lineEnd);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               parts.add(eventClass + <span class="string">","</span>);</span><br><span class="line">               parts.add(<span class="string">"ThreadMode."</span> + subscribe.threadMode().name() + <span class="string">","</span>);</span><br><span class="line">               parts.add(subscribe.priority() + <span class="string">","</span>);</span><br><span class="line">               parts.add(subscribe.sticky() + lineEnd);</span><br><span class="line">           &#125;</span><br><span class="line">           writeLine(writer, <span class="number">3</span>, parts.toArray(<span class="keyword">new</span> String[parts.size()]));</span><br><span class="line"></span><br><span class="line">           <span class="keyword">if</span> (verbose) &#123;</span><br><span class="line">               processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, <span class="string">"Indexed @Subscribe at "</span> +</span><br><span class="line">                       method.getEnclosingElement().getSimpleName() + <span class="string">"."</span> + methodName +</span><br><span class="line">                       <span class="string">"("</span> + paramElement.getSimpleName() + <span class="string">")"</span>);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>在该方法中，会获取订阅方法的参数信息，并构建 <code>SubscriberMethodInfo</code> 信息。这里就不对该方法进行详细的介绍了，大家可以根据代码中的注释进行理解。</p>
+<h3 id="混淆相关"><a href="#混淆相关" class="headerlink" title="混淆相关"></a>混淆相关</h3><p>在使用 EventBus3 的时候，如果你的项目采用了混淆，需要注意 keep 以下类及方法。官方中已经给出了详细的 keep 规则，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">-keepattributes *Annotation*</span><br><span class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> * </span>&#123;</span><br><span class="line">    <span class="meta">@org</span>.greenrobot.eventbus.Subscribe &lt;methods&gt;;</span><br><span class="line">&#125;</span><br><span class="line">-keep <span class="keyword">enum</span> org.greenrobot.eventbus.ThreadMode &#123; *; &#125;</span><br><span class="line"></span><br><span class="line"># Only required if you use AsyncExecutor</span><br><span class="line">-keepclassmembers <span class="class"><span class="keyword">class</span> * <span class="keyword">extends</span> <span class="title">org</span>.<span class="title">greenrobot</span>.<span class="title">eventbus</span>.<span class="title">util</span>.<span class="title">ThrowableFailureEvent</span> </span>&#123;</span><br><span class="line">    &lt;init&gt;(java.lang.Throwable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="为什么不能混淆注解"><a href="#为什么不能混淆注解" class="headerlink" title="为什么不能混淆注解"></a>为什么不能混淆注解</h4><p>android在打包的时候，应用程序会进行代码优化，优化的过程就把注解给去掉了。为了在程序运行期间读取到注解信息，所以我们需要保存注解信息不被混淆。</p>
+<h4 id="为什么不能混淆包含-Subscribe-注解的方法"><a href="#为什么不能混淆包含-Subscribe-注解的方法" class="headerlink" title="为什么不能混淆包含 @Subscribe 注解的方法"></a>为什么不能混淆包含 @Subscribe 注解的方法</h4><p>因为当我们在使用索引类时，获取相关订阅的方法是通过<code>方法名称</code>获取的，那么当代码被混淆过后，订阅者的方法名称将会发生改变，比如原来订阅方法名称为onMessageEvent，混淆后有可能改为a，或b方法。这个时候是找不到相关的订阅者的方法的 ，就会抛出 <code>Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?</code> 的异常，所以在混淆的时候我们需要保留订阅者所有包含 <code>@Subscribe</code> 注解的方法。</p>
+<h4 id="为什么不能混淆枚举类中的静态变量"><a href="#为什么不能混淆枚举类中的静态变量" class="headerlink" title="为什么不能混淆枚举类中的静态变量"></a>为什么不能混淆枚举类中的静态变量</h4><p>如果我们没有在混淆规则中添加如下语句:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-keep <span class="keyword">public</span> <span class="keyword">enum</span> org.greenrobot.eventbus.ThreadMode &#123; <span class="keyword">public</span> <span class="keyword">static</span> *; &#125;</span><br></pre></td></tr></table></figure>
+<p>在运行程序的时候，会报<code>java.lang.NoSuchFieldError: No static field POSTING</code>。原因是因为在 <code>SubscriberMethodFinder</code> 的 <code>findUsingReflection</code> 方法中，在调用 <code>Method.getAnnotation()</code>时获取 <code>ThreadMode</code> 这个 <code>enum</code> 失败了。</p>
+<p>我们都知道当我们声明枚举类时，编译器会为我们的枚举，自动生成一个继承<br><code>java.lang.Enum</code> 的 <code>final</code> 类。如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用命令 javap ThreadMode.class</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">tian</span>.<span class="title">auto</span>.<span class="title">ThreadMode</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Enum</span>&lt;<span class="title">com</span>.<span class="title">tian</span>.<span class="title">auto</span>.<span class="title">ThreadMode</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> com.tian.auto.ThreadMode POSTING;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> com.tian.auto.ThreadMode MAIN;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> com.tian.auto.ThreadMode MAIN_ORDERED;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> com.tian.auto.ThreadMode BACKGROUND;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> com.tian.auto.ThreadMode ASYNC;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> com.tian.auto.ThreadMode[] values();</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> com.tian.auto.<span class="function">ThreadMode <span class="title">valueOf</span><span class="params">(java.lang.String)</span></span>;</span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说，我们在枚举中声明的元素，其实最后对应的是类中的静态公有的常量。</p>
+<p>那么在结合在没有添加混淆规则时，程序所提示的错误信息。我们可以确定当我们在注解中包含<code>枚举类型</code>的注解元素时且设置了默认值时。该默认值是通过枚举类的 class 对象.getField(String name) 去获取的。因为只有该方法才会抛出该异常。<code>getField()</code> 代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Field <span class="title">getField</span><span class="params">(String name)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> NoSuchFieldException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"name == null"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Field result = getPublicFieldRecursive(name);</span><br><span class="line">    <span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchFieldException(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么也就说如果不添加上述的 keep 规则，就会导致我们编译器自动生成的静态常量名发生变化，又因为注解中的默认枚举值，是通过 <code>getField(String name)</code> 获得的。所以就会出现找不到字段的情况。</p>
+<blockquote>
+<p>其实在很多情况下，我们需要添加 keep 规则，常常是因为代码中是直接拿<strong>混淆前</strong>的方法名称或字段名称去直接寻找<strong>混淆后</strong>的方法与字段名称，我们只要在项目中注意这些情况，添加相应的 keep 规则，就可以避免因为代码被混淆而产生的异常啦。</p>
+</blockquote>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>EventBus3 中的索引类及其相关内容到这里就讲完啦！我相应大家已经了解了索引类在性能优化上的重要作用。希望大家在后续使用EventBus3时，一定要使用索引类呦。在接下来的一段时间内，我可能不会继续更新博客啦，因为作者我要去学习 flutter 去啦~ 没有办法，总要保持前进呢。优秀的人还在努力，更何况自己并不聪明呢。哎~伤心</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/EventBus/" rel="tag"># EventBus</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/13/Git新手教程-添加忽略文件（十）/" rel="next" title="Git新手教程-添加忽略文件（十）">
+                <i class="fa fa-chevron-left"></i> Git新手教程-添加忽略文件（十）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/23/Android-注解系列之EventBus3原理（四）/" rel="prev" title="Android 注解系列之 EventBus3 原理（四）">
+                Android 注解系列之 EventBus3 原理（四） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://upload-images.jianshu.io/upload_images/2824145-e320240ea6ec767d.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AndyJennifer">
+            
+              <p class="site-author-name" itemprop="name">AndyJennifer</p>
+              <p class="site-description motion-element" itemprop="description">AndyJennifer 个人站，主要涉及Android、Java、Kotlin等相关知识，愿与大家共同学习，共同进步</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/AndyJennifer" title="GitHub &rarr; https://github.com/AndyJennifer" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="/andyjennifer@126.com" title="E-Mail &rarr; andyjennifer@126.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前景回顾"><span class="nav-number">2.</span> <span class="nav-text">前景回顾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键代码"><span class="nav-number">3.</span> <span class="nav-text">关键代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#findUsingInfo-方法"><span class="nav-number">3.1.</span> <span class="nav-text">findUsingInfo 方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getSubscriberInfo-方法"><span class="nav-number">3.2.</span> <span class="nav-text">getSubscriberInfo 方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EventBus中索引类的使用"><span class="nav-number">4.</span> <span class="nav-text">EventBus中索引类的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#索引类实际使用分析"><span class="nav-number">4.1.</span> <span class="nav-text">索引类实际使用分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引类的生成"><span class="nav-number">5.</span> <span class="nav-text">索引类的生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#混淆相关"><span class="nav-number">6.</span> <span class="nav-text">混淆相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么不能混淆注解"><span class="nav-number">6.1.</span> <span class="nav-text">为什么不能混淆注解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么不能混淆包含-Subscribe-注解的方法"><span class="nav-number">6.2.</span> <span class="nav-text">为什么不能混淆包含 @Subscribe 注解的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么不能混淆枚举类中的静态变量"><span class="nav-number">6.3.</span> <span class="nav-text">为什么不能混淆枚举类中的静态变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">7.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AndyJennifer</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">565k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">17:08</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
