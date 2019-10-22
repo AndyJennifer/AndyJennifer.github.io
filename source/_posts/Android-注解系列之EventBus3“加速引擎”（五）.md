@@ -1,33 +1,37 @@
 ---
-title: Android-注解系列之EventBus3“加速引擎"（五）
+title: Android-注解系列之EventBus3”加速引擎“（五）
 tags:
-- EventBus
+  - EventBus
 categories:
-- 源码分析
+  - 源码分析
+date: 2019-10-23 00:16:48
 ---
+
+
+{% asset_img bus.jpg bus %}
 
 ### 前言
 
-在上篇文章 《Android 注解系列之 EventBus3 原理（四）》中我们讲解了 EventBus3 的内部原理，在该篇文章中我们将讲解 EventBus3 中的 `“加速引擎"`---索引类。阅读该篇文章我们能够学到如下知识点。
+在上篇文章 {% post_link Android-注解系列之EventBus3原理（四）%}中我们讲解了 EventBus3 的内部原理，在该篇文章中我们将讲解 EventBus3 中的 `“加速引擎“`---索引类。阅读该篇文章我们能够学到如下知识点。
 
 - EventBus3 索引类出现的原因
 - EventBus3 索引类的使用
-- EventBus3 中APT的使用
+- EventBus3 索引类生成的过程
 - EventBus3 混淆注意事项
   
->对 APT 技术不熟悉的小伙伴，可以查看文章 Android-注解系列之APT工具(三)
+>对 APT 技术不熟悉的小伙伴，可以查看文章 {% post_link Android-注解系列之APT工具(三) %}
 
 ### 前景回顾
 
-在 《Android 注解系列之 EventBus3 原理（四）》中，我们特别指出在 EventBus3 中优化了 `SubscriberMethodFinder` 获取类中包含 `@Subscribe` 注解的订阅方法的流程。使其能在 `EventBus.register()` 方法调用之前就能知道相关订阅事件的方法，这样就减少了程序在运行期间使用反射遍历获取方法所带来的时间消耗。优化点如下图中 `红色虚线框` 所示：
+在  {% post_link Android-注解系列之EventBus3原理（四）%}中，我们特别指出在 EventBus3 中优化了 `SubscriberMethodFinder` 获取类中包含 `@Subscribe` 注解的订阅方法的流程。使其能在 `EventBus.register()` 方法调用之前就能知道相关订阅事件的方法，这样就减少了程序在运行期间使用反射遍历获取方法所带来的时间消耗。优化点如下图中 `红色虚线框` 所示：
 
-![EventBus3优化.jpg](https://upload-images.jianshu.io/upload_images/2824145-775ec7aee8132189.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img EventBus3优化.jpg EventBus3优化 %}
 
 EventBus 作者 [Markus Junginger](http://androiddevblog.com/eventbus-3-droidcon/) 也给出了使用索引类前后 EventBus 的效率对比，如下图所示：
 
-![eventbus3-registration-perf-nexus9m.png](https://upload-images.jianshu.io/upload_images/2824145-97e436b273ff2a1d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img eventbus3-registration-perf-nexus9m.png eventbus3-registration-perf-nexus9m %}
 
-从上图中，我们可以使用索引类后，EventBus 的效率有着明显的提升，而效率提升的背后，正是使用了 `APT` 技术。那么接下啦我们就来看一看 EventBus3 中是如何结合 `APT` 技术来进行优化的。
+从上图中，我们可以使用索引类后，EventBus 的效率有着明显的提升，而效率提升的背后，正是使用了 `APT` 技术所创建的`索引类`。那么接下来我们就来看一看 EventBus3 中是如何结合 `APT` 技术来进行优化的。
 
 ### 关键代码
 
@@ -234,7 +238,7 @@ public class EventBusIndex implements SubscriberInfoIndex {
     }
 ```
 
-当 `subscriberInfo` 不为空时，会通过 `getSubscriberMethods()`方法，去获取索引类中 `SubscriberMethod[]数组` 信息。因为索引类使用的是 `SimpleSubscriberInfo` 类，我们查看该方法的实现：
+当 `subscriberInfo` 不为空时，会通过 `getSubscriberMethods()`方法，去获取索引类中 `SubscriberMethod[]数组` 信息。因为索引类使用的是 `SimpleSubscriberInfo` 类，我们查看该类中该方法的实现：
 
 ```java
    @Override
@@ -265,37 +269,51 @@ public class EventBusIndex implements SubscriberInfoIndex {
     }
 ```
 
-从上述代码中，我们可以看出 `SubscriberMethod` 中的 `Method` 对象，其实是通过订阅者中的 class 对象根据索引类中的方法名称找到的。
+从上述代码中，我们可以看出 `SubscriberMethod` 中的 `Method` 对象，其实是调用订阅者的 class 对象并使用 `getDeclaredMethod（）`方法找到的。
 
-现在为止，我们已经基本了解了索引类的使用流程。相比传统的通过反射遍历去获取订阅方法。使用索引类确实提高了不少的性能，因为在程序运行之前，EventBus 已经通过索引类知道了那些订阅方法的名称，那么当 EventBus 注册订阅者时，就可以直接通过方法名称拿到 Method 对象。
+现在为止我们已经基本了解，索引类之所以相比传统的通过反射遍历去获取订阅方法效率要更高。是因为在自动生成的索引类中，已经包含了相关订阅者中的订阅方法的名称及注解信息，那么当 EventBus 注册订阅者时，就可以直接通过`方法名称`拿到 Method 对象。这样就减少了通过遍历寻找方法的时间。
 
 ### 索引类的生成
 
-那现在我们继续学习 EventBus 中是如何创建索引类的。在之前的文章中，我已经介绍了其实是使用了 `APT` 技术。如果你不是了解这门技术，你可能需要查看文章 《Android-注解系列之APT工具(三)》
+那现在我们继续学习 EventBus3 中是如何创建索引类的。索引类的创建是通过 `APT` 技术，如果你不了解这门技术，你可能需要查看文章 {% post_link Android-注解系列之APT工具(三) %}
 
-在 EventBus 中使用了创建了自己的注解处理器，从其源代码中我们就可以看出。
+>`APT(Annotation Processing Tool)`是 javac 中提供的一种编译时扫描和处理注解的工具，它会对源代码文件进行检查，并找出其中的注解，然后根据用户自定义的注解处理方法进行额外的处理。APT工具不仅能解析注解，还能根据注解生成其他的源文件，最终将生成的新的源文件与原来的源文件共同编译（`注意：APT并不能对源文件进行修改操作，只能生成新的文件，例如在已有的类中添加方法`）
 
-![EventBus注解处理器.png](https://upload-images.jianshu.io/upload_images/2824145-5c698cc9cec0701f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+使用APT技术需要创建自己的注解处理器，在 EventBus 中也创建了自己的注解处理器，从其源代码中我们就可以看出。
 
-> 以下的代码，都出至于[EventBusAnnotationProcessor](https://github.com/greenrobot/EventBus/blob/master/EventBusAnnotationProcessor/src/org/greenrobot/eventbus/annotationprocessor/EventBusAnnotationProcessor.java)
+{% asset_img EventBus注解处理器.png EventBus注解处理器 %}
 
 那下面，我们就直接查看源码：
 
+> 以下的代码，都出至于 [EventBusAnnotationProcessor](https://github.com/greenrobot/EventBus/blob/master/EventBusAnnotationProcessor/src/org/greenrobot/eventbus/annotationprocessor/EventBusAnnotationProcessor.java)
+
+查看 EventBusAnnotationProcessor 中的 `process()` 方法：
+
+>`process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)`：注解处理器实际处理方法，一般要求子类实现该抽象方法，你可以在在这里写你的扫描与处理注解的代码，以及生成 Java 文件。其中参数 RoundEnvironment ，可以让你查询出包含特定注解的被注解元素.
+
 ```java
+@SupportedAnnotationTypes("org.greenrobot.eventbus.Subscribe")
+@SupportedOptions(value = {"eventBusIndex", "verbose"})
+public class EventBusAnnotationProcessor extends AbstractProcessor {
+public static final String OPTION_EVENT_BUS_INDEX = "eventBusIndex";
+
 @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         Messager messager = processingEnv.getMessager();
         try {
-            //👇获取我们配置的索引类，
+            //步骤1：👇获取我们配置的索引类，
             String index = processingEnv.getOptions().get(OPTION_EVENT_BUS_INDEX);
             if (index == null) {
                 messager.printMessage(Diagnostic.Kind.ERROR, "No option " + OPTION_EVENT_BUS_INDEX +
                         " passed to annotation processor");
                 return false;
             }
+
             //省略部分代码
 
-            //👇创建索引类文件
+            //步骤2:👇收集当前订阅者信息
+            collectSubscribers(annotations, env, messager);
+            //步骤3：👇创建索引类文件
             if (!methodsByClass.isEmpty()) {
                 createInfoIndexFile(index);
             } else {
@@ -307,7 +325,44 @@ public class EventBusIndex implements SubscriberInfoIndex {
         }
         return true;
     }
+}
 ```
+
+该方法中主要逻辑为三个逻辑：
+
+- 步骤1：读取我们之前在 APP 中的 build.gradle 设置的索引类对应的包名与类名。
+- 步骤2：读取源文件中的包含 `@Subscribe` 注解的方法。并将订阅者与订阅方法进行记录在 `methodsByClass` Map 集合中。
+- 步骤3：根据读取的索引类设置，通过 `createInfoIndexFile()` 方法开始创建索引类文件。
+
+> 因为声明了`@SupportedAnnotationTypes("org.greenrobot.eventbus.Subscribe")`  在注解处理器上，那么 APT 只会处理包含该注解的文件。
+
+我们接下来看看步骤2中的方法 `collectSubscribers()` 方法：
+
+```java
+    private void collectSubscribers(Set<? extends TypeElement> annotations, RoundEnvironment env, Messager messager) {
+        for (TypeElement annotation : annotations) {
+            Set<? extends Element> elements = env.getElementsAnnotatedWith(annotation);
+            for (Element element : elements) {
+                if (element instanceof ExecutableElement) {
+                    ExecutableElement method = (ExecutableElement) element;
+                    if (checkHasNoErrors(method, messager)) {
+                        //获取包含`@Subscribe`类的class对象
+                        TypeElement classElement = (TypeElement) method.getEnclosingElement();
+                        methodsByClass.putElement(classElement, method);
+                    }
+                } else {
+                    messager.printMessage(Diagnostic.Kind.ERROR, "@Subscribe is only valid for methods", element);
+                }
+            }
+        }
+    }
+```
+
+>在注解处理过程中，我们需要扫描所有的Java源文件，源代码的每一个部分都是一个特定类型的`Element`，也就是说 Element 代表源文件中的元素，例如包、类、字段、方法等。
+
+在上述方法中，`annotations` 为扫描到包含 `@Subscribe` 注解 的 `Element` 集合。其中 ExecutableElement 表示类或接口的方法、构造函数或初始化器（静态或实例），因为我们可以通过 getEnclosingElement（）方法，拿到当前 `ExecutableElement` 的最近的父 Element，那么我们就能获得当前的类的 element 对象了。那么通过该方法，我们就能知道所有订阅者与其对应的订阅方法了。
+
+我们继续跟踪查看索引类文件的创建：
 
 ```java
     private void createInfoIndexFile(String index) {
@@ -363,13 +418,15 @@ public class EventBusIndex implements SubscriberInfoIndex {
     }
 ```
 
+在该方法中，通过 `processingEnv.getFiler().createSourceFile(index)` 拿到我们需要创建的索引类文件对象，然后通过文件IO流向该文件中输入索引类中需要的内容。在该方法中，最为主要的就是 `writeIndexLines()` 方法了。查看该方法：
+
 ```java
     private void writeIndexLines(BufferedWriter writer, String myPackage) throws IOException {
         for (TypeElement subscriberTypeElement : methodsByClass.keySet()) {
             if (classesToSkip.contains(subscriberTypeElement)) {
                 continue;
             }
-
+            //当前订阅对象的class对象
             String subscriberClass = getClassString(subscriberTypeElement, myPackage);
             if (isVisible(myPackage, subscriberTypeElement)) {
                 writeLine(writer, 2,
@@ -386,21 +443,27 @@ public class EventBusIndex implements SubscriberInfoIndex {
     }
 ```
 
+在该方法中，会从 `methodsByClass` Map 中遍历获取我们之前的订阅者，然后获取其所有的订阅方法，并书写模板方法。其中关构造 `SubscriberMethodInfo` 代码的关键方法为 `writeCreateSubscriberMethods()`，跟踪该方法：
 
 ```java
  private void writeCreateSubscriberMethods(BufferedWriter writer, List<ExecutableElement> methods,
                                               String callPrefix, String myPackage) throws IOException {
         for (ExecutableElement method : methods) {
+            //获取当前方法上的参数
             List<? extends VariableElement> parameters = method.getParameters();
             TypeMirror paramType = getParamTypeMirror(parameters.get(0), null);
+            //获取第一个参数的类型
             TypeElement paramElement = (TypeElement) processingEnv.getTypeUtils().asElement(paramType);
+            //获取方法的名称
             String methodName = method.getSimpleName().toString();
+            //获取订阅的事件class类型字符串信息
             String eventClass = getClassString(paramElement, myPackage) + ".class";
-
+            //获取方法上的注解信息
             Subscribe subscribe = method.getAnnotation(Subscribe.class);
             List<String> parts = new ArrayList<>();
             parts.add(callPrefix + "(\"" + methodName + "\",");
             String lineEnd = "),";
+            //设置优先级，是否粘性，线程模式，订阅事件class类型
             if (subscribe.priority() == 0 && !subscribe.sticky()) {
                 if (subscribe.threadMode() == ThreadMode.POSTING) {
                     parts.add(eventClass + lineEnd);
@@ -426,9 +489,11 @@ public class EventBusIndex implements SubscriberInfoIndex {
     }
 ```
 
+在该方法中，会获取订阅方法的参数信息，并构建 `SubscriberMethodInfo` 信息。这里就不对该方法进行详细的介绍了，大家可以根据代码中的注释进行理解。
+
 ### 混淆相关
 
-在使用EventBus的时候，如果你的项目采用了混淆，需要注意keep以下类及方法。官方中已经给了使用EventBus库中需要keep的类，具体如下所示：
+在使用 EventBus3 的时候，如果你的项目采用了混淆，需要注意 keep 以下类及方法。官方中已经给出了详细的 keep 规则，如下所示：
 
 ```java
 -keepattributes *Annotation*
@@ -443,27 +508,63 @@ public class EventBusIndex implements SubscriberInfoIndex {
 }
 ```
 
-首先，因为EventBus 3弃用了反射的方式去寻找回调方法，改用注解的方式。作者的意思是在混淆时就不用再keep住相应的类和方法。但是我们在运行时，却会报java.lang.NoSuchFieldError: No static field POSTING。网上给出的解决办法是keep住所有eventbus相关的代码：
+#### 为什么不能混淆注解
 
--keep class de.greenrobot.** {*;}
-其实我们仔细分析，可以看到是因为在SubscriberMethodFinder的findUsingReflection方法中，在调用Method.getAnnotation()时获取ThreadMode这个enum失败了，所以我们只需要keep住这个enum就可以了（如下）。
+android在打包的时候，应用程序会进行代码优化，优化的过程就把注解给去掉了。为了在程序运行期间读取到注解信息，所以我们需要保存注解信息不被混淆。
 
+#### 为什么不能混淆包含 @Subscribe 注解的方法
+
+因为当我们在使用索引类时，获取相关订阅的方法是通过`方法名称`获取的，那么当代码被混淆过后，订阅者的方法名称将会发生改变，比如原来订阅方法名称为onMessageEvent，混淆后有可能改为a，或b方法。这个时候是找不到相关的订阅者的方法的 ，就会抛出 `Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?` 的异常，所以在混淆的时候我们需要保留订阅者所有包含 `@Subscribe` 注解的方法。
+
+#### 为什么不能混淆枚举类中的静态变量
+
+如果我们没有在混淆规则中添加如下语句:
+
+```java
 -keep public enum org.greenrobot.eventbus.ThreadMode { public static *; }
+```
 
- 因为通过APT生成的代码记录的订阅者的回调方方法是在代码混淆之前的名称，如上述代码中的onMessageEvent()方法。当通过混淆后，该方法名称有可能发生改变了，那么它有可能叫a,叫b，叫c。那么通过
+在运行程序的时候，会报`java.lang.NoSuchFieldError: No static field POSTING`。原因是因为在 `SubscriberMethodFinder` 的 `findUsingReflection` 方法中，在调用 `Method.getAnnotation()`时获取 `ThreadMode` 这个 `enum` 失败了。
 
-因为是通过记录的实际名称来寻找相应的方法的，因为混淆过后，订阅者的方法发生了改变（onMessageEvent有可能改为a()，或b()方法。所以这个时候是找不到相关的订阅者的方法的 ，就会抛出`Could not find subscriber method in  + subscriberClass + Maybe a missing ProGuard rule?`的异常，所以在混淆的时候我们需要保留订阅者所有包含`@Subscribe`注解的方法。
+我们都知道当我们声明枚举类时，编译器会为我们的枚举，自动生成一个继承
+`java.lang.Enum` 的 `final` 类。如下所示：
 
+```java
+//使用命令 javap ThreadMode.class
+public final class com.tian.auto.ThreadMode extends java.lang.Enum<com.tian.auto.ThreadMode> {
+  public static final com.tian.auto.ThreadMode POSTING;
+  public static final com.tian.auto.ThreadMode MAIN;
+  public static final com.tian.auto.ThreadMode MAIN_ORDERED;
+  public static final com.tian.auto.ThreadMode BACKGROUND;
+  public static final com.tian.auto.ThreadMode ASYNC;
+  public static com.tian.auto.ThreadMode[] values();
+  public static com.tian.auto.ThreadMode valueOf(java.lang.String);
+  static {};
+}
+```
+
+也就是说，我们在枚举中声明的元素，其实最后对应的是类中的静态公有的常量。
+
+那么在结合在没有添加混淆规则时，程序所提示的错误信息。我们可以确定当我们在注解中包含`枚举类型`的注解元素时且设置了默认值时。该默认值是通过枚举类的 class 对象.getField(String name) 去获取的。因为只有该方法才会抛出该异常。`getField()` 代码如下所示：
+
+```java
+    public Field getField(String name)
+        throws NoSuchFieldException {
+        if (name == null) {
+            throw new NullPointerException("name == null");
+        }
+        Field result = getPublicFieldRecursive(name);
+        if (result == null) {
+            throw new NoSuchFieldException(name);
+        }
+        return result;
+    }
+```
+
+那么也就说如果不添加上述的 keep 规则，就会导致我们编译器自动生成的静态常量名发生变化，又因为注解中的默认枚举值，是通过 `getField(String name)` 获得的。所以就会出现找不到字段的情况。
+
+>其实在很多情况下，我们需要添加 keep 规则，常常是因为代码中是直接拿**混淆前**的方法名称或字段名称去直接寻找**混淆后**的方法与字段名称，我们只要在项目中注意这些情况，添加相应的 keep 规则，就可以避免因为代码被混淆而产生的异常啦。
 
 ### 最后
 
-为什么枚举类，不能被混淆，因为枚举类，最终会自动生成，而注解也是自动生成的是全限定名称
-官方作者：
-
-http://androiddevblog.com/eventbus-3-droidcon/
-
-https://blog.kaush.co/2014/12/24/implementing-an-event-bus-with-rxjava-rxbus/
-
-
-https://www.jianshu.com/p/61631134498e
-站在巨人的肩膀上，才能看的更远~
+EventBus3 中的索引类及其相关内容到这里就讲完啦！我相应大家已经了解了索引类在性能优化上的重要作用。希望大家在后续使用EventBus3时，一定要使用索引类呦。在接下来的一段时间内，我可能不会继续更新博客啦，因为作者我要去学习 flutter 去啦~ 没有办法，总要保持前进呢。优秀的人还在努力，更何况自己并不聪明呢。哎~伤心
