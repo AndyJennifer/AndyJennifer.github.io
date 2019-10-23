@@ -337,6 +337,20 @@ public class GetModifiersProcessor extends AbstractProcessor {
 
 同时，在[官方文档](https://docs.oracle.com/javase/7/docs/api/javax/tools/Diagnostic.Kind.html)中，描述了消息的不同级别，关于更多的消息级别，大家可以通过从`Diagnostic.Kind`枚举中查看。
 
+#### 错误信息显示界面
+
+如果你需要使用处理器提供的 `Messager` 来打印日志，那么你需要在如下界面中查看输出的信息：
+
+```java
+ roundEnvironment.getMessager().printMessage(Diagnostic.Kind.ERROR, "the class is not public");
+```
+
+使用如上代码，查看日志界面如下所示：
+
+{% asset_img messager错误展示界面.png  messager错误展示界面 %}
+
+在每次编译代码的时候，如果你使用了 `Messager` 来打印日志，那么就会显示。
+
 ### 文件生成
 
 到了现在我们已经基本了解整个APT的基础知识。现在来讲讲APT技术如何`生成新的类的定义（也就是创建新的源文件）`。对于创建新的文件，我们并不用像基本文件操作一样，通过调用IO流来进行读写操作。而是通过[JavaPoet](https://github.com/square/javapoet)来构造源文件。（当然当你使用`JavaPoet`时，在gradle中你需要添加依赖`compile 'com.google.auto.service:auto-service:1.0-rc2'`)，`JavaPoet`的使用也非常简单，就像下面这样：
