@@ -13,6 +13,8 @@ categories:
 
 ### 使用例子
 
+Lifecycles 需要配合LifecycleOwner使用
+
 ```java
 class MyLocationListener implements LifecycleObserver {
     private boolean enabled = false;

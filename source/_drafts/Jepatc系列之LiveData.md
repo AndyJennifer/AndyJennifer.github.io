@@ -8,6 +8,12 @@ categories:
 
 ### 前言
 
+LiveData 需要配合  LifecycleOwner 一起使用一般的使用方式就是：
+
+```java
+livedata.oberser(lifecycleOwner owner,new Observer)
+```
+
 ```java
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
         assertMainThread("observe");
@@ -27,6 +33,8 @@ categories:
         owner.getLifecycle().addObserver(wrapper);
     }
 ```
+
+其实就是向LifecycleOwner中添加监听，在Activity不可用，不可见的状态下，移除监听就行了
 
 ### LifecycleBoundObserver
 
@@ -67,6 +75,7 @@ categories:
         }
     }
 ```
+
 
 这里所有的状态
 
