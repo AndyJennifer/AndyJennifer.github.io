@@ -8,6 +8,8 @@ categories:
 
 ### 前言
 
+
+
 LiveData 需要配合  LifecycleOwner 一起使用一般的使用方式就是：
 
 ```java
