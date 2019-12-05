@@ -28,6 +28,8 @@ Google官方架构：https://github.com/android/architecture-samples/tree/dev-to
 GoogleJetPack架构指南：
 https://developer.android.google.cn/jetpack/docs/guide
 
+Google官方视频讲解它的架构：Kotlin 语言帮助开发者更好的构建应用。
+ https://v.qq.com/x/page/q3006tgkwbk.html
 ### ViewModel使用注意的事项
 
 优点1：可以使用Viewmodle 共享Fragments数据

@@ -17,9 +17,10 @@ Hugo地址： https://github.com/JakeWharton/hugo
 Timer地址：https://github.com/JakeWharton/timber
 日志上传:     https://github.com/tony19/logback-android
 Timber博客参考文章：https://blog.csdn.net/Tomasyb/article/details/76034231
- Log快捷键及需求参考文章：https://blog.csdn.net/wangshihui512/article/details/51042704
+Log快捷键及需求参考文章：https://blog.csdn.net/wangshihui512/article/details/51042704
 Hugo 参考文章：https://www.jianshu.com/p/88abba27a2f3
 Logback: https://github.com/tony19/logback-android
+美图日志框架：https://juejin.im/entry/5865f3ddac502e006129b86d  https://tech.meituan.com/2018/10/11/logan-open-source.html
 
 需要思考的问题：
 
