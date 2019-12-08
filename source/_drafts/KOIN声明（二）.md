@@ -5,11 +5,12 @@ tags:
 categories:
   - null
 ---
-By using Koin, you describe definitions in modules. In this section we will see how to declare, organize & link your modules.
 
-### Writing a module
+通过使用 Koin，您可以在模块中声明相关定义。在本节中，我们将学习如何声明、组织和链接模块。
 
-A Koin module is the space to declare all your components. Use the module function to declare a Koin module:
+### 书写一个模块
+
+一个 Koin 模块是用来声明所有组件的空间。使用 module 函数声明一个 Koin 模块:
 
 ```kotlin
 val myModule = module {
@@ -17,35 +18,35 @@ val myModule = module {
 }
 ```
 
-In this module, you can declare components as decribed below.
+在该 module 下，你可以声明所拥有的组件。
 
-### Defining a singleton
+### 定义一个单例
 
-Declaring a singleton component means that Koin container will keep a unique instance of your declared component. Use the single function in a module to declare a singleton:
+声明一个单例组件意味着 Koin 容器将保留您声明的组件的唯一实例。在一个模块中使用一个 single 函数来声明一个单例:
 
 ```kotlin
 class MyService()
 
 val myModule = module {
 
-    // declare single instance for MyService class
+    // 声明 MyService 的单例
     single { MyService() }
 }
 ```
 
-### Defining your component within a lambda
+### 使用 lambda 声明组件
 
-single, factory & scoped keywords help you declare your components through a lambda expression. this lambda describe the way that you build your component. Usually we instantiate components via their constructors, but you can also use any expression.
+single、factory 和 scoped 关键字帮助您使用 lambda 表达式声明组件。这个 lambda 描述了您构建组件的方式。通常我们通过它们的构造函数实例化组件，但是您也可以使用任何表达式。
 
 ```kotlin
 single { Class constructor // Kotlin expression }
 ```
 
-The result type of your lambda is the main type of your component
+lambda 的结果类型是你声明的组件的主要类型
 
-### Defining a factory
+### 定义一个工厂对象
 
-A factory component declaration is a definition that will gives you a new instance each time you ask for this definition (this instance is not retrained by Koin container, as it won’t inject this instance in other definitions later). Use the factory function with a lambda expression to build a component.
+一个工厂组件声明，意味着它将在您每次请求此定义时为您提供一个新实例。使用带有 lambda 表达式的 factory 函数来构建组件。
 
 ```kotlin
 class Controller()
@@ -57,15 +58,15 @@ val myModule = module {
 }
 ```
 
-`Koin container doesn’t retain factory instances as it will give a new instance each time the definition is asked.`
+`Koin 容器不保留工厂实例，因为每次请求定义时都会给出一个新实例。`
 
-### Resolving & injecting dependencies
+### 解析和注释依赖项
 
-Now that we can declare components definitions, we want to link instances with dependency injection. To resolve an instance in a Koin module, just use the get() function to the requested needed component instance. This get() function is usually used into constructor, to inject constructor values.
+现在我们可以声明组件定义了，我们想要用依赖注入来链接实例。要解析Koin模块中的实例，只需将get()函数用于请求的所需组件实例。此get()函数通常用于构造函数中，以注入构造函数值。
 
-`To make dependency injection with Koin container, we have to write it in constructor injection style: resolve dependencies in class constructors. This way, your instance will be created with injected instances from Koin.`
+`要使用Koin容器进行依赖项注入，我们必须以构造函数注入的形式编写它:解析类构造函数中的依赖项。通过这种方式，您的实例将使用来自 Koin 的注入实例创建`。
 
-Let’s take an example with several classes:
+让我们一下几个类为例：
 
 ```kotlin
 // Presenter <- Service
@@ -76,16 +77,16 @@ val myModule = module {
 
     // declare Service as single instance
     single { Service() }
-    // declare Controller as single instance, resolving View instance with get()
+    // 声明一个单例Controller对象， 并通过 get(）函数解析并传入View 对象
     single { Controller(get()) }
 }
 ```
 
 ### Definition: binding an interface
 
-A single or a factory definition use the type from the their given lambda definition: i.e single { T } The matched type of the definition is the only matched type from this expression.
+一个 single 或者一个 factory 的声明 将会使用其给定的 lambda 表达式中的类型。比如 single{ T }，定义的匹配类型是该表达式中唯一匹配的类型。
 
-Let’s take an example with a class and implemented interface:
+让我们以一个类及其实现的接口为例:
 
 ```kotlin
 // Service interface
@@ -101,41 +102,41 @@ class ServiceImp() : Service {
 }
 ```
 
-In a Koin module we can use the as cast Kotlin operator as follow:
+在Koin模块中，我们可以使用 Kotlin 下的 `as` 操作符如下所示:
 
 ```kotlin
 val myModule = module {
 
-    // Will match type ServiceImp only
+    // 只匹配 Service 类型
     single { ServiceImp() }
 
-    // Will match type Service only
+    // 只匹配 Service 类型
     single { ServiceImp() as Service }
 
 }
 ```
 
-You can also use the inferred type expression:
+你也可以使用推断类型表达式:
 
 ```kotlin
 val myModule = module {
 
-    // Will match type ServiceImp only
+    // 只匹配 Service 类型
     single { ServiceImp() }
 
-    // Will match type Service only
+    // 只匹配 Service 类型
     single<Service> { ServiceImp() }
 
 }
 ```
 
-`This 2nd way of style declaration is preferred and will be used for the rest of the documentation.`
+`第二种方式的风格声明是首选的，在接下来的文章中，我也会使用该方式`
 
 ### Additional type binding
 
-In some cases, we want to match several types from just one definition.
+在某些情况下，我们希望一个定义匹配多个类型。
 
-Let’s take an example with a class and interface:
+让我们举一个类和接口的例子:
 
 ```kotlin
 // Service interface
@@ -151,23 +152,25 @@ class ServiceImp() : Service{
 }
 ```
 
-To make a definition bind additional types, we use the bind operator with a class:
+要定义绑定其他类型，我们使用 `bind` 操作符和一个 class 对象:
 
 ```kotlin
 val myModule = module {
 
-    // Will match types ServiceImp & Service
+    // 将会匹配 ServiceImp 与 Service 类型
     single { ServiceImp() } bind Service::class
 }
 ```
 
 Note here, that we would resolve the Service type directly with get(). But if we have multiple definitions binding Service, we have to use the bind<>() function.
 
+请注意，我们将使用 get() 直接解析 service 的类型。但是如果有多个定义都绑定了 Service，就必须使用`bind<>()`函数。
+
 ### Definition: naming & default bindings
 
-You can specify a name to your definition, to help you distinguish two definitions about the same type:
+你可以为你的声明指定一个名字，以帮助你区分关于同一类型的两个声明:
 
-Just request your definition with its name:
+只需要求你的声明及其名称:
 
 ```kotlin
 val myModule = module {
@@ -178,9 +181,9 @@ val myModule = module {
 val service : Service by inject(name = named("default"))
 ```
 
-get() and by inject() functions let you specify a definition name if needed. This name is a qualifier produced by the named() function.
+ `get()` 和`by inject()`函数允许您在需要时指定声明名称。这个名称是`named()`函数生成的限定符。
 
-By default Koin will bind a definition by its type or by its name, if the type is already bound to a definition.
+默认情况下，Koin 将根据类型或名称绑定声明，如果该类型以及绑定到一个声明上
 
 ```kotlin
 val myModule = module {
@@ -189,10 +192,10 @@ val myModule = module {
 }
 ```
 
-Then:
+那么
 
-val service : Service by inject() will trigger the ServiceImpl1 definition
-val service : Service by inject(named("test")) will trigger the ServiceImpl2 definition
+- val service : Service by inject() 将触发 ServiceImpl1 的声明
+- val service : Service by inject(named("test")) 将触发 ServiceImpl2 的声明
 
 ### Declaring injection parameters
 
@@ -262,7 +265,7 @@ startKoin {
 
 `if you need to load some definition at a special time (in a background thread instead of UI for example), just get/inject the desired components.`
 
-### Dealing with generics
+### 处理泛型
 
 Koin definitions doesn’t take in accounts generics type argument. For example, the module below tries to define 2 definitions of List:
 

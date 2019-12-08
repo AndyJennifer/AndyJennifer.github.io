@@ -8,7 +8,7 @@ categories:
 
 ### KOIN 是什么
 
-一个面向Kotlin开发人员的实用的轻量级依赖注入框架。用纯 Kotlin 编写，只使用函数解析:没有代理，没有代码生成，没有反射。Koin是一个DSL、一个轻量级容器和一个实用的API
+一个面向 Kotlin 开发人员的实用的轻量级依赖注入框架。用纯 Kotlin 编写，只使用函数解析:没有代理，没有代码生成，没有反射。Koin是一个DSL、一个轻量级容器和一个实用的API
 
 ### Koin DSL
 
@@ -16,10 +16,10 @@ categories:
 
 #### Application & Module DSL
 
-Koin提供了几个关键字来描述 Koin 应用程序的元素
+Koin 提供了几个关键字来描述 Koin 应用程序的元素
 
-- 应用程序 DSL :描述Koin容器配置
-- 模块 DSL :用来描述必须注入的组件
+- Application(应用程序) DSL :描述 Koin 容器配置
+- Module(模块) DSL :用来描述必须注入的组件
 
 #### Application DSL
 
@@ -32,15 +32,15 @@ KoinApplication 实例是 Koin 容器实例配置。这将允许您配置日志�
 
 要配置 `KoinApplication` 实例，可以使用以下任何函数:
 
-- `logger()` 描述要使用的级别和logger实现(默认使用EmptyLogger)
-- `modules()` 设置要加载到容器中的Koin模块列表(列表或vararg列表)
-- `properties()`  将 HashMap 属性加载到Koin容器中
-- `fileProperties()` 将属性从给定文件加载到Koin容器中
-- `environmentProperties()` 将操作系统环境中的属性加载到Koin容器中
+- `logger()` 描述要 Logger(日志）使用的级别和logger实现(默认使用 EmptyLogger )
+- `modules()` 设置要加载到容器中的 Koin 模块列表(列表或 vararg 列表)
+- `properties()`  将 HashMap 属性加载到 Koin 容器中
+- `fileProperties()` 将属性从给定文件加载到 Koin 容器中
+- `environmentProperties()` 将操作系统环境中的属性加载到 Koin 容器中
 
 ### KoinApplication instance: Global vs Local
 
-正如上面所看到的，我们可以用两种方式描述Koin容器配置:koinApplication或startKoin函数。
+正如上面所看到的，我们可以用两种方式描述Koin容器配置: koinApplication 或 startKoin 函数。
 
 - `koinApplication` 描述了一个 Koin 容器实例
 - `startKoin` 描述了一个 Koin 容器实例，并在 Koin 中的`GlobalContext`中注册
@@ -67,7 +67,7 @@ startKoin {
 
 ### Module DSL
 
-一个 Koin 模块将收集您为应用程序注入/合并的声明。要创建一个新模块，只需使用以下函数:
+一个 Koin 模块将收集您为应用程序注入或合并的定义。要创建一个新模块，只需使用以下函数:
 
 - module { // module content } - 创建一个 Koin 模块
 要描述模块中的内容，可以使用以下函数:
