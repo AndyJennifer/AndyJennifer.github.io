@@ -1,5 +1,5 @@
 ---
-title: KOIN声明(二)
+title: KOIN系列之Koin的声明（二）
 tags:
   - koin
 categories:
