@@ -21,7 +21,7 @@ val myModule = module {
 
 ### 使用多个 module
 
-组件不一定要在同一个 module 中。module 是帮助您组织定义与声明的一块逻辑空间，并且可以依赖于其module 的定义。这种定义是懒加载的，只有在组件请求它时才会解析。
+组件不一定要在同一个 module 中。module 是帮助您组织定义与声明的一块逻辑空间，并且可以依赖于其它 module 的定义。这种定义是懒加载的，只有在组件请求它时才会解析。
 
 让我们举个例子，在不同的模块中链接组件:
 
@@ -42,7 +42,7 @@ val moduleB = module {
 
 ```
 
-`Koin没有任何重要的概念。Koin 中的声明是懒加载的:一个 Koin 声明是随着 Koin 容器启动的，但是该声明并没有实例化。只有完成了对其类型的请求时，才会被创建`
+`Koin 没有任何重要的概念。Koin 中的声明是懒加载的:一个 Koin 声明是随着 Koin 容器启动的，但是该声明并没有实例化。只有完成了对其类型的请求时，才会被创建`
 
 当我们启动Koin容器时，我们只需要声明使用的模块列表:
 
@@ -57,7 +57,7 @@ Koin 将解析所有给定模块的依赖关系。
 
 ### 链接 module 的策略
 
-由于模块之间的定义是懒加载的，我们可以使用模块实现不同的策略实现:每个模块声明一个实现。
+由于模块之间的定义是懒加载的，我们可以使用模块实现不同的策略实现:每个模块中声明一个组件的实现。
 
 ```kotlin
 class Repository(val datasource : Datasource)
@@ -66,7 +66,7 @@ class LocalDatasource() : Datasource
 class RemoteDatasource() : Datasource
 ```
 
-我们可以在3个模块中声明这些组件: Repository 和每个 DataSource 中实现一个:
+我们可以在3个模块中声明这些组件: Repository 与每个 DataSource 中各实现一个:
 
 ```kotlin
 class Repository(val datasource : Datasource)
@@ -138,7 +138,7 @@ val myModuleB = module(override#true) {
 }
 ```
 
-`在列出模块和覆盖声明时，顺序非常重要。您必须在模块列表的最后一个module中包含先关覆盖声明。`
+`在列出模块和覆盖声明时，顺序非常重要。您必须在模块列表的最后一个module中包含相关覆盖声明。`
 
 ### 最后
 
