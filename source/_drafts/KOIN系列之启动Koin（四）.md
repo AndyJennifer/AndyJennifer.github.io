@@ -37,7 +37,7 @@ startKoin {
 
 `startKoin 不能被多次调用，如果需要额外加载模块，请使用 loadKoinModules 函数。`
 
-### 启动- KoinApplication和Koin实例的背后
+### 启动- KoinApplication 和 Koin 实例的背后
 
 当我们启动 Koin 时，我们会创建一个
 Koin 容器配置对象--`KoinApplication` 。 该对应一旦被加载，它将生成一个由您的模块和选项配置的 `Koin` 实例，这个 `Koin` 实例接着会在`GlobalContext` 中被注册，以便供任何`KoinComponen` t类使用。

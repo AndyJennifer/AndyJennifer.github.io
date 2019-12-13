@@ -12,7 +12,7 @@ categories:
 
 ### Koin DSL
 
-由于 Kotlin 语言的强大功能，Koin 提供了一种 DSL 来帮助您描述应用程序，而不是对其进行注释或生成代码。Koin 提供了Kotlin DSL，它提供了一个智能的函数式API来解决您的依赖注入。
+由于 Kotlin 语言的强大功能，Koin 提供了一种 DSL 来帮助您描述应用程序，而不是对其进行注释或生成代码。Koin 提供了 Kotlin DSL，它提供了一个智能的函数式 API 来解决您的依赖注入。
 
 #### Application & Module DSL
 
@@ -43,7 +43,7 @@ Koin 提供了几个关键字来描述 Koin Application 中的元素
 正如上面所看到的，我们可以用两种方式描述Koin容器配置: koinApplication 或 startKoin 函数。
 
 - `koinApplication` 描述了一个 Koin 容器对象
-- `startKoin` 描述了一个 Koin 容器对象，并在 Koin 中的`GlobalContext`中注册
+- `startKoin` 描述了一个 Koin 容器对象，并在 Koin 中的 `GlobalContext` 中注册
   
 通过将容器配置对象（koinApplication）注册到 `GlobalContext` 中，这样 全局 API 可以直接使用它。任何 `KoinComponent` 都将引用 `Koin` 对象。默认情况下，我们使用来自 `GlobalContext` 的配置对象。
 
@@ -80,11 +80,11 @@ startKoin {
 - scope { // scope group } - 为 `scoped`定义一个逻辑组
 - scoped { //definition }- 提供仅存在于 scope 中的对象声明
 
-注意:named()函数允许你给定一个字符串或其他类型限定符。该函数用于命名你的声明。
+注意:named()函数允许你给定一个字符串或其他类型限定符。该函数用于描述你的声明。
 
 ### 书写一个模块（module)
 
-Koin模块是用来声明所有组件的空间。使用`module` 函数声明一个 Koin 模块:
+Koin 模块是用来声明所有组件的空间。使用 `module` 函数声明一个 Koin 模块:
 
 ```kotlin
 val myModule = module {

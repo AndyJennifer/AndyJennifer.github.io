@@ -10,7 +10,7 @@ categories:
 
 ### 书写一个模块
 
-一个 Koin 模块是用来声明所有组件的空间。使用 module 函数声明一个 Koin 模块:
+一个 Koin 模块是用来声明你组件的一片空间。使用 module 函数声明一个 Koin module:
 
 ```kotlin
 val myModule = module {
@@ -18,7 +18,7 @@ val myModule = module {
 }
 ```
 
-在该 module 下，你可以声明所拥有的组件。
+在该 module作用域下，你可以声明所拥有的组件。
 
 ### 定义一个单例
 
@@ -34,19 +34,21 @@ val myModule = module {
 }
 ```
 
-### 使用 lambda 声明组件
+### 使用lambda表达式声明组件
 
-single、factory 和 scoped 关键字允许您使用 lambda 表达式声明组件。这个 lambda 描述了您构建组件的方式。通常我们通过它们的构造函数实例化组件，但是您也可以使用任何表达式。
+single、factory 和 scoped 关键字允许您使用 lambda 表达式来声明组件。这个 lambda表达式描述了你构建组件的方式。通常我们通过它们的构造函数来实例化组件，但是您也可以使用任意表达式
 
 ```kotlin
 single { Class constructor // Kotlin expression }
 ```
 
-lambda 的返回的结果的类型就是你声明的组件的主要类型
+lambda 表达式返回的类型就是你声明的组件的主要类型
 
 ### 定义一个工厂对象
 
-声明一个工厂组件，意味这将在您每次请求该对象时为您提供一个新的实例对象（该实例对象不会被 Koin 容器所保留，也不会因为其他的声明被注入）。使用带有 lambda 表达式的 factory 函数来构建组件。
+声明一个工厂组件，意味这将在您每次请求该对象时，Koin 容器将会每次都为你提供一个新的实例对象（该实例对象不会被 Koin 容器所保留，也不会因为随后的其他的声明而被注入）。
+
+使用带有 lambda 表达式的 factory 函数来构建组件。
 
 ```kotlin
 class Controller()
@@ -58,13 +60,13 @@ val myModule = module {
 }
 ```
 
-`因为每次请求定义时都会给出一个新实例，所以 Koin 容器不保留工厂实例，`
+`因为每次请求 factory 定义时都会给出一个新实例，所以 Koin 容器不保留工厂实例对象，`
 
-### 解析和注释依赖项
+### 解析和注入依赖项
 
-现在我们可以声明组件的定义了，我们想要用依赖注入来链接实例。要解析Koin模块中的实例，只需使用`get()` 函数用于请求的所需组件实例。此 `get()`函数通常用于构造函数中，以便注入构造函数值。
+如果我们想通过依赖注入的方式来链接实例。那么我们只需在需要请求实例的组件中调用 `get()` 函数来解析 Koin module 中的声明，`get()` 函数通常用于构造函数中，以便注入值。
 
-`要使用Koin容器进行依赖项注入，我们必须以构造函数注入的形式编写它:通过解析类构造函数中的依赖项，该构造函数中的参数对象实例 将会通过 Koin 的注入的方式创建`。
+`为了在 Koin 容器中进行依赖项注入，我们必须以构造函数注入的方式来编写它:解析了类中构造函数的依赖。这样，Koin 将会以注入的方式创建你的对象`。
 
 让我们以下几个类为例：
 
@@ -82,9 +84,9 @@ val myModule = module {
 }
 ```
 
-### 绑定一个接口
+### 声明：绑定一个接口
 
-一个 single 或者 factory 对象的声明，将会使用其给定的 lambda 表达式中的类型。比如 single{ T }，该对象所匹配的类型就是表达式所声明的类型 T
+一个 single 或者 factory 声明将会使用其给定的 lambda 表达式中的类型。比如 single{ T }，该声明所匹配的类型就是表达式所声明的类型 T
 
 让我们以一个类及其实现的接口为例:
 
@@ -102,7 +104,7 @@ class ServiceImp() : Service {
 }
 ```
 
-在Koin模块中，我们可以使用 Kotlin 下的 `as` 操作符如下所示:
+在 Koin 模块(module)中，我们可以使用 Kotlin 下的 `as` 操作符如下所示:
 
 ```kotlin
 val myModule = module {
@@ -162,9 +164,7 @@ val myModule = module {
 }
 ```
 
-Note here, that we would resolve the Service type directly with get(). But if we have multiple definitions binding Service, we have to use the bind<>() function.
-
-请注意，这里我们可以直接使用 get() 函数 解析到 Service 的类型。但是如果有多个对象都绑定了 Service，就必须使用`bind<>()`函数。
+请注意，这里我们可以直接使用 get() 函数 解析 Service 的类型。但是如果有多个声明都绑定了 Service类型，就必须使用`bind<>()`函数。
 
 ### 命名及默认绑定
 
@@ -181,9 +181,9 @@ val myModule = module {
 val service : Service by inject(name = named("default"))
 ```
 
- `get()` 和`by inject()` 函数允许您在需要时指定对象的名称。这个名称是`named()`函数生成的限定符。
+ `get()` 和 `by inject()` 函数允许您在需要时指定对象的名称。这个名称是 `named()` 函数生成的 `qualifer`对象。
 
-如果该类型以及绑定到一个对象上，默认情况下，Koin 将根据类型或名称绑定对象，
+如果该类型已经绑定到一个对象上，默认情况下，Koin 将根据类型或名称绑定声明。
 
 ```kotlin
 val myModule = module {
@@ -199,7 +199,7 @@ val myModule = module {
 
 ### 声明注入参数
 
-在任何 `single`、`factory` 或 `scoped` 的定义中，都可以使用注入参数：这些参数将会通过你的定义被注入以及使用。
+在任何 `single`、`factory` 或 `scoped` 的声明中，都可以使用注入参数：这些参数将会通过你的声明被注入以及使用。
 
 ```kotlin
 class Presenter(val view : View)
@@ -209,23 +209,21 @@ val myModule = module {
 }
 ```
 
-In contrary to resolved dependencies (resolved with get()), injection parameters are parameters passed through the resolution API. This means that those parameters are values passed with get() and by inject(), with the parametersOf function:
-
-与解析依赖项（使用 `get（）`解析）相反，注入参数是通过解析API传递的参数。这意味着这些参数是通过`get（）`和 `inject（）`以及 `parametersOf` 函数传递的值。
+与解析依赖项（使用 `get()`解析）相反，参数的注入是通过解析 API 传递的参数。这意味着这些参数的值是通过 `get()`和 `by inject()` 使用 `parametersOf` 函数传递的。
 
 ```kotlin
 val presenter : Presenter by inject { parametersOf(view) }
 ```
 
-### 使用标志位
+### 使用声明标志
 
-Koin DSL 也提供了一些标志位。
+在 Koin DSL 中也提供了一些标志位。
 
 #### 在开始的时候创建实例
 
-可以将对象或模块标记为 `createOnStart` ，以便在开始时（或在需要时）创建。首先在模块或对象声明上设置createOnStart标志。
+可以将一个声明或一个模块标记为 `createOnStart` ，以便在开始时（或在需要时）创建。首先，在你的模块或对象声明上设置 `createOnStart` 标志。
 
-在对象中声明一个 `createOnStart` 标志位
+在一个声明中添加 `createOnStart` 标志位
 
 ```kotlin
 val myModuleA = module {
@@ -235,7 +233,7 @@ val myModuleA = module {
 
 val myModuleB = module {
 
-    // 在当前对象声明的时候已经创建
+    // 该声明
     single<Service>(createAtStart=true) { TestServiceImp() }
 }
 ```
@@ -254,7 +252,7 @@ val myModuleB = module(createAtStart=true) {
 }
 ```
 
-`startKoin` 函数将自动创建含有`createAtStart`标记的对象以及modle。
+`startKoin` 函数将自动创建含有 `createAtStart` 标记的对象以及modle。
 
 ```kotlin
 // Start Koin modules
@@ -263,11 +261,9 @@ startKoin {
 }
 ```
 
-`如果需要在特定时间加载某些对象或 module （例如在后台线程而不是UI线程中）`，只需使用get/inject函数来注入所需的组件。
+`如果需要在特定时间加载某些声明（例如在后台线程而不是UI线程中）`，只需在所需的组件调用get/inject
 
 ### 处理泛型
-
-Koin definitions doesn’t take in accounts generics type argument. For example, the module below tries to define 2 definitions of List:
 
 Koin 不接受多种泛型类型参数。例如，在下面的模块中尝试定义两个List对象
 
@@ -277,8 +273,6 @@ module {
     single { ArrayList<String>() }
 }
 ```
-
-Koin won’t start with such definitions, understanding that you want to override one definition for the other.
 
 Koin 是不允许这样定义的，而是您希望为另一个定义重写一个定义。
 
