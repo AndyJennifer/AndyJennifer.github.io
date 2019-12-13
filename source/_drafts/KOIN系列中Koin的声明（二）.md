@@ -274,11 +274,11 @@ module {
 }
 ```
 
-Koin 是不允许这样定义的，而是您希望为另一个定义重写一个定义。
+Koin 是不允许你这样声明的，因为它知道如果这样声明的话，将会覆盖其他都很干嘛
 
-为了允许您使用这两个定义，您必须通过它们的名称或位置（module）来区分它们。例如：
+如果为你需要使用这两个声明，那么你必须通过它们的名称或位置（module）来区分它们。例如：
 
-```kotliln
+```kotlin
 module {
     single(named("Ints")) { ArrayList<Int>() }
     single(named("Strings")) { ArrayList<String>() }
