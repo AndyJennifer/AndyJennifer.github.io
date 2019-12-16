@@ -8,13 +8,13 @@ categories:
 
 ### 前言
 
-一旦你声明了一些模块并启动了 Koin ，那么如何在你的 Android 中的 Activity、Fragment或 Service 中检索你的实例?
+一旦你描述了一些模块并启动了 Koin ，那如何在你的 Android 中的 Activity、Fragment 或 Service 中检索你的实例?
 
 ### 将 Activity Fragment 及 Service 转换为 KoinComponent
 
 Activity Fragment 及 Service 在 KoinComponent 扩展的基础上进行了延伸。我们有权使用：
 
-- `by inject()` - 来自 Koin 容器的惰性创建（只有被请求的时候，才会创建实例对象）
+- `by inject()` - 来自 Koin 容器的惰性计算（只有被请求的时候，才会创建实例对象）
 - `get()` - 从 Koin 容器中立即获取实例
 - `release()` - 从它的路径中释放模块的实例
 - `getProperty()` / `setProperty()` - 获取/设置属性

@@ -33,7 +33,7 @@ class MainApplication : Application() {
 }
 ```
 
-### 在其他地方使用 Android context 启动 Koin
+### 在其他地方使用 Android context 并启动 Koin
 
 如果你需要从另一个 Android 类中启动 Koin，你可以使用 `startKoin` 函数，并提供你的Android `Context` 实例，如下所示：
 
@@ -48,9 +48,9 @@ startKoin {
 
 ### Koin 日志记录
 
-在 `KoinApplication` 实例中，我们有一个扩展 `androidLogger`，其内部使用的是 `AndroidLogger`对象，这个logger是 Koin logger的一个 Android 实现。
+在你的 `KoinApplication` 实例中，我们有一个扩展 `androidLogger`，其内部使用的是 `AndroidLogger` 对象，（这个logger 是 Koin logger 的一个 Android 实现）。
 
-如果这个日志记录器不适合您的需求，你可以按需修改。
+如果这个 logger 不适合你的需求，你可以按需修改。
 
 ```kotlin
 class MainApplication : Application() {
@@ -70,11 +70,39 @@ class MainApplication : Application() {
 }
 ```
 
-### 获取 module 中的 Android context
+### 属性
+
+你可以在`assets/koin.properties`文件中使用 Koin 属性，并在该文件中存储键值对。
+
+使用 Koin 额外的属性。
+
+```kotlin
+// Shut off Koin Logger
+class MainApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+
+        startKoin {
+            //注入 Android context
+            androidContext(/* 你自己的 android context */)
+            //使用 Android 下的日志 默认是 INFO 级别
+            androidLogger()
+            //使用从 assets/koin.proerties中获取的属性。
+            androidFileProperties()
+            //使用的 module
+            modules(myAppModules)
+        }
+    }
+}
+
+```
+
+### 从 module 中获取 Android context
 
 在 koin DSL 中增加了如下关键字：
 
-`androidContext()` 和 `androidApplication()` 函数允许你在一个 Koin module 中获取上下文对象，来帮助你简单地编写需要 `Application` 对象的表达式。
+`androidContext()` 和 `androidApplication()` 函数允许你在一个 Koin module 中获取 `Context` 对象，并可以帮助你简单地编写需要 `Application` 对象的表达式。
 
 ```kotlin
 val appModule = module {
