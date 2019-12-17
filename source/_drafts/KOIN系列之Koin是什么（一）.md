@@ -32,7 +32,7 @@ Koin 提供了几个关键字来描述 Koin Application 中的元素
 
 要配置 `KoinApplication` 对象，可以使用以下任何函数:
 
-- `logger()` 描述需要使用日志实现及其日志级别(默认使用 EmptyLogger )
+- `logger()` 声明使用的日志实现(默认使用 EmptyLogger )及日志使用的级别
 - `modules()` 设置要加载到容器中的 Koin 模块列表(list 或 vararg list)
 - `properties()`  将 HashMap 属性(键值对）加载到 Koin 容器中
 - `fileProperties()` 从给定文件中获取属性并加载到 Koin 容器中
