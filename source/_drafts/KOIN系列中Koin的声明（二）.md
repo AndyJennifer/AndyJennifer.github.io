@@ -64,9 +64,9 @@ val myModule = module {
 
 ### 解析和注入依赖项
 
-现在我们可以描述一些组件声明，如果我们想通过依赖注入的方式来链接实例。那么我们只需在需要请求实例的组件中调用 `get()` 函数来解析 Koin module 中的声明，`get()` 函数通常用于构造函数中，以便注入值。
+现在我们可以描述一些组件的声明，如果我们想通过依赖注入的方式来链接实例。我们只需在需要请求该实例的组件中调用 `get()` 函数来解析 Koin module 中的实例，`get()` 函数通常用于构造函数中，以便注入构造函数值。
 
-`为了在 Koin 容器中进行依赖项注入，我们必须以构造函数注入的方式来编写它:解析了类中构造函数中的依赖。这样，Koin 将会以注入的方式创建你的对象`。
+`为了在 Koin 容器中进行依赖项注入，我们必须以构造函数注入的方式来编写它:解析类中构造函数依赖。这样，你的实例对象才会带着 Koin 的注入实例而被创建`。
 
 让我们以下几个类为例：
 
@@ -197,9 +197,9 @@ val myModule = module {
 - `val service : Service by inject()` 将触发 `ServiceImpl1` 的声明
 - `val service : Service by inject(named("test"))` 将触发 `ServiceImpl2` 的声明
 
-### 声明注入参数
+### 声明参数注入
 
-在任何 `single`、`factory` 或 `scoped` 的声明中，都可以使用注入参数：这些参数将会根据你的声明，被注入以及使用。
+在任何 `single`、`factory` 或 `scoped` 的声明中，都可以使用参数注入：这些参数将会根据你的声明，被注入以及使用。
 
 ```kotlin
 class Presenter(val view : View)
@@ -209,7 +209,7 @@ val myModule = module {
 }
 ```
 
-与解析依赖项（使用 `get()` 解析）相反，参数的注入是通过解析 API 传递的参数。这意味着，这些参数的值是通过 `get()`和 `by inject()` 及 `parametersOf` 函数传递的。
+与解析依赖项（使用 `get()` 解析）相反，参数的注入是通过解析 API 传递的参数。这意味着，这些参数值的传递是通过调用 `get()` 和 `by inject()` 中的 `parametersOf` 函数。
 
 ```kotlin
 val presenter : Presenter by inject { parametersOf(view) }

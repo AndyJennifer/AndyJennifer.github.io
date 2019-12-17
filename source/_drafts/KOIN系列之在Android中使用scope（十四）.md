@@ -129,7 +129,7 @@ class Presenter(val userSession : UserSession)
 
 ```kotlin
 module {
-    // Shared user session data
+    // 共享 UserSession 数据
     scope(named("session")) {
         scoped { UserSession() }
     }

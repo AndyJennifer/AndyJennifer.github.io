@@ -8,7 +8,7 @@ categories:
 
 ### 前言
 
-一旦你描述了一些模块并启动了 Koin ，那如何在你的 Android 中的 Activity、Fragment 或 Service 中检索你的实例?
+一旦你声明了一些模块并且你已经启动了 Koin ，那如何在你的 Android 下的 Activity、Fragment 或 Service 中检索你的实例?
 
 ### 将 Activity Fragment 及 Service 转换为 KoinComponent
 
@@ -28,7 +28,7 @@ val androidModule = module {
 }
 ```
 
-我们可以声明一个属性为延迟注入:
+我们可以声明一个延迟属性注入:
 
 ```kotlin
 class DetailActivity : AppCompatActivity() {
