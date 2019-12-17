@@ -61,7 +61,7 @@ class MyComponent : KoinComponent {
 
 一旦你将你的类标记为 `KoinComponent` ，你就有权访问:
 
-- `by inject()` - 来自 Koin 容器的惰性加载（只有被请求的时候，才会创建实例对象）
+- `by inject()` - 从 Koin 容器中获取延迟计算的实例
 - `get()` — 从 Koin 容器中立即获取实例
 - getProperty()/setProperty() - 获取/设置属性
 
@@ -69,18 +69,18 @@ class MyComponent : KoinComponent {
 
 Koin 提供了两种从 Koin 容器中检索实例的方法:
 
-- `val t: t by inject()` - 惰性计算的委托实例
+- `val t: t by inject()` - 延迟计算（其值只在首次访问时计算）
 - `val t: t = get()`  - 立刻获取实例
 
 ```kotlin
-// 惰性计算
+// 延迟计算
 val myService : MyService by inject()
 
 // 直接获取实例对象
 val myService : MyService get()
 ```
 
-`懒加载更适合定义需要惰性求值的属性。`
+`延迟注入更适合那些需要延迟求值的属性。`
 
 ### 通过名称解析实例对象
 

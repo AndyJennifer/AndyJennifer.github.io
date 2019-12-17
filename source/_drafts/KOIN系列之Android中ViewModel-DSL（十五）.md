@@ -23,7 +23,7 @@ val appModule = module {
 }
 ```
 
-您声明的组件必须至少继承 `android.arch.lifecycle.ViewModel` 类。你可以具体说明你是如何注入类的构造函数，以及如何使用 `get()` 函数注入依赖项。
+您声明的组件必须至少继承 `android.arch.lifecycle.ViewModel` 类。你可以对如何注入类的构造函数，如何使用 `get()` 函数注入依赖项，进行详细的说明。
 
 > `viewModel` 关键字可以帮助声明 `ViewModel` 的工厂实例。该实例将由内部的 `ViewModelFactory` 处理，并在需要时重新附加 `ViewModel` 实例。
 
@@ -33,13 +33,13 @@ val appModule = module {
 
 为了在 Activity, Fragment 或者 Service 中注入 ViewModel，我们可以使用
 
-- `by viewModel()` - 惰性属性委托将会把 ViewModel 注入到属性中
+- `by viewModel()` - 延迟委托属性会把 ViewModel 注入到属性中
 - `getViewModel()` - 直接获取 ViewModel 实例
 
 ```kotlin
 class DetailActivity : AppCompatActivity() {
 
-    // 惰性注入 ViewModel
+    // 延迟注入 ViewModel
     val detailViewModel: DetailViewModel by viewModel()
 }
 ```
@@ -77,7 +77,7 @@ public class JavaActivity extends AppCompatActivity {
 
 为了在 Fragment 中注入一个可共享的 ViewModel,我们可以使用：
 
-- `by sharedViewModel()` - 惰性属性委托将可共享的 ViewModel 注入到属性中
+- `by sharedViewModel()` - 延迟属性委托将可共享的 ViewModel 注入到属性中
 - `getSharedViewModel()` - 直接获取可共享的 ViewModel 实例
 
 只需声明 ViewModel 一次:
@@ -165,7 +165,7 @@ class DetailActivity : AppCompatActivity() {
 
     val id : String //视图的 id
 
-    //惰性注入带id参数的ViewModel
+    //延迟注入带id参数的ViewModel
     val detailViewModel: DetailViewModel by viewModel{ parametersOf(id)}
 }
 ```
