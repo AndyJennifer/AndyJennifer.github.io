@@ -299,7 +299,7 @@ categories:
                 f.setAnimator(null);
                 moveToState(f, f.getStateAfterAnimating(), 0, 0, true);
             }
-            //难道当前的状态，与newState状态，如果比他小，就调用相关的声明周期
+            //拿到当前的状态，与newState状态，如果比他小，就调用相关的声明周期
             switch (f.mState) {
                 case Fragment.INITIALIZING:
                     if (newState > Fragment.INITIALIZING) {
@@ -639,6 +639,10 @@ categories:
     }
 ```
 
+> 对于宿主Activity，getSupportFragmentManager()获取的FragmentActivity的FragmentManager对象;
+> 对于Fragment，getFragmentManager()是获取的是父Fragment(如果没有，则是FragmentActivity)的FragmentManager对象，而getChildFragmentManager()是获取自己的FragmentManager对象。
+
+
 ### 相邻的Fragment生命周期调用
 
 也就是ViewPager 控制Fragment的显示的时候，因为调用了setPrimaryItem 方法，将其他非主Fragment mMaxState中的值设置为`Lifecycle.State.STARTED`,也就是不会再调用其他Fragment的生命周期，只有主Frament的生命周期会调用
@@ -646,6 +650,29 @@ categories:
 ### 超过缓存范围的直接销毁
 
 因为超过缓存范围的fragment会被销毁，会重新走声明周期，所以对懒加载没有影响。
+
+### ViewPager2
+
+因为ViewPage2是通过RecyclerView实现的，其会走RecyclerViwe的回收机制，如果你对RecyclerView的回收机制熟悉，那么你知道RecyclerView有一个ViewCache的概念，mViewCacheMax 默认值为2。
+
+```kotlin
+    if (cachedViewSize >= mViewCacheMax && cachedViewSize > 0) {
+                        recycleCachedViewAt(0);
+                        cachedViewSize--;
+                    }
+```
+
+```kotlin
+    @Override
+    public final void onViewRecycled(@NonNull FragmentViewHolder holder) {
+        final int viewHolderId = holder.getContainer().getId();
+        final Long boundItemId = itemForViewHolder(viewHolderId); // item currently bound to the VH
+        if (boundItemId != null) {
+            removeFragment(boundItemId);
+            mItemIdToViewHolder.remove(boundItemId);
+        }
+    }
+```    
 
 ### 最后
 
