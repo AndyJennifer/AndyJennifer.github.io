@@ -54,6 +54,8 @@ categories:
 ```java
     public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         Fragment fragment = (Fragment)object;
+        //如果当前的fragment不是当前选中并可见的Fragment,那么就会调用
+        // setMaxLifecycle 设置其最大生命周期为 Lifecycle.State.STARTED
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
@@ -66,6 +68,8 @@ categories:
                     mCurrentPrimaryItem.setUserVisibleHint(false);
                 }
             }
+        //如果是当前选中并可见的Fragment,则设置其最大生命周期为
+        //Lifecycle.State.RESUMED
             fragment.setMenuVisibility(true);
             if (mBehavior == BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
                 if (mCurTransaction == null) {
@@ -672,7 +676,7 @@ categories:
             mItemIdToViewHolder.remove(boundItemId);
         }
     }
-```    
+```
 
 ### 最后
 
