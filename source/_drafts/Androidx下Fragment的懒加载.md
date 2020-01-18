@@ -1,18 +1,20 @@
 ---
-title: Androidx 下 Fragment 懒加载的新方式
+title: Androidx 下 Fragment 懒加载的新实现
 tags:
   - 懒加载
 categories:
   - Fragment
 ---
 
+{% asset_img Fragment.jpg Fragment %}
+
 ### 前言
 
 >年后最后一篇文章啦，在这里先祝大家新年快乐~最重要的抽中`全家福`，明年继续修福报🤣
 
-以前我们处理 Fragment 的懒加载，我们通常会在 Fragment 中处理 `setUserVisibleHint + onHiddenChanged` 这两个函数，而在 Androidx 模式下，我们可以使用 `FragmentTransaction.setMaxLifecycle()` 的方式来处理 Fragment 的懒加载。相信这种`新`的思路与方法会直接让大家高潮!!!!!
+以前处理 Fragment 的懒加载，我们通常会在 Fragment 中处理 `setUserVisibleHint + onHiddenChanged` 这两个函数，而在 Androidx 模式下，我们可以使用 `FragmentTransaction.setMaxLifecycle()` 的方式来处理 Fragment 的懒加载。
 
-在本文章中，我会详细介绍不同使用场景下，两种方案的差异。大家快拿好小板凳。一起来学习新知识吧！
+在本文章中，我会详细介绍不同使用场景下两种方案的差异。大家快拿好小板凳。一起来学习新知识吧！
 
 >本篇文章涉及到的 Demo，已上传至Github---->[传送门](https://github.com/AndyJennifer/AndroidxLazyLoad)
 
@@ -30,7 +32,7 @@ categories:
 
 什么是同级 Frament 呢？看下图
 
-![同级Fragment.jpg](https://upload-images.jianshu.io/upload_images/2824145-7227e891da1318e8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 同级Fragment.jpg 同级Fragment %}
 
 >上图中，都是使用 `add+show+hide` 的方式控制 Fragment,
 
@@ -42,7 +44,7 @@ categories:
 
 那这种方式会带来什么问题呢？结合下图我们来分别分析。
 
-![show1.png](https://upload-images.jianshu.io/upload_images/2824145-1567d443a5150d6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img show1.png show1 %}
 
 观察上图我们可以发现，同级的Fragment_1、Fragment_2、Fragment_3 都调用了 `onAttach...onResume` 系列方法，也就是说，如果我们没有对 Fragment 进行懒加载处理，那么我们就会无缘无故的加载一些并`不可见`的 Fragment , 也就会造成用户流量的无故消耗（我们会在 Fragment 相关生命周期函数中，请求网络或其他数据操作）。
 
@@ -52,7 +54,7 @@ categories:
 
 那如何解决这种问题呢？我们继续接着上面的例子走，当我们 `show Fragment_2`，并 hide其他 Fragment 时，对应 Fragment 的生命周期调用如下：
 
-![show2.png](https://upload-images.jianshu.io/upload_images/2824145-ea70086f0b143f0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img show2.png show2 %}
 
 从上图中，我们可以看出 Fragment_2 与 Fragment_3 都调用了 `onHiddenChanged` 函数，该函数的官方 API 声明如下：
 
@@ -79,7 +81,7 @@ categories:
 
  show Fragment_3 并 hide 其他 Fragment ，对应生命周期函数调用如下所示：
 
-![show3.png](https://upload-images.jianshu.io/upload_images/2824145-0c9dca58ac704630.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img show3.png show3 %}
 
 从图中，我们可以看出，确实只有`隐藏状态`发生了改变的 Fragment 其 `onHiddenChanged` 函数才会调用，那么结合以上知识点，我们能得出如下重要结论：
 
@@ -143,21 +145,21 @@ abstract class LazyFragment:Fragment(){
 
 初始化 ViewPager 查看内部 Fragment 生命周期函数调用情况：
 
-![viewpager1.png](https://upload-images.jianshu.io/upload_images/2824145-eac42f17df339654.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img viewpager1.png viewpager1 %}
 
 观察上图，我们能发现 ViePager 初始化时，默认会调用其内部 Fragment 的 setUserVisibleHint 方法，因为其预缓存 Fragment 个数为 `1` 的原因，所以只有 Fragment_1 与 Fragment_2 的生命周期函数被调用。
 
 我们继续切换到 Fragment_2，查看各个Fragment的生命周期函数的调用变化。如下图所示：
 
-![viewpage2.png](https://upload-images.jianshu.io/upload_images/2824145-af63642f00e813e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img viewpage2.png viewpage2 %}
 
 观察上图，我们同样发现 Fragment 的 setUserVisibleHint 方法被调用了，并且 Fragment_3 的一系列生命周期函数被调用了。继续切换到 Fragment_3:
 
-![viewpager_3.png](https://upload-images.jianshu.io/upload_images/2824145-6f88bb3b5929d5bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img viewpager_3.png viewpager_3 %}
 
 观察上图可以发现，Fragment_3 调用了 setUserVisibleHint 方法，继续又切换到 Fragment_1，查看调用函数的变化：
 
-![viewpager4.png](https://upload-images.jianshu.io/upload_images/2824145-ea6d49cb4e320aee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img viewpager4.png viewpager4 %}
 
 >因为之前在切换到 Fragment_3 时，Frafgment_1 已经走了 onDestoryView(图二，蓝色标记处) 方法，所以 Fragment_1 需要重新走一次生命周期。
 
@@ -232,7 +234,7 @@ abstract class LazyFragment : Fragment() {
 当然，在实际项目中，我们可能会遇到更为复杂的 Fragment 嵌套组合。比如 Fragment+Fragment、Fragment+ViewPager、ViewPager+ViewPager....等等。
 如下图所示：
 
-![复杂嵌套Fragment.jpg](https://upload-images.jianshu.io/upload_images/2824145-f7f0a97b856f52b2.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 复杂嵌套Fragment.jpg 复杂嵌套Fragment %}
 
 对于以上场景，我们就需要重写我们的懒加载，以支持不同嵌套组合模式下 Fragment 正确懒加载。我们需要将 LazyFragment 修改成如下这样：
 
@@ -394,15 +396,15 @@ abstract class LazyFragment : Fragment() {
 
 默认初始化ViewPager，Fragment 生命周期如下所示：
 
-![androix1.png](https://upload-images.jianshu.io/upload_images/2824145-d79e5cda1b6cb27f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img androix1.png androix1 %}
 
 切换到 Fragment_2 时，日志情况如下所示：
 
-![androix2.png](https://upload-images.jianshu.io/upload_images/2824145-47f10a95a098baac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img androix2.png androix2 %}
 
 切换到 Fragment_3 时，日志情况如下所示:
 
-![androidx3.png](https://upload-images.jianshu.io/upload_images/2824145-b761e70c42138f5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img androidx3.png androidx3 %}
 
 >因为篇幅的原因，本文没有在讲解 FragmentStatePagerAdapter 设置 behavior 下的使用情况，但是原理以及生命周期函数调用情况一样，感兴趣的小伙伴，可以根据  [AndroidxLazyLoad](https://github.com/AndyJennifer/AndroidxLazyLoad) 项目自行测试。
 
@@ -544,15 +546,15 @@ private fun showHideFragmentTransaction(fragmentManager: FragmentManager, showFr
 add Fragment_1、Fragment_2、Fragment_3，并 hide Fragment_2,Fragment_3
 :
 
-![show_new1.png](https://upload-images.jianshu.io/upload_images/2824145-deafbc2ef5a11ca6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img show_new1.png show_new1 %}
 
 show Fragment_2，hide 其他 Fragment:
 
-![show_new2.png](https://upload-images.jianshu.io/upload_images/2824145-9a6f4347bacd3c5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img show_new2.png show_new2 %}
 
 show Fragment_3 hide 其他 Fragment:
 
-![show_new3.png](https://upload-images.jianshu.io/upload_images/2824145-6b962d6b9b88920b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img show_new3.png show_new3 %}
 
 参考上图，好像真的也能处理懒加载！！！！！美滋滋
 
@@ -560,7 +562,7 @@ show Fragment_3 hide 其他 Fragment:
 
 当我第一次使用 setMaxLifycycle 方法时，我也和大家一样觉得万事大吉。但这套方案仍然有点点瑕疵，当 Fragment 的嵌套时，即使使用了 setMaxLifycycle 方法，第一次初始化时，同级不可见的Fragment，仍然 TMD 要调用可见生命周期方法。看下面的例子：
 
-![瑕疵.png](https://upload-images.jianshu.io/upload_images/2824145-c75d082b730c8b70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 瑕疵.png 瑕疵 %}
 
 不知道是否是谷歌大大没有考虑到 Fragment 嵌套的情况，所以这里我们要对之前的方案就行修改，也就是如下所示：
 
