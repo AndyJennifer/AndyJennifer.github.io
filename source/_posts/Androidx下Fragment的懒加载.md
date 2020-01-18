@@ -339,7 +339,7 @@ abstract class LazyFragment : Fragment() {
 
 那如何使用该方法呢？我们先看该方法在 Androidx 模式下 ViewPager+Fragment 模式下的使用例子。
 
-### ViewPager+Fragment 模式下的方案
+#### ViewPager+Fragment 模式下的方案
 
 在 FragmentPagerAdapter 与 FragmentStatePagerAdapter 新增了含有  `behavior` 字段的构造函数，如下所示：
 
@@ -471,7 +471,7 @@ abstract class LazyFragment : Fragment() {
 }
 ```
 
-### add+show+hide 模式下的新方案
+#### add+show+hide 模式下的新方案
 
 虽然我们实现了Androidx 包下 ViewPager下的懒加载，但是我们仍然要考虑 add+show+hide 模式下的 Fragment 懒加载的情况，基于 ViewPager 在 `setPrimaryItem` 方法中的思路，我们可以在调用 add+show+hide 时，这样处理：
 
