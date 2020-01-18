@@ -4,7 +4,9 @@ tags:
   - 懒加载
 categories:
   - Fragment
+date: 2020-01-19 00:28:54
 ---
+
 
 {% asset_img Fragment.jpg Fragment %}
 
@@ -236,7 +238,7 @@ abstract class LazyFragment : Fragment() {
 
 {% asset_img 复杂嵌套Fragment.jpg 复杂嵌套Fragment %}
 
-对于以上场景，我们就需要重写我们的懒加载，以支持不同嵌套组合模式下 Fragment 正确懒加载。我们需要将 LazyFragment 修改成如下这样：
+对于以上场景，我们就需要重写我们的懒加h载，以支持不同嵌套组合模式下 Fragment 正确懒加载。我们需要将 LazyFragment 修改成如下这样：
 
 ```kotlin
 abstract class LazyFragment : Fragment() {
