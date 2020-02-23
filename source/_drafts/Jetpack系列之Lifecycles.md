@@ -61,6 +61,7 @@ public interface LifecycleOwner {
 ### ComponentActivity
 
 androidx.core.app下的 ComponentActivity
+
 ```java
 public Lifecycle getLifecycle() {
         return mLifecycleRegistry;
