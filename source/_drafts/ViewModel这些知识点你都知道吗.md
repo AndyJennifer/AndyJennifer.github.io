@@ -14,7 +14,7 @@ categories:
 2. 可感知生命周期的组件。
 3. 不会因配置改变而销毁。
 4. 可以配合LiveData使用。
-5. 多个Fragment可以共享同一Model
+5. 多个Fragment可以共享同一ViewModel
 6. 等等等....
 
 你也可以通过下列两个视频，更为详细的了解 ViewModel：
@@ -24,7 +24,7 @@ categories:
 
 在本篇文章中，不会讲解 ViewModel 的使用方式及使用 ViewModel 的原因，而是着重于讲解 ViewModel 的原理及额外注意事项。通过阅读本篇文章你能了解到：
 
-- ViewModel 与 Activity的绑定过程
+- ViewModel 与 Activity 的绑定过程
 - 常见的数据恢复的方式
 - ViewModel 在 Activity 中不会因配置改变而销毁的原理及流程。
 - ViewModel 如何与 OnSaveInstanceState 配合使用。
@@ -34,11 +34,32 @@ categories:
   
 希望通过该篇文章，大家能对 ViewModel 有更深入的了解。
 
-### ViewModel 与 Activity的绑定过程
+
+### ViewModel基础知识
+
+详细讲解ViewModel中涉及到的组件，
+
+- ViewModelStore,
+- ViewModelProvider,
+- ViewModelProviders
+- ViewModelStoreOwner
+- factory,
+- NewInstanceFactory，
+
+- FragmentViewModel,
+- FragmentManager栈视图
+
+可以结合数据结构中的HashMap来讲
+
+
+
+![Activity下ViewModel的创建过程.png](https://upload-images.jianshu.io/upload_images/2824145-fecc9582d2892c82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+### ViewModel 与 Activity 的绑定过程
 
 一般情况下，使用 ViewModel，我们一般会先声明自己的 ViewModel，并在 Activity 中的 `onCreate` 方法中，通过 `ViewModelProviders` 来创建 ViewModel。 如下代码所示：
 
->在谷歌的最新代码中，不推荐使用 ViweModelProvider`s` ，而是直接使用  `ViewModelProvider` 的构造函数来创建 `ViewModelProvider` 对象。
+>在谷歌的最新代码中，不推荐使用 `ViweModelProviders(注意是有s的呦)` ，而是直接使用  `ViewModelProvider` 的构造函数来创建 `ViewModelProvider` 对象。
 
 ```java
 public class MyViewModel extends ViewModel {
@@ -95,23 +116,31 @@ public class MyActivity extends AppCompatActivity {
     }
 ```
 
-观察上述构造函数，我们可以发现 ViewModelProvider 所需要的对象就两个，一个 `ViewModelStore` ，一个 `Factory`，且遵循如下规则：
+观察上述构造函数，我们可以发现 ViewModelProvider 所需要的对象为 `ViewModelStore` 与 `Factory` 对象。
 
-- 规则1：当没有传递 Factory 对象时，如果当前类实现了 HasDefaultViewModelProviderFactory 接口 ，默认会调用 getDefaultViewModelProviderFactory()。
-- 规则2：当规则2条件不满足时，默认会调用 ViewModelProvider 中的 NewInstanceFactory.getInstance()方法创建 Factory 对象。
+- 我们可以通过 `ViewModelStoreOwner` 接口实现类来获取 ViewModelStore，也可以直接传入
+- 我们可以不用传递 Factory 对象，当传入的 `ViewModelStoreOwner` 接口实现类同样实现了 `HasDefaultViewModelProviderFactory` 接口 ，那么默认会调用 `getDefaultViewModelProviderFactory()` 方法获取 Factory。反之，使用 `NewInstanceFactory.getInstance()` 来创建 Factory 对象。
 
-NewInstanceFactory 声明如下:
+其中 NewInstanceFactory类 与 Factory接口 声明如下:
 
 ```java
+    public interface Factory {
+        /**
+         * 通过给定的Class对象创建ViewModel对象
+         * <p>
+         *
+         * @param modelClass 所需实例的Class对象
+         * @param <T>        ViewModel泛型参数
+         * @return 新创建的ViewModel对象
+         */
+        @NonNull
+        <T extends ViewModel> T create(@NonNull Class<T> modelClass);
+    }
+
     public static class NewInstanceFactory implements Factory {
 
         private static NewInstanceFactory sInstance;
 
-        /**
-         * Retrieve a singleton instance of NewInstanceFactory.
-         *
-         * @return A valid {@link NewInstanceFactory}
-         */
         @NonNull
         static NewInstanceFactory getInstance() {
             if (sInstance == null) {
@@ -175,7 +204,7 @@ public class ViewModelStore {
 }
 ```
 
-观察代码我们发现 `ViewModelStore` 内部其实维护了一个可存入 ViewModel 的 HashMap, 也就是说 ViewModeStore 只是一个存储的 ViewModel 的容器，那我们再回到 `ViewModelProviders.of(this).get(MyViewModel.class);` 那段代码，最终的 ViewModel 的创建其实是通过 ViewModelProvider 的 get 方法，我们查看该方法实现：
+观察代码我们发现 `ViewModelStore` 内部其实维护了一个用于存储 ViewModel 的 HashMap, 也就是说 ViewModeStore 只是一个存储的 ViewModel 的容器，那我们再回到 `ViewModelProviders.of(this).get(MyViewModel.class);` 那段代码，最终的 ViewModel 的创建其实是通过 ViewModelProvider 的 get 方法，我们查看该方法实现：
 
 ```java
  public <T extends ViewModel> T get(@NonNull Class<T> modelClass) {
@@ -284,7 +313,7 @@ https://developer.android.google.cn/topic/libraries/architecture/saving-states.h
 
 https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-changes.html
 
-##### 使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
+###  使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
 
 ```java
     public ViewModelStore getViewModelStore() {
@@ -416,7 +445,22 @@ https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-ch
     )
 ```
 
-#### 第一步将FragmentManagerViewModel存入Activity中的ViewModelStore中
+### ViewModel与Fragment的绑定过程
+
+
+#### FragmentManager栈视图
+
+每个Fragment及宿主Activity(继承自FragmentActivity)都会在创建是，初始化一个FragmentManager对象，了解Fragment中的ViewModel与Activity的联系的关键，就是理清这些不同阶级的栈视图。
+
+下面给出一个简要的关系图：
+
+![FragmentManager栈对应关系.png](https://upload-images.jianshu.io/upload_images/2824145-9d85d056fb02e43c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+- 对于宿主Activity, `getSupportFragmentManager()`获取的 FragmentActivity 的 FragmentManager 对象;
+- 对于 Fragment , `getFragmentManager` 是获取的父 Fragment (如果没有，则是 FragmentActivity )的 FragmentManager 对象，而 `getChildFragmentManager()`是获取自身的 FragmentManager 对象。
+
+
+### 第一步将 FragmentManagerViewModel 存入 Activity 中的ViewModelStore中
 
 在 FragmentActivity 中的onCreate方法中
 
@@ -490,7 +534,7 @@ https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-ch
 
 >需要注意的是，当我们Fragment是其他Fragment的子Fragment时，获取的fragmentManager是，childFragmentManager,否则只Activity的FragmentManager。
 
-在Activity 中的 FragmentManager中的 FragmentManagerViewModel 中创建 Fragment 的 FragmentManagerViewModel
+在 Activity 中的 FragmentManager中的 FragmentManagerViewModel 中创建 Fragment 的 FragmentManagerViewModel
 
 ```java
   FragmentManagerViewModel getChildNonConfig(@NonNull Fragment f) {
@@ -503,7 +547,7 @@ https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-ch
     }
 ```
 
-### 第二步创建ViewModelStore并存入父类的FragmentManaerViewModel中的mViewModelStores中
+### 第二步创建 ViewModelStore 并存入对应FragmentManager 中的FragmentManaerViewModel中的mViewModelStores中
 
 在Fragment创建ViewModel时，会为每个Fragment创建单独的ViewModelStore
 
@@ -532,27 +576,20 @@ Fragment 下的 getViewModelStore() 实现：
     }
 ```
 
-```java
-FragmentManager mFragmentManager;
-```
-
-这里，可以介绍一下 FragmentManager :https://www.jianshu.com/p/fd71d65f0ec6
-
-最终会走到FragmentManagerViewModel中的getViewModelStore 方法。
+当 Fragment 的父Fragment 为空时，mFragmentManager 的值为宿主 Activity 的FragmentManager，反之，为父Fragment的FragmentManager，最终都会走到 FragmentManagerViewModel 中的 getViewModelStore 方法。
 
 ```java
   ViewModelStore getViewModelStore(@NonNull Fragment f) {
         ViewModelStore viewModelStore = mViewModelStores.get(f.mWho);
         if (viewModelStore == null) {
             viewModelStore = new ViewModelStore();
+            //将创建好的ViewStore，放入FragmentManagerViewModel中
             mViewModelStores.put(f.mWho, viewModelStore);
         }
         return viewModelStore;
     }
      String mWho = UUID.randomUUID().toString();//这里的id获取
 ```
-
-也就是在父类的FragmentManagerViewModel中，创建ViewModelStore，并存入那个mViewModelStores中
 
 ### ViewModel 使用范围
 
@@ -584,4 +621,5 @@ https://juejin.im/post/5a17d49b6fb9a0451704e229
 
 - ViewMode1 https://v.qq.com/x/page/t0763s9ma8o.html
 - ViewMode2  https://v.qq.com/x/page/m0605c1sejh.html
+FragmentManager :https://www.jianshu.com/p/fd71d65f0ec6
 站在巨人的肩膀上，才能看的更远~
