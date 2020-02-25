@@ -34,62 +34,17 @@ categories:
   
 希望通过该篇文章，大家能对 ViewModel 有更深入的了解。
 
-
-### ViewModel基础知识
-
-详细讲解ViewModel中涉及到的组件，
-
-- ViewModelStore,
-- ViewModelProvider,
-- ViewModelProviders
-- ViewModelStoreOwner
-- factory,
-- NewInstanceFactory，
-
-- FragmentViewModel,
-- FragmentManager栈视图
-
-可以结合数据结构中的HashMap来讲
-
-
-
-![Activity下ViewModel的创建过程.png](https://upload-images.jianshu.io/upload_images/2824145-fecc9582d2892c82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 ### ViewModel 与 Activity 的绑定过程
 
-一般情况下，使用 ViewModel，我们一般会先声明自己的 ViewModel，并在 Activity 中的 `onCreate` 方法中，通过 `ViewModelProviders` 来创建 ViewModel。 如下代码所示：
+一般情况下，使用 `ViewModel`，我们一般会先声明自己的 ViewModel，并在 Activity 中的 `onCreate` 方法中使用 `ViewModelProviders` 来创建 ViewModel。 如下代码所示：
+
+```java
+ MyViewModel model = ViewModelProviders.of(this).get(MyViewModel.class);
+```
 
 >在谷歌的最新代码中，不推荐使用 `ViweModelProviders(注意是有s的呦)` ，而是直接使用  `ViewModelProvider` 的构造函数来创建 `ViewModelProvider` 对象。
 
-```java
-public class MyViewModel extends ViewModel {
-    private MutableLiveData<List<User>> users;
-    public LiveData<List<User>> getUsers() {
-        if (users == null) {
-            users = new MutableLiveData<List<User>>();
-            loadUsers();
-        }
-        return users;
-    }
-
-    private void loadUsers() {
-        //执行异步操作操作获取用户信息
-    }
-}
-
-public class MyActivity extends AppCompatActivity {
-    public void onCreate(Bundle savedInstanceState) {
-        //系统第一次调用Activity的onCreate()方法时创建ViewModel。
-        //重新创建的Activity接收由第一个Activity创建的相同MyViewModel实例。
-        MyViewModel model = ViewModelProviders.of(this).get(MyViewModel.class);
-        model.getUsers().observe(this, users -> {
-            // 更新ui
-        });
-    }
-}
-```
-
-观察上述代码，我们能发现 ViewModel 的创建过程其实是与 `ViewModelProviders` 类相关的，我们查看该类到底做了什么。查看其 `of（）` 方法，代码如下所示：
+通过使用 `ViewModelProviders` 类的 `of（）` 方法，我们会得到一个 `ViewModelProvider` 对象。如下代码所示：
 
 ```java
    public static ViewModelProvider of(@NonNull FragmentActivity activity) {
@@ -97,31 +52,40 @@ public class MyActivity extends AppCompatActivity {
     }
 ```
 
-在该方法中，其实是就是创建了 `ViewModelProvider` 对象，那么也就是说最终 ViewModel 的创建是与该对象相关的。查看该类构造函数：
+ViewModelProvider 类需要我们传递 `ViewModelStore` 与 `Factory` 对象。其构造函数声明如下：
 
 ```java
+    //使用ViewModelStoreOwner对象构造函数
     public ViewModelProvider(@NonNull ViewModelStoreOwner owner) {
         this(owner.getViewModelStore(), owner instanceof HasDefaultViewModelProviderFactory
                 ? ((HasDefaultViewModelProviderFactory) owner).getDefaultViewModelProviderFactory()
                 : NewInstanceFactory.getInstance());
     }
 
+    //使用ViewModelStoreOwner与Factory对象的构造函数
     public ViewModelProvider(@NonNull ViewModelStoreOwner owner, @NonNull Factory factory) {
         this(owner.getViewModelStore(), factory);
     }
 
+    //使用ViewModelStore与Factory对象的构造函数
     public ViewModelProvider(@NonNull ViewModelStore store, @NonNull Factory factory) {
         mFactory = factory;
         mViewModelStore = store;
     }
 ```
 
-观察上述构造函数，我们可以发现 ViewModelProvider 所需要的对象为 `ViewModelStore` 与 `Factory` 对象。
+在 ViewModelProvider 内部，拥有三种类型构造函数：
 
-- 我们可以通过 `ViewModelStoreOwner` 接口实现类来获取 ViewModelStore，也可以直接传入
-- 我们可以不用传递 Factory 对象，当传入的 `ViewModelStoreOwner` 接口实现类同样实现了 `HasDefaultViewModelProviderFactory` 接口 ，那么默认会调用 `getDefaultViewModelProviderFactory()` 方法获取 Factory。反之，使用 `NewInstanceFactory.getInstance()` 来创建 Factory 对象。
+- `(ViewModelStoreOwner owner)`:
+  - 该构造函数使用 owner 对象的 `getViewModelStore()` 方法来获取 `ViewModelStore` 对象，如果传入的 owner 对象也实现了 `HasDefaultViewModelProviderFactory` 接口时，那么会调用 `getDefaultViewModelProviderFactory()` 方法获取 Factory。反之，使用内部静态的 `NewInstanceFactory` 对象来创建 Factory 对象。
+- `(ViewModelStoreOwner owner,  Factory factory)`:
+  - 该构造函数使用 owner 对象的 `getViewModelStore()` 方法来获取 `ViewModelStore` 对象，使用传递的 Factory 对象
+- `(ViewModelStore store, Factory factory)`：
+  - 使用 `ViewModelStore` 与 `Factory` 对象的构造函数
 
-其中 NewInstanceFactory类 与 Factory接口 声明如下:
+#### Factory 接口
+
+在 ViewModelProvider中，Factory 主要用于创建 ViewModel，Factory 的声明如下：
 
 ```java
     public interface Factory {
@@ -129,14 +93,18 @@ public class MyActivity extends AppCompatActivity {
          * 通过给定的Class对象创建ViewModel对象
          * <p>
          *
-         * @param modelClass 所需实例的Class对象
-         * @param <T>        ViewModel泛型参数
+         * @param modelClass 所需ViewModel的Class对象
+         * @param <T>        ViewModel的泛型参数
          * @return 新创建的ViewModel对象
          */
         @NonNull
         <T extends ViewModel> T create(@NonNull Class<T> modelClass);
     }
+```
 
+通过实现 Factory 接口，我们可以实现自己想要的工厂以创建所需的 ViewModel。在 Android 中有多个类都实现了该接口，如：`KeyedFactory`，`AndroidViewModelFactory` 等，这里以默认的 `NewInstanceFactory` 为例：
+
+```java
     public static class NewInstanceFactory implements Factory {
 
         private static NewInstanceFactory sInstance;
@@ -153,8 +121,8 @@ public class MyActivity extends AppCompatActivity {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            //noinspection TryWithIdenticalCatches
             try {
+                //默认使用对应ViewModel类无参的构造函数创建实例对象
                 return modelClass.newInstance();
             } catch (InstantiationException e) {
                 throw new RuntimeException("Cannot create an instance of " + modelClass, e);
@@ -165,11 +133,13 @@ public class MyActivity extends AppCompatActivity {
     }
 ```
 
-NewInstanceFactory 中的方法也非常简单，也就是通过 create 方法，获取传入的 ViewModel 的 Class 对象，并通过反射创建该model对象。注意！！！**调用的是其无参的构造函数。**
+默认情况下， `NewInstanceFactory` 会调用 ViewModel 的**无参构造函数**创建实例对象，当然如果你需要在 ViewModel 中使用其他参数，你也可以传递自定义的 Factory。
 
-查看了 NewInstanceFactory 类，我们再把思路聚焦在 ViewModelStore 上，通过观察 ViewModelProvider 的构造函数，我们能发现 ViewModelStore 的内容是通过 `ViewModelStoreOwner` 接口的实现类调用 getViewModelStore()方法获取。我们接着查看 `ViewModelStore` 类:
+#### ViewModelStore
 
->注意：androix 包下的 Activity 与 Fragment 都默认实现了 ViewModelStoreOwner 接口。
+ViewModelStore 内部维护了一个 HashMap，其 key 为 `DEFAULT_KEY` + `ViewModel的Class对象底层类规范名称`，其 value 为对应 ViewModel 对象。每个 Activity 与 Fragment 都对应着一个 ViewModelStore ，用于存储所需的 ViewModel。ViewModelStore 类声明如下所示：
+
+> DEFAULT_KEY 值为："androidx.lifecycle.ViewModelProvider.DefaultKey"
 
 ```java
 public class ViewModelStore {
@@ -204,7 +174,9 @@ public class ViewModelStore {
 }
 ```
 
-观察代码我们发现 `ViewModelStore` 内部其实维护了一个用于存储 ViewModel 的 HashMap, 也就是说 ViewModeStore 只是一个存储的 ViewModel 的容器，那我们再回到 `ViewModelProviders.of(this).get(MyViewModel.class);` 那段代码，最终的 ViewModel 的创建其实是通过 ViewModelProvider 的 get 方法，我们查看该方法实现：
+#### Activity中创建与获取ViewModel流程
+
+ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T> modelClass)`方法（该方法内部通过 ViewModelStore 与 Factory 的配合，创建并保存了所需的ViewModel对象），具体代码如下所示：
 
 ```java
  public <T extends ViewModel> T get(@NonNull Class<T> modelClass) {
@@ -216,12 +188,13 @@ public class ViewModelStore {
     }
 ```
 
-该方法会将传入的 class 对象的**底层类规范名称**作为 `key`，接着并调用含有两个参数的 get 方法，继续跟踪：
+该方法内部会调用另一 get 方法的重载函数：
 
 ```java
  public <T extends ViewModel> T get(@NonNull String key, @NonNull Class<T> modelClass) {
         //👇根据key值从ViewModelStore中取对应的ViewModel
         ViewModel viewModel = mViewModelStore.get(key);
+        //👇判断所传入的Class对象是否是ViewModel的Class类或其子类的对象，如果是，直接返回
         if (modelClass.isInstance(viewModel)) {
             if (mFactory instanceof OnRequeryFactory) {
                 ((OnRequeryFactory) mFactory).onRequery(viewModel);
@@ -233,7 +206,7 @@ public class ViewModelStore {
                 // TODO: log a warning.
             }
         }
-        //👇如果没有获取到已有的 ViewModel 根据传入的Factory创建新的 VideModel
+        //👇如果为null，根据传入的Factory创建新的VideModel
         if (mFactory instanceof KeyedFactory) {
             viewModel = ((KeyedFactory) (mFactory)).create(key, modelClass);
         } else {
@@ -246,30 +219,45 @@ public class ViewModelStore {
 
 ```
 
-观察代码，我们能发现该方法主要是在 ViewModelStore 中判断传入的 ViewModel 是否存在，如果存在，则直接返回。反之，根据传入的Facory的create方法，创建ViewModel，并将创建好的 ViewModel 放入 ViewModelStore中。
+在该方法中，会在 ViewModelStore 中根据传入的 key 获取并保存 ViewModel。其具体逻辑如下：
 
-那么结合所有的流程，我们能得到下图：
+- 根据 key 值从 ViewModelStore 中取对应的 ViewModel。
+- 判断所传入的 Class 对象是否是 ViewModel 的 Class 类或其子类的对象，如果是，直接返回。（当 `Object.isInstance(class)` 接受的参数为 `null` 时，该方法会返回 false）
+- 如果获取的 ViewModel 为 null，会根据传入的 Factory 对象创建新的 VideModel，并将创建好的 ViewModel 放入 ViewModelStore中。
+
+结合所有的流程，我们能得到 Activity 中创建与获取 ViewModel 的整体流程：
 
 ![Activity下ViewModel的创建过程.png](https://upload-images.jianshu.io/upload_images/2824145-fecc9582d2892c82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### ViewModel 如何做到不会因为配置改变而销毁
 
-我们都知道 ViewModel 不会因为 Activity 的配置发生改变而销毁，也就是如下所示：
+我们都知道 ViewModel 不会因为 Activity 的配置发生改变而销毁，ViewModel 作用域如下所示：
 
 ![viewmodel-lifecycle.png](https://upload-images.jianshu.io/upload_images/2824145-10c47be88330a248.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 观察上图，我相信小伙伴们肯定有如下疑惑：
 
-- 当 Activity 因为配置发生改变时，会重新创建一个新的Activity。那老的Activity中的ViewModel是如何传递给新的Activity的呢？
+- 当 Activity 因配置发生改变时，系统会重新创建一个新的 Activity 。那老的 Activity中的 ViewModel 是如何传递给新的 Activity 的呢？
 - ViewModel 又是如何感知配置是否改变，进而判断是否销毁的呢？
 
-那下面我们就着手来解决这些问题吧
+要解决如上问题，我们需要了解 Android 中数据恢复的方式以及 Activity 生命周期中 ViewModel 实际处理流程。
 
+#### 数据恢复
 
-#### 恢复数据的几种方式
+在 Android 系统中，需要数据恢复有如下两种场景：
 
-资源相关的配置发生改变导致Activity被杀死并重新创建时
-资源内存不足导致低优先及的Activity被杀死
+- 场景1：资源相关的配置发生改变导致 Activity 被杀死并重新创建时。
+- 场景2：资源内存不足导致低优先级的 Activity 被杀死。
+
+针对上述场景，分别对应三种数据恢复的方式。
+
+>对应场景1，不考虑在清单文件中配置 `android:configChanges` 的特殊情况。
+
+#### 使用 onSaveInstanceState 与 onRestoreInstanceState
+
+#### 使用 Fragment 的 setRetainInstance
+
+#### 使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
 
 ViewModel是一个可感知生命周期的组件，这意味着因为Activity配置发生改变的是后，我们会重新创建Fragment与Activity,那之前的数据是怎么保存的呢。
 
