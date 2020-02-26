@@ -10,11 +10,11 @@ categories:
 
 [ViewModel](https://developer.android.google.cn/topic/libraries/architecture/viewmodel) 作为 [Jetpack](https://developer.android.google.cn/jetpack) 中的明星组件，相信大家都对其有一定的了解。在 Google 的官方介绍中也详细的罗列了 ViewModel 的优点，如：
 
-1. 可以提供和管理UI界面数据。(将加载数据与数据恢复从Activity or Fragment中解耦)
+1. 可以提供和管理UI界面数据。(将加载数据与数据恢复从 Activity or Fragment中解耦)
 2. 可感知生命周期的组件。
 3. 不会因配置改变而销毁。
-4. 可以配合LiveData使用。
-5. 多个Fragment可以共享同一ViewModel
+4. 可以配合 LiveData 使用。
+5. 多个 Fragment 可以共享同一 ViewModel。
 6. 等等等....
 
 你也可以通过下列两个视频，更为详细的了解 ViewModel：
@@ -27,7 +27,7 @@ categories:
 - ViewModel 与 Activity 的绑定过程
 - 常见的数据恢复的方式
 - ViewModel 在 Activity 中不会因配置改变而销毁的原理及流程。
-- ViewModel 如何与 OnSaveInstanceState 配合使用。
+- ViewModel 为何与 OnSaveInstanceState 配合使用。
 - ViewModel 在 Fragment 中不会因配置改变而销毁的原理及流程。
 - ViewModel 如何做到共享的。
 - ViewModel 中使用网络请求时需要注意的事项。
@@ -44,7 +44,7 @@ categories:
 
 >在谷歌的最新代码中，不推荐使用 `ViweModelProviders(注意是有s的呦)` ，而是直接使用  `ViewModelProvider` 的构造函数来创建 `ViewModelProvider` 对象。
 
-通过使用 `ViewModelProviders` 类的 `of（）` 方法，我们会得到一个 `ViewModelProvider` 对象。如下代码所示：
+通过使用 `ViewModelProviders` 类的 `of()` 方法，我们会得到一个 `ViewModelProvider` 对象。如下代码所示：
 
 ```java
    public static ViewModelProvider of(@NonNull FragmentActivity activity) {
@@ -188,7 +188,7 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
     }
 ```
 
-该方法内部会调用另一 get 方法的重载函数：
+该方法内部会调用 `get(String key, Class<T> modelClass)` 方法：
 
 ```java
  public <T extends ViewModel> T get(@NonNull String key, @NonNull Class<T> modelClass) {
@@ -237,7 +237,7 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 
 观察上图，我相信小伙伴们肯定有如下疑惑：
 
-- 当 Activity 因配置发生改变时，系统会重新创建一个新的 Activity 。那老的 Activity中的 ViewModel 是如何传递给新的 Activity 的呢？
+- 当 Activity 因配置发生改变时，系统会重新创建一个新的 Activity 。那老的 Activity 中的 ViewModel 是如何传递给新的 Activity 的呢？
 - ViewModel 又是如何感知配置是否改变，进而判断是否销毁的呢？
 
 要解决如上问题，我们需要了解 Android 中数据恢复的方式以及 Activity 生命周期中 ViewModel 实际处理流程。
@@ -246,62 +246,108 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 
 在 Android 系统中，需要数据恢复有如下两种场景：
 
-- 场景1：资源相关的配置发生改变导致 Activity 被杀死并重新创建时。
-- 场景2：资源内存不足导致低优先级的 Activity 被杀死。
+- 场景1：资源相关的配置发生改变导致 Activity 被杀死并重新创建。
+- 场景2：资源内存不足导致低优先级的 Activity 被杀死，当内存恢复时，Activity 又被重建。
 
-针对上述场景，分别对应三种数据恢复的方式。
+针对上述场景，分别对应三种不同的数据恢复方式。
 
 >对应场景1，不考虑在清单文件中配置 `android:configChanges` 的特殊情况。
 
-#### 使用 onSaveInstanceState 与 onRestoreInstanceState
-
-#### 使用 Fragment 的 setRetainInstance
-
-#### 使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
-
-ViewModel是一个可感知生命周期的组件，这意味着因为Activity配置发生改变的是后，我们会重新创建Fragment与Activity,那之前的数据是怎么保存的呢。
-
-用户期望 Activity 的界面状态在整个配置变更（例如旋转或切换到多窗口模式）期间保持不变。然而，发生此类配置变更时，系统会默认销毁 Activity，从而消除存储在 Activity 实例中的所有界面状态。同样，如果用户暂时从您的应用切换到其他应用，并在稍后返回您的应用，他们也希望界面状态保持不变。但是，当用户离开应用且您的 Activity 停止时，系统可能会销毁您应用的进程。
-
-当 Activity 因系统限制遭到销毁时，您应组合使用 ViewModel、onSaveInstanceState() 和/或本地存储来保留用户的界面瞬态。如要详细了解用户期望与系统行为，以及如何在系统启动的 Activity 和进程遭到终止后最大程度地保留复杂的界面状态数据，请参阅保存界面状态。
-
-此部分将概述实例状态的定义，以及如何实现 onSaveInstance() 方法，该方法是对 Activity 本身的回调。如果界面数据简单且轻量，例如原始数据类型或简单对象（比如 String），则您可以单独使用 onSaveInstanceState() 使界面状态在配置更改和系统启动的进程遭到终止时保持不变。但在大多数情况下，您应使用 ViewModel 和 onSaveInstanceState()（如保存界面状态中所述），因为 onSaveInstanceState() 会产生序列化或反序列化费用。
-
-
-
-当 Activity 配置发生改变且走 onDestory 方法时，是不会清除所有的 ViewModel的，我们都知道在 Activity 配置发生改变时（比如选择屏幕），并且没有在清单文件中配置 `android:configChanges` 时，系统会杀死老的Activity并创建新的Activity。那现在有一个问题了，既然是新的 Activity，那老的Activity 中的 ViewModel 是如何传递给新的 Activity 呢？
-
-> 在清单文件中配置 `android:configChanges` 参数，可以设置 Activity 在对应配置发生改变时，不会被重新创建，取而代之的是系统将调用 Activity 的 `onConfigurationChanged()` 方法。
-
-https://developer.android.google.cn/topic/libraries/architecture/saving-states.html
-
 ##### 使用 onSaveInstanceState 与 onRestoreInstanceState
 
-一个数据列表，如果保证在配置发生改变的时候，不会重复的加载数据呢？
+使用 onSaveInstanceState 与 onRestoreInstanceState 方法，能处理 Activity 因配置发生改变及进程被杀死时数据的恢复。当你的界面数据简单且轻量时，例如原始数据类型或简单对象（比如 String)，则我们可以采用该方式。如果你需要恢复的数据较为复杂，那你应该考虑使用 `ViewModle + onSaveInstanceState()` (为什么要配合使用，会在下文进行讲解)，因为使用 onSaveInstanceState() 会导致序列化或反序列化，而这，有一定的时间消耗。
 
-这个数据的恢复和我们界面的数据恢复是不一样的。界面数据的保存，系统的工作流程是这样的。首先Activity会调用
-`onSaveInstanceState`去保存数据，然后Activity会委托Window去保存数据，接着Window在委托它上面的顶级容去保存数据。顶层容器是一个ViewGroup，最后顶层容器再去通知它的子元素来保存数据。
+onSaveInstanceState() 更为详细的介绍以及使用，可参考官方文档：
 
-- 重写configChange，让Activity不重复调用加载数据方法
-- 根据生命周期，冲走一次逻辑。缺点重复加载。
-- 重写`onSaveInstanceState`与`onRestoreInstanceState`这两个方法。但是存储的数据大小有限制。
-
-应用的某个 Activity 中可能包含用户列表。因配置更改而重新创建 Activity 后，新 Activity 必须重新提取用户列表。对于简单的数据，Activity 可以使用 onSaveInstanceState() 方法从 onCreate() 中的捆绑包恢复其数据，但此方法仅适合可以序列化再反序列化的少量数据，而不适合数量可能较大的数据，如用户列表或位图。
-
-可能让用户重新请求网络数据，或者重新查询数据库。
-
-
-用户期望 Activity 的界面状态在整个配置变更（例如旋转或切换到多窗口模式）期间保持不变。然而，发生此类配置变更时，系统会默认销毁 Activity，从而消除存储在 Activity 实例中的所有界面状态。同样，如果用户暂时从您的应用切换到其他应用，并在稍后返回您的应用，他们也希望界面状态保持不变。但是，当用户离开应用且您的 Activity 停止时，系统可能会销毁您应用的进程。
-
-当 Activity 因系统限制遭到销毁时，您应组合使用 ViewModel、onSaveInstanceState() 和/或本地存储来保留用户的界面瞬态。如要详细了解用户期望与系统行为，以及如何在系统启动的 Activity 和进程遭到终止后最大程度地保留复杂的界面状态数据，请参阅保存界面状态。
-
-此部分将概述实例状态的定义，以及如何实现 onSaveInstance() 方法，该方法是对 Activity 本身的回调。如果界面数据简单且轻量，例如原始数据类型或简单对象（比如 String），则您可以单独使用 onSaveInstanceState() 使界面状态在配置更改和系统启动的进程遭到终止时保持不变。但在大多数情况下，您应使用 ViewModel 和 onSaveInstanceState()（如保存界面状态中所述），因为 onSaveInstanceState() 会产生序列化或反序列化费用。
+- [使用 onSaveInstanceState() 保存简单轻量的界面状态](https://developer.android.google.cn/guide/components/activities/activity-lifecycle.html#%E4%BD%BF%E7%94%A8-onsaveinstancestate-%E4%BF%9D%E5%AD%98%E7%AE%80%E5%8D%95%E8%BD%BB%E9%87%8F%E7%9A%84%E7%95%8C%E9%9D%A2%E7%8A%B6%E6%80%81)
+- [使用保存的实例状态恢复 Activity 界面状态](https://developer.android.google.cn/guide/components/activities/activity-lifecycle.html#%E4%BD%BF%E7%94%A8%E4%BF%9D%E5%AD%98%E7%9A%84%E5%AE%9E%E4%BE%8B%E7%8A%B6%E6%80%81%E6%81%A2%E5%A4%8D-activity-%E7%95%8C%E9%9D%A2%E7%8A%B6%E6%80%81)
 
 ##### 使用 Fragment 的 setRetainInstance
 
-https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-changes.html
+当配置发生改变时，Fragment 会随着宿主 Activity 销毁与重建，当我们调用 Fragment 中的 `setRetainInstance(true)` 方法时，系统允许 Fragment 绕开销毁-重建的过程。使用该方法，将会发送信号给系统，让 Activity 重建时，保留 Fragment 的实例。需要注意的是：
 
-###  使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
+- 使用该方法后，不会调用 Fragment 的 `onDestory()` 方法，但仍然会调用 `onDetach()` 方法
+- 使用该方法后，不会调用 Fragment 的 `onCreate(Bundle)` 方法。因为 Fragment 没有被重建。
+- 使用该方法后，Fragment 的 `onAttach(Activity)` 与 `onActivityCreated(Bundle)` 方法仍然会被调用。
+
+以下示例代码展示了如何在配置发生改变时，保留 Fragment 实例，并进行数据的恢复。
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    private SaveFragment mSaveFragment;
+
+    public static final String TAG_SAVE_FRAGMENT = "save_fragment";
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        FragmentManager fm = getSupportFragmentManager();
+        mSaveFragment = (SaveFragment) fm.findFragmentByTag(TAG_SAVE_FRAGMENT);
+
+        // fragment 不为空，是因为配置发生改变，Fragment 被重建
+        if (mSaveFragment == null) {
+            mSaveFragment = SaveFragment.newInstance();
+            fm.beginTransaction().add(mSaveFragment, TAG_SAVE_FRAGMENT).commit();
+        }
+
+        //获取保存的数据
+        int saveData = mSaveFragment.getSaveData();
+    }
+}
+```
+
+Fragment ：
+
+```java
+public class SaveFragment extends Fragment {
+
+    private int saveData;
+
+    public static SaveFragment newInstance() {
+        Bundle args = new Bundle();
+        SaveFragment fragment = new SaveFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //保存当前Fragment实例
+        setRetainInstance(true);
+        saveData = 1010;//通过网络请求或查询数据库，赋值需要保存的数据
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    public int getSaveData() {
+        return saveData;
+    }
+}
+```
+
+>关于 Fragment 的 setRetainInstance 更多用法与注意事项，可以参看这篇文章
+[Handling Configuration Changes with Fragments](https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-changes.html)
+
+##### 使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
+
+内存保存及磁盘保存及序列化。
+
+#### ViewModel的恢复方式
+
+笔者是基于 SDK 版本 27 ，Lifecycle 版本 1.1.1 分析的。需要注意的是系统在 SDK 27 之前是通过一个不可见的 Fragment ，将 setRetainInstance() 设置为 true 进行处理的。笔者不再做过多分析，感兴趣的可自行研究。如分析有误，还多请指正。猜测是因为维护Frament栈。关于栈又又很多坑，所以Google又迁移回来了。
 
 ```java
     public ViewModelStore getViewModelStore() {
@@ -406,11 +452,9 @@ https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-ch
     }
 ```
 
-
-
-
 #### ViewModel需要配合 OnSaveInstanceState 来使用
 
+为了应对之前我们讲的上述两种场景的数据恢复。使用ViewModel在配置发生改变的时候不用再去请求网络或加载数据库，举一个搜索的例子。
 
 要获取 user，我们的 ViewModel 需要访问 Fragment 参数。我们可以通过 Fragment 传递它们，或者更好的办法是使用 SavedState 模块，我们可以让 ViewModel 直接读取参数：
 
@@ -585,7 +629,6 @@ Fragment 下的 getViewModelStore() 实现：
 
 ViewModel 和已保存实例状态均不是长期存储解决方案，因此不能替代本地存储空间，例如数据库。您只应该使用这些机制来暂时存储瞬时界面状态，对于其他应用数据，应使用持久性存储空间。请参阅应用架构指南，详细了解如何充分利用本地存储空间长期保留您的应用模型数据（例如在重启设备后）。
 
- 
 #### 使用注意事项
 
 不需要传入Context,会导致内存泄漏
@@ -596,7 +639,7 @@ ViewModel不可以替代OnSaveInstanceState.（https://developer.android.google.
 如果我们的应用需要大量的数据，那么推荐创建一个Repository类作为唯一的数据层入口
 同时我们也要注意不要重蹈Activity的覆辙，避免在ViewModel内中实现更多的职责，创建一个Presenter类来处理UI界面数据。
 
-### authodisposeViewModel
+### AuthodisposeViewModel
 
 在ViewModel进行销毁的时候，如果我们在ViewModel仍然进行网络请求，
 当您使用RxJava时，架构组件ViewModel的一个常见用例是您订阅ViewModel本身中的数据流。这对于提出正在运行的网络请求是有益的。由于您正在ViewModel中订阅，请求仍将完成。然后使用LiveData或类似BehaviorRelay的东西将ViewModel链接到视图。在这种情况下，您将在ViewModel中使用CompositeDisposable并在ViewModel的onCleared中调用dispose来处理一次性文件。
