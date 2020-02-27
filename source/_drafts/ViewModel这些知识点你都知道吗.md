@@ -264,7 +264,7 @@ onSaveInstanceState() 更为详细的介绍以及使用，可参考官方文档�
 
 ##### 使用 Fragment 的 setRetainInstance
 
-当配置发生改变时，Fragment 会随着宿主 Activity 销毁与重建，当我们调用 Fragment 中的 `setRetainInstance(true)` 方法时，系统允许 Fragment 绕开销毁-重建的过程。使用该方法，将会发送信号给系统，让 Activity 重建时，保留 Fragment 的实例。需要注意的是：
+当配置发生改变时，Fragment 会随着宿主 Activity 销毁与重建，当我们调用 Fragment 中的 `setRetainInstance(true)` 方法时，系统允许 Fragment 绕开`销毁-重建`的过程。使用该方法，将会发送信号给系统，让 Activity 重建时，保留 Fragment 的实例。需要注意的是：
 
 - 使用该方法后，不会调用 Fragment 的 `onDestory()` 方法，但仍然会调用 `onDetach()` 方法
 - 使用该方法后，不会调用 Fragment 的 `onCreate(Bundle)` 方法。因为 Fragment 没有被重建。
@@ -341,13 +341,62 @@ public class SaveFragment extends Fragment {
 >关于 Fragment 的 setRetainInstance 更多用法与注意事项，可以参看这篇文章
 [Handling Configuration Changes with Fragments](https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-changes.html)
 
-##### 使用 getLastNonConfigurationInstance 与 onRetainNonConfigurationInstance
+##### 使用onRetainNonConfigurationInstance 与 getLastNonConfigurationInstance
 
-内存保存及磁盘保存及序列化。
+在 Activity 中提供了 `onRetainNonConfigurationInstance` 方法，用于处理配置发生改变时数据的保存。随后在重新创建的 Activity 中调用 `getLastNonConfigurationInstance` 获取上次保存的数据。我们不能直接重写上述方法，如果想在 Activity 中自定义想要恢复的数据，需要我们调用上述两个方法内部的 `Object onRetainCustomNonConfigurationInstance()` 与 `Object getLastCustomNonConfigurationInstance()` 方法。
 
-#### ViewModel的恢复方式
+以下代码展示了，在 Actiity 中恢复自定义的数据：
 
-笔者是基于 SDK 版本 27 ，Lifecycle 版本 1.1.1 分析的。需要注意的是系统在 SDK 27 之前是通过一个不可见的 Fragment ，将 setRetainInstance() 设置为 true 进行处理的。笔者不再做过多分析，感兴趣的可自行研究。如分析有误，还多请指正。猜测是因为维护Frament栈。关于栈又又很多坑，所以Google又迁移回来了。
+```java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        String name = (String) getLastCustomNonConfigurationInstance();
+        if (!TextUtils.isEmpty(name)) {
+            //获取恢复后的数据，执行相应操作
+        }
+    }
+
+//你可以可以在onStart中,获取恢复的数据
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        String name = (String) getLastCustomNonConfigurationInstance();
+//        if (!TextUtils.isEmpty(name)) {
+//        }
+//    }
+
+    @Nullable
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return "AndyJennifer";
+    }  
+}
+```
+
+注意：
+
+- `onRetainNonConfigurationInstance` 方法，系统调用时机介于 `onStop - onDestory 之间`
+- `getLastNonConfigurationInstance` 方法可在 onCreate 与 onStart 方法中调用
+
+在 Android 3.0 后，官方推荐使用 `Fragment#setRetainInstance(true)` 的方式进行数据的恢复。之所以推荐这种方式，个人猜测是为了降低 Activity 的冗余，将数据恢复的任务从 Activity 抽离出来，这更符合单一职责的设计模式。
+
+#### ViewModel的数据恢复
+
+了解了常见的数据恢复模式，还记得我们之前的疑惑吗? 那ViewModel更倾向于恢复场景，及采用的数据恢复方式呢。
+
+总结一下，两个内存，一个满足进程的恢复，ViewModel 对数据的恢复更倾向于 配置发生改变。
+
+那为什么不使用 `Fragment#setRetainInstance(true)` 的方式恢复数据呢？
+
+猜测是因为 Fragment#setRetainInstance(true)` 因为Fragment的某种坑，或者考虑到程序的扩展性某种原因，导致了最新的ViewModel代码没有这种方式。
+
+> 需要注意的是系统在 SDK 27 之前是通过一个不可见的 Fragment `Fragment#setRetainInstance(true)` 的方式恢复数据。
+
+猜测是因为维护Frament栈。关于栈又又很多坑，所以Google又迁移回来了。
 
 ```java
     public ViewModelStore getViewModelStore() {
@@ -478,7 +527,6 @@ public class SaveFragment extends Fragment {
 ```
 
 ### ViewModel与Fragment的绑定过程
-
 
 #### FragmentManager栈视图
 
