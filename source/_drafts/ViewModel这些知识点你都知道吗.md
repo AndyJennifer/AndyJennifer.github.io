@@ -6,7 +6,7 @@ categories:
   - Jetpack
 ---
 
-### 前言
+## 前言
 
 [ViewModel](https://developer.android.google.cn/topic/libraries/architecture/viewmodel) 作为 [Jetpack](https://developer.android.google.cn/jetpack) 中的明星组件，相信大家都对其有一定的了解。在 Google 的官方介绍中也详细的罗列了 ViewModel 的优点，如：
 
@@ -22,19 +22,17 @@ categories:
 - [ViewMode男生讲解版](https://v.qq.com/x/page/t0763s9ma8o.html)
 - [ViewMode女生讲解版](https://v.qq.com/x/page/m0605c1sejh.html)
 
-在本篇文章中，不会讲解 ViewModel 的使用方式及使用 ViewModel 的原因，而是着重于讲解 ViewModel 的原理及额外注意事项。通过阅读本篇文章你能了解到：
+在本篇文章中，不会讲解 ViewModel 的使用方式及使用 ViewModel 的原因，而是着重于讲解 ViewModel 的原理。通过阅读本篇文章你能了解到：
 
-- ViewModel 与 Activity 的绑定过程
-- 常见的数据恢复的方式
-- ViewModel 在 Activity 中不会因配置改变而销毁的原理及流程。
-- ViewModel 为何与 OnSaveInstanceState 配合使用。
-- ViewModel 在 Fragment 中不会因配置改变而销毁的原理及流程。
-- ViewModel 如何做到共享的。
-- ViewModel 中使用网络请求时需要注意的事项。
+- ViewModel 在 Activity 中的绑定过程。
+- ViewModel 在 Activity 中不会因配置改变而销毁的原理。
+- ViewModel 在 Fragment 中的绑定过程。
+- ViewModel 在 Fragment 中不会因配置改变而销毁的原理。
+- ViewMode 能在 Fragment 中共享的原理。
   
 希望通过该篇文章，大家能对 ViewModel 有更深入的了解。
 
-### ViewModel 与 Activity 的绑定过程
+## ViewModel 与 Activity 的绑定过程
 
 一般情况下，使用 `ViewModel`，我们一般会先声明自己的 ViewModel，并在 Activity 中的 `onCreate` 方法中使用 `ViewModelProviders` 来创建 ViewModel。 如下代码所示：
 
@@ -83,7 +81,7 @@ ViewModelProvider 类需要我们传递 `ViewModelStore` 与 `Factory` 对象。
 - `(ViewModelStore store, Factory factory)`：
   - 使用 `ViewModelStore` 与 `Factory` 对象的构造函数
 
-#### Factory 接口
+### Factory 接口介绍
 
 在 ViewModelProvider中，Factory 主要用于创建 ViewModel，Factory 的声明如下：
 
@@ -135,9 +133,9 @@ ViewModelProvider 类需要我们传递 `ViewModelStore` 与 `Factory` 对象。
 
 默认情况下， `NewInstanceFactory` 会调用 ViewModel 的**无参构造函数**创建实例对象，当然如果你需要在 ViewModel 中使用其他参数，你也可以传递自定义的 Factory。
 
-#### ViewModelStore
+### ViewModelStore 介绍
 
-ViewModelStore 内部维护了一个 HashMap，其 key 为 `DEFAULT_KEY` + `ViewModel的Class对象底层类规范名称`，其 value 为对应 ViewModel 对象。每个 Activity 与 Fragment 都对应着一个 ViewModelStore ，用于存储所需的 ViewModel。ViewModelStore 类声明如下所示：
+ViewModelStore 内部维护了一个 HashMap，其 key 为 `DEFAULT_KEY` + `ViewModel的Class对象底层类规范名称`，其 value 为对应 ViewModel 对象。每个 Activity 与 Fragment 都对应着一个 `ViewModelStore` ，用于存储所需的 ViewModel。ViewModelStore 类声明如下所示：
 
 > DEFAULT_KEY 值为："androidx.lifecycle.ViewModelProvider.DefaultKey"
 
@@ -174,7 +172,7 @@ public class ViewModelStore {
 }
 ```
 
-#### Activity中创建与获取ViewModel流程
+### Activity 中创建与获取 ViewModel 流程
 
 ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T> modelClass)`方法（该方法内部通过 ViewModelStore 与 Factory 的配合，创建并保存了所需的ViewModel对象），具体代码如下所示：
 
@@ -222,14 +220,14 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 在该方法中，会在 ViewModelStore 中根据传入的 key 获取并保存 ViewModel。其具体逻辑如下：
 
 - 根据 key 值从 ViewModelStore 中取对应的 ViewModel。
-- 判断所传入的 Class 对象是否是 ViewModel 的 Class 类或其子类的对象，如果是，直接返回。（当 `Object.isInstance(class)` 接受的参数为 `null` 时，该方法会返回 false）
+- 判断所传入的 Class 对象是否是 ViewModel 的 Class 类或其子类的对象，如果是，直接返回。（当 `Object.isInstance(class)` 接受的参数为 `null` 时，该方法会返回  `false` ）
 - 如果获取的 ViewModel 为 null，会根据传入的 Factory 对象创建新的 VideModel，并将创建好的 ViewModel 放入 ViewModelStore中。
 
 结合所有的流程，我们能得到 Activity 中创建与获取 ViewModel 的整体流程：
 
 ![Activity下ViewModel的创建过程.png](https://upload-images.jianshu.io/upload_images/2824145-fecc9582d2892c82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### ViewModel 如何做到不会因为配置改变而销毁
+## ViewModel 在 Activity 中不会因配置改变而销毁的原理
 
 我们都知道 ViewModel 不会因为 Activity 的配置发生改变而销毁，ViewModel 作用域如下所示：
 
@@ -242,7 +240,7 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 
 要解决如上问题，我们需要了解 Android 中数据恢复的方式以及 Activity 生命周期中 ViewModel 实际处理流程。
 
-#### 数据恢复
+### 数据恢复的常见方式
 
 在 Android 系统中，需要数据恢复有如下两种场景：
 
@@ -253,7 +251,7 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 
 >对应场景1，不考虑在清单文件中配置 `android:configChanges` 的特殊情况。
 
-##### 使用 onSaveInstanceState 与 onRestoreInstanceState
+#### 使用 onSaveInstanceState 与 onRestoreInstanceState
 
 使用 onSaveInstanceState 与 onRestoreInstanceState 方法，能处理 Activity 因配置发生改变及进程被杀死时数据的恢复。当你的界面数据简单且轻量时，例如原始数据类型或简单对象（比如 String)，则我们可以采用该方式。如果你需要恢复的数据较为复杂，那你应该考虑使用 `ViewModle + onSaveInstanceState()` (为什么要配合使用，会在下文进行讲解)，因为使用 onSaveInstanceState() 会导致序列化或反序列化，而这，有一定的时间消耗。
 
@@ -262,12 +260,12 @@ onSaveInstanceState() 更为详细的介绍以及使用，可参考官方文档�
 - [使用 onSaveInstanceState() 保存简单轻量的界面状态](https://developer.android.google.cn/guide/components/activities/activity-lifecycle.html#%E4%BD%BF%E7%94%A8-onsaveinstancestate-%E4%BF%9D%E5%AD%98%E7%AE%80%E5%8D%95%E8%BD%BB%E9%87%8F%E7%9A%84%E7%95%8C%E9%9D%A2%E7%8A%B6%E6%80%81)
 - [使用保存的实例状态恢复 Activity 界面状态](https://developer.android.google.cn/guide/components/activities/activity-lifecycle.html#%E4%BD%BF%E7%94%A8%E4%BF%9D%E5%AD%98%E7%9A%84%E5%AE%9E%E4%BE%8B%E7%8A%B6%E6%80%81%E6%81%A2%E5%A4%8D-activity-%E7%95%8C%E9%9D%A2%E7%8A%B6%E6%80%81)
 
-##### 使用 Fragment 的 setRetainInstance
+#### 使用 Fragment 的 setRetainInstance
 
 当配置发生改变时，Fragment 会随着宿主 Activity 销毁与重建，当我们调用 Fragment 中的 `setRetainInstance(true)` 方法时，系统允许 Fragment 绕开`销毁-重建`的过程。使用该方法，将会发送信号给系统，让 Activity 重建时，保留 Fragment 的实例。需要注意的是：
 
-- 使用该方法后，不会调用 Fragment 的 `onDestory()` 方法，但仍然会调用 `onDetach()` 方法
-- 使用该方法后，不会调用 Fragment 的 `onCreate(Bundle)` 方法。因为 Fragment 没有被重建。
+- 使用该方法后，**不会**调用 Fragment 的 `onDestory()` 方法，但仍然会调用 `onDetach()` 方法
+- 使用该方法后，**不会**调用 Fragment 的 `onCreate(Bundle)` 方法。因为 Fragment 没有被重建。
 - 使用该方法后，Fragment 的 `onAttach(Activity)` 与 `onActivityCreated(Bundle)` 方法仍然会被调用。
 
 以下示例代码展示了如何在配置发生改变时，保留 Fragment 实例，并进行数据的恢复。
@@ -338,12 +336,17 @@ public class SaveFragment extends Fragment {
 }
 ```
 
->关于 Fragment 的 setRetainInstance 更多用法与注意事项，可以参看这篇文章
+>关于 Fragment 的 setRetainInstance 更多用法与注意事项，可以参看文章
 [Handling Configuration Changes with Fragments](https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-changes.html)
 
-##### 使用onRetainNonConfigurationInstance 与 getLastNonConfigurationInstance
+#### 使用 onRetainNonConfigurationInstance 与 getLastNonConfigurationInstance
 
-在 Activity 中提供了 `onRetainNonConfigurationInstance` 方法，用于处理配置发生改变时数据的保存。随后在重新创建的 Activity 中调用 `getLastNonConfigurationInstance` 获取上次保存的数据。我们不能直接重写上述方法，如果想在 Activity 中自定义想要恢复的数据，需要我们调用上述两个方法内部的 `Object onRetainCustomNonConfigurationInstance()` 与 `Object getLastCustomNonConfigurationInstance()` 方法。
+在 Activity 中提供了 `onRetainNonConfigurationInstance` 方法，用于处理配置发生改变时数据的保存。随后在重新创建的 Activity 中调用 `getLastNonConfigurationInstance` 获取上次保存的数据。我们不能直接重写上述方法，如果想在 Activity 中自定义想要恢复的数据，需要我们调用上述两个方法的内部方法：
+
+- `onRetainCustomNonConfigurationInstance()`
+- `getLastCustomNonConfigurationInstance()`
+
+>注意：`onRetainNonConfigurationInstance` 方法系统调用时机介于 `onStop - onDestory` 之间，`getLastNonConfigurationInstance` 方法可在 `onCreate` 与 `onStart` 方法中调用。
 
 以下代码展示了，在 Actiity 中恢复自定义的数据：
 
@@ -377,55 +380,23 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-注意：
-
-- `onRetainNonConfigurationInstance` 方法，系统调用时机介于 `onStop - onDestory 之间`
-- `getLastNonConfigurationInstance` 方法可在 onCreate 与 onStart 方法中调用
-
 在 Android 3.0 后，官方推荐使用 `Fragment#setRetainInstance(true)` 的方式进行数据的恢复。之所以推荐这种方式，个人猜测是为了降低 Activity 的冗余，将数据恢复的任务从 Activity 抽离出来，这更符合单一职责的设计模式。
 
-#### ViewModel的数据恢复
+#### 几种数据恢复方式的总结
 
-了解了常见的数据恢复模式，还记得我们之前的疑惑吗? 那ViewModel更倾向于恢复场景，及采用的数据恢复方式呢。
+通过了解数据恢复的几种方式，我们能得到如下对比图：
 
-总结一下，两个内存，一个满足进程的恢复，ViewModel 对数据的恢复更倾向于 配置发生改变。
+![数据恢复对比.png](https://upload-images.jianshu.io/upload_images/2824145-964abf91880376c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-那为什么不使用 `Fragment#setRetainInstance(true)` 的方式恢复数据呢？
+### ViewModel 的恢复
 
-猜测是因为 Fragment#setRetainInstance(true)` 因为Fragment的某种坑，或者考虑到程序的扩展性某种原因，导致了最新的ViewModel代码没有这种方式。
+ViewModel 在官方设计之初就倾向于在**配置改变**时进行数据的恢复。考虑到数据恢复时的效率，官方最终采用了 `onRetainNonConfigurationInstance` 的方式来恢复 ViewModel 。
 
-> 需要注意的是系统在 SDK 27 之前是通过一个不可见的 Fragment `Fragment#setRetainInstance(true)` 的方式恢复数据。
+>在 SDK 27 之前，官方一直采用 `Fragment#setRetainInstance(true)` 的方式恢复数据。导致官方修改了其内部实现的原因，猜测是因为 Fragment 的坑，程序的扩展性等其他因素。
 
-猜测是因为维护Frament栈。关于栈又又很多坑，所以Google又迁移回来了。
+知道了 ViewModel 的恢复方式，那现在一起来解决我们之前的疑惑。当 Activity 因配置发生改变时，系统会重新创建一个新的 Activity 。那老的 Activity 中的 ViewModel 是如何传递给新的 Activity ？
 
-```java
-    public ViewModelStore getViewModelStore() {
-        if (getApplication() == null) {
-            throw new IllegalStateException("Your activity is not yet attached to the "
-                    + "Application instance. You can't request ViewModel before onCreate call.");
-        }
-        if (mViewModelStore == null) {
-            NonConfigurationInstances nc =
-                    (NonConfigurationInstances) getLastNonConfigurationInstance();
-            if (nc != null) {
-                // Restore the ViewModelStore from NonConfigurationInstances
-                mViewModelStore = nc.viewModelStore;
-            }
-            if (mViewModelStore == null) {
-                mViewModelStore = new ViewModelStore();
-            }
-        }
-        return mViewModelStore;
-    }
-```
-
-```java
- public Object getLastNonConfigurationInstance() {
-        return mLastNonConfigurationInstances != null
-                ? mLastNonConfigurationInstances.activity : null;
-    }
-
-```
+在 Androidx 中的 Activity 的最新代码中，官方重写了 onRetainNonConfigurationInstance 方法，在该方法中保存了 `ViewModelStore` (ViweModelStore 中存储了 ViewModel )，进而也保存了 ViewModel，具体代码如下所示：
 
 ```java
     public final Object onRetainNonConfigurationInstance() {
@@ -433,8 +404,6 @@ public class MainActivity extends AppCompatActivity {
 
         ViewModelStore viewModelStore = mViewModelStore;
         if (viewModelStore == null) {
-            // No one called getViewModelStore(), so see if there was an existing
-            // ViewModelStore from our last NonConfigurationInstance
             NonConfigurationInstances nc =
                     (NonConfigurationInstances) getLastNonConfigurationInstance();
             if (nc != null) {
@@ -446,6 +415,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+        //将ViewModel存储在 NonConfigurationInstances 对象中
         NonConfigurationInstances nci = new NonConfigurationInstances();
         nci.custom = custom;
         nci.viewModelStore = viewModelStore;
@@ -453,35 +423,38 @@ public class MainActivity extends AppCompatActivity {
     }
 ```
 
-### Activity ViewModel 如何判断是否移除
+当新的 Activity 重新创建，并调用 ViewModelProviders.of(this).get(xxxModel.class) 时，又会在 `getViewModelStore()` 方法中获取老 Activity 保存的 ViewModelStore。那么也就拿到了 ViewModel。具体代码如下所示：
 
-在 androidx.actvity ComponentActivity 中的构造函数
+```java
+    public ViewModelStore getViewModelStore() {
+        if (getApplication() == null) {
+            throw new IllegalStateException("Your activity is not yet attached to the "
+                    + "Application instance. You can't request ViewModel before onCreate call.");
+        }
+        if (mViewModelStore == null) {
+            //👇获取保存的NonConfigurationInstances，
+            NonConfigurationInstances nc =
+                    (NonConfigurationInstances) getLastNonConfigurationInstance();
+            if (nc != null) {
+                //👇从该对象中获取ViewModelStore
+                mViewModelStore = nc.viewModelStore;
+            }
+            if (mViewModelStore == null) {
+                mViewModelStore = new ViewModelStore();
+            }
+        }
+        return mViewModelStore;
+    }
+```
+
+### ViewModel 何时判断是否被移除
+
+ViewModel 最重要的特性就是不会在配置发生改变的时候被移除。其内部实现也非常简单，监听 Activity 声明周期，在 `onDestory` 方法被调用时，判断配置是否改变。如果没有发送改变，则调用 Activity 中的 ViewModelStore 的 `clear()` 方法，清除所有的 ViewModel。具体代码如下所示：
 
 ```java
     public ComponentActivity() {
         Lifecycle lifecycle = getLifecycle();
-        //noinspection ConstantConditions
-        if (lifecycle == null) {
-            throw new IllegalStateException("getLifecycle() returned null in ComponentActivity's "
-                    + "constructor. Please make sure you are lazily constructing your Lifecycle "
-                    + "in the first call to getLifecycle() rather than relying on field "
-                    + "initialization.");
-        }
-        if (Build.VERSION.SDK_INT >= 19) {
-            getLifecycle().addObserver(new LifecycleEventObserver() {
-                @Override
-                public void onStateChanged(@NonNull LifecycleOwner source,
-                        @NonNull Lifecycle.Event event) {
-                    if (event == Lifecycle.Event.ON_STOP) {
-                        Window window = getWindow();
-                        final View decor = window != null ? window.peekDecorView() : null;
-                        if (decor != null) {
-                            decor.cancelPendingInputEvents();
-                        }
-                    }
-                }
-            });
-        }
+        //省略更多....
         getLifecycle().addObserver(new LifecycleEventObserver() {
             @Override
             public void onStateChanged(@NonNull LifecycleOwner source,
@@ -494,74 +467,72 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        if (19 <= SDK_INT && SDK_INT <= 23) {
-            getLifecycle().addObserver(new ImmLeaksCleaner(this));
-        }
     }
 ```
 
-#### ViewModel需要配合 OnSaveInstanceState 来使用
+## ViewModel 在 Fragment 的绑定过程
 
-为了应对之前我们讲的上述两种场景的数据恢复。使用ViewModel在配置发生改变的时候不用再去请求网络或加载数据库，举一个搜索的例子。
+在官方的最新代码实现中，Fragment 中的 ViewModel 与其宿主 Activity 有着密切的联系。要了解 ViewModel 与 Fragment 的绑定过程，我们需要先了解 `FragmentManager` 与 `FragmentManagerViewModel` 相关知识。
 
-要获取 user，我们的 ViewModel 需要访问 Fragment 参数。我们可以通过 Fragment 传递它们，或者更好的办法是使用 SavedState 模块，我们可以让 ViewModel 直接读取参数：
+### FragmentManager 介绍
 
-注意：SavedStateHandle(https://developer.android.google.cn/topic/libraries/architecture/viewmodel-savedstate#kotlin) 允许 ViewModel 访问相关 Fragment 或 Activity 的已保存状态和参数。
-
-```kotlin
-// UserProfileViewModel
-    class UserProfileViewModel(
-       savedStateHandle: SavedStateHandle
-    ) : ViewModel() {
-       val userId : String = savedStateHandle["uid"] ?:
-              throw IllegalArgumentException("missing user id")
-       val user : User = TODO()
-    }
-
-    // UserProfileFragment
-    private val viewModel: UserProfileViewModel by viewModels(
-       factoryProducer = { SavedStateVMFactory(this) }
-       ...
-    )
-```
-
-### ViewModel与Fragment的绑定过程
-
-#### FragmentManager栈视图
-
-每个Fragment及宿主Activity(继承自FragmentActivity)都会在创建是，初始化一个FragmentManager对象，了解Fragment中的ViewModel与Activity的联系的关键，就是理清这些不同阶级的栈视图。
+每个 Fragment 及宿主 Activity (继承自 `FragmentActivity`)都会在创建时，初始化一个 FragmentManager 对象，了解 Fragment 中的 ViewModel 与 Activity 的联系的关键，就是理清这些不同阶级的栈视图。
 
 下面给出一个简要的关系图：
 
 ![FragmentManager栈对应关系.png](https://upload-images.jianshu.io/upload_images/2824145-9d85d056fb02e43c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-- 对于宿主Activity, `getSupportFragmentManager()`获取的 FragmentActivity 的 FragmentManager 对象;
-- 对于 Fragment , `getFragmentManager` 是获取的父 Fragment (如果没有，则是 FragmentActivity )的 FragmentManager 对象，而 `getChildFragmentManager()`是获取自身的 FragmentManager 对象。
+- 对于宿主 Activity ， `getSupportFragmentManager()`获取的是 FragmentActivity 的 FragmentManager 对象;
+- 对于 Fragment ， `getFragmentManager()` 是获取的父 Fragment (如果没有，则是 FragmentActivity )的 FragmentManager 对象，而 `getChildFragmentManager()` 是获取自身的 FragmentManager 对象。
 
+### FragmentManagerViewModel 介绍
 
-### 第一步将 FragmentManagerViewModel 存入 Activity 中的ViewModelStore中
+每个 Fragment 创建时，都会创建一个 FragmentManagerViewModel 对象，在该对象中主要存储其 `子Fragment` 的 ViewModelStore 与 FragmentManagerViewMoel。具体结构如下所示：
 
-在 FragmentActivity 中的onCreate方法中
+![FragmentManagerViewModel.png](https://upload-images.jianshu.io/upload_images/2824145-2595c4fa9ec443d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+在 FragmentManagerViewModel 中：
+
+- mViewModelStore 是类型为 `<String, FragmentManagerViewModel>` 的 HashMap
+- mChildNonConfigs 是类型为 `<String, ViewModelStore>` 的 HashMap
+
+上述两个 Map 对应的 Key 值都为 Fragment 的唯一 `UUID`。该 UUID 会在 Fragment 对象创建时自动生成。也就是每个 Fragment 对应唯一 UUID。
+
+### ViewModel 在 Fragment 绑定具体流程
+
+ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
+
+- 第一步：在宿主 Activity 创建时，默认会在其 `FramgentManager` 中创建一个 FragmentManagerViewModel。同时将生成的 FragmentManagerViewModel 存储在其本身的 ViewModelStore 中。同时使用自身的FragmentManager
+- 第二步：在 Fragment 创建时，从 `宿主Activity` 或 `父Fragment` 中的 `FramgentManager` 中获取对应的 FragmentManagerViewModel，并使用自身的 `ChildFragmentManager` 中 `mNonConfig` 变量进行保存。
+- 第三步：将 Fragment 中所创建的 ViewModel 与其自身的 ViewModelStore 关联 ，并自身的 ViewModelStore 存储在 `mNonConfig` 所指向的 FragmentManaerViewModel 中的 `mViewModelStores` 中。
+
+下面我将结合源码对这三个流程进行详细的介绍。
+
+#### 第一步流程
+
+>在宿主 Activity 创建时，默认会在其 `FramgentManager` 中创建一个 FragmentManagerViewModel。同时将生成的 FragmentManagerViewModel 存储在其本身的 ViewModelStore 中。同时使用自身的FragmentManager
+
+`FragmentActivity` 中的 onCreate 方法：
 
 ```java
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mFragments.attachHost(null /*parent*/);
+    protected void onCreate(@Nullable Bundle savedInstanceState){
+        mFragments.attachHost(null /*parent*/);//👈传入null
         //省略更多...
     }
 ```
 
-注意这里获取的是 Activity 中的 FragmentManager
+> `mFragments` 是 FragmentController，内部通过 FragmentHostCallback 间接控制 FragmentManager。
+
+该方法最终会执行 FragmentActivity 中 FragmentManager 的 `attachController` 方法:
 
 ```java
  void attachController(@NonNull FragmentHostCallback<?> host,
             @NonNull FragmentContainer container, @Nullable final Fragment parent) {
         //省略更多...
-        // Get the FragmentManagerViewModel
         if (parent != null) {
             mNonConfig = parent.mFragmentManager.getChildNonConfig(parent);
         } else if (host instanceof ViewModelStoreOwner) {
-            //👇第一次因为传入的是 Activity 故会走这里
+            //👇走这里
             ViewModelStore viewModelStore = ((ViewModelStoreOwner) host).getViewModelStore();
             mNonConfig = FragmentManagerViewModel.getInstance(viewModelStore);
         } else {
@@ -570,7 +541,27 @@ public class MainActivity extends AppCompatActivity {
     }
 ```
 
-因为这里传入的activity，也就是我们拿取的是Activity中的 ViewModelStore，接着当我们在Activity添加Fragment时,默认会走Fragment的声明周期，也就是如下代码所示：
+因为传入的 `parent = null`，且 Activity 默认实现了 `ViewModelStoreOwner` 接口，所以会获取 Activity 中的 ViewModelStore，接着调用 FragmentManagerViewModel 的 `getInstance()` 方法:
+
+```java
+    static FragmentManagerViewModel getInstance(ViewModelStore viewModelStore) {
+        ViewModelProvider viewModelProvider = new ViewModelProvider(viewModelStore,
+                FACTORY);
+        return viewModelProvider.get(FragmentManagerViewModel.class);
+    }
+```
+
+在该方法中，会创建 FragmentManagerViewModel，并将其添加到 Activity 中的 ViewModelStore 中。
+
+整体流程如下所示：
+
+![第一步流程.png](https://upload-images.jianshu.io/upload_images/2824145-ba55a5f0003eafbd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 第二步流程
+
+>在 Fragment 创建时，从 `宿主Activity` 或 `父Fragment` 中的 `FramgentManager` 中获取对应的 FragmentManagerViewModel，并使用自身的 `ChildFragmentManager` 中 `mNonConfig` 变量进行保存。
+
+当 Fragment 与 Activity 关联时，在其 performAttach() 方法中
 
 ```java
     void performAttach() {
@@ -594,14 +585,14 @@ public class MainActivity extends AppCompatActivity {
     }
 ```
 
-我们继续回到 FragmentManager 中的 attachController
+该方法会调用 Fragment 中 `ChildFragmentManager` 中的 attachController 方法如下所：
 
 ```java
  void attachController(@NonNull FragmentHostCallback<?> host,
             @NonNull FragmentContainer container, @Nullable final Fragment parent) {
         //省略更多...
-        // Get the FragmentManagerViewModel
-        if (parent != null) {//👈因为parent为this,故我们会获取当前Fragment中的FragmentManager
+        if (parent != null) {
+            //👆因为parent为this,故我们会获取Activity的FragmentManager
             mNonConfig = parent.mFragmentManager.getChildNonConfig(parent);
         } else if (host instanceof ViewModelStoreOwner) {
             ViewModelStore viewModelStore = ((ViewModelStoreOwner) host).getViewModelStore();
@@ -612,14 +603,23 @@ public class MainActivity extends AppCompatActivity {
     }
 ```
 
->需要注意的是，当我们Fragment是其他Fragment的子Fragment时，获取的fragmentManager是，childFragmentManager,否则只Activity的FragmentManager。
+>注意，当 Fragment 是 `子Fragment` 时，parent.fragmentManager 的值为父Fragment 的 FragmentManager，否则为 Activity 中的 FragmentManager。
 
-在 Activity 中的 FragmentManager中的 FragmentManagerViewModel 中创建 Fragment 的 FragmentManagerViewModel
+假设当前 Fragment 获取的是 Activity 中的 FragmentManager，我们继续查看getChildNonConfig 方法：
 
 ```java
-  FragmentManagerViewModel getChildNonConfig(@NonNull Fragment f) {
+  private FragmentManagerViewModel getChildNonConfig(Fragment f){
+        return mNonConfig.getChildNonConfig(f);
+    }
+```
+
+`mNonConfig` 本身为 FragmentManagerViewModel，我们继续跟踪：
+
+```java
+  FragmentManagerViewModel getChildNonConfig(Fragment f){
         FragmentManagerViewModel childNonConfig = mChildNonConfigs.get(f.mWho);
         if (childNonConfig == null) {
+            //👇创建Fragment的FragmentViewmodel
             childNonConfig = new FragmentManagerViewModel(mStateAutomaticallySaved);
             mChildNonConfigs.put(f.mWho, childNonConfig);
         }
@@ -627,25 +627,17 @@ public class MainActivity extends AppCompatActivity {
     }
 ```
 
-### 第二步创建 ViewModelStore 并存入对应FragmentManager 中的FragmentManaerViewModel中的mViewModelStores中
+在该方法中，会从 Activity 中的 FragmentManagerViewModel 中的 `mChildNonConfigs` 中获取 Fragment 的 FragmentManagerViewModel，如果有，直接返回。反之，存入`mChildNonConfigs` 中。
 
-在Fragment创建ViewModel时，会为每个Fragment创建单独的ViewModelStore
+整体流程如下所示：
 
-```java
- public static ViewModelProvider of(@NonNull Fragment fragment) {
-        return new ViewModelProvider(fragment);
-    }
-```
+![第二步流程.png](https://upload-images.jianshu.io/upload_images/2824145-36b76d3f9f1dc342.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-```java
- public ViewModelProvider(@NonNull ViewModelStoreOwner owner) {
-        this(owner.getViewModelStore(), owner instanceof HasDefaultViewModelProviderFactory
-                ? ((HasDefaultViewModelProviderFactory) owner).getDefaultViewModelProviderFactory()
-                : NewInstanceFactory.getInstance());
-    }
-```
+#### 第三步流程
 
-Fragment 下的 getViewModelStore() 实现：
+>将 Fragment 中所创建的 ViewModel 与其自身的 ViewModelStore 关联 ，并自身的 ViewModelStore 存储在 `mNonConfig` 所指向的 FragmentManaerViewModel 中的 `mViewModelStores` 中。
+
+在 Fragment 中，ViewModelStore 是通过其 FragmentManager 创建与获取的。具体代码如所示：
 
 ```java
     public ViewModelStore getViewModelStore() {
@@ -656,7 +648,17 @@ Fragment 下的 getViewModelStore() 实现：
     }
 ```
 
-当 Fragment 的父Fragment 为空时，mFragmentManager 的值为宿主 Activity 的FragmentManager，反之，为父Fragment的FragmentManager，最终都会走到 FragmentManagerViewModel 中的 getViewModelStore 方法。
+>注意，当 Fragment 是 `子Fragment` 时，`mFragmentManager` 的值为 父Fragment 的 FragmentManager，否则为 Activity 中的 FragmentManager。
+
+假设当前 Fragment 获取的是 Activity 中的 FragmentManager，查看 getChildNonConfig 方法：
+
+```java
+  ViewModelStore getViewModelStore(@NonNull Fragment f) {
+        return mNonConfig.getViewModelStore(f);
+    }
+```
+
+`mNonConfig` 本身为 FragmentManagerViewModel，最终会走 getViewModelStore 方法。
 
 ```java
   ViewModelStore getViewModelStore(@NonNull Fragment f) {
@@ -668,37 +670,73 @@ Fragment 下的 getViewModelStore() 实现：
         }
         return viewModelStore;
     }
-     String mWho = UUID.randomUUID().toString();//这里的id获取
 ```
 
-### ViewModel 使用范围
+在该方法中最终会将 Fragment 的 ViewModelStore 存入 FragmentManagerViewModel 中的 `mViewModelStores` 集合中。
 
-只要您的应用安装在用户的设备上，持续性本地存储（例如数据库或共享偏好设置）就会继续存在（除非用户清除应用的数据）。虽然此类本地存储空间会在系统启动的活动和应用进程终止后继续存在，但由于必须从本地存储空间读取到内存，因此检索成本高昂。这种持久性本地存储通常已经属于应用架构的一部分，用于存储您打开和关闭 Activity 时不想丢失的所有数据。
+那么 Fragment 的创建并获取 ViewModel 的流程如下所示：
 
-ViewModel 和已保存实例状态均不是长期存储解决方案，因此不能替代本地存储空间，例如数据库。您只应该使用这些机制来暂时存储瞬时界面状态，对于其他应用数据，应使用持久性存储空间。请参阅应用架构指南，详细了解如何充分利用本地存储空间长期保留您的应用模型数据（例如在重启设备后）。
+![第三步流程.png](https://upload-images.jianshu.io/upload_images/2824145-f62c68713accb39b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-#### 使用注意事项
+## ViewModel 在 Fragment 中不会因配置改变而销毁的原理
 
-不需要传入Context,会导致内存泄漏
-如果需要传入Context 继承含有ApplicationContext的 AndroidViewModel 
-ViewModel不可以替代OnSaveInstanceState.（https://developer.android.google.cn/topic/libraries/architecture/saving-states）
+## ViewModel 能在 Fragment 中共享的原理
 
+ViewModel 的另一大特性就是能在 Fragment 中共享数据。要知道其中原理，我们先看下面的例子：
 
-如果我们的应用需要大量的数据，那么推荐创建一个Repository类作为唯一的数据层入口
-同时我们也要注意不要重蹈Activity的覆辙，避免在ViewModel内中实现更多的职责，创建一个Presenter类来处理UI界面数据。
+![Activity与Fragment嵌套.png](https://upload-images.jianshu.io/upload_images/2824145-14f6e5170e06f123.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### AuthodisposeViewModel
+在上图中，我们在Activity中 分别添加了 Fragment A、B、C。并在 Fragment C 中有嵌套了 Fragment D、E、F。
 
-在ViewModel进行销毁的时候，如果我们在ViewModel仍然进行网络请求，
-当您使用RxJava时，架构组件ViewModel的一个常见用例是您订阅ViewModel本身中的数据流。这对于提出正在运行的网络请求是有益的。由于您正在ViewModel中订阅，请求仍将完成。然后使用LiveData或类似BehaviorRelay的东西将ViewModel链接到视图。在这种情况下，您将在ViewModel中使用CompositeDisposable并在ViewModel的onCleared中调用dispose来处理一次性文件。
+结合本篇文章所讲解的知识，我们能得到如下结构：
 
-终止viewModel中的网络请求，主要目的就是这个。
+![嵌套下实际结构.jpg](https://upload-images.jianshu.io/upload_images/2824145-b249d46861405b4f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### 最后
+那么假如我们想 Fragment D 获取 Fragment A 中的数据，那么我们只有在 Activity 中的 ViewModelStore 下添加 ViewModel。只有这样，我们才能在不同 Fragment 中获取相同的数据。这也是为什么在 Fragment 中使用共享的 ViewModel 时，我们要在调用ViewModelProvider.of() 创建 ViewModel 时 需要传入 `getActivity()`的原因
 
-https://juejin.im/post/5a17d49b6fb9a0451704e229
+具体例子如下所示：
 
-- ViewMode1 https://v.qq.com/x/page/t0763s9ma8o.html
-- ViewMode2  https://v.qq.com/x/page/m0605c1sejh.html
-FragmentManager :https://www.jianshu.com/p/fd71d65f0ec6
+```java
+    public class SharedViewModel extends ViewModel {
+        private final MutableLiveData<Item> selected = new MutableLiveData<Item>();
+
+        public void select(Item item) {
+            selected.setValue(item);
+        }
+
+        public LiveData<Item> getSelected() {
+            return selected;
+        }
+    }
+
+    public class FragmentA extends Fragment {
+        private SharedViewModel model;
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            //👇传入的是宿主Activity
+            model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+            itemSelector.setOnClickListener(item -> {
+                model.select(item);
+            });
+        }
+    }
+
+    public class FragmentD extends Fragment {
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+             //👇传入的是宿主Activity
+            SharedViewModel model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+            model.getSelected().observe(this, { item ->
+               // Update the UI.
+            });
+        }
+    }
+```
+
+## 最后
+
 站在巨人的肩膀上，才能看的更远~
+
+- [ViewModel：持久化、onSaveInstanceState()、UI 状态恢复和 Loader](https://juejin.im/post/5a17d49b6fb9a0451704e229)
+- [Fragment全解析系列（二）：正确的使用姿势](https://www.jianshu.com/p/fd71d65f0ec6)
+- [在 Fragment 之间共享数据](https://developer.android.google.cn/topic/libraries/architecture/viewmodel#sharing)
