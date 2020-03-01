@@ -4,7 +4,11 @@ tags:
   - ViewModel
 categories:
   - Jetpack
+date: 2020-03-01 23:15:49
 ---
+
+
+{% asset_img 成都.JPG 成都 %}
 
 ## 前言
 
@@ -34,7 +38,7 @@ categories:
 
 ## ViewModel 与 Activity 的绑定过程
 
-一般情况下，使用 `ViewModel`，我们一般会先声明自己的 ViewModel，并在 Activity 中的 `onCreate` 方法中使用 `ViewModelProviders` 来创建 ViewModel。 如下代码所示：
+一般情况下使用 `ViewModel`，我们一般会先声明自己的 ViewModel，并在 Activity 中的 `onCreate` 方法中使用 `ViewModelProviders` 来创建 ViewModel。 如下代码所示：
 
 ```java
  MyViewModel model = ViewModelProviders.of(this).get(MyViewModel.class);
@@ -83,7 +87,7 @@ ViewModelProvider 类需要我们传递 `ViewModelStore` 与 `Factory` 对象。
 
 ### Factory 接口介绍
 
-在 ViewModelProvider中，Factory 主要用于创建 ViewModel，Factory 的声明如下：
+在 ViewModelProvider 中，`Factory` 主要用于创建 ViewModel，Factory 的声明如下：
 
 ```java
     public interface Factory {
@@ -100,7 +104,7 @@ ViewModelProvider 类需要我们传递 `ViewModelStore` 与 `Factory` 对象。
     }
 ```
 
-通过实现 Factory 接口，我们可以实现自己想要的工厂以创建所需的 ViewModel。在 Android 中有多个类都实现了该接口，如：`KeyedFactory`，`AndroidViewModelFactory` 等，这里以默认的 `NewInstanceFactory` 为例：
+通过实现 Factory 接口，我们可以实现自己想要的工厂以创建所需的 ViewModel。在 Android 中有多个类都实现了该接口`(如 KeyedFactory, AndroidViewModelFactory)`，这里以默认的 `NewInstanceFactory` 为例：
 
 ```java
     public static class NewInstanceFactory implements Factory {
@@ -135,7 +139,7 @@ ViewModelProvider 类需要我们传递 `ViewModelStore` 与 `Factory` 对象。
 
 ### ViewModelStore 介绍
 
-ViewModelStore 内部维护了一个 HashMap，其 key 为 `DEFAULT_KEY` + `ViewModel的Class对象底层类规范名称`，其 value 为对应 ViewModel 对象。每个 Activity 与 Fragment 都对应着一个 `ViewModelStore` ，用于存储所需的 ViewModel。ViewModelStore 类声明如下所示：
+ViewModelStore 内部维护了一个 HashMap，其 key 为 `DEFAULT_KEY` + `ViewModel的Class对象底层类规范名称`，其 value 为对应 `ViewModel` 对象。每个 Activity 与 Fragment 都对应着一个 `ViewModelStore` ，用于存储所需的 ViewModel。ViewModelStore 类声明如下所示：
 
 > DEFAULT_KEY 值为："androidx.lifecycle.ViewModelProvider.DefaultKey"
 
@@ -174,7 +178,7 @@ public class ViewModelStore {
 
 ### Activity 中创建与获取 ViewModel 流程
 
-ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T> modelClass)`方法（该方法内部通过 ViewModelStore 与 Factory 的配合，创建并保存了所需的ViewModel对象），具体代码如下所示：
+ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T> modelClass)`方法（该方法内部通过 ViewModelStore 与 Factory 的配合，创建并保存了所需的 ViewModel 对象），具体代码如下所示：
 
 ```java
  public <T extends ViewModel> T get(@NonNull Class<T> modelClass) {
@@ -220,18 +224,18 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 在该方法中，会在 ViewModelStore 中根据传入的 key 获取并保存 ViewModel。其具体逻辑如下：
 
 - 根据 key 值从 ViewModelStore 中取对应的 ViewModel。
-- 判断所传入的 Class 对象是否是 ViewModel 的 Class 类或其子类的对象，如果是，直接返回。（当 `Object.isInstance(class)` 接受的参数为 `null` 时，该方法会返回  `false` ）
+- 判断所传入的 Class 对象是否是 ViewModel 的 Class 类或其子类的对象，如果是，直接返回。(当 `Object.isInstance(class)` 接受的参数为 `null` 时，该方法会返回  `false`）
 - 如果获取的 ViewModel 为 null，会根据传入的 Factory 对象创建新的 VideModel，并将创建好的 ViewModel 放入 ViewModelStore中。
 
-结合所有的流程，我们能得到 Activity 中创建与获取 ViewModel 的整体流程：
+ Activity 中创建与获取 ViewModel 的整体流程如下所示：
 
-![Activity下ViewModel的创建过程.png](https://upload-images.jianshu.io/upload_images/2824145-fecc9582d2892c82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Activity下ViewModel的创建过程.png Activity下ViewModel的创建过程 %}
 
 ## ViewModel 在 Activity 中不会因配置改变而销毁的原理
 
 我们都知道 ViewModel 不会因为 Activity 的配置发生改变而销毁，ViewModel 作用域如下所示：
 
-![viewmodel-lifecycle.png](https://upload-images.jianshu.io/upload_images/2824145-10c47be88330a248.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img viewmodel-lifecycle.png viewmodel-lifecycle %}
 
 观察上图，我相信小伙伴们肯定有如下疑惑：
 
@@ -245,7 +249,7 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 在 Android 系统中，需要数据恢复有如下两种场景：
 
 - 场景1：资源相关的配置发生改变导致 Activity 被杀死并重新创建。
-- 场景2：资源内存不足导致低优先级的 Activity 被杀死，当内存恢复时，Activity 又被重建。
+- 场景2：资源内存不足导致低优先级的 Activity 被杀死。
 
 针对上述场景，分别对应三种不同的数据恢复方式。
 
@@ -253,7 +257,7 @@ ViewModel 最终的创建与获取，需要 ViewProvider 类调用 `get(Class<T>
 
 #### 使用 onSaveInstanceState 与 onRestoreInstanceState
 
-使用 onSaveInstanceState 与 onRestoreInstanceState 方法，能处理 Activity 因配置发生改变及进程被杀死时数据的恢复。当你的界面数据简单且轻量时，例如原始数据类型或简单对象（比如 String)，则我们可以采用该方式。如果你需要恢复的数据较为复杂，那你应该考虑使用 `ViewModle + onSaveInstanceState()` (为什么要配合使用，会在下文进行讲解)，因为使用 onSaveInstanceState() 会导致序列化或反序列化，而这，有一定的时间消耗。
+使用 onSaveInstanceState 与 onRestoreInstanceState 方法，能处理场景1与场景2的情况。当你的界面数据简单且轻量时，例如原始数据类型或简单对象（比如 String)，则我们可以采用该方式。如果你需要恢复的数据较为复杂，那你应该考虑使用 `ViewModle + onSaveInstanceState()` (为什么要配合使用，会在下文进行讲解)，因为使用 onSaveInstanceState() 会导致序列化或反序列化，而这，有一定的时间消耗。
 
 onSaveInstanceState() 更为详细的介绍以及使用，可参考官方文档：
 
@@ -310,7 +314,6 @@ public class SaveFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -386,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
 通过了解数据恢复的几种方式，我们能得到如下对比图：
 
-![数据恢复对比.png](https://upload-images.jianshu.io/upload_images/2824145-964abf91880376c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 数据恢复对比.png 数据恢复对比 %}
 
 ### ViewModel 的恢复
 
@@ -480,16 +483,16 @@ ViewModel 最重要的特性就是不会在配置发生改变的时候被移除�
 
 下面给出一个简要的关系图：
 
-![FragmentManager栈对应关系.png](https://upload-images.jianshu.io/upload_images/2824145-9d85d056fb02e43c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img FragmentManager栈对应关系.png FragmentManager栈对应关系 %}
 
 - 对于宿主 Activity ， `getSupportFragmentManager()`获取的是 FragmentActivity 的 FragmentManager 对象;
 - 对于 Fragment ， `getFragmentManager()` 是获取的父 Fragment (如果没有，则是 FragmentActivity )的 FragmentManager 对象，而 `getChildFragmentManager()` 是获取自身的 FragmentManager 对象。
 
 ### FragmentManagerViewModel 介绍
 
-每个 Fragment 创建时，都会创建一个 FragmentManagerViewModel 对象，在该对象中主要存储其 `子Fragment` 的 ViewModelStore 与 FragmentManagerViewMoel。具体结构如下所示：
+每个 Fragment 创建时，都会创建一个 `FragmentManagerViewModel` 对象，在该对象中主要存储其 `子Fragment` 的 ViewModelStore 与 FragmentManagerViewMoel。具体结构如下所示：
 
-![FragmentManagerViewModel.png](https://upload-images.jianshu.io/upload_images/2824145-2595c4fa9ec443d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img FragmentManagerViewModel.png FragmentManagerViewModel %}
 
 在 FragmentManagerViewModel 中：
 
@@ -555,7 +558,7 @@ ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
 
 整体流程如下所示：
 
-![第一步流程.png](https://upload-images.jianshu.io/upload_images/2824145-ba55a5f0003eafbd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 第一步流程.png 第一步流程 %}
 
 #### 第二步流程
 
@@ -605,7 +608,7 @@ ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
 
 >注意，当 Fragment 是 `子Fragment` 时，parent.fragmentManager 的值为父Fragment 的 FragmentManager，否则为 Activity 中的 FragmentManager。
 
-假设当前 Fragment 获取的是 Activity 中的 FragmentManager，我们继续查看getChildNonConfig 方法：
+继续追踪 FragmentManager 下的 getChildNonConfig 方法：
 
 ```java
   private FragmentManagerViewModel getChildNonConfig(Fragment f){
@@ -619,7 +622,7 @@ ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
   FragmentManagerViewModel getChildNonConfig(Fragment f){
         FragmentManagerViewModel childNonConfig = mChildNonConfigs.get(f.mWho);
         if (childNonConfig == null) {
-            //👇创建Fragment的FragmentViewmodel
+            //👇创建Fragment的FragmentManagerViewModel
             childNonConfig = new FragmentManagerViewModel(mStateAutomaticallySaved);
             mChildNonConfigs.put(f.mWho, childNonConfig);
         }
@@ -631,11 +634,11 @@ ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
 
 整体流程如下所示：
 
-![第二步流程.png](https://upload-images.jianshu.io/upload_images/2824145-36b76d3f9f1dc342.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 第二步流程.png 第二步流程 %}
 
 #### 第三步流程
 
->将 Fragment 中所创建的 ViewModel 与其自身的 ViewModelStore 关联 ，并自身的 ViewModelStore 存储在 `mNonConfig` 所指向的 FragmentManaerViewModel 中的 `mViewModelStores` 中。
+>将 Fragment 中所创建的 ViewModel 与其自身的 ViewModelStore 关联 ，并将该 ViewModelStore 存储在 `mNonConfig` 所指向的 FragmentManaerViewModel 中的 `mViewModelStores` 中。
 
 在 Fragment 中，ViewModelStore 是通过其 FragmentManager 创建与获取的。具体代码如所示：
 
@@ -650,7 +653,7 @@ ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
 
 >注意，当 Fragment 是 `子Fragment` 时，`mFragmentManager` 的值为 父Fragment 的 FragmentManager，否则为 Activity 中的 FragmentManager。
 
-假设当前 Fragment 获取的是 Activity 中的 FragmentManager，查看 getChildNonConfig 方法：
+继续追踪 FragmentManager 下的 getChildNonConfig 方法：
 
 ```java
   ViewModelStore getViewModelStore(@NonNull Fragment f) {
@@ -676,23 +679,29 @@ ViewModel 与 Fragment 的绑定流程比较复杂，主要分为三个流程：
 
 那么 Fragment 的创建并获取 ViewModel 的流程如下所示：
 
-![第三步流程.png](https://upload-images.jianshu.io/upload_images/2824145-f62c68713accb39b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 第三步流程.png 第三步流程 %}
 
 ## ViewModel 在 Fragment 中不会因配置改变而销毁的原理
 
-## ViewModel 能在 Fragment 中共享的原理
+ViewModel 在 Fragment 中不会因配置改变而销毁的原因其实是因为其声明的 ViewModel 是存储在 FragmentManagerViewModel 中的，而 FragmentManagerViewModel 是存储在宿主 Activity 中的 ViewModelStore 中，又因 Activity 中 ViewModelStore不会因配置改变而销毁，故 Fragment 中 ViewModel 也不会因配置改变而销毁。
 
-ViewModel 的另一大特性就是能在 Fragment 中共享数据。要知道其中原理，我们先看下面的例子：
+当然在 Google 的代码实现中，也能很好的处理 Fragment 嵌套的情况。在下述例子中展示了 Fragment 嵌套下 ViewModel 存储的情况。
 
-![Activity与Fragment嵌套.png](https://upload-images.jianshu.io/upload_images/2824145-14f6e5170e06f123.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img Activity与Fragment嵌套.png Activity与Fragment嵌套 %}
 
-在上图中，我们在Activity中 分别添加了 Fragment A、B、C。并在 Fragment C 中有嵌套了 Fragment D、E、F。
+在上图中，我们在 Activity 中 分别添加了 Fragment A、B、C。并在 Fragment C 中有嵌套了 Fragment D、E、F。
 
 结合本篇文章所讲解的知识，我们能得到如下结构：
 
-![嵌套下实际结构.jpg](https://upload-images.jianshu.io/upload_images/2824145-b249d46861405b4f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+{% asset_img 嵌套下实际结构.jpg 嵌套下实际结构 %}
 
-那么假如我们想 Fragment D 获取 Fragment A 中的数据，那么我们只有在 Activity 中的 ViewModelStore 下添加 ViewModel。只有这样，我们才能在不同 Fragment 中获取相同的数据。这也是为什么在 Fragment 中使用共享的 ViewModel 时，我们要在调用ViewModelProvider.of() 创建 ViewModel 时 需要传入 `getActivity()`的原因
+从上图中，我们可以看出，当存在嵌套 Fragment 的情况下，ViewModel 总是以**线性**的结构进行存储。在这种结构下，就能让宿主 Activity 良好的统一管理与所有的 ViewModel。
+
+## ViewModel 能在 Fragment 中共享的原理
+
+ViewModel 的另一大特性就是能在 Fragment 中共享数据。还是以上图例：
+
+假如我们想 Fragment D 获取 Fragment A 中的数据，那么我们只有在 Activity 中的 ViewModelStore 下添加 ViewModel。只有这样，我们才能在不同 Fragment 中获取相同的数据。这也是为什么在 Fragment 中使用共享的 ViewModel 时，我们要在调用ViewModelProvider.of() 创建 ViewModel 时需要传入 `getActivity()` 的原因。
 
 具体例子如下所示：
 
@@ -740,3 +749,4 @@ ViewModel 的另一大特性就是能在 Fragment 中共享数据。要知道其
 - [ViewModel：持久化、onSaveInstanceState()、UI 状态恢复和 Loader](https://juejin.im/post/5a17d49b6fb9a0451704e229)
 - [Fragment全解析系列（二）：正确的使用姿势](https://www.jianshu.com/p/fd71d65f0ec6)
 - [在 Fragment 之间共享数据](https://developer.android.google.cn/topic/libraries/architecture/viewmodel#sharing)
+- [Handling Configuration Changes with Fragments](https://www.androiddesignpatterns.com/2013/04/retaining-objects-across-config-changes.html)
