@@ -356,15 +356,26 @@ T[] = new Int[];
 类型擦除确保不会为参数化类型创建新类；因此，泛型不会产生运行时开销。当然这个是本文下节要描述的内容。
 
 
+|术语|中文含义|举例|
+|:--:|:--:|:--:|
+|Parameterized type|参数化类型|`List<String>`|
+|Actual type parameter|实际类型参数|`String`|
+|Formal type parameter|形式类型参数|`E`|
+|Unbounded wildcard type|无限制通配符类型|`List<?>`|
+|Raw type|原始类型|`List`|条目 26|
+|Bounded type parameter|限制类型参数|`<E extends Number>`|
+|Recursive type bound|递归类型限制|`<T extends Comparable<T>>`|
+|Bounded wildcard type|限制通配符类型|`List<? extends Number>`|
+|Generic method|泛型方法|`static <E> List<E> asList(E[] a)`|
+|Type token|类型令牌|`String.class`|
+
 ## 最后
 
 //    https://www.cnblogs.com/leyangzi/p/11379525.html
 //    https://juejin.im/post/5d6c6636f265da03c8153a03
 //    http://java.sun.com/docs/books/tutorial/java/generics/erasure.html
+https://segmentfault.com/a/1190000014120746#item-4-7
 
 《Think in Java》
 《Effective Java》
-站在巨人的肩膀上，才能看的更远~
-### 最后
-
 站在巨人的肩膀上，才能看的更远~
