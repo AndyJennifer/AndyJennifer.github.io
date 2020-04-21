@@ -109,7 +109,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/04/22/为什么Java的泛型要用擦除实现/版本说明.png">
 <meta property="og:image" content="http://yoursite.com/2020/04/22/为什么Java的泛型要用擦除实现/抽烟分析.jpg">
 <meta property="og:image" content="http://yoursite.com/2020/04/22/为什么Java的泛型要用擦除实现/编译器替换.png">
-<meta property="og:updated_time" content="2020-04-21T16:42:43.136Z">
+<meta property="og:updated_time" content="2020-04-21T17:12:10.969Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为什么Java的泛型要用擦除实现">
 <meta name="twitter:description" content="前言在 Java 中的 泛型，常常被称之为 伪泛型，究其原因是因为在实际代码的运行中，将实际类型参数的信息擦除掉了(Type Erasure)。那是什么原因导致了 Java 做出这种妥协的呢？下面我就带着大家以 Java 语言设计者的角度，带领大家一起了解这里面的辛酸过往。 什么是真泛型在了解 Java “伪泛型” 之前，我们先简单讲一讲”真泛型”与“伪泛型”的区别。  真泛型：泛型中的类型是真">
@@ -402,7 +402,7 @@
                 
               
 
-              <time title="创建时间：2020-04-22 00:26:33 / 修改时间：00:42:43" itemprop="dateCreated datePublished" datetime="2020-04-22T00:26:33+08:00">2020-04-22</time>
+              <time title="创建时间：2020-04-22 00:26:33 / 修改时间：01:12:10" itemprop="dateCreated datePublished" datetime="2020-04-22T00:26:33+08:00">2020-04-22</time>
             
 
             
@@ -551,6 +551,9 @@
 <li>java.util.generic.<code>ArrayList&lt;T&gt;</code> 👈 Java5 新增泛型版本</li>
 </ul>
 <p>即使以上的事情都做了，Java 也并不能采用这种方案。试想如下情况：</p>
+<blockquote>
+<p>Java  5 中引入了泛型</p>
+</blockquote>
 <img src="/2020/04/22/为什么Java的泛型要用擦除实现/如何兼容老版本.png" title="如何兼容老版本">
 <p>如果我有一个 <code>Java 5 之下</code> 的 A 项目与第三方的 B1 lib，其中有 A 项目中引用了 B1 lib 中的某个 ArrayList ，随着 Java 的升级，B1 lib 的开发者为了使用 Java 新特性–泛型，故将代码迁移到了 Java 5，并重新生成了 B2 lib，那么 A 项目要兼容 B2 lib，那么 A 项目中必须升级到 Java 5 并同时修改代码。</p>
 <p>A 项目为什么必须要升级 Java 5？</p>
