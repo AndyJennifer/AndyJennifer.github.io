@@ -362,7 +362,7 @@ T[] = new Int[];
 |Actual type parameter|实际类型参数|`String`|
 |Formal type parameter|形式类型参数|`E`|
 |Unbounded wildcard type|无限制通配符类型|`List<?>`|
-|Raw type|原始类型|`List`|条目 26|
+|Raw type|原始类型|`List`|
 |Bounded type parameter|限制类型参数|`<E extends Number>`|
 |Recursive type bound|递归类型限制|`<T extends Comparable<T>>`|
 |Bounded wildcard type|限制通配符类型|`List<? extends Number>`|
