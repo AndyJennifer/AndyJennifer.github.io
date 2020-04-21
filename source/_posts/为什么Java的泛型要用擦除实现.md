@@ -74,6 +74,8 @@ class Factory<T> {
 
 即使以上的事情都做了，Java 也并不能采用这种方案。试想如下情况：
 
+>Java  5 中引入了泛型
+
 {% asset_img 如何兼容老版本.png 如何兼容老版本 %}
 
 如果我有一个 `Java 5 之下` 的 A 项目与第三方的 B1 lib，其中有 A 项目中引用了 B1 lib 中的某个 ArrayList ，随着 Java 的升级，B1 lib 的开发者为了使用 Java 新特性--泛型，故将代码迁移到了 Java 5，并重新生成了 B2 lib，那么 A 项目要兼容 B2 lib，那么 A 项目中必须升级到 Java 5 并同时修改代码。
