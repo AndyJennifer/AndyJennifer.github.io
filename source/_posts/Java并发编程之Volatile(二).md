@@ -86,8 +86,8 @@ public class Demo {
 从上表我们可以看出
 
 - 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序，这个规则确保voatile写之前的操作不会被编译器排序到volatile之后。
-- 当第二个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。
-- 当第一个操作是volatile写，第二个操作如果是volatile读时，不能进行重排序。
+- 当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。
+- 当第一个操作是volatile写，第二个操作如果是volatile读或volatile写时，不能进行重排序。
 
 #### volatile防止重排序原理
 
