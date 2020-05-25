@@ -258,9 +258,9 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
 
 在该方法中，主要阻塞线程的方法是通过LockSupport（在后面的文章中会具体介绍）的park来阻塞当前线程。
 
-##### 从同步队列中移除，同时唤醒下一节点
+##### 取消状态获取，同时唤醒下一节点
 
-通过对独占式获取同步状态的理解，我们知道 acquireQueued(final Node node, int arg)方法中最终会执行`finally`语句块中的代码，来判断当前线程是否已经中断。如果中断，则通过那么`cancelAcquire(Node node)方法将该线程从同步队列中移除`。那么接下来我们来看看该方法的具体实现。具体代码如下：
+通过对独占式获取同步状态的理解，我们知道 acquireQueued(final Node node, int arg)方法中最终会执行`finally`语句块中的代码，来判断当前线程是否已经中断。如果中断，则通过 `cancelAcquire(Node node)` 方法将取消该线程的状态获取并唤醒下一个线程节点。那么接下来我们来看看该方法的具体实现。具体代码如下：
 
 ```java
    private void cancelAcquire(Node node) {
@@ -316,7 +316,7 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
 {% asset_img 重新设置尾节点Tail.png 重新设置尾节点Tail %}
 
 - （5）如果当前中断节点`不是尾节点`,且当前中断的节点的上一个节点的状态，为SINGAL或者即将为SINGAL，那么将该当前中断节点移除。
-- （6）如果（5）条件不满足，那么调用`unparkSuccessor(Node node)`方法将该节点移除，同时唤醒下一个节点。具体代码如下：
+- （6）如果（5）条件不满足，那么会调用 `unparkSuccessor(Node node)` 方法唤醒下一个节点。具体代码如下：
   
 ```java
     private void unparkSuccessor(Node node) {
