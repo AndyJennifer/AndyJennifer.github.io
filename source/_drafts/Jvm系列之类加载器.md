@@ -11,13 +11,15 @@ Jvm系列之了类加载器（六）
 ### 类加载器分类
 
 #### 从java虚拟机的角度
+
 - 启动类加载器（Bootstrap ClassLoader) 虚拟机的一部分
 - 其他类加载器，由Java语言实现，独立于虚拟机的外部，并且全部继承抽象类java.lang.ClassLoader。
 
 #### 从开发人员的角度来看
+
 - 启动类加载器
-1. 作用：负责将存放在<JAVA_HOME>\lib 目录中的，或者被-Xbootclasspath参数所指定的路径中的，且是能被虚拟机识别的（按照文件名进行识别）的类库加载到虚拟机内存中，
-2. 特点：启动类加载器，无法被Java程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委托给引导类加载器，那直接使用null代替即可。
+  1. 作用：负责将存放在<JAVA_HOME>\lib 目录中的，或者被-Xbootclasspath参数所指定的路径中的，且是能被虚拟机识别的（按照文件名进行识别）的类库加载到虚拟机内存中，
+  2. 特点：启动类加载器，无法被Java程序直接引用，用户在编写自定义类加载器时，如果需要把加载请求委托给引导类加载器，那直接使用null代替即可。
 
 - 扩展类加载器
 作用：负责将存放在<JAVA_HOME>\lib\ext 目录中的或者java.ext.dirs系统变量中路径中所有的类库
@@ -26,16 +28,17 @@ Jvm系列之了类加载器（六）
 作用：负责加载用户类路径（ClassPath)所指定的类库
 
 ### 双亲委派模型
+
 工作过程：当一个类加载器收到了类加载的请求，它首先不会自己尝试去加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此。因此所有的加载请求最终都应该传送到顶层的启动类加载器中，只有父类加载器反馈自己无法完成这个加载请求时，子类加载器才会去尝试去加载。
 好处：确定某个对象的唯一性，是需要类加载器确定的，相同类由不同的类加载器加载，是被判断为不同对象的。
-
 
 ### 双亲委派模型的破坏
 
 #### 第一次破坏
+
 双亲委派模型是JDK1.2之后才引入的。而类加载及抽象类ClassLoader在JDK1.0时代就有了。之前的操作是重写loadClass方法。为了向前兼容提供了findClass方法。
 
-```
+```java
  protected Class<?> loadClass(String name, boolean resolve)
         throws ClassNotFoundException
     {
@@ -75,10 +78,12 @@ Jvm系列之了类加载器（六）
     }
 
 ```
+
 #### 第二次破坏
+
 双亲委派模型能很好的解决各个类加载器的基础类的统一问题。但是会出现基础类又要回调用户的代码。所以为了解决这个问题，添加了线程上下文类加载器。这个类加载器可以通过Java.lang.Thread类的setContextClassLoader()方法进行设置，如果创建线程时还未设置，它将从父线程中继承一个，如果在应用程序的全局范围内没有设置过的话，那这个类加载器就是应用程序类加载器。也就是说现在父类加载器可以请求子类加载器完成类的加载动作了。
 
-```
+```java
     private void init(ThreadGroup g, Runnable target, String name,
                       long stackSize, AccessControlContext acc) {
         if (name == null) {
@@ -143,7 +148,7 @@ Jvm系列之了类加载器（六）
     }
 ```
 
-```
+```java
  public static ClassLoader getSystemClassLoader() {
         initSystemClassLoader();
         if (scl == null) {
@@ -155,7 +160,9 @@ Jvm系列之了类加载器（六）
         }
         return scl;
     }
+```
 
+```java
     private static synchronized void initSystemClassLoader() {
         if (!sclSet) {
             if (scl != null)
@@ -187,8 +194,7 @@ Jvm系列之了类加载器（六）
     }
 ```
 
-
-```
+```java
    public Launcher() {
         Launcher.ExtClassLoader var1;
         try {
@@ -202,7 +208,7 @@ Jvm系列之了类加载器（六）
         } catch (IOException var9) {
             throw new InternalError("Could not create application class loader", var9);
         }
-
+        //注意这里
         Thread.currentThread().setContextClassLoader(this.loader);
         String var2 = System.getProperty("java.security.manager");
         if (var2 != null) {
@@ -230,16 +236,18 @@ Jvm系列之了类加载器（六）
 
 ```
 
-
-
 #### 第三次破坏
+
 osgi
 
 #### 自定义类加载器
-```
+
+```java
     protected ClassLoader() {
         this(checkCreateClassLoader(), getSystemClassLoader());
     }
 ```
+
 ### 参考
+
 [IBM-深入探讨 Java 类加载器](https://www.ibm.com/developerworks/cn/java/j-lo-classloader/)

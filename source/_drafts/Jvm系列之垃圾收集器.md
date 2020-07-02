@@ -41,10 +41,9 @@ categories:
 使用算法 ：标记-整理算法
 回收区域：虚拟机的老年代
 
-
 ### CMS收集器
 
-特点：CMS(concurrent mark sweep) `单线程`且并行，用户线程和垃圾收集线程同时进行。
+特点：CMS(concurrent mark sweep) `单线程` 且并行，用户线程和垃圾收集线程同时进行。
 具体步骤：
 
 1. 初始标记：找到GC Roots能直接关联到的对象（会暂停用户线程）

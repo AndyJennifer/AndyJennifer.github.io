@@ -20,10 +20,14 @@ categories:
 推荐阅读：
 
 1. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第二章 Java内存区域与内存溢出异常
-1. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第三章 垃圾收集器与内存分配策略
-1. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第六章 类文件结构
-1. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第七章 虚拟机类加载机制
-1. 《Java虚拟机规范 JAVA SE 8版》
+2. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第三章 垃圾收集器与内存分配策略
+3. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第六章 类文件结构
+4. 《深入理解Java虚拟机JVM高级特性及最佳实践》 第七章 虚拟机类加载机制
+5. 《Java虚拟机规范 JAVA SE 8版》
+
+常见问题：
+
+
 
 #### 集合相关
 
@@ -83,19 +87,19 @@ HashMap、Hashtable 与ConcurrentHashMap的联系与区别
 推荐阅读：
 
 1. 《Java并发编程的艺术》第二章 Java并发机制的底层实现原理
-1. 《Java并发编程的艺术》第三章 内存模型
-1. 《Java并发编程的艺术》第五章 Java中的锁
-1. [Java并发编程之Java内存模型](https://juejin.im/post/5ba668b4e51d450e686787cc)
-1. [Java并发编程之Java CAS操作](https://juejin.im/post/5ba66a7ef265da0abb1435ae)
-1. [Java并发编程之Volatile](https://juejin.im/post/5ba66c7be51d450e576703f0)
-1. [Java并发编程之synchronized](https://juejin.im/post/5ba66e42f265da0aa664c19d)
-1. [Java并发编程之锁机制之引导篇](https://juejin.im/post/5bbf040df265da0ac446ccab)
-1. [Java并发编程之锁机制之Lock接口](https://juejin.im/post/5bbf0498f265da0aba70d9a7)
-1. [Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://juejin.im/post/5bbf04d5f265da0ad947f05b)
-1. [Java并发编程之锁机制之LockSupport工具](https://juejin.im/post/5bdc1142e51d45052c6fede7)
-1. [Java并发编程之锁机制之Condition接口](https://juejin.im/post/5be94044f265da61542d27d8)
-1. [Java并发编程之锁机制之重入锁](https://juejin.im/post/5bf791ec51882512d444e3d2)
-1. [Java并发编程之锁机制之读写锁](https://juejin.im/post/5c18da5c5188254caf18a58f)
+2. 《Java并发编程的艺术》第三章 内存模型
+3. 《Java并发编程的艺术》第五章 Java中的锁
+4. [Java并发编程之Java内存模型](https://juejin.im/post/5ba668b4e51d450e686787cc)
+5. [Java并发编程之Java CAS操作](https://juejin.im/post/5ba66a7ef265da0abb1435ae)
+6. [Java并发编程之Volatile](https://juejin.im/post/5ba66c7be51d450e576703f0)
+7. [Java并发编程之synchronized](https://juejin.im/post/5ba66e42f265da0aa664c19d)
+8. [Java并发编程之锁机制之引导篇](https://juejin.im/post/5bbf040df265da0ac446ccab)
+9. [Java并发编程之锁机制之Lock接口](https://juejin.im/post/5bbf0498f265da0aba70d9a7)
+10. [Java并发编程之锁机制之AQS(AbstractQueuedSynchronizer)](https://juejin.im/post/5bbf04d5f265da0ad947f05b)
+11. [Java并发编程之锁机制之LockSupport工具](https://juejin.im/post/5bdc1142e51d45052c6fede7)
+12. [Java并发编程之锁机制之Condition接口](https://juejin.im/post/5be94044f265da61542d27d8)
+13. [Java并发编程之锁机制之重入锁](https://juejin.im/post/5bf791ec51882512d444e3d2)
+14. [Java并发编程之锁机制之读写锁](https://juejin.im/post/5c18da5c5188254caf18a58f)
 
 #### 线程相关
 
