@@ -194,6 +194,8 @@ Jvm系列之了类加载器（六）
     }
 ```
 
+启动 main 方法的那个加载器，跟踪代码找到 Launcher 类，就是 jre 中用于启动入口函数 main 的类，我们在 Launcher 中找到如下代码：
+
 ```java
    public Launcher() {
         Launcher.ExtClassLoader var1;
@@ -235,6 +237,8 @@ Jvm系列之了类加载器（六）
     }
 
 ```
+
+线程中的上下文加载器，默认为应用类加载器
 
 #### 第三次破坏
 
