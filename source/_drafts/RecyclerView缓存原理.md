@@ -11,7 +11,7 @@ categories:
 
 （离屏缓存）[https://mp.weixin.qq.com/s/Qey-3JDdKYG04mo9WeBZ2g]
 
-### 第一次测量
+### 第一次layout
 
 ```java
     @Override
@@ -23,7 +23,7 @@ categories:
     }
 ```
 
-#### 
+#### dispatchLayout
 
 ```java
     void dispatchLayout() {
@@ -46,9 +46,8 @@ categories:
             dispatchLayoutStep2();
         } else if (mAdapterHelper.hasUpdates() || mLayout.getWidth() != getWidth()
                 || mLayout.getHeight() != getHeight()) {
-            // First 2 steps are done in onMeasure but looks like we have to run again due to
-            // changed size.
             mLayout.setExactMeasureSpecsFrom(this);
+            //分发布局的第二个步骤
             dispatchLayoutStep2();
         } else {
             // always make sure we sync them (to ensure mode is exact)
@@ -80,7 +79,7 @@ categories:
         mState.mItemCount = mAdapter.getItemCount();
         mState.mDeletedInvisibleItemCountSincePreviousLayout = 0;
 
-        // 注意，执行布局，这里的mLayout与我们设置的LayoutManager有关，
+        // 👇注意，执行布局，这里的mLayout与我们设置的LayoutManager有关，
         mState.mInPreLayout = false;
         mLayout.onLayoutChildren(mRecycler, mState);
 
@@ -96,14 +95,221 @@ categories:
 
 ```
 
-因为这里的具体布局是与我们设置的layoutManager有关，所以这里以LinearLayoutManager为例。在LinearLayoutManager中的
-onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tryGetViewHolderForPositionByDeadline（）方法。
+因为这里的具体布局是与我们设置的layoutManager有关，所以这里以LinearLayoutManager为例。查看其 onLayoutChildren 方法。
 
-#### 三级缓存或四级缓存
+```java
+  public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        //...省略部分代码
+        if (mAnchorInfo.mLayoutFromEnd) {
+        //...省略部分代码  
+            fill(recycler, mLayoutState, state, false); //👈这里
+        //...省略部分代码
+        } else {
+            //...省略部分代码
+            fill(recycler, mLayoutState, state, false);//👈这里
+            //...省略部分代码
+        }
 
-#### 这里需要画一个三级缓存的图
+         //...省略部分代码
+        layoutForPredictiveAnimations(recycler, state, startOffset, endOffset);
+         //...省略部分代码
+    }
 
-会先从Recycler scrap中获取缓存视图，然后再从cache，然后再从RecycleredViewPool,否则就直接创建
+
+    int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
+            RecyclerView.State state, boolean stopOnFocusable) {
+
+        //...省略部分代码
+        while ((layoutState.mInfinite || remainingSpace > 0) && layoutState.hasMore(state)) {
+            layoutChunkResult.resetInternal();
+            if (RecyclerView.VERBOSE_TRACING) {
+                TraceCompat.beginSection("LLM LayoutChunk");
+            }
+            //👇这里
+            layoutChunk(recycler, state, layoutState, layoutChunkResult);
+            //...省略部分代码
+            if (!layoutChunkResult.mIgnoreConsumed || layoutState.mScrapList != null
+                    || !state.isPreLayout()) {
+                layoutState.mAvailable -= layoutChunkResult.mConsumed;
+                // we keep a separate remaining space because mAvailable is important for recycling
+                //每次循环之后，豆浆remainingSpace减去已消费的size
+                remainingSpace -= layoutChunkResult.mConsumed;
+            }
+             //...省略部分代码  
+
+        }
+         //...省略部分代码  
+    }
+
+```
+
+解释说明：
+
+- 在 onLayoutChildren 中调用 fill 方法，完成子 View 的测量布局工作；
+- 在 fill 方法中通过 while 循环判断是否还有剩余足够空间来绘制一个完整的子 View；
+- layoutChunk 方法中是子 View 测量布局的真正实现，每次执行完之后需要重新计算 remainingSpace。
+
+layoutChunk 是一个非常核心的方法，这个方法执行一次就填充一个 ItemView 到 RV，部分代码如下：
+
+```java
+    void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
+            LayoutState layoutState, LayoutChunkResult result) {
+
+        View view = layoutState.next(recycler);
+        //...省略部分代码  
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
+        if (layoutState.mScrapList == null) {//👈第一处
+            if (mShouldReverseLayout == (layoutState.mLayoutDirection
+                    == LayoutState.LAYOUT_START)) {
+                addView(view);
+            } else {
+                addView(view, 0);
+            }
+        } else {
+            if (mShouldReverseLayout == (layoutState.mLayoutDirection
+                    == LayoutState.LAYOUT_START)) {
+                addDisappearingView(view);
+            } else {
+                addDisappearingView(view, 0);
+            }
+        }
+        measureChildWithMargins(view, 0, 0);//👈第二处
+        //...省略部分代码  
+        layoutDecoratedWithMargins(view, left, top, right, bottom);//👈第三处
+        //...省略部分代码  
+    }
+
+```
+
+说明：
+
+- 图中 1 处从缓存（Recycler）中取出子 ItemView，然后调用 addView 或者 addDisappearingView 将子 ItemView 添加到 RV 中。
+- 图中 2 处测量被添加的 RV 中的子 ItemView 的宽高。
+- 图中 3 处根据所设置的 Decoration、Margins 等所有选项确定子 ItemView 的显示位置。
+
+### onDraw
+
+RecyclerView 的 onDraw() 方法
+
+```java
+    public void onDraw(Canvas c) {
+        super.onDraw(c);
+
+        final int count = mItemDecorations.size();
+        for (int i = 0; i < count; i++) {
+            mItemDecorations.get(i).onDraw(c, this, mState);
+        }
+    }
+```
+
+这个方法很简单，如果有添加 ItemDecoration，则循环调用所有的 Decoration 的 onDraw 方法，将其显示。至于所有的子 ItemView 则是通过 Android 渲染机制递归的调用子 ItemView 的 draw 方法显示到屏幕上。
+
+小结：
+
+RV 会将测量 onMeasure 和布局 onLayout 的工作委托给 LayoutManager 来执行，不同的 LayoutManager 会有不同风格的布局显示，这是一种策略模式。用一张图来描述这段过程如下：
+
+![RecyclerView与LayoutManager的关系](RecyclerView缓存原理/RecyclerView与LayoutManager的关系.png)
+
+#### 缓存复用原理
+
+缓存复用是 RV 中另一个非常重要的机制，这套机制主要实现了 ViewHolder 的缓存以及复用。
+
+核心代码是在 Recycler 中完成的，它是 RV 中的一个内部类，主要用来缓存屏幕内 ViewHolder 以及部分屏幕外 ViewHolder，部分代码如下：
+
+```java
+    public final class Recycler {
+        final ArrayList<ViewHolder> mAttachedScrap = new ArrayList<>();
+        ArrayList<ViewHolder> mChangedScrap = null;
+        final ArrayList<ViewHolder> mCachedViews = new ArrayList<ViewHolder>();
+        RecycledViewPool mRecyclerPool;
+        }
+```
+
+Recycler 的缓存机制就是通过上图中的这些数据容器来实现的，实际上 Recycler 的缓存也是分级处理的，根据访问优先级从上到下可以分为 4 级，如下：
+
+- 第一级缓存：mAttachedScrap、mChangedScrap;
+- 第二级缓存：mCachedViews
+- 第三级缓存：ViewCacheExtension
+- 第四级缓存：RecycledViewPool
+
+#### 各级缓存功能
+
+RV 之所以要将缓存分成这么多块，是为了在功能上进行一些区分，并分别对应不同的使用场景。
+
+##### 第一级缓存 mAttachedScrap&mChangedScrap
+
+是两个名为 Scrap 的 ArrayList，这两者主要用来缓存屏幕内的 ViewHolder。为什么屏幕内的 ViewHolder 需要缓存呢？做过 App 开发的应该都熟悉下面的布局场景：
+
+下拉刷新场景：
+
+通过下拉刷新列表中的内容，当刷新被触发时，只需要在原有的 ViewHolder 基础上进行重新绑定新的数据 data 即可，而这些旧的 ViewHolder 就是被保存在 mAttachedScrap 和 mChangedScrap 中。实际上当我们调用 RV 的 notifyXXX 方法时，就会向这两个列表进行填充，将旧 ViewHolder 缓存起来。
+
+##### 第二级缓存 mCachedViews
+
+它用来缓存移除屏幕之外的 ViewHolder，默认情况下缓存个数是 2，不过可以通过 setViewCacheSize 方法来改变缓存的容量大小。如果 mCachedViews 的容量已满，则会根据 FIFO 的规则将旧 ViewHolder 抛弃，然后添加新的 ViewHolder，如下所示：
+
+![二级缓存](RecyclerView缓存原理/二级缓存.gif)
+
+##### 第三级缓存 ViewCacheExtension
+
+这是 RV 预留给开发人员的一个抽象类，在这个类中只有一个抽象方法，如下：
+
+```java
+    public abstract static class ViewCacheExtension {
+        @Nullable
+        public abstract View getViewForPositionAndType(@NonNull Recycler recycler, int position,
+                int type);
+    }
+```
+
+开发人员可以通过继承 ViewCacheExtension，并复写抽象方法 getViewForPositionAndType 来实现自己的缓存机制。只是一般情况下我们不会自己实现也不建议自己去添加缓存逻辑，因为这个类的使用门槛较高，需要开发人员对 RV 的源码非常熟悉。
+
+#### 第四级缓存 RecycledViewPool
+
+RecycledViewPool 同样是用来缓存屏幕外的 ViewHolder，当 mCachedViews 中的个数已满（默认为 2），则从 mCachedViews 中淘汰出来的 ViewHolder 会先缓存到 RecycledViewPool 中。ViewHolder 在被缓存到 RecycledViewPool 时，会将内部的数据清理，因此从 RecycledViewPool 中取出来的 ViewHolder 需要重新调用 onBindViewHolder 绑定数据。这就同最早的 ListView 中的使用 ViewHolder 复用 convertView 的道理是一致的，因此 RV 也算是将 ListView 的优点完美的继承过来。
+
+RecycledViewPool 还有一个重要功能，官方对其有如下解释：
+
+>RecycledViewPool lets you share Views between multiple RecyclerViews.
+
+可以看出，多个 RV 之间可以共享一个 RecycledViewPool，这对于多 tab 界面的优化效果会很显著。需要注意的是，RecycledViewPool 是根据 type 来获取 ViewHolder，每个 type 默认最大缓存 5 个。因此多个 RecyclerView 共享 RecycledViewPool 时，必须确保共享的 RecyclerView 使用的 Adapter 是同一个，或 view type 是不会冲突的。
+
+#### 具体的缓存过程
+
+在上文介绍 onLayout 阶段时，有介绍在 layoutChunk 方法中通过调用 layoutState.next 方法拿到某个子 ItemView，然后添加到 RV 中。看一下 layoutState.next 的详细代码：
+
+```java
+    void layoutChunk(RecyclerView.Recycler recycler, RecyclerView.State state,
+            LayoutState layoutState, LayoutChunkResult result) {
+        View view = layoutState.next(recycler);
+       //...省略部分代码
+    }
+```
+
+继续跟踪：
+
+```java
+        View next(RecyclerView.Recycler recycler) {
+            if (mScrapList != null) {
+                return nextViewFromScrapList();
+            }
+            final View view = recycler.getViewForPosition(mCurrentPosition);
+            mCurrentPosition += mItemDirection;
+            return view;
+        }
+```
+
+```java
+        public View getViewForPosition(int position) {
+            return getViewForPosition(position, false);
+        }
+
+        View getViewForPosition(int position, boolean dryRun) {
+            return tryGetViewHolderForPositionByDeadline(position, dryRun, FOREVER_NS).itemView;
+        }
+```
+
+可以看出最终调用 tryGetViewHolderForPositionByDeadline 方法来查找相应位置上的ViewHolder，在这个方法中会从上面介绍的 4 级缓存中依次查找：
 
 ```java
         ViewHolder tryGetViewHolderForPositionByDeadline(int position,
@@ -117,7 +323,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
             ViewHolder holder = null;
             //第一步，从changed scrap中获取数据
             if (mState.isPreLayout()) {
-                holder = getChangedScrapViewForPosition(position);
+                holder = getChangedScrapViewForPosition(position);//
                 fromScrapOrHiddenOrCache = holder != null;
             }
             //第二步、从 attach scrap,hidden 或者 cache中获取
@@ -310,7 +516,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
                                 + "unhiding a view:" + vh + exceptionLabel());
                     }
                     mChildHelper.detachViewFromParent(layoutIndex);
-                    //这里注意开始缓存了
+                    //👇这里注意开始缓存了
                     scrapView(view);
                     vh.addFlags(ViewHolder.FLAG_RETURNED_FROM_SCRAP
                             | ViewHolder.FLAG_BOUNCED_FROM_HIDDEN_LIST);
@@ -338,6 +544,8 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
             return null;
         }
 ```
+
+继续查看 scrapView 方法：
 
 ```java
         void scrapView(View view) {
@@ -826,7 +1034,6 @@ onTouchEvent方法
        //省略部分代码
     }
 
-
 ```
 
 以LinearLayoutManager为例子
@@ -1008,6 +1215,5 @@ onTouchEvent方法
         }
 
 ```
-
 
 ### 总结
