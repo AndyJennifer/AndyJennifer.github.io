@@ -10,9 +10,10 @@ categories:
 (微信参考地址)[https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=2653578065&idx=2&sn=25e64a8bb7b5934cf0ce2e49549a80d6&chksm=84b3b156b3c43840061c28869671da915a25cf3be54891f040a3532e1bb17f9d32e244b79e3f&scene=21#wechat_redirect]
 
 （离屏缓存）[https://mp.weixin.qq.com/s/Qey-3JDdKYG04mo9WeBZ2g]
-###  第一次测量
 
-```
+### 第一次测量
+
+```java
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         TraceCompat.beginSection(TRACE_ON_LAYOUT_TAG);
@@ -23,7 +24,8 @@ categories:
 ```
 
 #### 
-```
+
+```java
     void dispatchLayout() {
         if (mAdapter == null) {
             Log.e(TAG, "No adapter attached; skipping layout");
@@ -56,19 +58,20 @@ categories:
         dispatchLayoutStep3();
     }
 ```
+
 1. dispatchLayoutStep1();
     - 处理adapter的数据更新
     - 决定那种动画需要执行
     - 保存当前view的状态
     - 如果需要的话，执行预测的布局，并保存其中的布局信息。
-2. dispatchLayoutStep2(); 
+2. dispatchLayoutStep2();
 根据设置的layoutManager(我们自己设置的layoutManager)来布置其中的view。
 3. dispatchLayoutStep3();
 布局的最后一步，在这里我们保存关于视图的动画信息，触发动画并进行任何必要的清理。
 
 也就是说第二个步骤比较重要，我们继续看步骤2中涉及的方法。
 
-```
+```java
    private void dispatchLayoutStep2() {
         eatRequestLayout();
         onEnterLayoutOrScroll();
@@ -92,15 +95,17 @@ categories:
     }
 
 ```
+
 因为这里的具体布局是与我们设置的layoutManager有关，所以这里以LinearLayoutManager为例。在LinearLayoutManager中的
 onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tryGetViewHolderForPositionByDeadline（）方法。
+
 #### 三级缓存或四级缓存
 
 #### 这里需要画一个三级缓存的图
 
-
 会先从Recycler scrap中获取缓存视图，然后再从cache，然后再从RecycleredViewPool,否则就直接创建
-```
+
+```java
         ViewHolder tryGetViewHolderForPositionByDeadline(int position,
                 boolean dryRun, long deadlineNs) {
             if (position < 0 || position >= mState.getItemCount()) {
@@ -267,6 +272,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
 ```
 
 整个获取缓存的步骤：
+
 - 第一步，从changed scrap中获取数据
 - 第二步、从 attach scrap,hidden 或者 cache中获取
 - 第三步、通过StableId进行获取，针对复写了BaseAdapter的StableId
@@ -274,9 +280,9 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
 - 第五步、通过RecycledViewPool中获取
 - 第六步、如果从缓存中都没有拿到，那么久直接创建。
 
-
 第二步中的方法。getScrapOrHiddenOrCachedHolderForPosition需要注意
-```
+
+```java
         ViewHolder getScrapOrHiddenOrCachedHolderForPosition(int position, boolean dryRun) {
             final int scrapCount = mAttachedScrap.size();
 
@@ -333,7 +339,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
         }
 ```
 
-```
+```java
         void scrapView(View view) {
             final ViewHolder holder = getChildViewHolderInt(view);
             if (holder.hasAnyOfTheFlags(ViewHolder.FLAG_REMOVED | ViewHolder.FLAG_INVALID)
@@ -357,7 +363,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
 
 ### 滑动的时候回收数据
 
-```
+```java
    public boolean onTouchEvent(MotionEvent e) {
         if (mLayoutFrozen || mIgnoreMotionEventTillDown) {
             return false;
@@ -503,8 +509,10 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
         return true;
     }
 ```
+
 因为会涉及到GapWorker类，
-```
+
+```java
     void postFromTraversal(RecyclerView recyclerView, int prefetchDx, int prefetchDy) {
         if (recyclerView.isAttachedToWindow()) {
             if (RecyclerView.DEBUG && !mRecyclerViews.contains(recyclerView)) {
@@ -520,9 +528,10 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
     }
 
 ```
+
 因为GapWorker实现了Runnable接口
 
-```
+```java
     public void run() {
         try {
             TraceCompat.beginSection(RecyclerView.TRACE_PREFETCH_TAG);
@@ -559,8 +568,10 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
         }
     }
 ```
+
 涉及prefetch()方法，又因为内部调用了flushTasksWithDeadline（）方法，所以我们直接看该方法。
-```
+
+```java
     private RecyclerView.ViewHolder prefetchPositionWithDeadline(RecyclerView view,
             int position, long deadlineNs) {
         if (isPrefetchPositionAttached(view, position)) {
@@ -599,8 +610,10 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
 ```
 
 #### 缓存策略
+
 我们继续查看recycleView（）方法的缓存view的策略
-```
+
+```java
         public void recycleView(View view) {
             // This public recycle method tries to make view recycle-able since layout manager
             // intended to recycle this view (e.g. even if it is in scrap or change cache)
@@ -619,7 +632,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
         }
 ```
 
-```
+```java
         void recycleViewHolderInternal(ViewHolder holder) {
             if (holder.isScrap() || holder.itemView.getParent() != null) {
                 throw new IllegalArgumentException(
@@ -666,7 +679,7 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
                     }
 
                     int targetCacheIndex = cachedViewSize;
-                    
+
                     //这里在sdk21以上ui线程将帧传给渲染线程时，在下一帧渲染之前是有空闲时间的，我们就可以在这个时候进行预取操作
                     //如果说上次预先加载的已经在cache缓存了，那么会直接放入RecycledPool中
                     if (ALLOW_THREAD_GAP_WORK
@@ -717,11 +730,11 @@ onLayoutChildren方法中会调用fill方法，而fill方法中最终会调用tr
 
 默认预去状态下会将下一个view的数据绑定，也就是会将预先取得的数据放入Recycle中的Scrap与Cache中，如果不能通过Recycler的cache缓存数据，那么就放入RecycledPool中。
 
-
 ### 屏幕中不可见
 
 onTouchEvent方法
-```
+
+```java
 
             case MotionEvent.ACTION_MOVE: {
                 final int index = e.findPointerIndex(mScrollPointerId);
@@ -785,7 +798,7 @@ onTouchEvent方法
             } break;
 ```
 
-```
+```java
     boolean scrollByInternal(int x, int y, MotionEvent ev) {
         int unconsumedX = 0, unconsumedY = 0;
         int consumedX = 0, consumedY = 0;
@@ -815,8 +828,10 @@ onTouchEvent方法
 
 
 ```
+
 以LinearLayoutManager为例子
-```
+
+```java
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler,
             RecyclerView.State state) {
         if (mOrientation == HORIZONTAL) {
@@ -826,8 +841,7 @@ onTouchEvent方法
     }
 ```
 
-
-```
+```java
     int scrollBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
         if (getChildCount() == 0 || dy == 0) {
             return 0;
@@ -856,7 +870,7 @@ onTouchEvent方法
     }
 ```
 
-```
+```java
     int fill(RecyclerView.Recycler recycler, LayoutState layoutState,
             RecyclerView.State state, boolean stopOnFocusable) {
         // max offset we should set is mFastScroll + available
@@ -915,7 +929,7 @@ onTouchEvent方法
     }
 ```
 
-```
+```java
     private void recycleByLayoutState(RecyclerView.Recycler recycler, LayoutState layoutState) {
         if (!layoutState.mRecycle || layoutState.mInfinite) {
             return;
@@ -928,7 +942,7 @@ onTouchEvent方法
     }
 ```
 
-```
+```java
     private void recycleViewsFromStart(RecyclerView.Recycler recycler, int dt) {
         if (dt < 0) {
             if (DEBUG) {
@@ -964,7 +978,7 @@ onTouchEvent方法
     }
 ```
 
-```
+```java
     private void recycleChildren(RecyclerView.Recycler recycler, int startIndex, int endIndex) {
         if (startIndex == endIndex) {
             return;
@@ -986,7 +1000,7 @@ onTouchEvent方法
 
 //也就是这里会回收。
 
-```
+```java
         public void removeAndRecycleViewAt(int index, Recycler recycler) {
             final View view = getChildAt(index);
             removeViewAt(index);

@@ -9,13 +9,13 @@ categories:
 
 ### ListView 继承结构
 
-### adapter 
-
+### adapter
 
 ### RecycleBin机制
+
 因为ListView与GridView都需要缓存数据，所以缓存实体类在AbsListView中实现。
 
-```
+```java
    class RecycleBin {
         private RecyclerListener mRecyclerListener;
 
@@ -531,10 +531,21 @@ categories:
 
 ```
 
-### ListView的第一次layout();
+- fillActiveViews() 这个方法接收两个参数，第一个参数表示要存储的view的数量，第二个参数表示ListView中第一个可见元素的position值。RecycleBin当中使用mActiveViews这个数组来存储View，调用这个方法后就会根据传入的参数来将ListView中的指定元素存储到mActiveViews数组当中。
+- getActiveView() 这个方法和fillActiveViews()是对应的，用于从mActiveViews数组当中获取数据。该方法接收一个position参数，表示元素在ListView当中的位置，方法内部会自动将position值转换成mActiveViews数组对应的下标值。需要注意的是，mActiveViews当中所存储的View，一旦被获取了之后就会从mActiveViews当中移除，下次获取同样位置的View将会返回null，也就是说mActiveViews不能被重复利用。
+- 用于将一个废弃的View进行缓存，该方法接收一个View参数，当有某个View确定要废弃掉的时候(比如滚动出了屏幕)，就应该调用这个方法来对View进行缓存，RecycleBin当中使用mScrapViews和mCurrentScrap这两个List来存储废弃View。
+- getScrapView 用于从废弃缓存中取出一个View，这些废弃缓存中的View是没有顺序可言的，因此getScrapView()方法中的算法也非常简单，就是直接从mCurrentScrap当中获取尾部的一个scrap view进行返回。
+- setViewTypeCount() 我们都知道Adapter当中可以重写一个getViewTypeCount()来表示ListView中有几种类型的数据项，而setViewTypeCount()方法的作用就是为每种类型的数据项都单独启用一个RecycleBin缓存机制。实际上，getViewTypeCount()方法通常情况下使用的并不是很多，所以我们只要知道RecycleBin当中有这样一个功能就行了
+
+### ListView的第一次layout()
+
+View的执行流程无非就分为三步，onMeasure()用于测量View的大小，onLayout()用于确定View的布局，onDraw()用于将View绘制到界面上。而在ListView当中，onMeasure()并没有什么特殊的地方，因为它终归是一个View，占用的空间最多并且通常也就是整个屏幕。onDraw()在ListView当中也没有什么意义，因为ListView本身并不负责绘制，而是由ListView当中的子元素来进行绘制的。那么ListView大部分的神奇功能其实都是在onLayout()方法中进行的了，因此我们本篇文章也是主要分析的这个方法里的内容。
 
 #### AbsListView的onLayout
-```
+
+如果你到ListView源码中去找一找，你会发现ListView中是没有onLayout()这个方法的，这是因为这个方法是在ListView的父类AbsListView中实现的，代码如下所示：
+
+```java
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
@@ -560,9 +571,13 @@ categories:
     }
 ```
 
-### ListView的layoutChildren方法。
+可以看到，onLayout()方法中并没有做什么复杂的逻辑操作，主要就是一个判断，如果ListView的大小或者位置发生了变化，那么changed变量就会变成true，此时会要求所有的子布局都强制进行重绘。除此之外倒没有什么难理解的地方了，不过我们注意到，在第16行调用了layoutChildren()这个方法，从方法名上我们就可以猜出这个方法是用来进行子元素布局的，不过进入到这个方法当中你会发现这是个空方法，没有一行代码。这当然是可以理解的了，因为子元素的布局应该是由具体的实现类来负责完成的，而不是由父类完成。
 
-```
+### ListView 的 layoutChildren 方法
+
+那么进入ListView的layoutChildren()方法，代码如下所示：
+
+```java
   protected void layoutChildren() {
         final boolean blockLayoutRequests = mBlockLayoutRequests;
         if (blockLayoutRequests) {
@@ -605,7 +620,7 @@ categories:
                     recycleBin.addScrapView(getChildAt(i), firstPosition+i);
                 }
             } else {
-                //第一次进入的时候，childCount为0 
+                //第一次进入的时候，childCount为0
                 recycleBin.fillActiveViews(childCount, firstPosition);
             }
 
@@ -685,17 +700,21 @@ categories:
 
 ```
 
-布局模式：
-- static final int LAYOUT_NORMAL = 0; 常规布局
-- static final int LAYOUT_FORCE_TOP = 1; 显示第一个item
-- static final int LAYOUT_SET_SELECTION = 2; 显示选中的item
-- static final int LAYOUT_FORCE_BOTTOM = 3; 显示最后一个item
-- static final int LAYOUT_SPECIFIC = 4; 使mselecteditem出现在特定位置，并从中构建其余视图。顶部由MSpecificTop指定。
-- static final int LAYOUT_SYNC = 5; 由于数据更改而同步的布局。还原msyncPosition使其顶部位于mspecificTop
-- static final int LAYOUT_MOVE_SELECTION = 6; 根据定位键显示布局
+>布局模式：
+>
+> - static final int LAYOUT_NORMAL = 0; 常规布局
+> - static final int LAYOUT_FORCE_TOP = 1; 显示第一个item
+> - static final int LAYOUT_SET_SELECTION = 2; 显示选中的item
+>- static final int LAYOUT_FORCE_BOTTOM = 3; 显示最后一个item
+>- static final int LAYOUT_SPECIFIC = 4; 使mselecteditem出现在特定位置，并从中构建其余视图。顶部由MSpecificTop指定。
+>- static final int LAYOUT_SYNC = 5; 由于数据更改而同步的布局。还原msyncPosition使其顶部位于mspecificTop
+>- static final int LAYOUT_MOVE_SELECTION = 6; 根据定位键显示布局
 
+这段代码比较长，我们挑重点的看。首先可以确定的是，ListView当中目前还没有任何子View，数据都还是由Adapter管理的，并没有展示到界面上，因此第19行getChildCount()方法得到的值肯定是0。接着在第81行会根据dataChanged这个布尔型的值来判断执行逻辑，dataChanged只有在数据源发生改变的情况下才会变成true，其它情况都是false，因此这里会进入到第90行的执行逻辑，调用RecycleBin的fillActiveViews()方法。按理来说，调用fillActiveViews()方法是为了将ListView的子View进行缓存的，可是目前ListView中还没有任何的子View，因此这一行暂时还起不了任何作用。
 
-```
+接下来在第114行会根据mLayoutMode的值来决定布局模式，默认情况下都是普通模式LAYOUT_NORMAL，因此会进入到第140行的default语句当中。而下面又会紧接着进行两次if判断，childCount目前是等于0的，并且默认的布局顺序是从上往下，因此会进入到第145行的fillFromTop()方法，我们跟进去瞧一瞧：
+
+```java
     private View fillFromTop(int nextTop) {
         mFirstPosition = Math.min(mFirstPosition, mSelectedPosition);
         mFirstPosition = Math.min(mFirstPosition, mItemCount - 1);
@@ -704,11 +723,11 @@ categories:
         }
         return fillDown(mFirstPosition, nextTop);
     }
-
 ```
+
 该方法依次从上往下填充ListView，实际调用的方法是fillDown()方法。接着继续看
 
-```
+```java
     private View fillDown(int pos, int nextTop) {
         View selectedView = null;
 
@@ -716,7 +735,7 @@ categories:
         if ((mGroupFlags & CLIP_TO_PADDING_MASK) == CLIP_TO_PADDING_MASK) {
             end -= mListPadding.bottom;
         }
-
+        //👇这里
         while (nextTop < end && pos < mItemCount) {
             // is this the selected item?
             boolean selected = pos == mSelectedPosition;
@@ -733,10 +752,12 @@ categories:
         return selectedView;
     }
 ```
-fillDown方法比较好理解，就是一个一个的创建child，判断当前child距离顶部的高度是否超过屏幕显示的高度，如果超过那么就跳出循环。
-我们可以发现在该方法中又调用了makeAndAddView()方法。
 
-```
+可以看到，这里使用了一个while循环来执行重复逻辑，一开始nextTop的值是第一个子元素顶部距离整个ListView顶部的像素值，pos则是刚刚传入的mFirstPosition的值，而end是ListView底部减去顶部所得的像素值，mItemCount则是Adapter中的元素数量。因此一开始的情况下nextTop必定是小于end值的，并且pos也是小于mItemCount值的。那么每执行一次while循环，pos的值都会加1，并且nextTop也会增加，当nextTop大于等于end时，也就是子元素已经超出当前屏幕了，或者pos大于等于mItemCount时，也就是所有Adapter中的元素都被遍历结束了，就会跳出while循环。
+
+那么while循环当中又做了什么事情呢？值得让人留意的就是第18行调用的makeAndAddView()方法，进入到这个方法当中，代码如下所示：
+
+```java
  private View makeAndAddView(int position, int y, boolean flow, int childrenLeft,
             boolean selected) {
         if (!mDataChanged) {
@@ -754,15 +775,16 @@ fillDown方法比较好理解，就是一个一个的创建child，判断当前c
         //创建新的视图，如果当前缓存视图不可用的话
         final View child = obtainView(position, mIsScrap);
 
-        // This needs to be positioned and measured.
+        //👇This needs to be positioned and measured.
         setupChild(child, position, y, flow, childrenLeft, selected, mIsScrap[0]);
 
         return child;
     }
 ```
-当缓存视图为空时，会调用obtainView，该方法会获取一个视图并让他显示并与指定位置上的数据进行关联。
-其中 final boolean[] mIsScrap = new boolean[1];
-```
+
+这里在第19行尝试从RecycleBin当中快速获取一个active view，不过很遗憾的是目前RecycleBin当中还没有缓存任何的View，所以这里得到的值肯定是null。那么取得了null之后就会继续向下运行，到第28行会调用obtainView()方法来再次尝试获取一个View，这次的obtainView()方法是可以保证一定返回一个View的，于是下面立刻将获取到的View传入到了setupChild()方法当中。那么obtainView()内部到底是怎么工作的呢？我们先进入到这个方法里面看一下：
+
+```java
     View obtainView(int position, boolean[] outMetadata) {
         Trace.traceBegin(Trace.TRACE_TAG_VIEW, "obtainView");
 
@@ -790,7 +812,7 @@ fillDown方法比较好理解，就是一个一个的创建child，判断当前c
             return transientView;
         }
 
-        //从回收视图中获取相关view,
+        //👇从回收视图中获取相关view,
         final View scrapView = mRecycler.getScrapView(position);
         final View child = mAdapter.getView(position, scrapView, this);
         if (scrapView != null) {
@@ -832,26 +854,26 @@ fillDown方法比较好理解，就是一个一个的创建child，判断当前c
 
 这里我们调用了mAdapter.getView(position, scrapView, this)，那么我们平时中的listView的Adapter时，getView（）方法
 
-```
-
+```java
 @Override
 public View getView(int position, View convertView, ViewGroup parent) {
-	Fruit fruit = getItem(position);
-	View view;
-	if (convertView == null) {
-		view = LayoutInflater.from(getContext()).inflate(resourceId, null);
-	} else {
-		view = convertView;
-	}
-	ImageView fruitImage = (ImageView) view.findViewById(R.id.fruit_image);
-	TextView fruitName = (TextView) view.findViewById(R.id.fruit_name);
-	fruitImage.setImageResource(fruit.getImageId());
-	fruitName.setText(fruit.getName());
-	return view;
+    Fruit fruit = getItem(position);
+    View view;
+    if (convertView == null) {
+        view = LayoutInflater.from(getContext()).inflate(resourceId, null);
+    } else {
+        view = convertView;
+    }
+    ImageView fruitImage = (ImageView) view.findViewById(R.id.fruit_image);
+    TextView fruitName = (TextView) view.findViewById(R.id.fruit_name);
+    fruitImage.setImageResource(fruit.getImageId());
+    fruitName.setText(fruit.getName());
+    return view;
 ```
+
 也就是说，当我们第一次设置数据时，在当前界面可见的所有child对应的view都是我们通过LayoutInflater.from()出来的。那么当我们获取相应视图后，那么setupChild方法最终，
 
-```
+```java
     private void setupChild(View child, int position, int y, boolean flowDown, int childrenLeft,
             boolean selected, boolean isAttachedToWindow) {
         Trace.traceBegin(Trace.TRACE_TAG_VIEW, "setupListItem");
@@ -912,7 +934,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
             if (p.viewType == AdapterView.ITEM_VIEW_TYPE_HEADER_OR_FOOTER) {
                 p.recycledHeaderFooter = true;
             }
-            //注意，这里会将child添加到ListView中
+            //注意👇这里会将child添加到ListView中
             addViewInLayout(child, flowDown ? -1 : 0, p, true);
             // add view in layout will reset the RTL properties. We have to re-resolve them
             child.resolveRtlPropertiesIfNeeded();
@@ -956,18 +978,20 @@ public View getView(int position, View convertView, ViewGroup parent) {
     }
 ```
 
+setupChild()方法当中的代码虽然比较多，但是我们只看核心代码的话就非常简单了，刚才调用obtainView()方法获取到的子元素View，这里在第40行调用了addViewInLayout()方法将它添加到了ListView当中。那么根据fillDown()方法中的while循环，会让子元素View将整个ListView控件填满然后就跳出，也就是说即使我们的Adapter中有一千条数据，ListView也只会加载第一屏的数据，剩下的数据反正目前在屏幕上也看不到，所以不会去做多余的加载工作，这样就可以保证ListView中的内容能够迅速展示到屏幕上。
+
 ### ListView的第二次layout
 
-```
+```java
    public void setAdapter(ListAdapter adapter) {
-    
         //省略部分代码...
         requestLayout();
     }
 ```
-我们都知道requestLayout()方法会调用View的onLayout方法，也就是最后还是会走到ListView的layoutChildren方法中去
 
-```
+我们都知道 requestLayout()方法会调用View的onLayout方法，也就是最后还是会走到ListView的layoutChildren方法中去
+
+```java
     protected void layoutChildren() {
         final boolean blockLayoutRequests = mBlockLayoutRequests;
         if (blockLayoutRequests) {
@@ -990,7 +1014,6 @@ public View getView(int position, View convertView, ViewGroup parent) {
             final int childrenTop = mListPadding.top;
             final int childrenBottom = mBottom - mTop - mListPadding.bottom;
             final int childCount = getChildCount();
-           
             //省略部分代码...
             final int firstPosition = mFirstPosition;
             final RecycleBin recycleBin = mRecycler;
@@ -999,6 +1022,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
                     recycleBin.addScrapView(getChildAt(i), firstPosition+i);
                 }
             } else {
+                //👇这里
                 recycleBin.fillActiveViews(childCount, firstPosition);
             }
 
@@ -1058,7 +1082,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
                         sel = fillUp(mItemCount - 1, childrenBottom);
                     }
                 } else {
-                    //当childCount不为0的时候
+                    //👇这里当childCount不为0的时候
                     if (mSelectedPosition >= 0 && mSelectedPosition < mItemCount) {
                         sel = fillSpecific(mSelectedPosition,
                                 oldSel == null ? childrenTop : oldSel.getTop());
@@ -1075,7 +1099,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
         }
 ```
 
-```
+```java
         void fillActiveViews(int childCount, int firstActivePosition) {
             if (mActiveViews.length < childCount) {
                 mActiveViews = new View[childCount];
@@ -1096,13 +1120,12 @@ public View getView(int position, View convertView, ViewGroup parent) {
             }
         }
 ```
+
 也就是说当设置adapter的时候，会将ListView中的当前屏幕可见的所有的child视图放入回收视图中。
-
-
 
 最后通过，fillSpecific（）方法又会回到ListView的makeAndAddView方法，那么现在我们就可以从回收视图中去获取以存在的视图啦
 
-```
+```java
  private View makeAndAddView(int position, int y, boolean flow, int childrenLeft,
             boolean selected) {
         if (!mDataChanged) {
@@ -1126,11 +1149,12 @@ public View getView(int position, View convertView, ViewGroup parent) {
         return child;
     }
 ```
+
 ### 滑动时缓存视图的控制
+
 我们只知道在ListView添加数据的时候，回收视图时是怎么添加的，但是实际的缓存视图的控制是在滑动的时候。因为缓存ListView与GridView都需要滑动回收视图，所以缓存数据的是在AbsListView中进行操作的。
 
-
-```
+```java
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (!isEnabled()) {
@@ -1230,8 +1254,10 @@ public View getView(int position, View convertView, ViewGroup parent) {
         return true;
     }
 ```
+
 因为我们只需要考虑ACTION_MOVE事件，所以我们继续看onTouchMove方法
-```
+
+```java
     private void onTouchMove(MotionEvent ev, MotionEvent vtev) {
         if (mHasPerformedLongPress) {
             // Consume all move events following a successful long press.
@@ -1285,14 +1311,14 @@ public View getView(int position, View convertView, ViewGroup parent) {
                 break;
             case TOUCH_MODE_SCROLL://滑动的时候
             case TOUCH_MODE_OVERSCROLL:
+                //👇
                 scrollIfNeeded((int) ev.getX(pointerIndex), y, vtev);
                 break;
         }
     }
 ```
 
-
-```
+```java
     private void scrollIfNeeded(int x, int y, MotionEvent vtev) {
         int rawDeltaY = y - mMotionY;
         int scrollOffsetCorrection = 0;
@@ -1358,14 +1384,14 @@ public View getView(int position, View convertView, ViewGroup parent) {
                 // No need to do all this work if we're not going to move anyway
                 boolean atEdge = false;
                 if (incrementalDeltaY != 0) {
-                    //判断是否是边缘，同时添加到回收视图中
+                    //👇判断是否是边缘，同时添加到回收视图中
                     atEdge = trackMotionScroll(deltaY, incrementalDeltaY);
                 }
                 //省略部分代码
     }
 ```
 
-```
+```java
    boolean trackMotionScroll(int deltaY, int incrementalDeltaY) {
         final int childCount = getChildCount();
         if (childCount == 0) {
@@ -1454,8 +1480,8 @@ public View getView(int position, View convertView, ViewGroup parent) {
                     count++;
                     int position = firstPosition + i;
                     if (position >= headerViewsCount && position < footerViewsStart) {
-                        //添加到回收视图中，
                         child.clearAccessibilityFocus();
+                        //👇添加到回收视图中，
                         mRecycler.addScrapView(child, position);
                     }
                 }
@@ -1474,8 +1500,8 @@ public View getView(int position, View convertView, ViewGroup parent) {
                     count++;
                     int position = firstPosition + i;
                     if (position >= headerViewsCount && position < footerViewsStart) {
-                        //添加到回收视图中
                         child.clearAccessibilityFocus();
+                        //👇添加到回收视图中
                         mRecycler.addScrapView(child, position);
                     }
                 }
@@ -1485,7 +1511,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
         mMotionViewNewTop = mMotionViewOriginalTop + deltaY;
 
         mBlockLayoutRequests = true;
-
+        //👇移除已经移除屏幕的item
         if (count > 0) {
             detachViewsFromParent(start, count);
             mRecycler.removeSkippedScrap();
@@ -1535,7 +1561,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
 
 而我们在调用ListView的setAdapter方法
 
-```
+```java
    public void setAdapter(ListAdapter adapter) {
         if (mAdapter != null && mDataSetObserver != null) {
             mAdapter.unregisterDataSetObserver(mDataSetObserver);
@@ -1593,13 +1619,15 @@ public View getView(int position, View convertView, ViewGroup parent) {
 
 当我们调用Adapter的notifyDataSetChanged方法时，实际调用的是BaseAdapter的notifyDataSetChanged方法。具体如下所示：
 
-```
+```java
  public void notifyDataSetChanged() {
         mDataSetObservable.notifyChanged();
     }
 ```
+
 该方法最终会调用adapter中的所有观察者的onChanged（）方法
-```
+
+```java
 public class DataSetObservable extends Observable<DataSetObserver> {
     /**
      * Invokes {@link DataSetObserver#onChanged} on each observer.
@@ -1633,8 +1661,10 @@ public class DataSetObservable extends Observable<DataSetObserver> {
 }
 
 ```
+
 那么也就会回到之前，我们为Adapter设置的观察者中的onChanged方法，也就是会实际调用ListView中的AdapterDataSetObserver中的
-```
+
+```java
     class AdapterDataSetObserver extends AdapterView<ListAdapter>.AdapterDataSetObserver {
         @Override
         public void onChanged() {
@@ -1654,8 +1684,10 @@ public class DataSetObservable extends Observable<DataSetObserver> {
         }
     }
 ```
+
 最终会调用AdapaterView的onChanged方法,具体如下所示：
-```
+
+```java
  class AdapterDataSetObserver extends DataSetObserver {
 
         private Parcelable mInstanceState = null;
@@ -1676,12 +1708,12 @@ public class DataSetObservable extends Observable<DataSetObserver> {
                 rememberSyncState();
             }
             checkFocus();
-            requestLayout();
+            requestLayout();//👈重绘
         }
  }
 ```
 
-
 ### 总结
+
 - ListView会先从activeViews获取缓存的view,如果没有获取到则会通过scrapViews中获取数据。
 - 从ActiveViews中获取的view不需要在重新绑定数据，而从scrapViews中获取的数据需要重新缓存数据。
