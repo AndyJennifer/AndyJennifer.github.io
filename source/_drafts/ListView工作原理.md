@@ -871,7 +871,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
     return view;
 ```
 
-也就是说，当我们第一次设置数据时，在当前界面可见的所有child对应的view都是我们通过LayoutInflater.from()出来的。那么当我们获取相应视图后，那么setupChild方法最终，
+也就是说，当我们第一次设置数据时，在当前界面可见的所有child对应的view都是我们通过LayoutInflater.from()出来的。那么当我们获取相应视图后，调用 setupChild 方法：
 
 ```java
     private void setupChild(View child, int position, int y, boolean flowDown, int childrenLeft,
@@ -1481,7 +1481,7 @@ setupChild()方法当中的代码虽然比较多，但是我们只看核心代�
                     int position = firstPosition + i;
                     if (position >= headerViewsCount && position < footerViewsStart) {
                         child.clearAccessibilityFocus();
-                        //👇添加到回收视图中，
+                        //👇找到划出屏幕外的view,添加到回收视图中，
                         mRecycler.addScrapView(child, position);
                     }
                 }
@@ -1511,7 +1511,7 @@ setupChild()方法当中的代码虽然比较多，但是我们只看核心代�
         mMotionViewNewTop = mMotionViewOriginalTop + deltaY;
 
         mBlockLayoutRequests = true;
-        //👇移除已经移除屏幕的item
+        //👇将已经移除屏幕的item，从listView中移除
         if (count > 0) {
             detachViewsFromParent(start, count);
             mRecycler.removeSkippedScrap();

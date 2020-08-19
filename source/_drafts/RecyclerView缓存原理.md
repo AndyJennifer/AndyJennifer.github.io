@@ -61,7 +61,7 @@ categories:
 1. dispatchLayoutStep1();
     - 处理adapter的数据更新
     - 决定那种动画需要执行
-    - 保存当前view的状态
+    - 保存当前view的状态（处理一级缓存)
     - 如果需要的话，执行预测的布局，并保存其中的布局信息。
 2. dispatchLayoutStep2();
 根据设置的layoutManager(我们自己设置的layoutManager)来布置其中的view。
@@ -309,7 +309,7 @@ RecycledViewPool 还有一个重要功能，官方对其有如下解释：
         }
 ```
 
-可以看出最终调用 tryGetViewHolderForPositionByDeadline 方法来查找相应位置上的ViewHolder，在这个方法中会从上面介绍的 4 级缓存中依次查找：
+可以看出最终调用 tryGetViewHolderForPositionByDeadline 方法来查找相应位置上的 ViewHolder，在这个方法中会从上面介绍的 4 级缓存中依次查找：
 
 ```java
         ViewHolder tryGetViewHolderForPositionByDeadline(int position,
@@ -411,6 +411,7 @@ RecycledViewPool 还有一个重要功能，官方对其有如下解释：
                         // abort - we have a deadline we can't meet
                         return null;
                     }
+                    //👇这里开始创建
                     holder = mAdapter.createViewHolder(RecyclerView.this, type);
                     if (ALLOW_THREAD_GAP_WORK) {
                         // only bother finding nested RV if prefetching
@@ -455,7 +456,7 @@ RecycledViewPool 还有一个重要功能，官方对其有如下解释：
                             + exceptionLabel());
                 }
                 final int offsetPosition = mAdapterHelper.findPositionOffset(position);
-                //这里设置数据与视图的绑定
+                //👇这里设置数据与视图的绑定
                 bound = tryBindViewHolderByDeadline(holder, offsetPosition, position, deadlineNs);
             }
 
@@ -484,7 +485,7 @@ RecycledViewPool 还有一个重要功能，官方对其有如下解释：
 - 第三步、通过StableId进行获取，针对复写了BaseAdapter的StableId
 - 第四步、通过mViewCacheExtension来获取。
 - 第五步、通过RecycledViewPool中获取
-- 第六步、如果从缓存中都没有拿到，那么久直接创建。
+- 第六步、如果从缓存中都没有拿到，那么就直接创建。
 
 第二步中的方法。getScrapOrHiddenOrCachedHolderForPosition需要注意
 
@@ -557,12 +558,14 @@ RecycledViewPool 还有一个重要功能，官方对其有如下解释：
                             + " Invalid views cannot be reused from scrap, they should rebound from"
                             + " recycler pool." + exceptionLabel());
                 }
+                //👇这里开始缓存
                 holder.setScrapContainer(this, false);
                 mAttachedScrap.add(holder);
             } else {
                 if (mChangedScrap == null) {
                     mChangedScrap = new ArrayList<ViewHolder>();
                 }
+                //👇这里开始缓存
                 holder.setScrapContainer(this, true);
                 mChangedScrap.add(holder);
             }
@@ -940,7 +943,7 @@ RecycledViewPool 还有一个重要功能，官方对其有如下解释：
 
 ### 屏幕中不可见
 
-onTouchEvent方法
+onTouchEvent方法 在滑动的时候，会将移除屏幕外的 ViewHolder进行回收。
 
 ```java
 
@@ -992,7 +995,7 @@ onTouchEvent方法
                 if (mScrollState == SCROLL_STATE_DRAGGING) {
                     mLastTouchX = x - mScrollOffset[0];
                     mLastTouchY = y - mScrollOffset[1];
-                    //注意这里
+                    //👇注意这里
                     if (scrollByInternal(
                             canScrollHorizontally ? dx : 0,
                             canScrollVertically ? dy : 0,
@@ -1022,7 +1025,7 @@ onTouchEvent方法
                 unconsumedX = x - consumedX;
             }
             if (y != 0) {
-                //这里
+                //👇这里
                 consumedY = mLayout.scrollVerticallyBy(y, mRecycler, mState);
                 unconsumedY = y - consumedY;
             }
