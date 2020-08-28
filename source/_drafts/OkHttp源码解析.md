@@ -6,10 +6,9 @@ categories:
 - 源码分析
 ---
 
-
-
 ### OkHttp中的Builder类
-```
+
+```java
     final Dispatcher dispatcher;  //分发器
     final Proxy proxy;  //代理
     final List<Protocol> protocols; //协议
@@ -40,7 +39,8 @@ categories:
 ### 发起请求
 
 #### 发起同步请求
-```
+
+```java
 String run(String url) throws IOException {
   Request request = new Request.Builder()
       .url(url)
@@ -51,10 +51,10 @@ String run(String url) throws IOException {
 }
 ```
 
-```
+```java
 //RealCall类
 @Override public Response execute() throws IOException {
-	//第一步，判断是否被执行
+  //第一步，判断是否被执行
     synchronized (this) {
       if (executed) throw new IllegalStateException("Already Executed");
       executed = true;
@@ -77,16 +77,39 @@ String run(String url) throws IOException {
     }
   }
 ```
-- 第一步 检查这个 call是否已经被执行了，每个 call 只能被执行一次，如果想要一个完全一样的 call，可以利用 all#clone 方法进行克隆。
+
+- 第一步 检查这个 call 是否已经被执行了，每个 call 只能被执行一次，如果想要一个完全一样的 call，可以利用 all#clone 方法进行克隆。
 - 第二步 利用 client.dispatcher().executed(this) 来进行实际执行，dispatcher 是刚才看到的 OkHttpClient.Builder 的成员之一，它的文档说自己是异步 HTTP请求的执行策略，现在看来，同步请求它也有掺和。
 - 第三步 调用 getResponseWithInterceptorChain() 函数获取 HTTP 返回结果，从函数名可以看出，这一步还会进行一系列“拦截”操作。
 - 第四步 最后还要通知 dispatcher 自己已经执行完毕。
 dispatcher 这里我们不过度关注，在同步执行的流程中，涉及到 dispatcher 的内容只不过是告知它我们的执行状态，比如开始执行了（调用 executed），比如执行完毕了（调用 finished），在异步执行流程中它会有更多的参与。
 真正发出网络请求，解析返回结果的，还是 getResponseWithInterceptorChain：
 
+```java
+  Response getResponseWithInterceptorChain() throws IOException {
+    // Build a full stack of interceptors.
+    List<Interceptor> interceptors = new ArrayList<>();
+    interceptors.addAll(client.interceptors());
+    interceptors.add(retryAndFollowUpInterceptor);
+    interceptors.add(new BridgeInterceptor(client.cookieJar()));
+    interceptors.add(new CacheInterceptor(client.internalCache()));
+    interceptors.add(new ConnectInterceptor(client));
+    if (!forWebSocket) {
+      interceptors.addAll(client.networkInterceptors());
+    }
+    interceptors.add(new CallServerInterceptor(forWebSocket));
+
+    Interceptor.Chain chain = new RealInterceptorChain(interceptors, null, null, null, 0,
+        originalRequest, this, eventListener, client.connectTimeoutMillis(),
+        client.readTimeoutMillis(), client.writeTimeoutMillis());
+
+    return chain.proceed(originalRequest);
+  }
+```
 
 #### 发起异步请求
-```
+
+```java
 client.newCall(request).enqueue(new Callback() {
     @Override
     public void onFailure(Call call, IOException e) {
@@ -99,7 +122,7 @@ client.newCall(request).enqueue(new Callback() {
 });
 ```
 
-```
+```java
 //RealCall类
   @Override public void enqueue(Callback responseCallback) {
     synchronized (this) {
@@ -115,7 +138,7 @@ client.newCall(request).enqueue(new Callback() {
 
 ### Dispatcher
 
-```
+```java
   private int maxRequests = 64;
   private int maxRequestsPerHost = 5;
   private @Nullable Runnable idleCallback;
@@ -151,15 +174,18 @@ client.newCall(request).enqueue(new Callback() {
 #### 对同步请求的处理
 
 直接添加到正在执行的同步请求集合中，
-```
+
+```java
   synchronized void executed(RealCall call) {
     runningSyncCalls.add(call);
   }
 ```
 
 #### 对异步请求的处理
+
 直接将当前异步请求添加到异步请求集合中
-```
+
+```java
 synchronized void enqueue(AsyncCall call) {
     //第一步，判断请求个数，与host个数
     if (runningAsyncCalls.size() < maxRequests && runningCallsForHost(call) < maxRequestsPerHost) {
@@ -171,8 +197,10 @@ synchronized void enqueue(AsyncCall call) {
     }
   }
 ```
+
 线程池中执行的方法。
-```
+
+```java
     @Override protected void execute() {
       boolean signalledCallback = false;
       try {
@@ -199,8 +227,7 @@ synchronized void enqueue(AsyncCall call) {
     }
 ```
 
-```
-
+```java
   void finished(AsyncCall call) {
     finished(runningAsyncCalls, call, true);
   }
@@ -210,7 +237,7 @@ synchronized void enqueue(AsyncCall call) {
     Runnable idleCallback;
     synchronized (this) {
       if (!calls.remove(call)) throw new AssertionError("Call wasn't in-flight!");
-      if (promoteCalls) promoteCalls();//如果是true，这唤醒
+      if (promoteCalls) promoteCalls();//如果是true，则唤醒
       runningCallsCount = runningCallsCount();
       idleCallback = this.idleCallback;
     }
@@ -220,8 +247,10 @@ synchronized void enqueue(AsyncCall call) {
     }
   }
 ```
+
 唤醒逻辑
-```
+
+```java
 
   private void promoteCalls() {
     if (runningAsyncCalls.size() >= maxRequests) return; // Already running max capacity.
@@ -241,11 +270,12 @@ synchronized void enqueue(AsyncCall call) {
   }
 
 ```
+
 需要注意的是，在异步请求的时候，注意请求的数量，在默认情况下，如果请求数过多，那么会导致其他请求延迟执行的情况。
 
 ### 拦截器责任链
-```
 
+```java
   Response getResponseWithInterceptorChain() throws IOException {
     // Build a full stack of interceptors.
     List<Interceptor> interceptors = new ArrayList<>();
@@ -266,18 +296,19 @@ synchronized void enqueue(AsyncCall call) {
     return chain.proceed(originalRequest);
   }
 ```
+
 - **interceptors**：在配置 OkHttpClient 时设置的拦截器；
 - **RetryAndFollowUpInterceptor**：负责失败重试以及重定向；
 - **BridgeInterceptor**：负责把用户构造的请求转换为发送到服务器的请求、把服务器返回的响应转换为用户友好的响应
 - **CacheInterceptor**：负责读取缓存直接返回、更新缓存；
 - **ConnectInterceptor**：负责和服务器建立连接的 ；
-- **networkInterceptors**： 配置 OkHttpClient网络拦截器；
+- **NetworkInterceptors**： 配置 OkHttpClient网络拦截器；
 - **CallServerInterceptor**： 负责向服务器发送请求数据、从服务器读取响应数据。
 - 在return chain.proceed(originalRequest);中开启链式调用：
 
 ### RealInterceptorChain
 
-```
+```java
   public Response proceed(Request request, StreamAllocation streamAllocation, HttpCodec httpCodec,
       RealConnection connection) throws IOException {
     if (index >= interceptors.size()) throw new AssertionError();
@@ -323,38 +354,41 @@ synchronized void enqueue(AsyncCall call) {
   }
 ```
 
-
-```
+```java
  RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation, httpCodec,
         connection, index + 1, request, call, eventListener, connectTimeout, readTimeout,
         writeTimeout);
     Interceptor interceptor = interceptors.get(index);
     Response response = interceptor.intercept(next);
 ```
+
 - 实例化下一个拦截器对应的RealIterceptorChain对象，这个对象会在传递给当前的拦截器
 - 得到当前的拦截器：interceptors是存放拦截器的ArryList
 - 调用当前拦截器的intercept()方法，并将下一个拦截器的RealIterceptorChain对象传递下去,除了在client中自己设置的interceptor,第一个调用的就是**retryAndFollowUpInterceptor**。
 
-
 ### RetryAndFollowUpInterceptor
 
 重试与重定向拦截器
-```
+
+```java
 /**
    * How many redirects and auth challenges should we attempt? Chrome follows 21 redirects; Firefox,
    * curl, and wget follow 20; Safari follows 16; and HTTP/1.0 recommends 5.
    */
   private static final int MAX_FOLLOW_UPS = 20;
 ```
+
 最大支持的重定向的次数为20.
 
 ### BridgeInterceptor
+
 构建用户的请求与响应体
 
 ### CacheInterceptor
+
 判断是否需要读取缓存数据，整个阶段，分为两个，请求之前判断缓存是否可用，请求是否支持缓存，第二个，请求之后是否写入缓存。
 
-```
+```java
      mOkHttpClient = OkHttpClient.Builder()
                 .readTimeout(READ_TIME_OUT, TimeUnit.MILLISECONDS)
                 .writeTimeout(WRITE_TIME_OUT, TimeUnit.MILLISECONDS)
@@ -362,7 +396,7 @@ synchronized void enqueue(AsyncCall call) {
 
 ```
 
-```
+```java
   @Override public Response intercept(Chain chain) throws IOException {
     //先判断缓存中是否有缓存的数据
     Response cacheCandidate = cache != null
@@ -370,7 +404,7 @@ synchronized void enqueue(AsyncCall call) {
         : null;
 
     long now = System.currentTimeMillis();
-    
+
     //获取构建的CacheStrategy对象
     CacheStrategy strategy = new CacheStrategy.Factory(now, chain.request(), cacheCandidate).get();
     Request networkRequest = strategy.networkRequest;
@@ -464,7 +498,8 @@ synchronized void enqueue(AsyncCall call) {
 ```
 
 CacheStrategy.Factory主要判断是否有缓存，如果有缓存判断缓存是否过期，并构建CacheStrategy对象
-```
+
+```java
    public Factory(long nowMillis, Request request, Response cacheResponse) {
       this.nowMillis = nowMillis;
       this.request = request;
@@ -495,7 +530,7 @@ CacheStrategy.Factory主要判断是否有缓存，如果有缓存判断缓存�
     }
 ```
 
-```
+```java
  public CacheStrategy get() {
       CacheStrategy candidate = getCandidate();
       //如果request强制使用缓存，那么都为null
@@ -510,7 +545,7 @@ CacheStrategy.Factory主要判断是否有缓存，如果有缓存判断缓存�
 
 构建CacheStrategy对象
 
-```
+```java
     /** Returns a strategy to use assuming the request can use the network. */
     private CacheStrategy getCandidate() {
       //如果没有缓存，则CacheStrategy的cacheResponse为null
@@ -533,7 +568,7 @@ CacheStrategy.Factory主要判断是否有缓存，如果有缓存判断缓存�
       if (requestCaching.noCache() || hasConditions(request)) {
         return new CacheStrategy(request, null);
       }
-      
+
       //如果缓存的response为不变类型，则获取缓存
       CacheControl responseCaching = cacheResponse.cacheControl();
       if (responseCaching.immutable()) {
@@ -596,9 +631,11 @@ CacheStrategy.Factory主要判断是否有缓存，如果有缓存判断缓存�
       return new CacheStrategy(conditionalRequest, cacheResponse);
     }
 ```
- 
+
 ### ConnectInterceptor
+
 构建连接通道，也就是Socket通道
 
 ### CallServerInterceptor
+
 发起请求拦截器
