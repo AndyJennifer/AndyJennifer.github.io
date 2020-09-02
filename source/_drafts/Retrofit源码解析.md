@@ -8,7 +8,7 @@ categories:
 
 ### Retrofit源码解析
 
-```
+```java
    mRetrofit = new Retrofit.Builder()
                 .client(mOkHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -18,8 +18,7 @@ categories:
         apiService = mRetrofit.create(ApiService.class);
 ```
 
-
-```
+```java
 public <T> T create(final Class<T> service) {
     Utils.validateServiceInterface(service);
     if (validateEagerly) {
@@ -27,7 +26,7 @@ public <T> T create(final Class<T> service) {
     }
     return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[] { service },
         new InvocationHandler() {
-	       //判断当前平台
+         //判断当前平台
           private final Platform platform = Platform.get();
 
           @Override public Object invoke(Object proxy, Method method, @Nullable Object[] args)
@@ -41,7 +40,7 @@ public <T> T create(final Class<T> service) {
             if (platform.isDefaultMethod(method)) {
               return platform.invokeDefaultMethod(method, service, proxy, args);
             }
-            //最重要的是这三部
+            //最重要的这里👇
             ServiceMethod<Object, Object> serviceMethod =
                 (ServiceMethod<Object, Object>) loadServiceMethod(method);
             OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
@@ -52,7 +51,8 @@ public <T> T create(final Class<T> service) {
 ```
 
 ### 第一步获取ServiceMethod
-```
+
+```java
 ServiceMethod<?, ?> loadServiceMethod(Method method) {
    //从缓存中获取method对应的缓存的注解信息。
     ServiceMethod<?, ?> result = serviceMethodCache.get(method);
@@ -69,8 +69,10 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
     return result;
   }
 ```
+
 查看相应ServiceMethod中的builder方法
-```
+
+```java
     Builder(Retrofit retrofit, Method method) {
       this.retrofit = retrofit;
       this.method = method;
@@ -79,9 +81,10 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
       this.parameterAnnotationsArray = method.getParameterAnnotations();//获取参数上的注解
     }
 ```
+
 接下来看build方法
 
-```
+```java
     public ServiceMethod build() {
       callAdapter = createCallAdapter();//创建并获取请求适配器
       responseType = callAdapter.responseType();//获取响应类型
@@ -113,7 +116,7 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
         }
       }
 
-      //判断参数上的总结
+      //判断总的参数个数
       int parameterCount = parameterAnnotationsArray.length;
       parameterHandlers = new ParameterHandler<?>[parameterCount];
       for (int p = 0; p < parameterCount; p++) {
@@ -122,7 +125,7 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
           throw parameterError(p, "Parameter type must not include a type variable or wildcard: %s",
               parameterType);
         }
-        
+
         Annotation[] parameterAnnotations = parameterAnnotationsArray[p];
         if (parameterAnnotations == null) {
           throw parameterError(p, "No Retrofit annotation found.");
@@ -152,14 +155,16 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
 
 
 ### 第三步执行请求
+
 将构建的okhttp请求传入callAdapter的adpat中
-```
+
+```java
 return serviceMethod.callAdapter.adapt(okHttpCall);
 ```
 
 这里以RxJava2CallAdapter的adapt方法为例：
 
-```
+```java
  @Override public Object adapt(Call<R> call) {
    //判断是同步还是异步请求，创建相应观察者
     Observable<Response<R>> responseObservable = isAsync
@@ -194,10 +199,12 @@ return serviceMethod.callAdapter.adapt(okHttpCall);
     return observable;
   }
 ```
+
 主要是创建被观察者,那么就查看CallEnqueueObservable（异步）和CallExecuteObservable（同步）的实现
 
 #### 异步请求实现
-```
+
+```java
 final class CallEnqueueObservable<T> extends Observable<Response<T>> {
   private final Call<T> originalCall;
 
@@ -268,8 +275,10 @@ final class CallEnqueueObservable<T> extends Observable<Response<T>> {
   }
 }
 ```
+
 OkHttpCall的enqueue方法的实现
-```
+
+```java
 @Override public void enqueue(final Callback<T> callback) {
     checkNotNull(callback, "callback == null");
 
@@ -339,4 +348,5 @@ OkHttpCall的enqueue方法的实现
     });
   }
 ```
+
 #### parameterHandlers

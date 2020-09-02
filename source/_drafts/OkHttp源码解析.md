@@ -171,6 +171,9 @@ client.newCall(request).enqueue(new Callback() {
   }
 ```
 
+- 最大请求数 64
+- 同时最大请求域名数 5
+
 #### 对同步请求的处理
 
 直接添加到正在执行的同步请求集合中，
