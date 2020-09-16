@@ -131,7 +131,7 @@ ArrayList list = new ArrayList<String>();
 如果按照我们之前讲解的 “真泛型” 思路来处理 Java 的泛型， 那么 `new ArrayList<String>()` 实际会被替换为 `new ArrayList@String@()`，那么实际运行代码是这样：
 
 ```java
-ArrayList list = new Factory@String@()
+ArrayList list = new ArrayList@String@()
 ```
 
 从代码逻辑上来看，根本就跑不通。因为 `ArrayList` 与 `ArrayList@String@` 根本就不是同一类， 那怎么办呢？
