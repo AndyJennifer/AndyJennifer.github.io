@@ -109,7 +109,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/04/22/为什么Java的泛型要用擦除实现/版本说明.png">
 <meta property="og:image" content="http://yoursite.com/2020/04/22/为什么Java的泛型要用擦除实现/抽烟分析.jpg">
 <meta property="og:image" content="http://yoursite.com/2020/04/22/为什么Java的泛型要用擦除实现/编译器替换.png">
-<meta property="og:updated_time" content="2020-04-21T17:12:10.969Z">
+<meta property="og:updated_time" content="2020-09-16T10:25:22.341Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为什么Java的泛型要用擦除实现">
 <meta name="twitter:description" content="前言在 Java 中的 泛型，常常被称之为 伪泛型，究其原因是因为在实际代码的运行中，将实际类型参数的信息擦除掉了(Type Erasure)。那是什么原因导致了 Java 做出这种妥协的呢？下面我就带着大家以 Java 语言设计者的角度，带领大家一起了解这里面的辛酸过往。 什么是真泛型在了解 Java “伪泛型” 之前，我们先简单讲一讲”真泛型”与“伪泛型”的区别。  真泛型：泛型中的类型是真">
@@ -402,12 +402,24 @@
                 
               
 
-              <time title="创建时间：2020-04-22 00:26:33 / 修改时间：01:12:10" itemprop="dateCreated datePublished" datetime="2020-04-22T00:26:33+08:00">2020-04-22</time>
+              <time title="创建时间：2020-04-22 00:26:33" itemprop="dateCreated datePublished" datetime="2020-04-22T00:26:33+08:00">2020-04-22</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-09-16 18:25:22" itemprop="dateModified" datetime="2020-09-16T18:25:22+08:00">2020-09-16</time>
               
             
           </span>
@@ -583,7 +595,7 @@
 </ul>
 <p>这种情况的出现，会导致一个问题。就是 b1 项目中的 ArrayList 是不知道 A 项目中的 Arraylist 已经泛型化了的，那么如何保证<strong>泛型化后</strong>的 ArrayList（<code>也就是ArrayList&lt;T&gt;</code>）与<strong>老版本</strong>的 ArrayList 等价呢？</p>
 <p>如果按照我们之前讲解的 “真泛型” 思路来处理 Java 的泛型， 那么 <code>new ArrayList&lt;String&gt;()</code> 实际会被替换为 <code>new ArrayList@String@()</code>，那么实际运行代码是这样：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList list = <span class="keyword">new</span> Factory<span class="meta">@String</span>@()</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList list = <span class="keyword">new</span> ArrayList<span class="meta">@String</span>@()</span><br></pre></td></tr></table></figure>
 <p>从代码逻辑上来看，根本就跑不通。因为 <code>ArrayList</code> 与 <code>ArrayList@String@</code> 根本就不是同一类， 那怎么办呢？</p>
 <p>最为直接的解决方案就是，不再为参数化类型创造新类了，同时在编译期间将<code>泛型类型</code>中的<code>类型参数</code>全部替换 <code>Object</code>（因为不创建新类了，那么在泛型类中的 T 对应的类型，只能用 Object 替换）。</p>
 <blockquote>
