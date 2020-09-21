@@ -18,7 +18,6 @@ categories:
 - Pageing   分页库：https://v.qq.com/x/page/r077736iasg.html
 - Room  https://v.qq.com/x/page/d0770r409g3.html
 
-
 - ViewModel2 https://juejin.im/post/5a17d49b6fb9a0451704e229
 
 Google官方例子：https://github.com/android/architecture-components-samples
