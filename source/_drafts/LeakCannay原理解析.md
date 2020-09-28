@@ -8,8 +8,8 @@ categories:
 
 ### 前言
 
-
 ### 整体原理
+
 - 监听 Activity 的生命周期
 - 在 onDestroy 的时候，创建相应的 Refrence 和 RefrenceQueue，并启动后台进程去检测
 - 一段时间之后，从 RefrenceQueue 读取，若读取不到相应 activity 的 Refrence，有可能发生泄露了，这个时候，再促发 gc，一段时间之后，再去读取，若在从 RefrenceQueue 还是读取不到相应 activity 的 refrence，可以断定是发生内存泄露了
@@ -20,9 +20,9 @@ categories:
 
 ### 整体过程
 
-```
+```java
     private fun initLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
+      if (LeakCanary.isInAnalyzerProcess(this)) {
             return
         }
         LeakCanary.install(this)
@@ -30,20 +30,18 @@ categories:
 
 ```
 
-
-
-```
+```java
  public static @NonNull RefWatcher install(@NonNull Application application) {
     return refWatcher(application).listenerServiceClass(DisplayLeakService.class)
         .excludedRefs(AndroidExcludedRefs.createAppDefaults().build())
         .buildAndInstall();
   }
 ```
+
 - 其中DisplayLeakService本质是一个前台的IntentService主要用于分析内存泄露日志，并提供通知。
 - AndroidExcludedRefs.createAppDefaults().build()主要用于排除开发中可以忽略掉的泄露路径
 
-
-```
+```java
   public @NonNull RefWatcher buildAndInstall() {
     if (LeakCanaryInternals.installedRefWatcher != null) {
       throw new UnsupportedOperationException("buildAndInstall() should only be called once.");
@@ -67,10 +65,9 @@ categories:
   }
 ```
 
-
 #### ActivityRefWatcher
 
-```
+```java
 public static void install(@NonNull Context context, @NonNull RefWatcher refWatcher) {
     Application application = (Application) context.getApplicationContext();
     ActivityRefWatcher activityRefWatcher = new ActivityRefWatcher(application, refWatcher);
@@ -78,8 +75,10 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
     application.registerActivityLifecycleCallbacks(activityRefWatcher.lifecycleCallbacks);
   }
 ```
+
 其中监听的声明
-```
+
+```java
   private final Application.ActivityLifecycleCallbacks lifecycleCallbacks =
       new ActivityLifecycleCallbacksAdapter() {
         @Override public void onActivityDestroyed(Activity activity) {
@@ -88,9 +87,10 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
       };
 
 ```
+
 在Activity销毁的时候，最终会回调RefWatcher的watch(Object watchedReference)方法。来观察Activity中的内存泄露情况
 
-```
+```java
   public void watch(Object watchedReference, String referenceName) {
     if (this == DISABLED) {
       return;
@@ -108,8 +108,10 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
     ensureGoneAsync(watchStartNanoTime, reference);
   }
 ```
+
 执行任务，开始检测。内部是通过Handler
-```
+
+```java
   private void ensureGoneAsync(final long watchStartNanoTime, final KeyedWeakReference reference) {
     watchExecutor.execute(new Retryable() {
       @Override public Retryable.Result run() {
@@ -119,7 +121,7 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
   }
 ```
 
-```
+```java
   Retryable.Result ensureGone(final KeyedWeakReference reference, final long watchStartNanoTime) {
     long gcStartNanoTime = System.nanoTime();
     long watchDurationMs = NANOSECONDS.toMillis(gcStartNanoTime - watchStartNanoTime);
@@ -157,7 +159,7 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
           .gcDurationMs(gcDurationMs)
           .heapDumpDurationMs(heapDumpDurationMs)
           .build();
-
+      //分析heap prof 文件，找到内存泄漏点
       heapdumpListener.analyze(heapDump);
     }
     return DONE;
@@ -165,14 +167,14 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
 
 ```
 
-```
+```java
   @Override public void analyze(@NonNull HeapDump heapDump) {
     checkNotNull(heapDump, "heapDump");
     HeapAnalyzerService.runAnalysis(context, heapDump, listenerServiceClass);
   }
 ```
 
-```
+```java
   @Override protected void onHandleIntentInForeground(@Nullable Intent intent) {
     if (intent == null) {
       CanaryLog.d("HeapAnalyzerService received a null intent, ignoring.");
@@ -188,5 +190,4 @@ public static void install(@NonNull Context context, @NonNull RefWatcher refWatc
         heapDump.computeRetainedHeapSize);
     AbstractAnalysisResultService.sendResultToListener(this, listenerClassName, heapDump, result);
   }
-
 ```
