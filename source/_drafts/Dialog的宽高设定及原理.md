@@ -159,6 +159,7 @@ viewrootimpl 的查找方式windowManger->WindowManagerImpl->WindowManagerGlobal
 ```
 
 getRootMeasureSpec的测量方法
+
 ```java
  private static int getRootMeasureSpec(int windowSize, int rootDimension) {
         int measureSpec;
