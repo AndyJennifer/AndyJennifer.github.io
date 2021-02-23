@@ -23,7 +23,7 @@ categories:
         private int mFirstActivePosition;
 
 
-        //布局开始时，屏幕中存在的视图（就是是ListView开始时当前ListView中所有可见的View)
+        //布局开始时，屏幕中存在的视图（就是ListView开始时当前ListView中所有可见的View)
         //在布局结束时，会将mActiveViews移动到回收视图中去
         private View[] mActiveViews = new View[0];
 
@@ -531,10 +531,10 @@ categories:
 
 ```
 
-- fillActiveViews() 这个方法接收两个参数，第一个参数表示要存储的view的数量，第二个参数表示ListView中第一个可见元素的position值。RecycleBin当中使用mActiveViews这个数组来存储View，调用这个方法后就会根据传入的参数来将ListView中的指定元素存储到mActiveViews数组当中。
-- getActiveView() 这个方法和fillActiveViews()是对应的，用于从mActiveViews数组当中获取数据。该方法接收一个position参数，表示元素在ListView当中的位置，方法内部会自动将position值转换成mActiveViews数组对应的下标值。需要注意的是，mActiveViews当中所存储的View，一旦被获取了之后就会从mActiveViews当中移除，下次获取同样位置的View将会返回null，也就是说mActiveViews不能被重复利用。
+- fillActiveViews() 这个方法接收两个参数，第一个参数表示要存储的view的数量，第二个参数表示ListView中第一个可见元素的 position 值。RecycleBin 当中使用 mActiveViews 这个数组来存储View，调用这个方法后就会根据传入的参数来将 ListView 中的指定元素存储到mActiveViews 数组当中。
+- getActiveView() 这个方法和 fillActiveViews()是对应的，用于从 mActiveViews 数组当中获取数据。该方法接收一个position参数，表示元素在ListView当中的位置，方法内部会自动将position值转换成mActiveViews数组对应的下标值。需要注意的是，mActiveViews当中所存储的View，一旦被获取了之后就会从mActiveViews当中移除，下次获取同样位置的View将会返回null，也就是说mActiveViews不能被重复利用。
 - 用于将一个废弃的View进行缓存，该方法接收一个View参数，当有某个View确定要废弃掉的时候(比如滚动出了屏幕)，就应该调用这个方法来对View进行缓存，RecycleBin当中使用mScrapViews和mCurrentScrap这两个List来存储废弃View。
-- getScrapView 用于从废弃缓存中取出一个View，这些废弃缓存中的View是没有顺序可言的，因此getScrapView()方法中的算法也非常简单，就是直接从mCurrentScrap当中获取尾部的一个scrap view进行返回。
+- getScrapView() 用于从废弃缓存中取出一个View，这些废弃缓存中的View是没有顺序可言的，因此getScrapView()方法中的算法也非常简单，就是直接从mCurrentScrap当中获取尾部的一个scrap view进行返回。
 - setViewTypeCount() 我们都知道Adapter当中可以重写一个getViewTypeCount()来表示ListView中有几种类型的数据项，而setViewTypeCount()方法的作用就是为每种类型的数据项都单独启用一个RecycleBin缓存机制。实际上，getViewTypeCount()方法通常情况下使用的并不是很多，所以我们只要知道RecycleBin当中有这样一个功能就行了
 
 ### ListView的第一次layout()
@@ -798,7 +798,7 @@ View的执行流程无非就分为三步，onMeasure()用于测量View的大小�
             // 如果当前视图没有发生改变，那么重新绑定数据。
             if (params.viewType == mAdapter.getItemViewType(position)) {
                 final View updatedView = mAdapter.getView(position, transientView, this);
-                // 如果重新绑定数据失败，那么把当前mAdapter.getView（）获取的view添加到垃圾堆中
+                // 如果没有复用view,那么把当前mAdapter.getView（）获取的view添加到ScrapView数组中
                 if (updatedView != transientView) {
                     setItemViewLayoutParams(updatedView, position);
                     mRecycler.addScrapView(updatedView, position);
@@ -814,10 +814,11 @@ View的执行流程无非就分为三步，onMeasure()用于测量View的大小�
 
         //👇从回收视图中获取相关view,
         final View scrapView = mRecycler.getScrapView(position);
+        //👇从Adapter中获取相关view,
         final View child = mAdapter.getView(position, scrapView, this);
         if (scrapView != null) {
             if (child != scrapView) {
-                 // 如果重新绑定数据失败，那么把当前mAdapter.getView（）获取的view添加到垃圾堆中
+                 // 如果没有复用view,那么把当前mAdapter.getView（）获取的view添加到ScrapView数组中
                 mRecycler.addScrapView(scrapView, position);
             } else if (child.isTemporarilyDetached()) {
                 outMetadata[0] = true;
@@ -1138,9 +1139,8 @@ setupChild()方法当中的代码虽然比较多，但是我们只看核心代�
             }
         }
 
-        // Make a new view for this position, or convert an unused view if
-        // possible.
-        //创建新的视图，如果当前缓存视图不可用的花
+
+        //如果当前缓存视图不可用，则创建新的视图
         final View child = obtainView(position, mIsScrap);
 
         // This needs to be positioned and measured.
