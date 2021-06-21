@@ -91,7 +91,7 @@ categories:
 
 #### helpTransfer
 
-当CocurrentHashMap，正在扩容是，其他线程执行如下操作的时候，会触发 HelpTransfer 方法的调用，如：
+当CocurrentHashMap，正在扩容时，其他线程执行如下操作的时候，会触发 HelpTransfer 方法的调用，如：
 
 - putVal
 - remove

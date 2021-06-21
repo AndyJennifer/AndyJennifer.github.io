@@ -34,6 +34,7 @@ Gradle带有自己的`Groovy`库，因此不需要安装Groovy，任何现有的
 #### 第一步、下载最新版本的Gradle
 
 我们可以通过官网[https://gradle.org/releases/](https://gradle.org/releases/)去下载我们想要下载的Gradle版本。
+
 {% asset_img 官方下载界面.png 官方下载界面 %}
 
 点击进入官方下载页，我们可以看到一些Gradle版本的信息与下载地址，其中下载分为了两个版本：
