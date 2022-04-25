@@ -11,6 +11,11 @@ categories:
 
 参考链接：https://mp.weixin.qq.com/s/AmxTnOaJX4hHSMXLGxG3Jg
 
+## Lifecycles 的设计原理
+
+LifecycleOwner 持有 LifeCycle 具体实现类为 LifecycleRegistry （该类内部维护了当前组件的生命周期及对应事件），当生命周期发生改变的时候调用
+LifecycleObserver 的相关方法。
+
 ### 使用例子
 
 Lifecycles 需要配合LifecycleOwner使用
