@@ -14,11 +14,61 @@ categories:
 ## Lifecycles 的设计原理
 
 LifecycleOwner 持有 LifeCycle 具体实现类为 LifecycleRegistry （该类内部维护了当前组件的生命周期及对应事件），当生命周期发生改变的时候调用
-LifecycleObserver 的相关方法。
+LifecycleObserver 的相关方法。具体如下所示：
+
+```java
+public abstract class Lifecycle {
+    public Lifecycle() {
+    }
+
+    @MainThread
+    public abstract void addObserver(@NonNull LifecycleObserver var1);
+
+    @MainThread
+    public abstract void removeObserver(@NonNull LifecycleObserver var1);
+
+    @MainThread
+    @NonNull
+    public abstract Lifecycle.State getCurrentState();
+
+    public static enum State {
+        DESTROYED,
+        INITIALIZED,
+        CREATED,
+        STARTED,
+        RESUMED;
+
+        private State() {
+        }
+
+        public boolean isAtLeast(@NonNull Lifecycle.State state) {
+            return this.compareTo(state) >= 0;
+        }
+    }
+
+    public static enum Event {
+        ON_CREATE,
+        ON_START,
+        ON_RESUME,
+        ON_PAUSE,
+        ON_STOP,
+        ON_DESTROY,
+        ON_ANY;
+
+        private Event() {
+        }
+    }
+}
+
+public class LifecycleRegistry extends Lifecycle {
+    //省略.....
+}
+
+```
 
 ### 使用例子
 
-Lifecycles 需要配合LifecycleOwner使用
+Lifecycles 需要配合 LifecycleOwner 使用
 
 ```java
 class MyLocationListener implements LifecycleObserver {
@@ -65,9 +115,9 @@ public interface LifecycleOwner {
 
 ### ComponentActivity
 
-androidx.core.app下的 ComponentActivity
+androidx.core.app下的 ComponentActivity 中维护了 LifecycleRegistry，通过内部的ReportFragment来监听当前Activity的生命周期状态。
 
-```java
+```java 
 public Lifecycle getLifecycle() {
         return mLifecycleRegistry;
     }
@@ -230,6 +280,9 @@ public class ReportFragment extends Fragment {
 ```
 
 ### 通知观察者
+
+
+通过 LifecycleRegistry 内部的 handleLifecycleEvent 根据对应的事件来处理对应生命周期的状态。
 
 ```java
   public void handleLifecycleEvent(@NonNull Lifecycle.Event event) {

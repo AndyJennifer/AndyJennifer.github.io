@@ -8,7 +8,7 @@ categories:
 
 SharedPreferences源码分析
 
-```
+```java
  private ContextImpl createBaseContextForActivity(ActivityClientRecord r) {
         final int displayId;
         try {
@@ -41,7 +41,7 @@ SharedPreferences源码分析
 
 ```
 
-```
+```java
  @Override
     public SharedPreferences getSharedPreferences(String name, int mode) {
         // At least one application in the world actually passes in a null
@@ -69,7 +69,7 @@ SharedPreferences源码分析
     }
 ```
 
-```
+```java
  @Override
     public SharedPreferences getSharedPreferences(File file, int mode) {
         SharedPreferencesImpl sp;
@@ -127,7 +127,8 @@ SharedPreferences源码分析
 ```
 ### 创建SharedPreferences文件夹地址
 为什么会在该手机目录下的原因。/data/data/package_name/shared_prefs/
-```
+
+```java
 
     @Override
     public File getSharedPreferencesPath(String name) {
@@ -135,7 +136,7 @@ SharedPreferences源码分析
     }
 ```
 
-```
+```java
   private File getPreferencesDir() {
         synchronized (mSync) {
             if (mPreferencesDir == null) {
@@ -149,9 +150,10 @@ SharedPreferences源码分析
 
 ### Share文件的创建
 
-```
+```java
  SharedPreferencesImpl(File file, int mode) {
         mFile = file;
+        //创建备份文件
         mBackupFile = makeBackupFile(file);
         mMode = mode;
         mLoaded = false;//用于判断当前Share文件是否读取完毕。
@@ -161,7 +163,7 @@ SharedPreferences源码分析
 ```
 
 
-```
+```java
   private void loadFromDisk() {
         synchronized (mLock) {
             if (mLoaded) {
@@ -214,7 +216,8 @@ SharedPreferences源码分析
 ```
 
 ### 获取Share文件中的数据
-```
+
+```java
   public boolean getBoolean(String key, boolean defValue) {
         synchronized (mLock) {
             awaitLoadedLocked();
@@ -223,8 +226,7 @@ SharedPreferences源码分析
         }
     }
 ```
-```
-
+```java
     private void awaitLoadedLocked() {
         if (!mLoaded) {
             // Raise an explicit StrictMode onReadFromDisk for this
@@ -243,7 +245,7 @@ SharedPreferences源码分析
 ```
 
 ### 保存数据到Share文件中
-```
+```java
 public final class EditorImpl implements Editor {
         private final Object mLock = new Object();
 		
@@ -267,7 +269,7 @@ public final class EditorImpl implements Editor {
 
 #### commit()方法
 
-```
+```java
         public boolean commit() {
             long startTime = 0;
 
@@ -296,7 +298,7 @@ public final class EditorImpl implements Editor {
 ```
 
 
-```
+```java
    private MemoryCommitResult commitToMemory() {
             long memoryStateGeneration;
             List<String> keysModified = null;
